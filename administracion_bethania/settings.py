@@ -119,6 +119,7 @@ STATICFILES_DIRS = [
     os.path.join(BASE_DIR, 'static'),
 ]
 
+
 # Configuración para encontrar archivos estáticos en las aplicaciones
 STATICFILES_FINDERS = [
     'django.contrib.staticfiles.finders.FileSystemFinder',
