@@ -1,0 +1,28 @@
+{% extends 'base.html' %}
+
+{% block title %}Editar Alumno{% endblock %}
+
+{% block content %}
+    <div class="edit-student-container">
+        <h1>Editar {{ form.instance.nombres }} {{ form.instance.apellidos }}</h1>
+        <form method="post" enctype="multipart/form-data" class="edit-student-form">
+            {% csrf_token %}
+            {% for field in form %}
+                <div class="form-group">
+                    {{ field.label_tag }}
+                    {{ field }}
+                    {% if field.help_text %}
+                        <small>{{ field.help_text }}</small>
+                    {% endif %}
+                    {% if field.errors %}
+                        <div class="error">{{ field.errors }}</div>
+                    {% endif %}
+                </div>
+            {% endfor %}
+            <div class="button">
+                <button type="submit" class="button-submit">Guardar</button>
+                <a href="{% url 'alumno_detail' pk=form.instance.pk %}" class="button-cancel">Cancelar</a>
+            </div>
+        </form>
+    </div>
+{% endblock %}

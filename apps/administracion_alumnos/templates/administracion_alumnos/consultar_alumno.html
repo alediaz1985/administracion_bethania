@@ -1,0 +1,42 @@
+{% extends 'base.html' %}
+
+{% block title %}Consultar Alumno{% endblock %}
+
+{% block content %}
+    <h1>Consultar Alumno</h1>
+    <form method="post" class="form-inline">
+        {% csrf_token %}
+        <label for="cuil">CUIL del Alumno:</label>
+        <input type="text" id="cuil" name="cuil" required>
+        <button type="submit" class="button-submit">Buscar</button>
+    </form>
+    {% if alumno %}
+        <p>Alumno encontrado: {{ alumno.cuil_alumno }} --- {{ alumno.apellidos_alumno }} {{ alumno.nombres_alumno }}</p>
+        <div class="button-group">
+            <form method="get" action="{% url 'ver_datos_alumno' pk=alumno.pk %}">
+                <button type="submit" class="button-submit">Ver Datos</button>
+            </form>
+            <form method="post" action="{% url 'alumno_delete' pk=alumno.pk %}" id="delete-form">
+                {% csrf_token %}
+                <button type="button" class="button-submit" id="delete-button">Eliminar</button>
+            </form>
+            <form method="get" action="{% url 'alumno_edit' pk=alumno.pk %}">
+                <button type="submit" class="button-submit">Modificar</button>
+            </form>
+        </div>
+    {% elif error %}
+        <p style="color: red;">{{ error }}</p>
+    {% endif %}
+{% endblock %}
+
+{% block extra_scripts %}
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            document.getElementById('delete-button').addEventListener('click', function() {
+                if (confirm('¿Estás seguro de que quieres eliminar este alumno?')) {
+                    document.getElementById('delete-form').submit();
+                }
+            });
+        });
+    </script>
+{% endblock %}

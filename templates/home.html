@@ -1,0 +1,35 @@
+{% extends "base.html" %}
+
+{% block title %}Inicio - Hogar de Bethania{% endblock %}
+
+{% load static %}
+
+{% block extra_styles %}
+    <link rel="stylesheet" href="{% static 'css/home.css' %}">
+{% endblock %}
+
+{% block content %}
+    <div class="conta">
+        <h2>Bienvenido al Proyecto Hogar de Bethania</h2>
+        <p>Este proyecto fue realizado para gestionar de manera eficiente la información y documentación de los alumnos del Hogar de Bethania, U.E.G.P. N°82. El sistema permite:</p>
+        <div class="features">
+            <ul>
+                <li>Registrar nuevos alumnos</li>
+                <li>Consultar información de alumnos</li>
+                <li>Actualizar datos de los alumnos</li>
+                <li>Generar reportes y certificados</li>
+            </ul>
+        </div>
+        <div class="alumnos-list">
+            <h3>Desarrollado por</h3>
+            <ul>
+                <li>Chávez, Jose</li>
+                <li>Díaz, Alejandro Leonel</li>
+                <li>Galeano Sandoval Cristian Agustín Ramón</li>
+                <li>Meza Kozak, Ramiro</li>
+                <li>Ojeda Néstor Fabián</li>
+                <li>Sandoval Alexis Emanuel</li>
+            </ul>
+        </div>
+    </div>
+{% endblock %}

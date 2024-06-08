@@ -1,0 +1,106 @@
+{% extends 'base.html' %}
+
+{% block title %}Lista de Alumnos{% endblock %}
+
+{% block content %}
+
+<div class="header-container">
+    <h1>Lista de Alumnos</h1>
+    <form action="{% url 'generar_pdf_lista_alumnos' %}" method="get">
+        <button type="submit">Generar PDF</button>
+    </form>
+</div>
+
+<div class="table-container">
+    <table class="student-table">
+        <thead>
+            <tr>
+                <th>CUIL</th>
+                <th>Apellidos</th>
+                <th>Nombres</th>
+                <th>Fecha de Nacimiento</th>
+                <th>Género</th>
+                <th>Domicilio</th>
+                <th>Localidad</th>
+                <th>Provincia</th>
+                <th>Código Postal</th>
+                <th>Teléfono</th>
+                <th>Localidad de Nacimiento</th>
+                <th>Provincia de Nacimiento</th>
+                <th>Nacionalidad</th>
+                <th>Nivel Cursado</th>
+                <th>Año de Ingreso</th>
+                <th>Medicamento</th>
+                <th>Alergia</th>
+                <th>Alergia a Medicamentos</th>
+                <th>Condición Médica</th>
+                <th>CUIL Tutor</th>
+                <th>Apellido y Nombre del Tutor</th>
+                <th>Teléfono del Tutor</th>
+                <th>Domicilio del Tutor</th>
+                <th>Localidad del Tutor</th>
+                <th>Provincia del Tutor</th>
+                <th>Código Postal del Tutor</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% if alumnos %}
+                {% for alumno in alumnos %}
+                    <tr>
+                        <td><a href="{% url 'alumno_detail' pk=alumno.pk %}">{{ alumno.cuil_alumno }}</a></td>
+                        <td>{{ alumno.apellidos_alumno }}</td>
+                        <td>{{ alumno.nombres_alumno }}</td>
+                        <td>{{ alumno.fecha_nacimiento_alumno }}</td>
+                        <td>{{ alumno.genero_alumno }}</td>
+                        <td>{{ alumno.domicilio_residencia_alumno }}</td>
+                        <td>{{ alumno.localidad_residencia_alumno }}</td>
+                        <td>{{ alumno.provincia_residencia_alumno }}</td>
+                        <td>{{ alumno.codigo_postal_alumno }}</td>
+                        <td>{{ alumno.numero_telefonico_alumno }}</td>
+                        <td>{{ alumno.localidad_nacimiento_alumno }}</td>
+                        <td>{{ alumno.provincia_nacimiento_alumno }}</td>
+                        <td>{{ alumno.nacionalidad_alumno }}</td>
+                        <td>{{ alumno.nivel_cursado_alumno }}</td>
+                        <td>{{ alumno.ingreso_alumno }}</td>
+                        <td>{{ alumno.medicamento_alumno }}</td>
+                        <td>{{ alumno.alergia_alumno }}</td>
+                        <td>{{ alumno.alergico_medicamento_alumno }}</td>
+                        <td>{{ alumno.condicion_medica_alumno }}</td>
+                        <td>{{ alumno.cuil_tutor }}</td>
+                        <td>{{ alumno.apellido_nombre_tutor }}</td>
+                        <td>{{ alumno.telefono_tutor }}</td>
+                        <td>{{ alumno.domicilio_tutor }}</td>
+                        <td>{{ alumno.localidad_tutor }}</td>
+                        <td>{{ alumno.provincia_tutor }}</td>
+                        <td>{{ alumno.codigo_postal_tutor }}</td>
+                    </tr>
+                {% endfor %}
+            {% else %}
+                <tr>
+                    <td colspan="26">No hay alumnos en la base de datos.</td>
+                </tr>
+            {% endif %}
+        </tbody>
+    </table>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const studentList = document.querySelector('.student-list-container');
+        const letterIndicator = document.getElementById('letter-indicator');
+
+        studentList.addEventListener('scroll', function() {
+            const items = studentList.querySelectorAll('tbody tr a');
+            for (let item of items) {
+                const rect = item.getBoundingClientRect();
+                if (rect.top >= 0 && rect.bottom <= window.innerHeight) {
+                    const firstLetter = item.textContent.trim().charAt(0).toUpperCase();
+                    letterIndicator.textContent = firstLetter;
+                    break;
+                }
+            }
+        });
+    });
+</script>
+
+{% endblock %}

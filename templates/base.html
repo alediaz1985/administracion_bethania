@@ -3,25 +3,80 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{% block title %}Administración Bethania{% endblock %}</title>
-    {% load static %} <!-- Añade esta línea para cargar el tag static -->
+    <title>{% block title %}Hogar de Bethania{% endblock %}</title>
+    {% load static %}
     <link rel="stylesheet" href="{% static 'css/main.css' %}">
-    {% block extra_head %}{% endblock %}
+    <link rel="stylesheet" href="{% static 'css/menu.css' %}">
+    {% block extra_styles %}{% endblock %}
 </head>
 <body>
     <header>
-        <!-- Contenido del header -->
+        <img src="{% static 'img/logo.png' %}" alt="Logo" class="logo">
+        <h1>Hogar de Bethania</h1>
+        <h4>U.E.G.P. N°82</h4>
+        <button class="menu-toggle" aria-label="Abrir menú">
+            <span class="menu-icon">&#9776;</span>
+        </button>
+        <nav class="navbar">
+            <ul class="nav-list">
+                <li><a href="{% url 'home' %}">Inicio</a></li>
+                {% if user.is_authenticated %}
+                    <!-- Menú de Alumnos -->
+                    <li class="dropdown">
+                        <a href="#" class="dropbtn">Alumnos</a>
+                        <div class="dropdown-content">
+                            <a href="{% url 'alumno_list' %}">Lista de Alumnos</a>
+                            <a href="{% url 'consultar_alumno' %}">Consultar Alumnos</a>
+                            <a href="{% url 'registrar_alumno' %}">Registrar Alumno</a>
+                        </div>
+                    </li>
+                    <!-- Menú de Docentes -->
+                    <li class="dropdown">
+                        <a href="#" class="dropbtn">Docentes</a>
+                        <div class="dropdown-content">
+                            <a href="{% url 'docente_list' %}">Lista de Docentes</a>
+                            <a href="{% url 'consultar_docente' %}">Consultar Docentes</a>
+                            <a href="{% url 'registrar_docente' %}">Registrar Docente</a>
+                        </div>
+                    </li>
+                    <!-- Menú de Cuotas -->
+                    <li class="dropdown">
+                        <a href="#" class="dropbtn">Cuotas</a>
+                        <div class="dropdown-content">
+                            <a href="{% url 'cuotas_list' %}">Lista de Cuotas</a>
+                        </div>
+                    </li>
+                    <!-- Menú de Niveles -->
+                    <li class="dropdown">
+                        <a href="#" class="dropbtn">Niveles</a>
+                        <div class="dropdown-content">
+                            <a href="{% url 'niveles_list' %}">Lista de Niveles</a>
+                            <a href="{% url 'registrar_nivel' %}">Registrar Nivel</a>
+                            <a href="{% url 'editar_nivel' %}">Editar Nivel</a>
+                        </div>
+                    </li>
+                    <li><a href="{% url 'cerrar_sesion' %}">Cerrar Sesión</a></li>
+                {% else %}
+                    <li><a href="{% url 'iniciar_sesion' %}">Iniciar Sesión</a></li>
+                {% endif %}
+            </ul>
+        </nav>
     </header>
-    <nav>
-        <!-- Menú de navegación -->
-    </nav>
     <main>
+        {% if messages %}
+            <div class="messages">
+                {% for message in messages %}
+                    <div class="message {{ message.tags }}">{{ message }}</div>
+                {% endfor %}
+            </div>
+        {% endif %}
         {% block content %}{% endblock %}
     </main>
     <footer>
-        <!-- Contenido del footer -->
+        <p>&copy; 2024 Hogar de Bethania. Todos los derechos reservados.</p>
     </footer>
-    <script src="{% static 'js/main.js' %}"></script>
+    
+    <script src="{% static 'js/scripts.js' %}"></script>
     {% block extra_scripts %}{% endblock %}
 </body>
 </html>

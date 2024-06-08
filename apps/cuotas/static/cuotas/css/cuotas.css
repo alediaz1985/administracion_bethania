@@ -1,0 +1,8 @@
+/* Estilos específicos para la lista de cuotas */
+.conta {
+    margin: 20px;
+    padding: 20px;
+    background-color: #ca0606;
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}

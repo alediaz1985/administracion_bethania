@@ -1,0 +1,21 @@
+{% extends 'base.html' %}
+
+{% block title %}Datos del Alumno{% endblock %}
+
+{% block content %}
+    <div class="see-student-container">
+        <h1>Datos del Alumno</h1>
+        <form method="post" enctype="multipart/form-data" class="see-student-form">
+            {% for key, value in campos_alumno.items %}
+                <div class="form-group">
+                    <label>{{ key|capfirst }}</label>
+                    <span>{{ value }}</span>
+                </div>
+            {% endfor %}
+        </form>
+        <div class="button">
+            <a href="{% url 'consultar_alumno' %}" class="button-submit">Volver</a>
+            <a href="{% url 'generar_pdf_alumno' alumno_id=campos_alumno.cuil_alumno %}" class="button-submit">Generar PDF</a>
+        </div>
+    </div>
+{% endblock %}

@@ -1,0 +1,16 @@
+{% extends 'base.html' %}
+
+{% block title %}Detalle del Alumno{% endblock %}
+
+{% block content %}
+    <div class="detail-student-container">
+        <h1>{{ alumno.nombres }} {{ alumno.apellidos }}</h1>
+        <p>Correo electrónico: {{ alumno.correo_electronico }}</p>
+        <p>CUIL: {{ alumno.cuil_alumno }}</p>
+        <!-- Agrega más campos según sea necesario -->
+        <div class="button-group">
+            <a href="{% url 'alumno_edit' pk=alumno.pk %}" class="button-submit">Editar</a>
+            <a href="{% url 'alumno_list' %}" class="button-cancel">Volver a la lista</a>
+        </div>
+    </div>
+{% endblock %}

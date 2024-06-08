@@ -1,4 +1,4 @@
 from django.shortcuts import render
 
-def index(request):
-    return render(request, 'cuotas/index.html')
+def cuotas_list(request):
+    return render(request, 'cuotas/cuotas_list.html')

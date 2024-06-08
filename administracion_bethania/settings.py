@@ -13,7 +13,7 @@ SECRET_KEY = 'django-insecure-k&i2xs2b#vq!smy1jzvgi^ueoz-v8_d6exdhmd%)*r_*&_mt=q
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['127.0.0.1', 'localhost']
 
 
 # Application definition
@@ -29,6 +29,7 @@ INSTALLED_APPS = [
     'apps.cuotas',
     'apps.administracion_docentes',
     'apps.administracion_alumnos',
+    'apps.niveles',
 ]
 
 MIDDLEWARE = [
@@ -70,11 +71,14 @@ WSGI_APPLICATION = 'administracion_bethania.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'ENGINE': 'django.db.backends.mysql',
+        'NAME': 'bethania2024',
+        'USER': 'admin_remoto',
+        'PASSWORD': 'admin123_remoto',
+        'HOST': '190.227.23.98',
+        'PORT': '3307',
     }
 }
-
 
 # Password validation
 # https://docs.djangoproject.com/en/5.0/ref/settings/#auth-password-validators
@@ -115,6 +119,12 @@ STATICFILES_DIRS = [
     os.path.join(BASE_DIR, 'static'),
 ]
 
+# Configuración para encontrar archivos estáticos en las aplicaciones
+STATICFILES_FINDERS = [
+    'django.contrib.staticfiles.finders.FileSystemFinder',
+    'django.contrib.staticfiles.finders.AppDirectoriesFinder',
+    
+]
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.0/ref/settings/#default-auto-field
 
