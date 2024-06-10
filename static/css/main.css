@@ -84,6 +84,18 @@ nav {
     border-radius: 5px;
 }
 
+footer {
+    background-color: #000;
+    color: #fff;
+    text-align: center;
+    padding: 10px 20px;
+    border-top: 5px solid #1b3a5e;
+    border-bottom: 7px solid #d32f2f;
+    position: fixed;
+    width: 100%;
+    bottom: 0;
+}
+
 .menu-toggle {
     display: none;
     background: none;

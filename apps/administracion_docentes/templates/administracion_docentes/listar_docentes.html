@@ -1,44 +1,58 @@
-{% extends "base.html" %}
+{% extends 'base.html' %}
+
+{% block title %}Lista de Docentes{% endblock %}
+
+{% load static %}
+
+{% block extra_styles %}
+    <link rel="stylesheet" href="{% static 'administracion_docentes/css/docentes.css' %}">
+{% endblock %}
+
 
 {% block content %}
-<h2>Lista de Docentes</h2>
-<table>
-    <thead>
-        <tr>
-            <th>CUIL</th>
-            <th>Nombre</th>
-            <th>Apellido</th>
-            <th>Fecha de Nacimiento</th>
-            <th>Género</th>
-            <th>Dirección</th>
-            <th>Provincia</th>
-            <th>Teléfono</th>
-            <th>Email</th>
-            <th>Nacionalidad</th>
-            <th>Acciones</th>
-        </tr>
-    </thead>
-    <tbody>
-        {% for docente in docentes %}
-        <tr>
-            <td>{{ docente.cuil }}</td>
-            <td>{{ docente.nombre }}</td>
-            <td>{{ docente.apellido }}</td>
-            <td>{{ docente.fecha_nacimiento }}</td>
-            <td>{{ docente.genero }}</td>
-            <td>{{ docente.direccion }}</td>
-            <td>{{ docente.provincia }}</td>
-            <td>{{ docente.telefono }}</td>
-            <td>{{ docente.email }}</td>
-            <td>{{ docente.nacionalidad }}</td>
-            <td>
-                <a href="{% url 'editar_docente' docente.cuil %}">Editar</a> |
-                <a href="{% url 'eliminar_docente' docente.cuil %}">Eliminar</a>
-            </td>
-        </tr>
-        {% endfor %}
-    </tbody>
-</table>
+<h2 class="test-style">Lista de Docentes</h2>
+
+<div class="table-outer-container">
+    <div class="table-container">
+        <table class="student-table">
+            <thead>
+                <tr>
+                    <th>CUIL</th>
+                    <th>Nombre</th>
+                    <th>Apellido</th>
+                    <th>Fecha de Nacimiento</th>
+                    <th>Género</th>
+                    <th>Dirección</th>
+                    <th>Provincia</th>
+                    <th>Teléfono</th>
+                    <th>Email</th>
+                    <th>Nacionalidad</th>
+                    <th>Acciones</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for docente in docentes %}
+                <tr>
+                    <td>{{ docente.cuil }}</td>
+                    <td>{{ docente.nombre }}</td>
+                    <td>{{ docente.apellido }}</td>
+                    <td>{{ docente.fecha_nacimiento }}</td>
+                    <td>{{ docente.genero }}</td>
+                    <td>{{ docente.direccion }}</td>
+                    <td>{{ docente.provincia }}</td>
+                    <td>{{ docente.telefono }}</td>
+                    <td>{{ docente.email }}</td>
+                    <td>{{ docente.nacionalidad }}</td>
+                    <td>
+                        <a href="{% url 'editar_docente' docente.cuil %}">Editar</a> |
+                        <a href="{% url 'eliminar_docente' docente.cuil %}">Eliminar</a>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
 
 {% if messages %}
     <div class="messages">

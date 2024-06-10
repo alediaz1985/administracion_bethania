@@ -6,149 +6,45 @@
     margin-top: 20px;
 }
 
-
-/* Estilos del formulario de edición */
-.edit-student-container {
-    background-color: #fff;
-    padding: 20px;
-    border-radius: 5px;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-    margin-bottom: 20px;
-    max-width: 1250px; /* Ajusta el ancho máximo */
-    width: 100%; /* Asegura que el contenedor se ajuste al 100% del ancho disponible */
-    max-height: 400px; /* Ajusta el alto máximo */
-    overflow-y: auto; /* Añade desplazamiento interno */
-    margin-left: auto;
-    margin-right: auto;
-}
-
-.edit-student-form {
+.header-container {
     display: flex;
-    flex-wrap: wrap;
-    gap: 10px; /* Ajusta el espacio entre los elementos */
-}
-
-.edit-student-form .form-group {
-    flex: 1 1 45%; /* Permite que los elementos se ajusten al 45% del ancho */
-    min-width: 200px;
-    margin-bottom: 8px; /* Ajusta el margen inferior */
-}
-
-.edit-student-form button,
-.edit-student-form .button-cancel {
-    margin-top: 10px;
-    padding: 10px 20px;
-    font-size: 16px;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-    transition: background-color 0.3s;
-    text-align: center;
-}
-
-.edit-student-form .button-submit {
-    background-color: #d32f2f;
-    color: #fff;
-}
-
-.edit-student-form .button-submit:hover {
-    background-color: #1b3a5e;
-}
-
-.edit-student-form .button-cancel {
-    background-color: #ccc;
-    color: #333;
-    text-decoration: none;
-    display: inline-block;
-    text-align: center;
-}
-
-.edit-student-form .button-cancel:hover {
-    background-color: #999;
-}
-
-/* Estilos de la lista de alumnos */
-.student-list-container {
-    display: flex;
-    flex-direction: column;
-    position: relative;
-    max-height: 350px; /* Ajusta esta altura según tus necesidades */
-    overflow: auto; /* Añade desplazamiento interno */
-    padding-right: 50px; /* Espacio para el indicador de letra */
-}
-
-.student-list ul {
-    list-style: none;
-    padding: 0;
-    margin: 0;
-    background-color: #fff;
-    border-radius: 5px;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-    overflow: hidden;
-}
-
-.student-list li {
-    border-bottom: 1px solid #ccc;
-    padding: 10px;
-}
-
-.student-list li:last-child {
-    border-bottom: none;
-}
-
-.student-list a {
-    display: block;
-    padding: 15px;
-    color: #333;
-    text-decoration: none;
-    transition: background-color 0.3s, color 0.3s;
-}
-
-.student-list a:hover {
-    background-color: #1b3a5e;
-    color: #fff;
-}
-
-.letter-indicator {
-    position: absolute;
-    right: 10px;
-    top: 50%;
-    transform: translateY(-50%);
-    width: 40px;
-    height: 40px;
-    background-color: #1b3a5e;
-    color: #fff;
-    border-radius: 50%;
-    display: flex;
+    justify-content: space-between;
     align-items: center;
-    justify-content: center;
-    font-size: 20px;
-    font-weight: bold;
+    margin-bottom: 20px;
 }
 
-/* Estilos de la tabla de alumnos */
-.table-container {
+.table-outer-container {
+    width: 100%;
     overflow-x: auto;
-    max-width: 100%; /* Asegura que la tabla ocupe el ancho completo */
-    margin-bottom: 20px;
+    overflow-y: auto;
+    max-height: 400px; /* Ajusta según tus necesidades */
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    padding: 10px;
+    background-color: #fff;
+    position: relative;
+}
+
+.table-container {
+    width: 100%;
+    display: block;
 }
 
 .student-table {
     width: 100%;
     border-collapse: collapse;
     background-color: #ffffff;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-    font-size: 12px; /* Reduce el tamaño de la letra */
-    table-layout: auto; /* Ajusta el layout de la tabla automáticamente */
+    font-size: 12px;
+    table-layout: auto;
 }
 
 .student-table th,
 .student-table td {
-    padding: 8px; /* Ajusta el padding para mejorar la legibilidad */
+    padding: 8px;
     text-align: left;
     border: 1px solid #ddd;
-    min-width: 80px; /* Asegura que las celdas tengan un ancho mínimo */
-    white-space: nowrap; /* Evita que el texto se divida en múltiples líneas */
+    white-space: nowrap;
 }
 
 .student-table th {
@@ -158,6 +54,8 @@
     position: sticky;
     top: 0;
     z-index: 2;
+    height: 50px; /* Altura del encabezado */
+    box-shadow: 0 2px 2px -1px rgba(0, 0, 0, 0.4); /* Sombra para mejor visibilidad */
 }
 
 .student-table tr:nth-child(even) {
@@ -178,63 +76,6 @@
     color: #d32f2f;
 }
 
-/* Ajuste de ancho de columnas específicas */
-.student-table th:nth-child(1),
-.student-table td:nth-child(1) {
-    width: 8%;
-}
-
-.student-table th:nth-child(2),
-.student-table td:nth-child(2) {
-    width: 10%;
-}
-
-.student-table th:nth-child(3),
-.student-table td:nth-child(3) {
-    width: 10%;
-}
-
-.student-table th:nth-child(4),
-.student-table td:nth-child(4) {
-    width: 10%;
-}
-
-.student-table th:nth-child(5),
-.student-table td:nth-child(5) {
-    width: 5%;
-}
-
-.student-table th:nth-child(6),
-.student-table td:nth-child(6) {
-    width: 10%;
-}
-
-.student-table th:nth-child(7),
-.student-table td:nth-child(7) {
-    width: 8%;
-}
-
-.student-table th:nth-child(8),
-.student-table td:nth-child(8) {
-    width: 8%;
-}
-
-.student-table th:nth-child(9),
-.student-table td:nth-child(9) {
-    width: 8%;
-}
-
-.student-table th:nth-child(10),
-.student-table td:nth-child(10) {
-    width: 8%;
-}
-
-/* Ajuste de ancho para las demás columnas */
-.student-table th,
-.student-table td {
-    width: 5%;
-}
-
 .list-student-container {
     background-color: #fff;
     padding: 20px;
@@ -249,28 +90,31 @@
     margin-right: auto;
 }
 
-.table-container {
-    width: 100%;
-    overflow: auto;
+/* Media Queries para responsividad */
+@media (max-width: 768px) {
+    .edit-student-form .form-group {
+        flex: 1 1 100%;
+    }
+
+    .student-table th,
+    .student-table td {
+        font-size: 10px;
+        padding: 4px;
+    }
 }
 
-.table-container table {
-    width: 100%;
-    border-collapse: collapse;
-}
+@media (max-width: 480px) {
+    .edit-student-form .form-group {
+        flex: 1 1 100%;
+    }
 
-.table-container th {
-    position: sticky;
-    top: 0;
-    background-color: #004080; /* Color de fondo del encabezado */
-    color: #fff; /* Color del texto del encabezado */
-    padding: 10px;
-    border: 1px solid #ddd;
-    z-index: 1; /* Asegura que el encabezado esté por encima del contenido */
-}
+    .student-table th,
+    .student-table td {
+        font-size: 8px;
+        padding: 2px;
+    }
 
-.table-container td {
-    padding: 10px;
-    border: 1px solid #ddd;
+    .student-list a {
+        padding: 10px;
+    }
 }
-
