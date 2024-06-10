@@ -1,11 +1,11 @@
 {% extends "base.html" %}
 
 {% block content %}
-<h2>Registro de Docente</h2>
-<form method="post" action="{% url 'registrar_docente' %}">
+<h2>Editar Docente</h2>
+<form method="post" action="{% url 'editar_docente' docente.cuil %}">
     {% csrf_token %}
     {{ form.as_p }}
-    <button type="submit">Registrar</button>
+    <button type="submit">Guardar cambios</button>
 </form>
 
 {% if messages %}
