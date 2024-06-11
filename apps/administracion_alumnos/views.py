@@ -13,7 +13,7 @@ from io import BytesIO
 from django.conf import settings
 import os
 from datetime import datetime
-
+from django.utils import timezone
 
 def home_view(request):
     return render(request, 'home.html')
@@ -92,9 +92,13 @@ def registrar_alumno(request):
     if request.method == 'POST':
         form = AlumnoForm(request.POST)
         if form.is_valid():
-            form.save()
+            alumno = form.save(commit=False)
+            alumno.fecha_registro = timezone.localtime(timezone.now())  # Obtener la fecha y hora actual con el timezone configurado
+            alumno.save()
             messages.success(request, 'Alumno registrado correctamente.')
             return redirect('alumno_list')
+        else:
+            messages.error(request, 'Por favor, corrija los errores a continuación.')
     else:
         form = AlumnoForm()
     return render(request, 'administracion_alumnos/registrar_alumno.html', {'form': form})
@@ -116,9 +120,12 @@ def generar_pdf_alumno(alumno, datos_institucion, logo_path):
     pdf_path = "Ficha del Alumno.pdf"
     fecha_hora_actual = datetime.now().strftime("%Y-%m-%d-%H%M")
     nombre_archivo = f"{fecha_hora_actual}.pdf"
-    doc = SimpleDocTemplate(pdf_path, pagesize=A4, rightMargin=10, leftMargin=10, topMargin=10, bottomMargin=10, title="Ficha Alumno - {}".format(fecha_hora_actual))
-    doc.title = "Fundación Hogar de Bethania U.E.G.P. N°82"
-    doc.author = "Hogar de Bethania U.E.G.P. N°82"
+    doc = SimpleDocTemplate(pdf_path, pagesize=A4, rightMargin=10, leftMargin=10, topMargin=10, bottomMargin=10)
+
+    # Establecer los metadatos del documento
+    doc.title = "Ficha Alumno - {}".format(fecha_hora_actual)
+    doc.author = "Fundación Hogar de Bethania U.E.G.P. N°82"
+
     styles = getSampleStyleSheet()
     styleN = styles['Normal']
     styleH = styles['Heading2']
@@ -126,7 +133,6 @@ def generar_pdf_alumno(alumno, datos_institucion, logo_path):
     
     elements = []
 
-    logo_path = os.path.join(settings.BASE_DIR, 'static', 'img', 'logo.png')
     try:
         if os.path.exists(logo_path):
             logo = Image(logo_path, 1*inch, 1*inch)
@@ -203,14 +209,17 @@ def generar_pdf_alumno(alumno, datos_institucion, logo_path):
     doc.build(elements)
     return pdf_path
 
-# Función para generar PDF de la lista de alumnos
 def generar_pdf_lista_alumnos_view(request):
     response = HttpResponse(content_type='application/pdf')
     response['Content-Disposition'] = 'attachment; filename="lista_alumnos.pdf"'
 
     buffer = BytesIO()
     doc = SimpleDocTemplate(buffer, pagesize=A4, rightMargin=20, leftMargin=20, topMargin=15, bottomMargin=30)
-    
+
+    # Establecer los metadatos del documento
+    doc.title = "Lista de Alumnos"
+    doc.author = "Fundación Hogar de Bethania U.E.G.P. N°82"
+
     elements = []
 
     logo_path = os.path.join(settings.BASE_DIR, 'static', 'img', 'logo.png')

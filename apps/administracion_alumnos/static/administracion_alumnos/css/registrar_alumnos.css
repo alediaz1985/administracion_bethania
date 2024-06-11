@@ -1,0 +1,118 @@
+/* registrar_alumnos.css */
+
+/* Estilos generales */
+body {
+    font-family: 'Roboto', sans-serif;
+    background-color: #f5f5f5;
+    margin: 0;
+    padding: 0;
+}
+
+/* Estilos específicos para el formulario de registro de alumnos */
+.form-container {
+    max-width: 1000px;
+    margin: 80px auto;
+    padding: 20px;
+    background-color: #fff;
+    border-radius: 10px;
+    box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+h1 {
+    font-size: 2em;
+    color: #333;
+    margin-bottom: 20px;
+    text-align: center;
+}
+
+form {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.form-fields {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+.form-fields p {
+    flex: 1 1 calc(50% - 20px);
+    display: flex;
+    flex-direction: column;
+    margin: 0;
+}
+
+.form-fields label {
+    margin-bottom: 5px;
+    color: #333;
+    font-weight: bold;
+}
+
+.form-fields input,
+.form-fields select {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    box-sizing: border-box;
+}
+
+button {
+    background-color: #007bff;
+    color: white;
+    border: none;
+    padding: 12px 20px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 16px;
+    margin: 20px 0;
+    cursor: pointer;
+    border-radius: 8px;
+    transition: background-color 0.3s ease;
+    width: 100%;
+}
+
+button:hover {
+    background-color: #0056b3;
+}
+
+/* Media Queries para responsividad */
+@media (max-width: 900px) {
+    .form-container {
+        padding: 15px;
+    }
+
+    h1 {
+        font-size: 1.5em;
+    }
+
+    .form-fields p {
+        flex: 1 1 100%;
+    }
+
+    button {
+        padding: 10px;
+    }
+}
+
+@media (max-width: 480px) {
+    .form-container {
+        padding: 10px;
+    }
+
+    h1 {
+        font-size: 1.2em;
+    }
+
+    button {
+        padding: 8px;
+        font-size: 14px;
+    }
+}

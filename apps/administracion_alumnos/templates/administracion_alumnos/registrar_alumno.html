@@ -2,11 +2,29 @@
 
 {% block title %}Registrar Alumno{% endblock %}
 
+{% load static %}
+
+{% block extra_styles %}
+    <link rel="stylesheet" href="{% static 'administracion_alumnos/css/registrar_alumnos.css' %}">
+{% endblock %}
+
 {% block content %}
-<h1>Registrar Alumno</h1>
-<form method="post">
-    {% csrf_token %}
-    {{ form.as_p }}
-    <button type="submit">Registrar</button>
-</form>
+<p>asdas</p>
+<div class="form-container">
+    <h1>Registrar Alumno</h1>
+    {% if messages %}
+        <ul class="messages">
+            {% for message in messages %}
+                <li class="message {{ message.tags }}">{{ message }}</li>
+            {% endfor %}
+        </ul>
+    {% endif %}
+    <form method="post">
+        {% csrf_token %}
+        <div class="form-fields">
+            {{ form.as_p }}
+        </div>
+        <button type="submit">Registrar</button>
+    </form>
+</div>
 {% endblock %}
