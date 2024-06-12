@@ -75,7 +75,7 @@ DATABASES = {
         'NAME': 'bethania2024',
         'USER': 'admin_remoto',
         'PASSWORD': 'admin123_remoto',
-        'HOST': '190.227.23.98',
+        'HOST': '190.136.146.119',
         'PORT': '3307',
     }
 }
