@@ -1,3 +1,4 @@
+# administracion_bethania/urls.py
 from django.contrib import admin
 from django.urls import path, include
 from apps.administracion_alumnos.views import home_view

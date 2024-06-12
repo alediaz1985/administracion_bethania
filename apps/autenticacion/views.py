@@ -1,7 +1,7 @@
+# apps/autenticacion/views.py
 from django.shortcuts import render, redirect
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required, user_passes_test
-from django.contrib.auth.models import User
 from .forms import LoginForm, RegisterForm
 
 def login_view(request):
@@ -14,6 +14,8 @@ def login_view(request):
             if user is not None:
                 login(request, user)
                 return redirect('home')
+            else:
+                return render(request, 'autenticacion/iniciar_sesion.html', {'form': form, 'error': 'Credenciales inválidas'})
     else:
         form = LoginForm()
     return render(request, 'autenticacion/iniciar_sesion.html', {'form': form})
@@ -32,4 +34,4 @@ def register_view(request):
 
 def logout_view(request):
     logout(request)
-    return redirect('iniciar_sesion')
+    return redirect('home')
