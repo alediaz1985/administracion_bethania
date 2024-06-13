@@ -2,7 +2,14 @@
 
 {% block title %}Lista de Alumnos{% endblock %}
 
+{% load static %}
+
+{% block extra_styles %}
+    <link rel="stylesheet" href="{% static 'administracion_alumnos/css/alumnos.css' %}">
+{% endblock %}
+
 {% block content %}
+<h2 class="test-style">Hola Mundo</h2>
 
 <div class="header-container">
     <h1>Lista de Alumnos</h1>
