@@ -1,0 +1,125 @@
+{% extends 'base.html' %}
+
+{% block title %}Ver Datos del Docente{% endblock %}
+
+{% block content %}
+    <h1>Datos del Docente</h1>
+    {% if docente %}
+        <table class="table">
+            <tr>
+                <th>CUIL</th>
+                <td>{{ docente.cuil }}</td>
+            </tr>
+            <tr>
+                <th>Nombre</th>
+                <td>{{ docente.nombre }}</td>
+            </tr>
+            <tr>
+                <th>Apellido</th>
+                <td>{{ docente.apellido }}</td>
+            </tr>
+            <tr>
+                <th>Fecha de Nacimiento</th>
+                <td>{{ docente.fecha_nacimiento }}</td>
+            </tr>
+            <tr>
+                <th>Género</th>
+                <td>{{ docente.genero }}</td>
+            </tr>
+            <tr>
+                <th>Dirección</th>
+                <td>{{ docente.direccion }}</td>
+            </tr>
+            <tr>
+                <th>Provincia</th>
+                <td>{{ docente.provincia }}</td>
+            </tr>
+            <tr>
+                <th>Teléfono</th>
+                <td>{{ docente.telefono }}</td>
+            </tr>
+            <tr>
+                <th>Email</th>
+                <td>{{ docente.email }}</td>
+            </tr>
+            <tr>
+                <th>Nacionalidad</th>
+                <td>{{ docente.nacionalidad }}</td>
+            </tr>
+            <tr>
+                <th>Título Académico</th>
+                <td>{{ docente.titulo_academico }}</td>
+            </tr>
+            <tr>
+                <th>Especialidad</th>
+                <td>{{ docente.especialidad }}</td>
+            </tr>
+            <tr>
+                <th>Años de Experiencia</th>
+                <td>{{ docente.anos_experiencia }}</td>
+            </tr>
+            <tr>
+                <th>Idiomas</th>
+                <td>{{ docente.idiomas }}</td>
+            </tr>
+            <tr>
+                <th>Certificaciones</th>
+                <td>{{ docente.certificaciones }}</td>
+            </tr>
+            <tr>
+                <th>Cursos Realizados</th>
+                <td>{{ docente.cursos_realizados }}</td>
+            </tr>
+            <tr>
+                <th>Fecha de Ingreso</th>
+                <td>{{ docente.fecha_ingreso }}</td>
+            </tr>
+            <tr>
+                <th>Número de Legajo</th>
+                <td>{{ docente.numero_legajo }}</td>
+            </tr>
+            <tr>
+                <th>Cargo</th>
+                <td>{{ docente.cargo }}</td>
+            </tr>
+            <tr>
+                <th>Departamento</th>
+                <td>{{ docente.departamento }}</td>
+            </tr>
+            <tr>
+                <th>Horario de Trabajo</th>
+                <td>{{ docente.horario_trabajo }}</td>
+            </tr>
+            <tr>
+                <th>Salario</th>
+                <td>{{ docente.salario }}</td>
+            </tr>
+            <tr>
+                <th>Fecha del Último Ascenso</th>
+                <td>{{ docente.fecha_ultimo_ascenso }}</td>
+            </tr>
+            <tr>
+                <th>Estado Laboral</th>
+                <td>{{ docente.estado_laboral }}</td>
+            </tr>
+            <tr>
+                <th>Contacto de Emergencia</th>
+                <td>{{ docente.contacto_emergencia }}</td>
+            </tr>
+            <tr>
+                <th>Observaciones</th>
+                <td>{{ docente.observaciones }}</td>
+            </tr>
+            <tr>
+                <th>CUIL del Supervisor</th>
+                <td>{{ docente.cuil_supervisor }}</td>
+            </tr>
+            <tr>
+                <th>Cursos Asignados</th>
+                <td>{{ docente.cursos_asignados }}</td>
+            </tr>
+        </table>
+    {% else %}
+        <p>Docente no encontrado.</p>
+    {% endif %}
+{% endblock %}

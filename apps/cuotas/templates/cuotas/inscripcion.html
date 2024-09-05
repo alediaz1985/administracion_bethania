@@ -1,0 +1,18 @@
+<form method="post">
+    {% csrf_token %}
+    <label for="cuil_alumno">Alumno:</label>
+    <select name="cuil_alumno" id="cuil_alumno">
+        {% for alumno in alumnos %}
+        <option value="{{ alumno.cuil_alumno }}">{{ alumno.nombres_alumno }} {{ alumno.apellidos_alumno }}</option>
+        {% endfor %}
+    </select>
+
+    <label for="año_lectivo">Año Lectivo:</label>
+    <select name="año_lectivo" id="año_lectivo">
+        {% for año in años_lectivos %}
+        <option value="{{ año.id }}">{{ año.año_lectivo }}</option>
+        {% endfor %}
+    </select>
+
+    <button type="submit">Inscribir</button>
+</form>

@@ -1,0 +1,203 @@
+/* alumnos.css */
+
+p {
+    text-decoration: red;
+    text-size-adjust: 100px;
+}
+/* Estilos generales para el botón */
+button {
+    background-color: #007bff; /* Color de fondo azul */
+    color: white; /* Color del texto blanco */
+    border: none; /* Sin borde */
+    padding: 10px 20px; /* Relleno */
+    text-align: center; /* Alinear texto al centro */
+    text-decoration: none; /* Sin subrayado */
+    display: inline-block; /* Mostrar en línea */
+    font-size: 16px; /* Tamaño de la fuente */
+    margin: 4px 2px; /* Margen */
+    cursor: pointer; /* Cursor de puntero */
+    border-radius: 8px; /* Bordes redondeados */
+    transition: background-color 0.3s ease; /* Transición suave */
+}
+
+button:hover {
+    background-color: #0056b3; /* Color de fondo más oscuro al pasar el ratón */
+}
+
+/* Estilos de prueba */
+.test-style {
+    color: rgb(45, 0, 207);
+    font-size: 24px;
+    font-weight: bold;
+    text-align: center;
+    margin-top: 20px;
+}
+
+/* Contenedor del encabezado */
+.header-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+/* Contenedor exterior de la tabla */
+.table-outer-container {
+    width: 100%;
+    overflow-x: auto;
+    overflow-y: auto;
+    max-height: 400px; /* Ajusta según tus necesidades */
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    padding: 10px;
+    background-color: #fff;
+    position: relative;
+}
+
+/* Contenedor de la tabla */
+.table-container {
+    width: 100%;
+    display: block;
+}
+
+/* Tabla de estudiantes */
+.student-table {
+    width: 100%;
+    border-collapse: collapse;
+    background-color: #ffffff;
+    font-size: 12px;
+    table-layout: auto;
+}
+
+.student-table th,
+.student-table td {
+    padding: 8px;
+    text-align: left;
+    border: 1px solid #ddd;
+    white-space: nowrap;
+}
+
+.student-table th {
+    background-color: #1b3a5e;
+    color: #fff;
+    font-weight: bold;
+    position: sticky;
+    top: 0;
+    z-index: 2;
+    height: 50px; /* Altura del encabezado */
+    box-shadow: 0 2px 2px -1px rgba(0, 0, 0, 0.4); /* Sombra para mejor visibilidad */
+}
+
+.student-table tr:nth-child(even) {
+    background-color: #f4f4f4;
+}
+
+.student-table tr:hover {
+    background-color: #d3d3d3;
+}
+
+.student-table a {
+    color: #1b3a5e;
+    text-decoration: none;
+    transition: color 0.3s;
+}
+
+.student-table a:hover {
+    color: #d32f2f;
+}
+
+/* Contenedor de la lista de estudiantes */
+.list-student-container {
+    background-color: #fff;
+    padding: 20px;
+    border-radius: 5px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    margin-bottom: 20px;
+    max-width: 950px;
+    width: 100%;
+    max-height: 300px;
+    overflow: auto;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+/* Estilos para los mensajes */
+.messages {
+    list-style-type: none;
+    padding: 0;
+    margin: 20px 0;
+}
+
+.messages .message {
+    padding: 15px;
+    margin-bottom: 10px;
+    border-radius: 4px;
+    font-size: 16px;
+    font-weight: bold;
+    border: 1px solid transparent;
+    display: flex;
+    align-items: center;
+}
+
+.messages .message::before {
+    content: "⚠"; /* Icono de advertencia */
+    margin-right: 10px;
+}
+
+/* Estilos para los mensajes de éxito */
+.messages .success {
+    background-color: #d4edda;
+    border-color: #c3e6cb;
+    color: #155724;
+}
+
+/* Estilos para los mensajes de error */
+.messages .error {
+    background-color: #f8d7da;
+    border-color: #f5c6cb;
+    color: #721c24;
+}
+
+/* Estilos para los mensajes de información */
+.messages .info {
+    background-color: #d1ecf1;
+    border-color: #bee5eb;
+    color: #0c5460;
+}
+
+/* Estilos para los mensajes de advertencia */
+.messages .warning {
+    background-color: #fff3cd;
+    border-color: #ffeeba;
+    color: #856404;
+}
+
+/* Media Queries para responsividad */
+@media (max-width: 768px) {
+    .edit-student-form .form-group {
+        flex: 1 1 100%;
+    }
+
+    .student-table th,
+    .student-table td {
+        font-size: 10px;
+        padding: 4px;
+    }
+}
+
+@media (max-width: 480px) {
+    .edit-student-form .form-group {
+        flex: 1 1 100%;
+    }
+
+    .student-table th,
+    .student-table td {
+        font-size: 8px;
+        padding: 2px;
+    }
+
+    .student-list a {
+        padding: 10px;
+    }
+}

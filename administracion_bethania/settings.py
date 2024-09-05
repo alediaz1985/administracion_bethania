@@ -24,11 +24,13 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'apps.administracion',
     'apps.autenticacion',
     'apps.cuotas',
     'apps.administracion_docentes',
     'apps.administracion_alumnos',
     'apps.niveles',
+    'apps.documentos',  # Asegúrate de haber agregado la aplicación documentos
 ]
 
 MIDDLEWARE = [
@@ -71,10 +73,11 @@ DATABASES = {
         'NAME': 'bethania2024',
         'USER': 'admin_remoto',
         'PASSWORD': 'admin123_remoto',
-        'HOST': '190.136.146.119',
+        'HOST': '190.225.126.7',
         'PORT': '3307',
     }
 }
+
 
 # Password validation
 # https://docs.djangoproject.com/en/5.0/ref/settings/#auth-password-validators
@@ -119,6 +122,10 @@ STATICFILES_FINDERS = [
     'django.contrib.staticfiles.finders.AppDirectoriesFinder',
 ]
 
+# Configuración de archivos de medios
+MEDIA_URL = '/media/'
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.0/ref/settings/#default-auto-field
 
@@ -126,3 +133,12 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 # URL de inicio de sesión
 LOGIN_URL = 'iniciar_sesion'
+
+# Configura la ruta a tu archivo de credenciales
+CREDENTIALS_FILE = os.path.join(BASE_DIR, 'credentials.json')
+
+# Configura la ID de la carpeta de Google Drive
+DRIVE_FOLDER_ID = '1lyxImVDTJt9Q2P9QDm0M_wHz9jgodfGp'
+
+# Directorio de archivos locales
+ARCHIVOS_DIR = os.path.join(BASE_DIR, 'media', 'documentos')

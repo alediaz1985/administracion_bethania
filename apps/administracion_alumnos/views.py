@@ -15,11 +15,6 @@ import os
 from datetime import datetime
 from django.utils import timezone
 
-def home_view(request):
-    return render(request, 'home.html')
-
-def home(request):
-    return render(request, 'home.html')
 
 def alumno_list(request):
     alumnos = Alumno.objects.all()

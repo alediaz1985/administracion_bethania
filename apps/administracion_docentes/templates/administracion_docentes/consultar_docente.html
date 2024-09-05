@@ -1,42 +1,42 @@
-{% extends "base.html" %}
+{% extends 'base.html' %}
+
+{% block title %}Consultar Docente{% endblock %}
 
 {% block content %}
-<h2>Consulta de Docente</h2>
-<form method="get" action="{% url 'consultar_docente' %}">
-    <label for="cuil">CUIL del Docente:</label>
-    <input type="text" id="cuil" name="cuil" required>
-    <button type="submit">Buscar</button>
-</form>
+    <h1>Consultar Docente</h1>
+    <form method="post" class="form-inline">
+        {% csrf_token %}
+        <label for="cuil">CUIL del Docente:</label>
+        <input type="text" id="cuil" name="cuil" required>
+        <button type="submit" class="button-submit">Buscar</button>
+    </form>
+    {% if docente %}
+        <p>Docente encontrado: {{ docente.cuil }} --- {{ docente.apellido }} {{ docente.nombre }}</p>
+        <div class="button-group">
+            <form method="get" action="{% url 'ver_datos_docente' cuil=docente.cuil %}">
+                <button type="submit" class="button-submit">Ver Datos</button>
+            </form>
+            <form method="post" action="{% url 'eliminar_docente' cuil=docente.cuil %}" id="delete-form">
+                {% csrf_token %}
+                <button type="button" class="button-submit" id="delete-button">Eliminar</button>
+            </form>
+            <form method="get" action="{% url 'editar_docente' cuil=docente.cuil %}">
+                <button type="submit" class="button-submit">Modificar</button>
+            </form>
+        </div>
+    {% elif docente is not None %}
+        <p style="color: red;">Docente no encontrado.</p>
+    {% endif %}
+{% endblock %}
 
-{% if docente %}
-    <h3>Información del Docente</h3>
-    <p><strong>Nombre:</strong> {{ docente.nombre }}</p>
-    <p><strong>Apellido:</strong> {{ docente.apellido }}</p>
-    <p><strong>Fecha de Nacimiento:</strong> {{ docente.fecha_nacimiento }}</p>
-    <p><strong>Género:</strong> {{ docente.genero }}</p>
-    <p><strong>CUIL:</strong> {{ docente.cuil }}</p>
-    <p><strong>Dirección:</strong> {{ docente.direccion }}</p>
-    <p><strong>Provincia:</strong> {{ docente.provincia }}</p>
-    <p><strong>Teléfono:</strong> {{ docente.telefono }}</p>
-    <p><strong>Email:</strong> {{ docente.email }}</p>
-    <p><strong>Nacionalidad:</strong> {{ docente.nacionalidad }}</p>
-    <p><strong>Título Académico:</strong> {{ docente.titulo_academico }}</p>
-    <p><strong>Especialidad:</strong> {{ docente.especialidad }}</p>
-    <p><strong>Años de Experiencia:</strong> {{ docente.anos_experiencia }}</p>
-    <p><strong>Idiomas:</strong> {{ docente.idiomas }}</p>
-    <p><strong>Certificaciones:</strong> {{ docente.certificaciones }}</p>
-    <p><strong>Cursos Realizados:</strong> {{ docente.cursos_realizados }}</p>
-    <p><strong>Fecha de Ingreso:</strong> {{ docente.fecha_ingreso }}</p>
-    <p><strong>Número de Legajo:</strong> {{ docente.numero_legajo }}</p>
-    <p><strong>Cargo:</strong> {{ docente.cargo }}</p>
-    <p><strong>Departamento:</strong> {{ docente.departamento }}</p>
-    <p><strong>Horario de Trabajo:</strong> {{ docente.horario_trabajo }}</p>
-    <p><strong>Salario:</strong> {{ docente.salario }}</p>
-    <p><strong>Fecha de Último Ascenso:</strong> {{ docente.fecha_ultimo_ascenso }}</p>
-    <p><strong>Estado Laboral:</strong> {{ docente.estado_laboral }}</p>
-    <p><strong>Contacto de Emergencia:</strong> {{ docente.contacto_emergencia }}</p>
-    <p><strong>Observaciones:</strong> {{ docente.observaciones }}</p>
-    <p><strong>CUIL del Supervisor:</strong> {{ docente.cuil_supervisor }}</p>
-    <p><strong>Cursos Asignados:</strong> {{ docente.cursos_asignados }}</p>
-{% endif %}
+{% block extra_scripts %}
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            document.getElementById('delete-button').addEventListener('click', function() {
+                if (confirm('¿Estás seguro de que quieres eliminar este docente?')) {
+                    document.getElementById('delete-form').submit();
+                }
+            });
+        });
+    </script>
 {% endblock %}

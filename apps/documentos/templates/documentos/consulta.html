@@ -1,0 +1,33 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Consulta de Comprobante{% endblock %}
+
+
+{% block extra_css %}
+<link rel="stylesheet" type="text/css" href="{% static 'cuotas/css/cuotas.css' %}">
+{% endblock %}
+
+{% block content %}
+<h2>Consulta de Comprobante</h2>
+<form method="post">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit">Buscar</button>
+</form>
+
+{% if resultados %}
+<h2>Resultados de la búsqueda</h2>
+<p>Cantidad de archivos encontrados: {{ cantidad_archivos }}</p>
+<ul>
+    {% for resultado in resultados %}
+    <li>
+        <strong>Nombre:</strong> <a href="{{ resultado.url }}" target="_blank">{{ resultado.nombre }}</a><br>
+        <strong>Fecha de subida:</strong> {{ resultado.fecha }}
+    </li>
+    {% endfor %}
+</ul>
+{% else %}
+<p>No se encontraron documentos.</p>
+{% endif %}
+{% endblock %}

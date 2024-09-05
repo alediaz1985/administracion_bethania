@@ -1,0 +1,15 @@
+.pagado {
+    color: #00cfff; /* Celeste */
+}
+
+.vencido {
+    color: #ff0000; /* Rojo */
+}
+
+.pendiente {
+    color: #008000; /* Verde */
+}
+
+.gris-claro {
+    color: #d3d3d3; /* Gris Claro */
+}
