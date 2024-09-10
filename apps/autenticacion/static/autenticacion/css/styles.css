@@ -1,0 +1,145 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Arial', sans-serif;
+}
+
+body {
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: linear-gradient(135deg, white, #C62828, #1565C0);
+}
+
+.container {
+    display: flex;
+    width: 80%;
+    height: 80vh;
+    background: white;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+    border-radius: 20px;
+    overflow: hidden;
+}
+
+.left-side {
+    width: 50%;
+    background: linear-gradient(135deg, white, #C62828, #1565C0);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.left-content {
+    text-align: center;
+    color: white;
+}
+
+.left-content h1 {
+    font-size: 65px;
+    margin-bottom: 20px;
+}
+
+.left-content p {
+    font-size: 34px;
+    margin-bottom: 10px;
+}
+
+.right-side {
+    width: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: white;
+}
+
+.login-box {
+    width: 80%;
+    text-align: center;
+}
+
+.user-img {
+    margin-bottom: 20px;
+}
+
+.user-img img {
+    width: 100px;
+    height: 100px;
+    border-radius: 50%;
+    border: 2px solid #C62828;
+}
+
+.login-header h2 {
+    font-size: 28px;
+    color: #333;
+    margin-bottom: 20px;
+}
+
+.input-box {
+    display: flex;
+    align-items: center;
+    background-color: #f1f1f1;
+    margin-bottom: 20px;
+    border-radius: 30px;
+    padding: 10px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    position: relative;
+}
+
+.input-box i {
+    padding-left: 10px;
+    color: #999;
+    cursor: pointer;
+}
+
+.input-box input {
+    border: none;
+    outline: none;
+    background: none;
+    padding: 10px;
+    width: 100%;
+    font-size: 16px;
+    color: #333;
+}
+
+.input-box #togglePassword {
+    position: absolute;
+    right: 20px;
+    color: #999;
+    cursor: pointer;
+}
+
+.login-btn {
+    background: linear-gradient(135deg, #C62828, #1565C0);
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 30px;
+    cursor: pointer;
+    width: 100%;
+    font-size: 16px;
+    font-weight: bold;
+    transition: background 0.3s ease;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+.login-btn:hover {
+    background: linear-gradient(135deg, #1565C0, #C62828);
+}
+
+.footer-links {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 20px;
+    font-size: 14px;
+}
+
+.footer-links a {
+    color: #C62828;
+    text-decoration: none;
+}
+
+.footer-links a:hover {
+    text-decoration: underline;
+}

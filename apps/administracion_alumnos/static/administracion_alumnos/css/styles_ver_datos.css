@@ -1,0 +1,64 @@
+body {
+    font-family: 'Arial', sans-serif;
+    background-image: url('../img/fondo1.png');
+    margin: 0;
+    padding: 0;
+}
+
+.see-student-container {
+    width: 60%;
+    margin: 40px auto;
+    background-color: white;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+h1 {
+    text-align: center;
+    font-size: 24px;
+    color: #333;
+    margin-bottom: 20px;
+}
+
+.student-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 20px;
+}
+
+.student-table th, .student-table td {
+    padding: 12px 15px;
+    text-align: left;
+    border-bottom: 1px solid #ddd;
+    color: #555;
+}
+
+.student-table th {
+    background-color: #f4f7f9;
+    font-weight: bold;
+}
+
+.student-table tr:hover {
+    background-color: #f9f9f9;
+}
+
+.button-group {
+    display: flex;
+    justify-content: space-between;
+}
+
+.button-submit {
+    display: inline-block;
+    padding: 10px 20px;
+    background: linear-gradient(90deg, red, blue);
+    color: white;
+    text-decoration: none;
+    border-radius: 5px;
+    transition: background-color 0.3s ease;
+    font-size: 16px;
+}
+
+.button-submit:hover {
+    background: linear-gradient(90deg, blue, red);
+}

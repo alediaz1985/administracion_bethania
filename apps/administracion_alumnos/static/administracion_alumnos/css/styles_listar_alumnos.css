@@ -1,0 +1,133 @@
+body {
+    font-family: 'Roboto', sans-serif;
+    margin: 0;
+    padding: 0;
+    background-image: url('../img/fondo1.png'); /* Cambia por la ruta de tu imagen */
+    background-size: cover;  /* Asegura que la imagen cubra todo el fondo */
+    background-position: center; /* Centra la imagen */
+    background-repeat: no-repeat; /* Evita que la imagen se repita */
+}
+
+.alumnos-container {
+    width: 100%;
+    padding: 50px 40px;
+}
+
+/* .alumnos {
+    max-height: 600px;
+    background-color: #fff;
+    padding: 20px;
+    border: 1px solid #ccc;
+} */
+
+.alumnos-titulo {
+    font-size: 36px;
+    color: #000000;
+    text-align: center;
+    margin-bottom: 20px;
+    font-family: 'Poppins', sans-serif;
+    font-weight: 400;
+    /* font-weight: bold; */
+}
+
+.alumnos-controls {
+    text-align: right;
+    margin-bottom: 20px;
+}
+
+.alumnos-scroll-container {
+    max-height: 600px; /* Altura máxima del contenedor con scroll */
+    overflow-y: auto;  /* Activar scroll vertical */
+    border: 1px solid #ccc;
+    padding: 10px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+    background-color: #fff;
+    border-radius: 7px;
+}
+
+.alumnos-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 20px 0;
+    box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
+}
+
+.alumnos-table thead {
+    background-color: #f8fafc;
+}
+
+.alumnos-table th, .alumnos-table td {
+    padding: 12px;
+    text-align: left;
+    border-bottom: 1px solid #ddd;
+}
+
+.alumnos-table th {
+    background-color: #eff4f9;
+    color: #333;
+    font-weight: bold;
+}
+
+.alumnos-table tbody tr:hover {
+    background-color: #f1f1f1;
+}
+
+/* Elimina el subrayado y el color morado de los enlaces */
+.alumnos-table a {
+    text-decoration: none; /* Elimina el subrayado */
+    color: black; /* Cambia el color del texto a negro o el que prefieras */
+}
+
+/* Resalta el enlace cuando el mouse está sobre él */
+.alumnos-table a:hover {
+    color: blue; /* Cambia el color cuando el mouse está sobre el enlace */
+}
+
+.alumnos-btn {
+    padding: 15px 25px;
+    background: linear-gradient(90deg, red, blue);
+    color: white;
+    border: none;
+    cursor: pointer;
+    border-radius: 5px;
+}
+
+.alumnos-btn:hover {
+    background: linear-gradient(90deg, blue, red);
+}
+
+.alumnos-details-row {
+    background-color: #f9f9f9;
+}
+
+.alumnos-details-table {
+    width: 100%;
+    background-color: #eef;
+    padding: 10px;
+    border-radius: 5px;
+    border-collapse: collapse;
+}
+
+.alumnos-details-table td {
+    padding: 8px;
+    text-align: center;
+    border: 1px solid #ddd;
+    word-wrap: break-word;
+}
+
+.alumnos-cell-header {
+    background-color: #d9e3f0;
+    padding: 5px;
+    font-weight: bold;
+    color: #333;
+}
+
+.alumnos-cell-content {
+    padding: 5px;
+    color: #555;
+}
+
+.alumnos-table td {
+    word-wrap: break-word;
+    max-width: 200px; /* Limitar la anchura de las celdas */
+}

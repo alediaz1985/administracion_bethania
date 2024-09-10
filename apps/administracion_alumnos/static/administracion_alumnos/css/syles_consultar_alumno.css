@@ -1,0 +1,121 @@
+body {
+    background-image: url('../img/fondo1.png'); /* Cambia por la ruta de tu imagen */
+    background-size: cover;  /* Asegura que la imagen cubra todo el fondo */
+    background-position: center; /* Centra la imagen */
+    background-repeat: no-repeat; /* Evita que la imagen se repita */
+}
+
+/* Contenedor general con un fondo más fuerte */
+.consulta-alumno-container {
+    font-family: 'Helvetica Neue', Arial, sans-serif;
+    background-color: #c9c9ca;
+    color: #1b1b1b;
+    padding: 50px;
+    margin: 30px auto;
+    max-width: 700px;
+    border-radius: 15px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.9);
+}
+
+/* Estilo del título */
+.consulta-alumno-container h1 {
+    font-size: 32px;
+    color: #282929;
+    text-align: center;
+    margin-bottom: 30px;
+}
+
+/* Estilo del formulario */
+.styled-form {
+    background-color: #f7f7f7;
+    padding: 30px;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    margin-bottom: 40px;
+}
+
+.styled-form label {
+    font-weight: bold;
+    margin-right: 10px;
+    color: #181818;
+    display: block;
+    margin-bottom: 10px;
+}
+
+.styled-form input[type="text"] {
+    padding: 12px;
+    border: 1px solid #95a5a6;
+    border-radius: 5px;
+    font-size: 16px;
+    width: 100%;
+    margin-bottom: 20px;
+}
+
+/* Botón sin efectos de tamaño */
+.button-submit {
+    padding: 12px 25px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    color: white;
+    font-size: 16px;
+    margin-top: 20px;
+    transition: background 0.3s ease;
+}
+
+/* Botón con gradiente */
+.gradient-button {
+    background: linear-gradient(90deg, red, blue);
+}
+
+.gradient-button:hover {
+    background: linear-gradient(90deg, blue, red);
+}
+
+/* Grupo de botones con más espacio */
+.button-group {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 30px;
+}
+
+#delete-button {
+    background-color: #e74c3c;
+}
+
+#delete-button:hover {
+    background-color: #c0392b;
+}
+
+/* Estilo para los resultados del alumno */
+.resultado-alumno {
+    background-color: #f7f7f7;
+    padding: 30px;
+    border-radius: 10px;
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3);
+    margin-bottom: 40px;
+}
+
+.resultado-alumno h2 {
+    color: #050505;
+    font-size: 24px;
+    margin-bottom: 20px;
+}
+
+.alumno-datos {
+    background-color: #c9c9ca;
+    padding: 20px;
+    border-radius: 8px;
+    color: #202020;
+    font-size: 18px;
+    margin-bottom: 20px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.alumno-datos p {
+    margin: 10px 0;
+}
+
+.alumno-datos strong {
+    color: #202020;
+}

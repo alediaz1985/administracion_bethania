@@ -5,46 +5,38 @@
 {% load static %}
 
 {% block extra_styles %}
-    <link rel="stylesheet" href="{% static 'administracion/css/administracion.css' %}">
+    <link rel="stylesheet" href="{% static 'administracion/css/administracion1.css' %}">
 {% endblock %}
 
 {% block content %}
-    <div class="container">
-        <h2>Bienvenido al Proyecto Hogar de Bethania</h2>
-        <p>Este proyecto fue realizado para gestionar de manera eficiente la información y documentación de los alumnos del Hogar de Bethania, U.E.G.P. N°82. El sistema permite:</p>
-        
-        <div class="features">
-            <ul>
-                <li>Registrar nuevos alumnos</li>
-                <li>Consultar información de alumnos</li>
-                <li>Actualizar datos de los alumnos</li>
-                <li>Generar reportes y certificados</li>
-            </ul>
-        </div>
-
-        <!-- Contenedor para el cubo, separando el contenido superior del inferior -->
-        <div class="cube-wrapper">
-            <div class="cube-container">
-                <div class="cube">
-                    <div class="face front"><img src="{% static 'administracion/images/img1.jpg' %}" alt="Front"></div>
-                    <div class="face back"><img src="{% static 'administracion/images/img2.jpg' %}" alt="Back"></div>
-                    <div class="face right"><img src="{% static 'administracion/images/img3.jpg' %}" alt="Right"></div>
-                    <div class="face left"><img src="{% static 'administracion/images/img1.jpg' %}" alt="Left"></div>
-                    <div class="face top"><img src="{% static 'administracion/images/img2.jpg' %}" alt="Top"></div>
-                    <div class="face bottom"><img src="{% static 'administracion/images/img3.jpg' %}" alt="Bottom"></div>
+<div class="block-content-hero">
+    <div class="hero-container">
+        <div class="blurred-background"></div>
+        <div class="content-wrapper">
+            <div class="text-content">
+                <h1>SISTEMA PARA GESTIÓN DE ALUMNOS</h1>
+                <p>Este proyecto fue realizado para gestionar de manera eficiente la información y documentación de los alumnos del Hogar de Bethania, U.E.G.P. N°82.</p>
+                <form method="get" action="{% url 'consultar_alumno' %}"></form>
+                    <button>COMENZAR</button>
+                </form>
+            </div>
+            <div class="image-box">
+                <div class="carousel">
+                    <img src="static/img/colegio.jpg" alt="Colegio 1">
+                    <img src="static/img/colegio2.jpg" alt="Colegio 2">
+                    <img src="static/img/colegio3.jpg" alt="Colegio 3">
+                </div>
+                <div class="carousel-controls">
+                    <div class="circle" data-index="0"></div>
+                    <div class="circle" data-index="1"></div>
+                    <div class="circle" data-index="2"></div>
                 </div>
             </div>
         </div>
-
-        <!-- Lista de desarrolladores debajo del cubo -->
-        <h3>Desarrollado por:</h3>
-        <ul class="desarrolladores-list">
-            <li>Chávez, Jose</li>
-            <li>Díaz, Alejandro Leonel</li>
-            <li>Galeano Sandoval Cristian Agustín Ramón</li>
-            <li>Meza Kozak, Ramiro</li>
-            <li>Ojeda Néstor Fabián</li>
-            <li>Sandoval Alexis Emanuel</li>
-        </ul>
     </div>
+</div>
+
+
+<script src="static/js/script_home.js"></script>
+
 {% endblock %}
