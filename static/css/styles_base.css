@@ -125,13 +125,6 @@ body {
     transform: translateY(0);
 }
 
-.hola {
-    color: red;
-    padding: 20px;
-    height: 350px;
-    text-align: center;
-}
-
 .footer {
     background-color: #f2f2f2; /* Fondo blanco claro */
     color: #333;
@@ -259,4 +252,285 @@ body {
     margin-bottom: 2px;
     color: #333;
     font-size: 14px;
+}
+
+/* Pantallas de 1366px o menos */
+@media screen and (max-width: 1366px) {
+    .navbar {
+        height: 70px;
+    }
+
+    .nav-items li a {
+        font-size: 13px;
+        padding: 15px 0;
+    }
+
+    .logo img {
+        width: 80px;
+    }
+
+    .signin-btn {
+        right: 30px;
+        font-size: 14px;
+    }
+
+    /* Rectángulo superior vacío */
+    .top-footer {
+        height: 170px;
+    }
+
+    /* Rectángulo del medio */
+    .middle-footer {
+        height: 170px;
+    }
+
+    /* Rectángulo inferior */
+    .bottom-footer {
+        padding: 10px 0;
+    }
+
+    .floating-box {
+        top: 40px; /* Subir el rectángulo para no tapar el medio */
+        padding: 0;
+    }
+
+    .footer-nav li a {
+        font-size: 14px;
+    }
+
+    .developers p {
+        font-size: 14px;
+    }
+
+    .developers li {
+        font-size: 12px;
+    }
+
+    .copyright {
+        font-size: 13px;
+    }
+}
+
+/* Pantallas de 1024px o menos */
+@media screen and (max-width: 1024px) {
+    .navbar {
+        height: 60px;
+    }
+
+    .nav-items li {
+        margin: 0 15px;
+    }
+
+    .nav-items li a {
+        font-size: 12px;
+    }
+
+    .logo img {
+        width: 70px;
+    }
+
+    .signin-btn a {
+        font-size: 13px;
+        padding: 5px 15px;
+    }
+
+    .floating-box {
+        width: 70%;
+    }
+
+    .logo-image {
+        width: 200px;
+    }
+
+    .developers p {
+        font-size: 14px;
+    }
+
+    .developers li {
+        font-size: 12px;
+    }
+
+    .footer-nav li a {
+        font-size: 12px;
+    }
+
+    .social-icons a {
+        font-size: 16px;
+    }
+}
+
+/* Pantallas de 768px o menos */
+@media screen and (max-width: 768px) {
+    .navbar {
+        flex-direction: column;
+        height: auto;
+    }
+
+    .nav-items {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 10px;
+    }
+
+    .nav-items li {
+        margin: 0 0 10px 0;
+    }
+
+    .logo img {
+        width: 60px;
+        margin: 10px 0;
+    }
+
+    .signin-btn {
+        right: 0;
+        margin-top: 10px;
+    }
+
+    .signin-btn a {
+        padding: 5px 10px;
+    }
+
+    .floating-box {
+        width: 80%;
+        top: 50px;
+    }
+
+    .logo-image {
+        width: 150px;
+    }
+
+    .developers p {
+        font-size: 13px;
+    }
+
+    .developers li {
+        font-size: 11px;
+    }
+
+    .footer-nav {
+        flex-direction: column;
+        gap: 10px;
+    }
+
+    .footer-nav li a {
+        font-size: 11px;
+    }
+
+    .social-icons a {
+        font-size: 14px;
+    }
+}
+
+/* Pantallas de 480px o menos (móviles) */
+@media screen and (max-width: 480px) {
+    .navbar {
+        height: auto;
+        padding: 10px 0;
+    }
+
+    .nav-items {
+        flex-direction: column;
+        align-items: center;
+        gap: 5px;
+    }
+
+    .nav-items li {
+        margin: 5px 0;
+    }
+
+    .nav-items li a {
+        font-size: 11px;
+        padding: 10px 0;
+    }
+
+    .logo img {
+        width: 50px;
+    }
+
+    .signin-btn {
+        right: 0;
+        position: relative;
+        margin-top: 10px;
+    }
+
+    .signin-btn a {
+        padding: 5px 10px;
+        font-size: 12px;
+    }
+
+    .floating-box {
+        width: 90%;
+        top: 40px;
+    }
+
+    .logo-image {
+        width: 120px;
+    }
+
+    .developers p {
+        font-size: 12px;
+    }
+
+    .developers li {
+        font-size: 10px;
+    }
+
+    .footer-nav {
+        flex-direction: column;
+        gap: 5px;
+    }
+
+    .footer-nav li a {
+        font-size: 10px;
+    }
+
+    .social-icons a {
+        font-size: 12px;
+    }
+
+    .bottom-footer {
+        padding: 15px 0;
+    }
+}
+
+@media screen and (max-width: 1366px) {
+    /* Ajustar los ítems del menú principal */
+    .nav-items li {
+        margin: 0 15px; /* Menor espacio entre los elementos */
+    }
+
+    .nav-items li a {
+        font-size: 12px; /* Reducir un poco el tamaño de la fuente */
+    }
+
+    /* Ajustar el submenú */
+    .submenu {
+        width: 200px; /* Reducir el ancho del submenú */
+        padding: 5px 0; /* Reducir el padding */
+        font-size: 10px; /* Tamaño de texto más pequeño */
+    }
+
+    .submenu li a {
+        padding: 8px 20px; /* Reducir el padding de los elementos del submenú */
+    }
+}
+
+@media screen and (max-width: 1024px) {
+    /* Cambiar el comportamiento del submenú a vertical */
+    .submenu {
+        position: static; /* Para que se muestre debajo de los ítems de menú */
+        width: 100%; /* Ocupa todo el ancho */
+        padding: 10px 0;
+    }
+
+    .submenu li a {
+        padding: 10px 15px; /* Más espacio para facilitar la interacción táctil */
+    }
+    
+    /* Ajustar la barra de navegación para pantallas más pequeñas */
+    .nav-items {
+        flex-direction: column;
+        align-items: flex-start;
+        padding-left: 20px;
+    }
 }

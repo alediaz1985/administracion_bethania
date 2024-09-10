@@ -5,11 +5,11 @@
 {% load static %}
 
 {% block extra_styles %}
-    <link rel="stylesheet" href="{% static 'administracion_alumnos/css/registrar_alumnos.css' %}">
+    <link rel="stylesheet" href="{% static 'administracion_alumnos/css/styles_registrar_alumno.css' %}">
 {% endblock %}
 
 {% block content %}
-<p>asdas</p>
+<!-- <p>asdas</p>
 <div class="form-container">
     <h1>Registrar Alumno</h1>
     {% if messages %}
@@ -26,5 +26,147 @@
         </div>
         <button type="submit">Registrar</button>
     </form>
+</div> -->
+
+<div class="form-container">
+    <h1>REGISTRO DE ALUMNO</h1>
+    <form method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+        <div class="form-section">
+            <label for="fecha_registro">Fecha de Registro:</label>
+            <input type="datetime-local" id="fecha_registro" name="fecha_registro">
+        </div>
+        <div class="form-section">
+            <label for="cuil_alumno">CUIL:</label>
+            <input type="text" id="cuil_alumno" name="cuil_alumno" required>
+        </div>
+        <div class="form-section">
+            <label for="apellidos_alumno">Apellidos:</label>
+            <input type="text" id="apellidos_alumno" name="apellidos_alumno" required>
+        </div>
+        <div class="form-section">
+            <label for="nombres_alumno">Nombres:</label>
+            <input type="text" id="nombres_alumno" name="nombres_alumno" required>
+        </div>
+        <div class="form-section">
+            <label for="fecha_nacimiento_alumno">Fecha de Nacimiento:</label>
+            <input type="date" id="fecha_nacimiento_alumno" name="fecha_nacimiento_alumno" required>
+        </div>
+        <div class="form-section">
+            <label for="genero_alumno">Género:</label>
+            <select id="genero_alumno" name="genero_alumno" required>
+                <option value="Masculino">Masculino</option>
+                <option value="Femenino">Femenino</option>
+                <option value="Otro">Otro</option>
+            </select>
+        </div>
+        <div class="form-section">
+            <label for="domicilio_residencia_alumno">Domicilio:</label>
+            <input type="text" id="domicilio_residencia_alumno" name="domicilio_residencia_alumno" required>
+        </div>
+        <div class="form-section">
+            <label for="localidad_residencia_alumno">Localidad:</label>
+            <input type="text" id="localidad_residencia_alumno" name="localidad_residencia_alumno" required>
+        </div>
+        <div class="form-section">
+            <label for="provincia_residencia_alumno">Provincia:</label>
+            <input type="text" id="provincia_residencia_alumno" name="provincia_residencia_alumno" required>
+        </div>
+        <div class="form-section">
+            <label for="codigo_postal_alumno">Código Postal:</label>
+            <input type="text" id="codigo_postal_alumno" name="codigo_postal_alumno" required>
+        </div>
+        <div class="form-section">
+            <label for="numero_telefonico_alumno">Teléfono:</label>
+            <input type="text" id="numero_telefonico_alumno" name="numero_telefonico_alumno" required>
+        </div>
+        <div class="form-section">
+            <label for="localidad_nacimiento_alumno">Localidad de Nacimiento:</label>
+            <input type="text" id="localidad_nacimiento_alumno" name="localidad_nacimiento_alumno" required>
+        </div>
+        <div class="form-section">
+            <label for="provincia_nacimiento_alumno">Provincia de Nacimiento:</label>
+            <input type="text" id="provincia_nacimiento_alumno" name="provincia_nacimiento_alumno" required>
+        </div>
+        <div class="form-section">
+            <label for="nacionalidad_alumno">Nacionalidad:</label>
+            <input type="text" id="nacionalidad_alumno" name="nacionalidad_alumno" required>
+        </div>
+        <div class="form-section">
+            <label for="dni_frente_alumno">DNI - Frente:</label>
+            <input type="file" id="dni_frente_alumno" name="dni_frente_alumno" accept=".pdf" class="custom-file-input" required>
+        </div>
+        <div class="form-section">
+            <label for="dni_dorso_alumno">DNI - Dorso:</label>
+            <input type="file" id="dni_dorso_alumno" name="dni_dorso_alumno" accept=".pdf" class="custom-file-input" required>
+        </div>
+        <div class="form-section">
+            <label for="nivel_cursado_alumno">Nivel Cursado:</label>
+            <select id="nivel_cursado_alumno" name="nivel_cursado_alumno" required>
+                <option value="1er Año">1er Año</option>
+                <option value="2do Año">2do Año</option>
+                <option value="3er Año">3er Año</option>
+                <option value="4to Año">4to Año</option>
+                <!-- Añadir más opciones según sea necesario -->
+            </select>
+        </div>
+        <div class="form-section">
+            <label for="ingreso_alumno">Año de Ingreso:</label>
+            <input type="number" id="ingreso_alumno" name="ingreso_alumno" required>
+        </div>
+        <div class="form-section">
+            <label for="medicamento_alumno">Medicamento:</label>
+            <textarea id="medicamento_alumno" name="medicamento_alumno" placeholder="Ingrese detalles sobre medicamentos"></textarea>
+        </div>
+        <div class="form-section">
+            <label for="alergia_alumno">Alergia:</label>
+            <textarea id="alergia_alumno" name="alergia_alumno" placeholder="Ingrese detalles sobre alergias"></textarea>
+        </div>
+        <div class="form-section">
+            <label for="condicion_medica_alumno">Condición Médica:</label>
+            <textarea id="condicion_medica_alumno" name="condicion_medica_alumno" placeholder="Ingrese detalles sobre condiciones médicas"></textarea>
+        </div>
+        <div class="form-section">
+            <label for="cuil_tutor">CUIL Tutor:</label>
+            <input type="text" id="cuil_tutor" name="cuil_tutor" required>
+        </div>
+        <div class="form-section">
+            <label for="apellido_nombre_tutor">Apellido y Nombre del Tutor:</label>
+            <input type="text" id="apellido_nombre_tutor" name="apellido_nombre_tutor" required>
+        </div>
+        <div class="form-section">
+            <label for="telefono_tutor">Teléfono del Tutor:</label>
+            <input type="text" id="telefono_tutor" name="telefono_tutor" required>
+        </div>
+        <div class="form-section">
+            <label for="domicilio_tutor">Domicilio del Tutor:</label>
+            <input type="text" id="domicilio_tutor" name="domicilio_tutor" required>
+        </div>
+        <div class="form-section">
+            <label for="localidad_tutor">Localidad del Tutor:</label>
+            <input type="text" id="localidad_tutor" name="localidad_tutor" required>
+        </div>
+        <div class="form-section">
+            <label for="provincia_tutor">Provincia del Tutor:</label>
+            <input type="text" id="provincia_tutor" name="provincia_tutor" required>
+        </div>
+        <div class="form-section">
+            <label for="codigo_postal_tutor">Código Postal del Tutor:</label>
+            <input type="text" id="codigo_postal_tutor" name="codigo_postal_tutor" required>
+        </div>
+        <div class="form-section">
+            <label for="contrato_ensenanza">Contrato de Enseñanza:</label>
+            <input type="file" id="contrato_ensenanza" name="contrato_ensenanza" accept=".pdf" class="custom-file-input" required>
+        </div>
+        <div class="form-section">
+            <label for="ficha_inscripcion">Ficha de Inscripción:</label>
+            <input type="file" id="ficha_inscripcion" name="ficha_inscripcion" accept=".pdf" class="custom-file-input" required>
+        </div>
+        <div class="button-group">
+            <button type="submit" class="button-submit">Registrar</button>
+        </div>
+    </form>
 </div>
+</div>
+
 {% endblock %}

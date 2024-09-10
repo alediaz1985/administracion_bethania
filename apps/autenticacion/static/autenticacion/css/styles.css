@@ -143,3 +143,164 @@ body {
 .footer-links a:hover {
     text-decoration: underline;
 }
+
+/* Medias queries para pantallas de 1366px a 1024px */
+@media (max-width: 1366px) and (min-width: 1024px) {
+    .container {
+        width: 70%;
+        height: 80vh;
+    }
+
+    .left-side {
+        width: 50%;
+    }
+
+    .right-side {
+        width: 50%;
+    }
+
+    .left-content h1 {
+        font-size: 40px;
+    }
+
+    .left-content p {
+        font-size: 24px;
+    }
+
+    .login-box {
+        width: 90%;
+    }
+
+    .user-img img {
+        width: 80px;
+        height: 80px;
+    }
+
+    .login-header h2 {
+        font-size: 24px;
+    }
+
+    .input-box input {
+        font-size: 14px;
+    }
+
+    .login-btn {
+        font-size: 14px;
+        padding: 8px 16px;
+    }
+}
+
+/* Medias queries para pantallas de 1024px a 768px */
+@media (max-width: 1024px) and (min-width: 768px) {
+    .container {
+        flex-direction: column;
+        width: 95%;
+        height: auto;
+    }
+
+    .left-side, .right-side {
+        width: 100%;
+    }
+
+    .left-content h1 {
+        font-size: 40px;
+    }
+
+    .left-content p {
+        font-size: 24px;
+    }
+
+    .login-box {
+        width: 80%;
+    }
+
+    .user-img img {
+        width: 70px;
+        height: 70px;
+    }
+
+    .login-header h2 {
+        font-size: 22px;
+    }
+
+    .input-box input {
+        font-size: 15px;
+    }
+
+    .login-btn {
+        font-size: 15px;
+        padding: 10px 20px;
+    }
+}
+
+/* Medias queries para pantallas de 768px a 480px */
+@media (max-width: 768px) and (min-width: 480px) {
+    .left-content h1 {
+        font-size: 35px;
+    }
+
+    .left-content p {
+        font-size: 20px;
+    }
+
+    .user-img img {
+        width: 60px;
+        height: 60px;
+    }
+
+    .login-header h2 {
+        font-size: 20px;
+    }
+
+    .input-box input {
+        font-size: 14px;
+    }
+
+    .login-btn {
+        font-size: 14px;
+        padding: 8px 16px;
+    }
+}
+
+/* Medias queries para pantallas menores a 480px */
+@media (max-width: 480px) {
+    .left-content h1 {
+        font-size: 30px;
+    }
+
+    .left-content p {
+        font-size: 18px;
+    }
+
+    .user-img img {
+        width: 50px;
+        height: 50px;
+    }
+
+    .login-header h2 {
+        font-size: 18px;
+    }
+
+    .input-box input {
+        font-size: 13px;
+    }
+
+    .login-btn {
+        font-size: 13px;
+        padding: 8px 14px;
+    }
+
+    .container {
+        width: 100%;
+        height: auto;
+        flex-direction: column;
+    }
+
+    .left-side, .right-side {
+        width: 100%;
+    }
+
+    .left-content {
+        padding: 20px;
+    }
+}

@@ -46,7 +46,7 @@
 }
 
 .block-content-hero .text-content h1 {
-    font-size: 2.5rem;
+    font-size: 2.5vw;
     margin-bottom: 20px;
     font-weight: 600;
     letter-spacing: 1px;
@@ -54,7 +54,7 @@
 }
 
 .block-content-hero .text-content p {
-    font-size: 1.2rem;
+    font-size: 1.2vw;
     margin-bottom: 20px;
     max-width: 90%;
     line-height: 1.5;
@@ -62,11 +62,12 @@
 }
 
 .block-content-hero .text-content button {
-    padding: 10px 20px;
+    padding: 1vw 2vw;
+    font-size: 1vw;
     background-color: transparent;
     border: 2px solid white;
+    border-radius: 5px;
     color: white;
-    font-size: 1rem;
     cursor: pointer;
     transition: background-color 0.3s, color 0.3s;
     box-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
@@ -123,25 +124,129 @@
     opacity: 0.8;
 }
 
-/* Adaptaciones para pantallas más pequeñas */
-@media (max-width: 768px) {
+/* Estilos para pantallas desde 1366px y menores */
+@media (max-width: 1366px) {
     .block-content-hero .content-wrapper {
-        flex-direction: column;
-        width: 95%;
+        width: 85%;
+        height: 75vh; /* Reducir la altura para evitar desbordamientos */
+    }
+
+    .block-content-hero .text-content h1 {
+        font-size: 2.0vw; /* Ajustar el tamaño de la cabecera */
+    }
+
+    .block-content-hero .text-content p {
+        font-size: 1.1vw; /* Ajustar el tamaño del texto */
+    }
+
+    .block-content-hero .text-content button {
+        padding: 0.6vw 1.2vw; /* Reducir ligeramente el tamaño del botón */
+        font-size: 0.9vw; /* Ajustar el tamaño del texto del botón */
+    }
+
+    .block-content-hero .image-box {
+        flex-basis: 65%; /* Ajustar el tamaño de la caja de la imagen */
+    }
+
+    .block-content-hero .carousel-controls {
+        bottom: 15px;
+        right: 15px;
+    }
+}
+
+/* Estilos para pantallas desde 1024px y menores */
+@media (max-width: 1024px) {
+    .block-content-hero .content-wrapper {
+        flex-direction: column; /* Cambiar el layout a vertical */
+        width: 90%; /* Ajustar el ancho */
+        height: 70vh; /* Reducir la altura */
     }
 
     .block-content-hero .text-content {
         flex-basis: 100%;
-        text-align: center;
-        padding: 20px;
+        text-align: center; /* Centrar el texto */
+        padding: 30px 20px; /* Ajustar padding */
     }
 
     .block-content-hero .image-box {
         flex-basis: 100%;
+        margin-top: 20px; /* Añadir un margen entre texto e imagen */
+    }
+
+    .block-content-hero .text-content h1 {
+        font-size: 3vw; /* Ajustar tamaño del título */
+    }
+
+    .block-content-hero .text-content p {
+        font-size: 1.8vw; /* Ajustar tamaño del texto */
+    }
+
+    .block-content-hero .text-content button {
+        padding: 1.5vw 3vw; /* Ajustar el tamaño del botón */
+        font-size: 1.5vw; /* Ajustar el tamaño del texto del botón */
+    }
+
+    .block-content-hero .carousel img {
+        height: auto; /* Ajustar el alto de las imágenes para evitar recortes */
     }
 
     .block-content-hero .carousel-controls {
         bottom: 10px;
         right: 10px;
+    }
+}
+
+/* Estilos para pantallas de 768px y menores */
+@media (max-width: 768px) {
+    .block-content-hero .content-wrapper {
+        width: 95%;
+        height: auto; /* Dejar que la altura se ajuste automáticamente */
+    }
+
+    .block-content-hero .text-content h1 {
+        font-size: 4vw; /* Un poco más grande en pantallas pequeñas */
+    }
+
+    .block-content-hero .text-content p {
+        font-size: 3vw; /* Ajustar el texto del párrafo */
+    }
+
+    .block-content-hero .text-content button {
+        padding: 2vw 4vw; /* Botón más grande */
+        font-size: 2vw; /* Aumentar el tamaño del texto del botón */
+    }
+
+    .block-content-hero .image-box {
+        width: 100%;
+        margin-top: 20px; /* Separar imagen del texto */
+    }
+
+    .block-content-hero .carousel img {
+        height: auto; /* Ajustar el alto de las imágenes */
+    }
+
+    .block-content-hero .carousel-controls {
+        bottom: 10px;
+        right: 10px;
+    }
+}
+
+/* Estilos para pantallas de 480px y menores (muy pequeñas) */
+@media (max-width: 480px) {
+    .block-content-hero .text-content h1 {
+        font-size: 5vw; /* Aumentar el tamaño del título */
+    }
+
+    .block-content-hero .text-content p {
+        font-size: 3.5vw; /* Ajustar el texto del párrafo */
+    }
+
+    .block-content-hero .text-content button {
+        padding: 3vw 5vw; /* Botón más grande */
+        font-size: 2.5vw; /* Aumentar el tamaño del texto del botón */
+    }
+
+    .block-content-hero .image-box {
+        flex-basis: 100%; /* La imagen ocupa todo el ancho */
     }
 }

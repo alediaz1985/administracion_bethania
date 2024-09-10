@@ -11,7 +11,7 @@ body {
     background-color: white;
     padding: 20px;
     border-radius: 10px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.5);
 }
 
 h1 {
@@ -61,4 +61,77 @@ h1 {
 
 .button-submit:hover {
     background: linear-gradient(90deg, blue, red);
+}
+
+/* Para pantallas de entre 1366px y 1024px */
+@media only screen and (max-width: 1366px) {
+    .see-student-container {
+        width: 65%; /* Aumenta el ancho para que se vea mejor en pantallas más pequeñas */
+        padding: 15px;
+    }
+
+    h1 {
+        font-size: 20px; /* Reduce el tamaño de la fuente para el título */
+    }
+
+    .student-table th, .student-table td {
+        padding: 10px 12px; /* Reduce el padding para mejorar la lectura */
+        font-size: 14px;
+    }
+
+    .button-submit {
+        padding: 8px 18px; /* Reduce el tamaño de los botones */
+        font-size: 12px; /* Reduce el tamaño del texto del botón */
+    }
+}
+
+/* Para pantallas entre 1024px y 768px */
+@media only screen and (max-width: 1024px) {
+    .see-student-container {
+        width: 85%; /* Ajuste para pantallas más pequeñas */
+        padding: 15px;
+    }
+
+    h1 {
+        font-size: 20px; /* Ajuste de tamaño de fuente para pantallas más pequeñas */
+    }
+
+    .student-table th, .student-table td {
+        padding: 8px 10px; /* Ajuste de padding */
+        font-size: 14px; /* Ajuste de tamaño de texto para mejorar la visibilidad */
+    }
+
+    .button-submit {
+        padding: 7px 15px;
+        font-size: 13px;
+    }
+}
+
+/* Para pantallas de 768px y más pequeñas (tablets, móviles) */
+@media only screen and (max-width: 768px) {
+    .see-student-container {
+        width: 95%; /* Mayor ancho para aprovechar el espacio disponible */
+        padding: 10px;
+    }
+
+    h1 {
+        font-size: 18px; /* Reducir aún más el tamaño del título */
+    }
+
+    .student-table th, .student-table td {
+        padding: 6px 8px;
+        font-size: 12px; /* Reducir tamaño de texto */
+    }
+
+    .button-group {
+        flex-direction: column; /* Los botones estarán uno debajo del otro */
+        gap: 10px; /* Espaciado entre los botones */
+    }
+
+    .button-submit {
+        padding: 6px 12px;
+        font-size: 12px;
+        width: 100%; /* Botones ocupando el 100% del ancho en pantallas pequeñas */
+        text-align: center;
+    }
 }
