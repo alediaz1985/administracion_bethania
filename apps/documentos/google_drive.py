@@ -11,7 +11,7 @@ import openpyxl
 from django.conf import settings
 
 # Configura la ruta a tu archivo de credenciales
-CREDENTIALS_FILE = settings.CREDENTIALS_FILE
+CREDENTIALS_FILE = settings.GOOGLE_CREDENTIALS
 
 SCOPES = ['https://www.googleapis.com/auth/drive.readonly']
 

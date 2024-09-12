@@ -40,9 +40,11 @@
                 <li class="menu-item">
                     <a href="#">CUOTAS</a>
                     <ul class="submenu">
-                        <li><a href="{% url 'cuotas_list' %}">Lista de Cuotas</a></li>
+                        <li><a href="{% url 'cuotas:habilitar_ciclo_lectivo' %}">Habilitar Ciclo Lectivo</a></li>
+                        <li><a href="{% url 'cuotas:consultar_ciclo_lectivo' %}">Consultar Ciclo Lectivo</a></li>
+                        <li><a href="{% url 'cuotas:inscribir_alumno' %}">Inscribir Alumno</a></li>
                         <li><a href="{% url 'consulta' %}">Consultar Comprobante</a></li>
-                        <li><a href="{% url 'subir_comprobante' %}">Subir Comprobante</a></li>
+                        
                     </ul>
                 </li>
                 <li class="menu-item">
@@ -59,14 +61,7 @@
             </div>
         </nav>
 
-        <!-- Mensajes flash -->
-        {% if messages %}
-        <div class="messages">
-            {% for message in messages %}
-                <div class="message {{ message.tags }}">{{ message }}</div>
-            {% endfor %}
-        </div>
-        {% endif %}
+    
 
         <!-- Contenido del sitio -->
         {% block content %}

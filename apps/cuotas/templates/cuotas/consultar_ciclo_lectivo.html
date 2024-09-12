@@ -1,0 +1,37 @@
+{% extends 'base.html' %}
+
+{% block title %}Consulta de Ciclos Lectivos{% endblock %}
+
+{% load static %}
+
+{% block extra_styles %}
+    <link rel="stylesheet" href="{% static 'cuotas/css/cuotas.css' %}">
+{% endblock %}
+
+{% block content %}
+<h1>Consulta de Ciclos Lectivos</h1>
+
+<!-- Formulario para seleccionar el año lectivo -->
+<form method="get" action="{% url 'cuotas:consultar_ciclo_lectivo' %}">
+    <label for="ciclo_lectivo">Selecciona un Año Lectivo:</label>
+    <select name="ciclo_lectivo_id" id="ciclo_lectivo_id" required>
+        <option value="">Seleccione un año lectivo</option>
+        {% for ciclo in ciclos %}
+        <option value="{{ ciclo.id }}">{{ ciclo.año_lectivo }}</option>
+        {% endfor %}
+    </select>
+
+    <button type="submit">Consultar</button>
+</form>
+
+<!-- Si se ha seleccionado un ciclo lectivo, mostrar sus detalles -->
+{% if ciclo_seleccionado %}
+    <h2>Detalles del Ciclo Lectivo {{ ciclo_seleccionado.año_lectivo }}</h2>
+    <p><strong>Fecha de Inicio:</strong> {{ ciclo_seleccionado.fecha_inicio }}</p>
+    <p><strong>Fecha de Fin:</strong> {{ ciclo_seleccionado.fecha_fin }}</p>
+    <p><strong>Monto de Inscripción:</strong> ${{ ciclo_seleccionado.monto_inscripcion }}</p>
+    <p><strong>Monto de la Cuota Mensual:</strong> ${{ ciclo_seleccionado.monto_cuota }}</p>
+{% else %}
+    <p>No se ha seleccionado ningún ciclo lectivo.</p>
+{% endif %}
+{% endblock %}

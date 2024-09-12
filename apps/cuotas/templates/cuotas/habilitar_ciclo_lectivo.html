@@ -1,0 +1,35 @@
+{% extends 'base.html' %}
+
+{% block title %}Habilitar Ciclo Lectivo{% endblock %}
+
+{% load static %}
+
+{% block extra_styles %}
+    <link rel="stylesheet" href="{% static 'cuotas/css/cuotas.css' %}">
+{% endblock %}
+
+{% block content %}
+    <h1>Habilitar Ciclo Lectivo</h1>
+
+    <form method="post">
+        {% csrf_token %}
+        
+        <label for="año_lectivo">Año Lectivo:</label>
+        <input type="number" name="año_lectivo" id="año_lectivo" required>
+
+        <label for="fecha_inicio">Fecha de Inicio:</label>
+        <input type="date" name="fecha_inicio" id="fecha_inicio" required>
+
+        <label for="fecha_fin">Fecha de Fin:</label>
+        <input type="date" name="fecha_fin" id="fecha_fin" required>
+
+        <label for="monto_inscripcion">Monto de Inscripción:</label>
+        <input type="number" name="monto_inscripcion" id="monto_inscripcion" step="0.01" required>
+
+        <!-- Campo para el valor de la cuota mensual -->
+        <label for="monto_cuota">Monto de la Cuota Mensual:</label>
+        <input type="number" name="monto_cuota" id="monto_cuota" step="0.01" required>
+
+        <button type="submit">Habilitar Año Lectivo</button>
+    </form>
+{% endblock %}

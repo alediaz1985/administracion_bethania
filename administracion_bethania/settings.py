@@ -134,11 +134,14 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 # URL de inicio de sesión
 LOGIN_URL = 'iniciar_sesion'
 
-# Configura la ruta a tu archivo de credenciales
-CREDENTIALS_FILE = os.path.join(BASE_DIR, 'credentials.json')
 
+GOOGLE_CREDENTIALS = os.path.join(BASE_DIR, 'credentials.json')
+
+#DRIVE_FOLDER_ID = '1lyxImVDTJt9Q2P9QDm0M_wHz9jgodfGp'
+# Configura la ruta a tu archivo de credenciales
+#GOOGLE_CREDENTIALS = os.path.join(BASE_DIR, 'administracion_bethania', 'credentials.json')
 # Configura la ID de la carpeta de Google Drive
-DRIVE_FOLDER_ID = '1lyxImVDTJt9Q2P9QDm0M_wHz9jgodfGp'
+DRIVE_FOLDER_ID = '1lyxImVDTJt9Q2P9QDm0M_wHz9jgodfGp'  # Este es el ID de la carpeta de Google Drive
 
 # Directorio de archivos locales
 ARCHIVOS_DIR = os.path.join(BASE_DIR, 'media', 'documentos')

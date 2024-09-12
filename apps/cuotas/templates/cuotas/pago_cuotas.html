@@ -1,0 +1,20 @@
+<form method="POST">
+    {% csrf_token %}
+    <label for="cuota_id">Cuota:</label>
+    <select name="cuota_id" required>
+        {% for cuota in cuotas %}
+            <option value="{{ cuota.id }}">Mes: {{ cuota.mes }} - Monto: {{ cuota.monto_cuota }}</option>
+        {% endfor %}
+    </select>
+    <label for="tutor_id">Tutor:</label>
+    <select name="tutor_id" required>
+        {% for tutor in tutores %}
+            <option value="{{ tutor.cuil_tutor }}">{{ tutor.apellido_nombre_tutor }}</option>
+        {% endfor %}
+    </select>
+    <label for="monto_pagado">Monto Pagado:</label>
+    <input type="text" name="monto_pagado" required>
+    <label for="medio_pago">Medio de Pago:</label>
+    <input type="text" name="medio_pago" required>
+    <button type="submit">Registrar Pago</button>
+</form>

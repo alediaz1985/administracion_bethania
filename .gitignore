@@ -1,0 +1,50 @@
+# Entornos virtuales
+venv/
+env/
+*.pyc
+*.pyo
+*.pyd
+__pycache__/
+*.sqlite3
+
+# Archivos de configuración del entorno
+.env
+*.env
+
+# Archivos de compilación
+*.log
+*.pot
+*.pyc
+*.so
+
+# Base de datos local
+db.sqlite3
+
+# Archivos estáticos
+/staticfiles/
+/media/
+
+# Archivos relacionados con Python y Django
+*.py[cod]
+*.sqlite3
+
+# Archivos y configuraciones del sistema operativo
+.DS_Store
+Thumbs.db
+
+# Configuraciones de IDEs
+.vscode/
+.idea/
+*.iml
+
+# Archivos de cobertura de pruebas
+htmlcov/
+coverage.xml
+*.cover
+*.coverage
+
+# Archivos de Node.js (si usas npm o yarn)
+node_modules/
+
+# Configuración de Google Drive
+credentials.json

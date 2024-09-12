@@ -1,0 +1,56 @@
+{% extends 'base.html' %}
+
+{% block title %}Inscripción de Alumnos{% endblock %}
+
+{% load static %}
+
+{% block extra_styles %}
+    <link rel="stylesheet" href="{% static 'cuotas/css/cuotas.css' %}">
+{% endblock %}
+
+{% block content %}
+    <h1>Inscripción de Alumnos</h1>
+
+    <!-- Mostrar mensajes de éxito o error -->
+    {% if messages %}
+    <ul class="messages">
+        {% for message in messages %}
+        <li class="{{ message.tags }}">{{ message }}</li>
+        {% endfor %}
+    </ul>
+    {% endif %}
+
+    <form method="post">
+        {% csrf_token %}
+
+        <label for="alumno_id">Alumno:</label>
+        <select name="alumno_id" id="alumno_id" required>
+            <option value="">--- Selecciona un alumno ---</option>
+            {% for alumno in alumnos %}
+            <option value="{{ alumno.cuil_alumno }}" 
+                {% if alumno_seleccionado and alumno.cuil_alumno == alumno_seleccionado.cuil_alumno %}selected{% endif %}>
+                {{ alumno.apellidos_alumno }}, {{ alumno.nombres_alumno }}
+            </option>
+            {% endfor %}
+        </select>
+
+        <label for="ciclo_lectivo">Ciclo Lectivo:</label>
+        <select name="ciclo_lectivo" id="ciclo_lectivo" required>
+            <option value="">--- Selecciona un ciclo ---</option>
+            {% for ciclo in ciclos %}
+            <option value="{{ ciclo.id }}" 
+                {% if ciclo_seleccionado and ciclo.id == ciclo_seleccionado.id %}selected{% endif %}>
+                {{ ciclo.año_lectivo }}
+            </option>
+            {% endfor %}
+        </select>
+
+        <label for="monto_inscripcion">Monto de Inscripción:</label>
+        <input type="number" name="monto_inscripcion" id="monto_inscripcion" value="{{ monto_inscripcion }}" readonly>
+
+        <label for="pagada">¿Inscripción Pagada?</label>
+        <input type="checkbox" name="pagada" id="pagada" {% if pagada %}checked{% endif %}>
+
+        <button type="submit">Inscribir Alumno</button>
+    </form>
+{% endblock %}

@@ -63,12 +63,17 @@ def extract_text_from_xlsx(xlsx_path):
         return ""
 
 def limpiar_texto(texto):
-    """Elimina caracteres no numéricos de un texto."""
-    return re.sub(r'\D', '', texto)
+    """Elimina caracteres no alfanuméricos de un texto y lo convierte a minúsculas."""
+    return re.sub(r'\W+', ' ', texto).lower()
 
 def buscar_termino(texto, consulta):
     texto_limpio = limpiar_texto(texto)
     consulta_limpia = limpiar_texto(consulta)
+    
+    # Depuración: Mostrar la consulta y el texto procesados
+    print(f"Texto limpio: {texto_limpio[:1000]}")  # Solo mostrar los primeros 1000 caracteres
+    print(f"Consulta limpia: {consulta_limpia}")
+    
     return consulta_limpia in texto_limpio
 
 def consulta_view(request):
