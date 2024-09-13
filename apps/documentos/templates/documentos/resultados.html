@@ -3,20 +3,22 @@
 
 {% block title %}Resultados de la Consulta{% endblock %}
 
-
 {% block extra_css %}
 <link rel="stylesheet" type="text/css" href="{% static 'cuotas/css/cuotas.css' %}">
 {% endblock %}
 
 {% block content %}
 <h1>Resultados de la Consulta</h1>
-    <form method="post">
-        {% csrf_token %}
-        {{ form.as_p }}
-        <button type="submit">Buscar</button>
-    </form>
-    
-    {% if resultados %}
+
+<!-- Formulario para realizar una nueva consulta -->
+<form method="post">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit">Buscar</button>
+</form>
+
+<!-- Mostrar resultados si los hay -->
+{% if resultados %}
     <h2>Resultados de la búsqueda</h2>
     <p>Cantidad de archivos encontrados: {{ cantidad_archivos }}</p>
     <ul>
@@ -27,7 +29,7 @@
         </li>
         {% endfor %}
     </ul>
-    {% else %}
+{% else %}
     <p>No se encontraron documentos.</p>
-    {% endif %}
+{% endif %}
 {% endblock %}

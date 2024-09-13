@@ -1,5 +1,5 @@
 from django.shortcuts import render, redirect
-from django.conf import settings  # Importar settings para obtener MEDIA_ROOT y ARCHIVOS_DIR
+from django.conf import settings
 from .forms import ConsultaForm, DocumentoForm
 from .google_drive import search_files_in_drive, download_file, extract_text_from_file, get_drive_service  # Importar funciones de Google Drive
 import logging
@@ -11,6 +11,10 @@ import re
 import docx
 import openpyxl
 from datetime import datetime
+
+from django.http import HttpResponse, JsonResponse
+
+from .google_drive import get_drive_service, search_files_in_drive
 
 # Configura el logging
 logging.basicConfig(level=logging.INFO)
@@ -63,14 +67,17 @@ def extract_text_from_xlsx(xlsx_path):
         return ""
 
 def limpiar_texto(texto):
-    """Elimina caracteres no alfanuméricos de un texto."""
-    return re.sub(r'\W+', '', texto)
+    """Elimina caracteres no alfanuméricos de un texto y lo convierte a minúsculas."""
+    return re.sub(r'\W+', ' ', texto).lower()
 
 def buscar_termino(texto, consulta):
-    texto_limpio = limpiar_texto(texto).lower()
-    consulta_limpia = limpiar_texto(consulta).lower()
-    logger.info(f"Texto limpio: {texto_limpio[:100]}")  # Imprime los primeros 100 caracteres para depuración
-    logger.info(f"Consulta limpia: {consulta_limpia}")
+    texto_limpio = limpiar_texto(texto)
+    consulta_limpia = limpiar_texto(consulta)
+
+    # Depuración: Mostrar la consulta y el texto procesados
+    print(f"Texto limpio: {texto_limpio[:1000]}")  # Solo mostrar los primeros 1000 caracteres
+    print(f"Consulta limpia: {consulta_limpia}")
+
     return consulta_limpia in texto_limpio
 
 def consulta_view(request):
@@ -145,7 +152,7 @@ def consulta_view(request):
                                 fecha_modificacion = datetime.fromtimestamp(os.path.getmtime(archivo_path)).strftime('%d/%m/%Y')
                                 resultados.append({
                                     'nombre': file_name,
-                                    'url': f"{settings.MEDIA_URL}documentos/{file_name}",
+                                    'url': f"{settings.MEDIA_URL}documentos/descargados/{file_name}",
                                     'fecha': fecha_modificacion
                                 })
                                 logger.info(f"Término encontrado en: {file_name}")
@@ -173,3 +180,67 @@ def subir_comprobante_view(request):
     else:
         form = DocumentoForm()
     return render(request, 'documentos/subir_comprobante.html', {'form': form})
+
+# Nueva función: Descargar archivos desde Google Drive
+def descargar_archivos_nube(request):
+    try:
+        drive_files = search_files_in_drive(settings.DRIVE_FOLDER_ID)
+        service = get_drive_service()
+
+        if not drive_files:
+            logger.info("No se encontraron archivos en la carpeta de Google Drive.")
+            return HttpResponse("No se encontraron archivos en la carpeta de Google Drive.")
+
+        logger.info(f"Archivos encontrados: {drive_files}")
+
+        ruta_descarga = os.path.join(settings.MEDIA_ROOT, 'documentos', 'descargados')
+        if not os.path.exists(ruta_descarga):
+            os.makedirs(ruta_descarga)
+
+        for file in drive_files:
+            try:
+                file_id = file['id']
+                file_name = file['name']
+                file_data = download_file(service, file_id)
+
+                if file_data:
+                    # Obtener la fecha de subida y formatearla
+                    created_time = file.get('createdTime', '')
+                    fecha_formateada = datetime.strptime(created_time, "%Y-%m-%dT%H:%M:%S.%fZ").strftime("%Y-%m-%d_%H-%M-%S")
+
+                    # Renombrar el archivo con el formato deseado
+                    nuevo_nombre = f"bethania-{fecha_formateada}{os.path.splitext(file_name)[1]}"  # Mantiene la extensión original
+
+                    archivo_path = os.path.join(ruta_descarga, nuevo_nombre)
+                    with open(archivo_path, 'wb') as archivo_local:  # 'wb' para escribir en modo binario
+                        archivo_local.write(file_data)  # Escribimos los bytes directamente
+                    logger.info(f"Archivo {file_name} descargado exitosamente como {nuevo_nombre}.")
+                else:
+                    logger.error(f"No se pudo obtener el contenido del archivo {file_name}.")
+            except Exception as e:
+                logger.error(f"Error descargando archivo {file_name}: {e}")
+                return HttpResponse(f"Error descargando archivo {file_name}: {e}")
+
+        return HttpResponse(f"Archivos descargados exitosamente en la carpeta {ruta_descarga}.")
+    except Exception as e:
+        logger.error(f"Error en la descarga de archivos: {e}")
+        return HttpResponse(f"Error en la descarga de archivos: {e}")
+
+# Nueva función: Vaciar la carpeta de Google Drive
+def vaciar_carpeta_drive(request):
+    try:
+        service = get_drive_service()
+        folder_id = settings.DRIVE_FOLDER_ID
+        results = service.files().list(q=f"'{folder_id}' in parents").execute()
+        files = results.get('files', [])
+
+        for file in files:
+            try:
+                service.files().delete(fileId=file['id']).execute()
+            except Exception as error:
+                logger.error(f"Error al eliminar el archivo {file['name']}: {error}")
+
+        return JsonResponse({'mensaje': 'Carpeta vaciada correctamente.'})
+    except Exception as e:
+        logger.error(f"Error vaciando la carpeta: {e}")
+        return HttpResponse(f"Error vaciando la carpeta: {e}")

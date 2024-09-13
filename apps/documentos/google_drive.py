@@ -13,7 +13,7 @@ from django.conf import settings
 # Configura la ruta a tu archivo de credenciales
 CREDENTIALS_FILE = settings.GOOGLE_CREDENTIALS
 
-SCOPES = ['https://www.googleapis.com/auth/drive.readonly']
+SCOPES = ['https://www.googleapis.com/auth/drive']
 
 # Configura el logging
 logging.basicConfig(level=logging.INFO)
@@ -74,10 +74,9 @@ def download_file(service, file_id):
         logger.error(f"Error descargando archivo: {e}")
         return None
 
-
 def extract_text_from_pdf(file_data):
     try:
-        pdf = PdfReader(file_data)
+        pdf = PdfReader(BytesIO(file_data))
         text = ""
         for page in pdf.pages:
             text += page.extract_text()
@@ -88,7 +87,7 @@ def extract_text_from_pdf(file_data):
 
 def extract_text_from_image(file_data):
     try:
-        image = Image.open(file_data)
+        image = Image.open(BytesIO(file_data))
         text = pytesseract.image_to_string(image)
         return text
     except Exception as e:
@@ -97,7 +96,7 @@ def extract_text_from_image(file_data):
 
 def extract_text_from_docx(file_data):
     try:
-        doc = docx.Document(file_data)
+        doc = docx.Document(BytesIO(file_data))
         full_text = []
         for para in doc.paragraphs:
             full_text.append(para.text)
@@ -108,7 +107,7 @@ def extract_text_from_docx(file_data):
 
 def extract_text_from_xlsx(file_data):
     try:
-        wb = openpyxl.load_workbook(file_data, data_only=True)
+        wb = openpyxl.load_workbook(BytesIO(file_data), data_only=True)
         text = []
         for sheet in wb.worksheets:
             for row in sheet.iter_rows(values_only=True):
@@ -129,3 +128,30 @@ def extract_text_from_file(file_data, mime_type):
         return extract_text_from_xlsx(file_data)
     else:
         return ""
+
+def vaciar_carpeta_drive(folder_id):
+    try:
+        service = get_drive_service()
+        if not service:
+            return "Error al autenticar con Google Drive"
+
+        # Listar todos los archivos en la carpeta
+        archivos = service.files().list(q=f"'{folder_id}' in parents").execute().get('files', [])
+
+        if not archivos:
+            logger.info("No se encontraron archivos en la carpeta de Google Drive.")
+            return "No se encontraron archivos en la carpeta."
+
+        # Eliminar todos los archivos encontrados
+        for archivo in archivos:
+            try:
+                file_id = archivo['id']
+                service.files().delete(fileId=file_id).execute()
+                logger.info(f"Archivo {archivo['name']} eliminado exitosamente.")
+            except Exception as e:
+                logger.error(f"Error eliminando archivo {archivo['name']}: {e}")
+
+        return "Todos los archivos fueron eliminados exitosamente."
+    except Exception as e:
+        logger.error(f"Error vaciando la carpeta de Google Drive: {e}")
+        return f"Error vaciando la carpeta: {e}"

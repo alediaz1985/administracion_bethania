@@ -3,7 +3,6 @@
 
 {% block title %}Consulta de Comprobante{% endblock %}
 
-
 {% block extra_css %}
 <link rel="stylesheet" type="text/css" href="{% static 'cuotas/css/cuotas.css' %}">
 {% endblock %}
@@ -16,9 +15,15 @@
     <button type="submit">Buscar</button>
 </form>
 
-<!-- Aquí va el formulario para descargar archivos correctamente estructurado -->
+<!-- Formulario para descargar archivos de Google Drive -->
 <form method="get" action="{% url 'descargar_archivos_nube' %}">
     <button type="submit">Descargar Archivos de la Nube</button>
+</form>
+
+<!-- Formulario para vaciar la carpeta de Google Drive -->
+<form method="post" action="{% url 'vaciar_carpeta_drive' %}">
+    {% csrf_token %}
+    <button type="submit">Vaciar Carpeta de Google Drive</button>
 </form>
 
 {% if resultados %}
