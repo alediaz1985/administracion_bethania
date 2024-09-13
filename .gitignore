@@ -55,3 +55,7 @@ __pycache__/
 *.pyc
 *.pyc
 administracion_bethania/__pycache__/middleware.cpython-312.pyc
+apps/documentos/__pycache__/google_drive.cpython-312.pyc
+apps/documentos/__pycache__/google_drive.cpython-312.pyc
+apps/documentos/__pycache__/urls.cpython-312.pyc
+apps/documentos/__pycache__/views1.cpython-312.pyc
