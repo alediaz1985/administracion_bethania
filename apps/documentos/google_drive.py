@@ -74,6 +74,7 @@ def download_file(service, file_id):
         logger.error(f"Error descargando archivo: {e}")
         return None
 
+
 def extract_text_from_pdf(file_data):
     try:
         pdf = PdfReader(file_data)

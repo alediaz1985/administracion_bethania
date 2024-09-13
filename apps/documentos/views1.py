@@ -11,6 +11,7 @@ import re
 import docx
 import openpyxl
 from datetime import datetime
+
 from django.http import HttpResponse
 
 # Configura el logging
@@ -180,7 +181,6 @@ def subir_comprobante_view(request):
 
 def descargar_archivos_nube(request):
     try:
-        # Obtener los archivos desde Google Drive
         drive_files = search_files_in_drive(settings.DRIVE_FOLDER_ID)
         service = get_drive_service()
 
@@ -190,31 +190,22 @@ def descargar_archivos_nube(request):
 
         logger.info(f"Archivos encontrados: {drive_files}")
 
-        # Ruta donde se guardarán los archivos
         ruta_descarga = os.path.join(settings.MEDIA_ROOT, 'documentos', 'descargados')
         if not os.path.exists(ruta_descarga):
             os.makedirs(ruta_descarga)
 
+        # Aquí es donde debes actualizar el ciclo for con las nuevas instrucciones
         for file in drive_files:
             try:
                 file_id = file['id']
                 file_name = file['name']
-                file_data = download_file(service, file_id)  # Descarga el archivo desde Google Drive
-
+                file_data = download_file(service, file_id)  # Usamos la función corregida
+                
                 if file_data:
-                    # Obtener la fecha de creación del archivo y formatearla
-                    created_time = file.get('createdTime', '')
-                    fecha_formateada = datetime.strptime(created_time, "%Y-%m-%dT%H:%M:%S.%fZ").strftime("%Y-%m-%d_%H-%M-%S")
-
-                    # Crear el nuevo nombre con el formato "bethania-fecha"
-                    extension = os.path.splitext(file_name)[1]  # Mantener la extensión del archivo original
-                    nuevo_nombre = f"bethania-{fecha_formateada}{extension}"
-
-                    # Guardar el archivo con el nuevo nombre
-                    archivo_path = os.path.join(ruta_descarga, nuevo_nombre)
-                    with open(archivo_path, 'wb') as archivo_local:
-                        archivo_local.write(file_data)  # Escribir los bytes en el archivo
-                    logger.info(f"Archivo {file_name} descargado exitosamente como {nuevo_nombre}.")
+                    archivo_path = os.path.join(ruta_descarga, file_name)
+                    with open(archivo_path, 'wb') as archivo_local:  # 'wb' para escribir en modo binario
+                        archivo_local.write(file_data)  # Escribimos los bytes directamente
+                    logger.info(f"Archivo {file_name} descargado exitosamente.")
                 else:
                     logger.error(f"No se pudo obtener el contenido del archivo {file_name}.")
             except Exception as e:
@@ -225,6 +216,3 @@ def descargar_archivos_nube(request):
     except Exception as e:
         logger.error(f"Error en la descarga de archivos: {e}")
         return HttpResponse(f"Error en la descarga de archivos: {e}")
-    
-
-    
