@@ -61,13 +61,15 @@ def search_files_in_drive(folder_id, mime_types=None):
 def download_file(service, file_id):
     try:
         request = service.files().get_media(fileId=file_id)
-        file_data = BytesIO()
+        file_data = BytesIO()  # Creamos un BytesIO para almacenar los datos descargados
         downloader = MediaIoBaseDownload(file_data, request)
         done = False
-        while done is False:
+        while not done:
             status, done = downloader.next_chunk()
-        file_data.seek(0)
-        return file_data
+        
+        file_data.seek(0)  # Nos aseguramos de posicionarnos al principio del archivo
+        
+        return file_data.read()  # Aquí devolvemos los datos en formato de bytes
     except Exception as e:
         logger.error(f"Error descargando archivo: {e}")
         return None

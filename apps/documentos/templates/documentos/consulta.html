@@ -16,6 +16,16 @@
     <button type="submit">Buscar</button>
 </form>
 
+<!-- Aquí va el formulario para descargar archivos correctamente estructurado -->
+<form method="get" action="{% url 'descargar_archivos_nube' %}">
+    <button type="submit">Descargar Archivos de la Nube</button>
+</form>
+
+<form method="post" action="{% url 'vaciar_carpeta_drive' %}"></form>
+    {% csrf_token %}
+    <button type="submit">Vaciar Carpeta de Google Drive</button>
+</form>
+
 {% if resultados %}
 <h2>Resultados de la búsqueda</h2>
 <p>Cantidad de archivos encontrados: {{ cantidad_archivos }}</p>

@@ -52,3 +52,6 @@ credentials.json
 # Ignorar archivos Python (Compiled files)
 *.pyc
 __pycache__/
+*.pyc
+*.pyc
+administracion_bethania/__pycache__/middleware.cpython-312.pyc
