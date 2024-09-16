@@ -77,16 +77,26 @@ body {
 }
 
 .alumnos-btn {
-    padding: 15px 25px;
-    background: linear-gradient(90deg, red, blue);
+    padding: 10px 20px;
+    background-color: #4CAF50; /* Verde suave */
     color: white;
     border: none;
     cursor: pointer;
     border-radius: 5px;
+    transition: all 0.3s ease; /* Transición suave para todos los efectos */
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Sombra sutil inicial */
 }
 
 .alumnos-btn:hover {
-    background: linear-gradient(90deg, blue, red);
+    background-color: #3e8e41; /* Verde más oscuro elegante */
+    transform: translateY(-3px); /* Efecto de "levantamiento" al pasar el mouse */
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2); /* Sombra más marcada */
+}
+
+.alumnos-btn:active {
+    background-color: #357a38; /* Verde aún más oscuro al hacer clic */
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Sombra más ligera al presionar */
+    transform: translateY(0); /* Efecto de "presión" */
 }
 
 .alumnos-details-row {
