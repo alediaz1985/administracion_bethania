@@ -51,16 +51,25 @@ h1 {
 .button-submit {
     display: inline-block;
     padding: 10px 20px;
-    background: linear-gradient(90deg, red, blue);
+    background-color: #4CAF50; /* Verde suave */
     color: white;
     text-decoration: none;
     border-radius: 5px;
-    transition: background-color 0.3s ease;
+    transition: all 0.3s ease; /* Transición suave para todos los efectos */
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Sombra sutil inicial */
     font-size: 16px;
 }
 
 .button-submit:hover {
-    background: linear-gradient(90deg, blue, red);
+    background-color: #3e8e41; /* Verde más oscuro elegante */
+    transform: translateY(-3px); /* Efecto de "levantamiento" al pasar el mouse */
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2); /* Sombra más marcada */
+}
+
+.button-submit:active {
+    background-color: #357a38; /* Verde aún más oscuro al hacer clic */
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Sombra más ligera al presionar */
+    transform: translateY(0); /* Efecto de "presión" */
 }
 
 /* Para pantallas de entre 1366px y 1024px */
