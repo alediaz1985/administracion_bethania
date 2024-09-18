@@ -135,6 +135,7 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 LOGIN_URL = 'iniciar_sesion'
 
 
+
 GOOGLE_CREDENTIALS = os.path.join(BASE_DIR, 'credentials.json')
 
 #DRIVE_FOLDER_ID = '1lyxImVDTJt9Q2P9QDm0M_wHz9jgodfGp'

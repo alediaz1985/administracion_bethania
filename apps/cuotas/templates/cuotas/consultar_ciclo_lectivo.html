@@ -24,14 +24,14 @@
     <button type="submit">Consultar</button>
 </form>
 
-<!-- Si se ha seleccionado un ciclo lectivo, mostrar sus detalles -->
+<!-- Mostrar detalles solo si se ha seleccionado un ciclo -->
 {% if ciclo_seleccionado %}
     <h2>Detalles del Ciclo Lectivo {{ ciclo_seleccionado.año_lectivo }}</h2>
     <p><strong>Fecha de Inicio:</strong> {{ ciclo_seleccionado.fecha_inicio }}</p>
     <p><strong>Fecha de Fin:</strong> {{ ciclo_seleccionado.fecha_fin }}</p>
     <p><strong>Monto de Inscripción:</strong> ${{ ciclo_seleccionado.monto_inscripcion }}</p>
     <p><strong>Monto de la Cuota Mensual:</strong> ${{ ciclo_seleccionado.monto_cuota }}</p>
-{% else %}
-    <p>No se ha seleccionado ningún ciclo lectivo.</p>
+{% elif request.GET.ciclo_lectivo_id %}
+    <p>No se encontró ningún ciclo lectivo con ese ID.</p>
 {% endif %}
 {% endblock %}
