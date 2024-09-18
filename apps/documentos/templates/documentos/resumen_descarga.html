@@ -1,0 +1,30 @@
+{% extends 'base.html' %}
+
+{% block title %}Resumen de Descargas{% endblock %}
+
+{% load static %}
+
+{% block extra_styles %}
+<link rel="stylesheet" href="{% static 'cuotas/css/cuotas.css' %}">
+{% endblock %}
+
+{% block content %}
+
+<h1>Resumen de Descarga</h1>
+    <h2>Archivos descargados:</h2>
+    <ul>
+        {% for archivo in archivos_descargados %}
+            <li>{{ archivo }}</li>
+        {% endfor %}
+    </ul>
+
+    <h2>Archivos omitidos (ya descargados):</h2>
+    <ul>
+        {% for archivo in archivos_omitidos %}
+            <li>{{ archivo }}</li>
+        {% endfor %}
+    </ul>
+
+    <a href="{% url 'consulta' %}">Volver a la consulta</a>
+
+{% endblock %}

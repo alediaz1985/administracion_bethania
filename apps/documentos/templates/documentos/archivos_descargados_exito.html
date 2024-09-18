@@ -1,0 +1,37 @@
+{% extends 'base.html' %}
+
+{% block title %}Archivos Descargados{% endblock %}
+
+{% load static %}
+
+{% block extra_styles %}
+<link rel="stylesheet" href="{% static 'cuotas/css/cuotas.css' %}">
+{% endblock %}
+
+{% block content %}
+
+<div class="container">    
+    {% if archivos_descargados %}
+        <h2>Archivos Descargados Exitosamente:</h2>
+        <ul>
+            {% for archivo in archivos_descargados %}
+            <li>{{ archivo }}</li>
+            {% endfor %}
+        </ul>
+    {% else %}
+        <p>No se descargaron archivos nuevos.</p>
+    {% endif %}
+
+    {% if archivos_omitidos %}
+        <h2>Archivos Omitidos (Ya descargados):</h2>
+        <ul>
+            {% for archivo in archivos_omitidos %}
+            <li>{{ archivo }}</li>
+            {% endfor %}
+        </ul>
+    {% endif %}
+
+    <a href="{% url 'home' %}">Volver a la página principal</a>
+</div>
+
+{% endblock %}

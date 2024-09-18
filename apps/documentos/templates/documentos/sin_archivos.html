@@ -1,0 +1,16 @@
+{% extends 'base.html' %}
+
+{% block title %}Sin archivos{% endblock %}
+
+{% load static %}
+
+{% block extra_styles %}
+<link rel="stylesheet" href="{% static 'cuotas/css/cuotas.css' %}">
+{% endblock %}
+
+{% block content %}
+
+<h1>No se encontraron archivos en la carpeta de Google Drive</h1>
+    <a href="{% url 'consulta' %}">Volver a la consulta</a>
+
+{% endblock %}
