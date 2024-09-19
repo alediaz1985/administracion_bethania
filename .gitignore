@@ -48,6 +48,7 @@ node_modules/
 
 # Configuración de Google Drive
 credentials.json
+token.json
 
 # Ignorar archivos Python (Compiled files)
 *.pyc
