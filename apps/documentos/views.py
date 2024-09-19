@@ -20,7 +20,6 @@ from .google_drive import get_drive_service, search_files_in_drive
 
 from django.contrib.auth.decorators import user_passes_test
 
-
 # Configura el logging
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
@@ -32,19 +31,20 @@ def preprocess_image(image_path):
         image = Image.open(image_path)
         # Convertir la imagen a escala de grises
         image = image.convert('L')
-        # Binarizar la imagen usando un umbral
-        binarized_image = image.point(lambda x: 0 if x < 128 else 255, '1')
-        return binarized_image
+        # Aplicar filtros adicionales si es necesario
+        image = image.point(lambda x: 0 if x < 150 else 255, '1')  # Cambiar umbral según necesidad
+        return image
     except Exception as e:
         logger.error(f"Error al preprocesar la imagen {image_path}: {e}")
         return None
     
 def extract_text_from_image(image_path):
     try:
-        image = Image.open(image_path)
-        # Usar un idioma específico (por ejemplo, español) o configuraciones personalizadas
-        config = '--oem 3 --psm 6'  # Puedes cambiar las configuraciones aquí
-        text = pytesseract.image_to_string(image, config=config, lang='spa')
+        # Asegúrate de que las rutas sean válidas
+        image = Image.open(rf'{image_path}')
+        # Configuraciones de Tesseract
+        config = '--oem 3 --psm 6'  # Puedes ajustar estos valores según la imagen
+        text = pytesseract.image_to_string(image, config=config, lang='spa')  # Especifica el idioma
         return text
     except Exception as e:
         logger.error(f"Error al extraer texto de la imagen {image_path}: {e}")
@@ -86,13 +86,28 @@ def extract_text_from_xlsx(xlsx_path):
         return ""
 
 def limpiar_texto(texto):
-    """Elimina caracteres no alfanuméricos pero conserva letras, números y espacios."""
-    return re.sub(r'[^A-Za-z0-9\s]', '', texto).lower()
+    """Elimina caracteres especiales y convierte el texto a minúsculas para una comparación más robusta."""
+    return re.sub(r'[^A-Za-z0-9\s]', '', texto).strip().lower()
 
 def buscar_termino(texto, consulta):
+    """Realiza la búsqueda del término en el texto. Considera palabras similares o cercanas."""
     texto_limpio = limpiar_texto(texto)
     consulta_limpia = limpiar_texto(consulta)
-    return consulta_limpia in texto_limpio
+
+    # Compara si la consulta está dentro del texto limpiado
+    if consulta_limpia in texto_limpio:
+        return True
+    
+    # Intenta dividir el texto y comparar las palabras
+    texto_palabras = texto_limpio.split()
+    consulta_palabras = consulta_limpia.split()
+    
+    # Compara por palabras individuales
+    for palabra in consulta_palabras:
+        if any(palabra in palabra_texto for palabra_texto in texto_palabras):
+            return True
+    
+    return False
 
 def consulta_view(request):
     resultados = None
@@ -202,6 +217,88 @@ from django.shortcuts import render
 def archivo_existe(ruta_descarga, nombre_archivo):
     archivo_path = os.path.join(ruta_descarga, nombre_archivo)
     return os.path.exists(archivo_path)
+
+def obtener_ruta_archivo(file_name):
+    # Ruta en /media/documentos
+    ruta_documentos = os.path.join(settings.MEDIA_ROOT, 'documentos', file_name)
+    
+    # Ruta en /media/documentos/descargados
+    ruta_descargados = os.path.join(settings.MEDIA_ROOT, 'documentos', 'descargados', file_name)
+    
+    # Verificar si el archivo existe en alguna de las dos rutas
+    if os.path.exists(ruta_documentos):
+        return os.path.join(settings.MEDIA_URL, 'documentos', file_name)
+    elif os.path.exists(ruta_descargados):
+        return os.path.join(settings.MEDIA_URL, 'documentos', 'descargados', file_name)
+    else:
+        return None
+
+# En tu lógica actual, reemplaza la generación de la URL del archivo
+def consulta_view(request):
+    resultados = None
+    cantidad_archivos = 0
+    search_done = False
+
+    if request.method == 'POST':
+        form = ConsultaForm(request.POST)
+        if form.is_valid():
+            search_done = True
+            consulta = form.cleaned_data['consulta']
+            origen = form.cleaned_data['origen']
+            logger.info(f"Consulta: {consulta}, Origen: {origen}")
+            resultados = []
+
+            if origen == 'drive':
+                # Código para buscar en Google Drive
+                pass
+            elif origen == 'local':
+                archivos_dir = settings.ARCHIVOS_DIR
+                for root, dirs, files in os.walk(archivos_dir):
+                    for file_name in files:
+                        try:
+                            archivo_path = os.path.join(root, file_name)
+                            mime_type = None
+                            texto = ""
+
+                            # Extraer texto según el tipo de archivo
+                            if file_name.lower().endswith('.pdf'):
+                                mime_type = 'application/pdf'
+                                texto = extract_text_from_pdf(archivo_path)
+                            elif file_name.lower().endswith(('.png', '.jpg', '.jpeg')):
+                                mime_type = 'image/jpeg'
+                                texto = extract_text_from_image(archivo_path)
+                            elif file_name.lower().endswith('.docx'):
+                                mime_type = 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'
+                                texto = extract_text_from_docx(archivo_path)
+                            elif file_name.lower().endswith('.xlsx'):
+                                mime_type = 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+                                texto = extract_text_from_xlsx(archivo_path)
+
+                            # Si se encuentra el término en el texto
+                            if buscar_termino(texto, consulta):
+                                ruta_archivo = obtener_ruta_archivo(file_name)
+                                if ruta_archivo:
+                                    fecha_modificacion = datetime.fromtimestamp(os.path.getmtime(archivo_path)).strftime('%d/%m/%Y')
+                                    resultados.append({
+                                        'nombre': file_name,
+                                        'url': ruta_archivo,
+                                        'fecha': fecha_modificacion
+                                    })
+                        except Exception as e:
+                            logger.error(f"Error procesando archivo {file_name}: {e}")
+
+            cantidad_archivos = len(resultados)
+
+    else:
+        form = ConsultaForm()
+
+    context = {
+        'form': form,
+        'resultados': resultados if resultados else None,
+        'cantidad_archivos': cantidad_archivos,
+        'search_done': search_done
+    }
+    return render(request, 'documentos/consulta.html', context)
 
 # Nueva función: Descargar archivos desde Google Drive
 def descargar_archivos_nube(request):
