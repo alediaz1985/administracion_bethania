@@ -20,6 +20,33 @@ from .google_drive import get_drive_service, search_files_in_drive
 
 from django.contrib.auth.decorators import user_passes_test
 
+from google.oauth2.credentials import Credentials
+from googleapiclient.discovery import build
+from googleapiclient.errors import HttpError
+
+# Configurar ruta al token
+TOKEN_PATH = os.path.join(settings.BASE_DIR, 'token.json')
+
+def get_drive_service():
+    """Obtiene el servicio autenticado de Google Drive usando el token"""
+    creds = None
+    if os.path.exists(TOKEN_PATH):
+        creds = Credentials.from_authorized_user_file(TOKEN_PATH, scopes=['https://www.googleapis.com/auth/drive'])
+    
+    if not creds or not creds.valid:
+        if creds and creds.expired and creds.refresh_token:
+            creds.refresh(Request())
+        else:
+            raise Exception("No se pudo autenticar con el token de Google Drive.")
+
+    # Construir el servicio
+    try:
+        service = build('drive', 'v3', credentials=creds)
+        return service
+    except HttpError as error:
+        logger.error(f"Error al construir el servicio de Google Drive: {error}")
+        return None
+
 # Configura el logging
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
@@ -119,37 +146,40 @@ def consulta_view(request):
         if form.is_valid():
             search_done = True
             consulta = form.cleaned_data['consulta']
-            origen = form.cleaned_data['origen']
+            origen = form.cleaned_data.get('origen', 'local')  # Si no se selecciona origen, usa 'local' como predeterminado
             logger.info(f"Consulta: {consulta}, Origen: {origen}")
             resultados = []
 
+            # Si el origen es Google Drive
             if origen == 'drive':
-                drive_files = search_files_in_drive(settings.DRIVE_FOLDER_ID)
+                # Obtener el servicio autenticado de Google Drive
                 service = get_drive_service()
+                if service:
+                    drive_files = search_files_in_drive(service)
+                    if not drive_files:
+                        logger.info("No se encontraron archivos en la carpeta de Google Drive.")
+                    else:
+                        for file in drive_files:
+                            try:
+                                file_id = file['id']
+                                file_name = file['name']
+                                mime_type = file['mimeType']
+                                created_time = file['createdTime']
+                                created_time_formatted = datetime.strptime(created_time, '%Y-%m-%dT%H:%M:%S.%fZ').strftime('%d/%m/%Y')
+                                web_view_link = file.get('webViewLink', '#')
+                                file_data = download_file(service, file_id)
+                                if file_data:
+                                    texto = extract_text_from_file(file_data, mime_type)
+                                    if buscar_termino(texto, consulta):
+                                        resultados.append({
+                                            'nombre': file_name,
+                                            'url': web_view_link,
+                                            'fecha': created_time_formatted
+                                        })
+                            except Exception as e:
+                                logger.error(f"Error procesando archivo {file_name}: {e}")
 
-                if not drive_files:
-                    logger.info("No se encontraron archivos en la carpeta de Google Drive.")
-                else:
-                    for file in drive_files:
-                        try:
-                            file_id = file['id']
-                            file_name = file['name']
-                            mime_type = file['mimeType']
-                            created_time = file['createdTime']
-                            created_time_formatted = datetime.strptime(created_time, '%Y-%m-%dT%H:%M:%S.%fZ').strftime('%d/%m/%Y')
-                            web_view_link = file.get('webViewLink', '#')
-                            file_data = download_file(service, file_id)
-                            if file_data:
-                                texto = extract_text_from_file(file_data, mime_type)
-                                if buscar_termino(texto, consulta):
-                                    resultados.append({
-                                        'nombre': file_name,
-                                        'url': web_view_link,
-                                        'fecha': created_time_formatted
-                                    })
-                        except Exception as e:
-                            logger.error(f"Error procesando archivo {file_name}: {e}")
-
+            # Por defecto o si el origen es local
             elif origen == 'local':
                 archivos_dir = settings.ARCHIVOS_DIR
                 for root, dirs, files in os.walk(archivos_dir):
@@ -194,6 +224,7 @@ def consulta_view(request):
         'search_done': search_done
     }
     return render(request, 'documentos/consulta.html', context)
+
 
 
 
