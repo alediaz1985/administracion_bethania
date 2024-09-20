@@ -3,33 +3,49 @@ from apps.administracion_alumnos.models import Alumno
 from .models import CicloLectivo, Inscripcion, Cuota, Pago
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib import messages
+from django.utils import timezone
 
 # Habilitar Ciclo Lectivo
 def habilitar_ciclo_lectivo(request):
+    error = None
+    success = None
+    current_year = timezone.now().year  # Obtener el año actual
+
     if request.method == 'POST':
         año_lectivo = request.POST.get('año_lectivo')
         fecha_inicio = request.POST.get('fecha_inicio')
         fecha_fin = request.POST.get('fecha_fin')
         monto_inscripcion = request.POST.get('monto_inscripcion')
-        monto_cuota = request.POST.get('monto_cuota')  # Nuevo campo para el monto de la cuota mensual
+        monto_cuota = request.POST.get('monto_cuota')
 
+        # Validación: Verificar si los montos de inscripción y cuota están vacíos
         if not monto_inscripcion or not monto_cuota:
-            return render(request, 'cuotas/habilitar_ciclo_lectivo.html', {
-                'error': 'El monto de inscripción y el monto de la cuota son obligatorios.'
-            })
+            error = 'El monto de inscripción y el monto de la cuota son obligatorios.'
+        
+        # Validación: Verificar que el año lectivo sea de 4 dígitos y sea igual al año actual o al siguiente
+        elif not año_lectivo.isdigit() or len(año_lectivo) != 4 or int(año_lectivo) < current_year or int(año_lectivo) > current_year + 1:
+            error = f"El año lectivo debe ser {current_year} o {current_year + 1}."
+        
+        # Validación: Verificar si el ciclo lectivo ya existe
+        elif CicloLectivo.objects.filter(año_lectivo=año_lectivo).exists():
+            error = f'El ciclo lectivo {año_lectivo} ya existe.'
 
-        # Crear un nuevo ciclo lectivo con el monto de inscripción y de la cuota mensual
-        CicloLectivo.objects.create(
-            año_lectivo=año_lectivo,
-            fecha_inicio=fecha_inicio,
-            fecha_fin=fecha_fin,
-            monto_inscripcion=monto_inscripcion,
-            monto_cuota=monto_cuota  # Guardar el monto de la cuota mensual
-        )
-
-        return redirect('habilitar_ciclo_lectivo')
-
-    return render(request, 'cuotas/habilitar_ciclo_lectivo.html')
+        else:
+            # Si todas las validaciones son exitosas, crear el ciclo lectivo
+            CicloLectivo.objects.create(
+                año_lectivo=año_lectivo,
+                fecha_inicio=fecha_inicio,
+                fecha_fin=fecha_fin,
+                monto_inscripcion=monto_inscripcion,
+                monto_cuota=monto_cuota
+            )
+            success = f'El ciclo lectivo {año_lectivo} ha sido habilitado correctamente.'
+    
+    # Renderizar el template con el contexto de éxito o error
+    return render(request, 'cuotas/habilitar_ciclo_lectivo.html', {
+        'error': error,
+        'success': success
+    })
 
 #Consultar Ciclo Lectivo
 def consultar_ciclo_lectivo(request):
