@@ -6,30 +6,41 @@ from google_auth_oauthlib.flow import InstalledAppFlow
 from google.auth.transport.requests import Request
 from googleapiclient.errors import HttpError
 from googleapiclient.http import MediaIoBaseDownload
+from django.conf import settings
 
-# Configurar el logging
+# Define el TOKEN_PATH usando settings.BASE_DIR
+TOKEN_PATH = os.path.join(settings.BASE_DIR, 'token.json')
+
+# Configuración del logger
 logger = logging.getLogger(__name__)
 
 # Scope requerido para la gestión completa de Google Drive (incluye eliminación)
 SCOPES = ['https://www.googleapis.com/auth/drive']
 
 def get_drive_service():
-    """Autentica con Google Drive y devuelve el servicio."""
+    """Obtiene el servicio autenticado de Google Drive usando el token"""
     creds = None
-    if os.path.exists('token.json'):
-        creds = Credentials.from_authorized_user_file('token.json', SCOPES)
+    if os.path.exists(TOKEN_PATH):
+        creds = Credentials.from_authorized_user_file(TOKEN_PATH, SCOPES)
     
     if not creds or not creds.valid:
         if creds and creds.expired and creds.refresh_token:
             creds.refresh(Request())
         else:
-            flow = InstalledAppFlow.from_client_secrets_file('credentials.json', SCOPES)
+            # Si no hay token, iniciamos el flujo de autenticación
+            flow = InstalledAppFlow.from_client_secrets_file(
+                settings.GOOGLE_CREDENTIALS, SCOPES)
             creds = flow.run_local_server(port=0)
-        with open('token.json', 'w') as token:
-            token.write(creds.to_json())
-    
-    service = build('drive', 'v3', credentials=creds)
-    return service
+            # Guardamos el token en un archivo
+            with open(TOKEN_PATH, 'w') as token:
+                token.write(creds.to_json())
+
+    try:
+        service = build('drive', 'v3', credentials=creds)
+        return service
+    except Exception as error:
+        logger.error(f"Error al construir el servicio de Google Drive: {error}")
+        return None
 
 def asignar_permisos(service, file_id, email_user):
     """Asigna permisos de escritura a la cuenta para un archivo."""
@@ -48,8 +59,8 @@ def asignar_permisos(service, file_id, email_user):
     except Exception as e:
         logger.error(f"Error al otorgar permisos al archivo {file_id}: {e}")
 
+# Función para eliminar archivos de una carpeta de Google Drive
 def vaciar_carpeta_drive(folder_id):
-    """Elimina todos los archivos de una carpeta en Google Drive."""
     try:
         service = get_drive_service()
         if not service:
@@ -64,24 +75,9 @@ def vaciar_carpeta_drive(folder_id):
 
         # Eliminar todos los archivos encontrados
         for archivo in archivos:
-            try:
-                file_id = archivo['id']
-                try:
-                    # Intentamos eliminar el archivo
-                    service.files().delete(fileId=file_id).execute()
-                    logger.info(f"Archivo {archivo['name']} eliminado exitosamente.")
-                except HttpError as e:
-                    # Si ocurre un error de permisos, intentamos asignar permisos de escritura
-                    if 'insufficientFilePermissions' in str(e):
-                        logger.warning(f"Permisos insuficientes para eliminar el archivo {archivo['name']}. Intentando asignar permisos...")
-                        asignar_permisos(service, file_id, "tu_email@gmail.com")  # Aquí usa el correo de la cuenta de servicio o usuario autenticado
-                        # Luego de asignar permisos, intentamos eliminar el archivo de nuevo
-                        service.files().delete(fileId=file_id).execute()
-                        logger.info(f"Archivo {archivo['name']} eliminado exitosamente tras otorgar permisos.")
-                    else:
-                        raise e
-            except Exception as e:
-                logger.error(f"Error eliminando archivo {archivo['name']}: {e}")
+            file_id = archivo['id']
+            service.files().delete(fileId=file_id).execute()
+            logger.info(f"Archivo {archivo['name']} eliminado exitosamente.")
 
         return "Todos los archivos fueron eliminados exitosamente."
     except Exception as e:
@@ -96,7 +92,7 @@ def descargar_archivo(service, file_id, nombre_archivo, ruta_descarga):
         with open(archivo_path, 'wb') as fh:
             downloader = MediaIoBaseDownload(fh, request)
             done = False
-            while done is False:
+            while not done:
                 status, done = downloader.next_chunk()
                 logger.info(f"Descargando {nombre_archivo}: {int(status.progress() * 100)}%.")
         logger.info(f"Archivo {nombre_archivo} descargado correctamente.")
