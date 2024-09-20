@@ -139,12 +139,15 @@ def consulta_view(request):
                             texto = extract_text_from_xlsx(archivo_path)
 
                         if buscar_termino(texto, consulta):
-                            fecha_modificacion = datetime.fromtimestamp(os.path.getmtime(archivo_path)).strftime('%d/%m/%Y')
-                            resultados.append({
-                                'nombre': file_name,
-                                'url': f"{settings.MEDIA_URL}documentos/{file_name}",
-                                'fecha': fecha_modificacion
-                            })
+                            # Verificar si el archivo está en la carpeta de documentos o descargados
+                            ruta_archivo = obtener_ruta_archivo(file_name)
+                            if ruta_archivo:
+                                fecha_modificacion = datetime.fromtimestamp(os.path.getmtime(archivo_path)).strftime('%d/%m/%Y')
+                                resultados.append({
+                                    'nombre': file_name,
+                                    'url': ruta_archivo,
+                                    'fecha': fecha_modificacion
+                                })
                     except Exception as e:
                         logger.error(f"Error procesando archivo {file_name}: {e}")
 
@@ -175,16 +178,22 @@ def archivo_existe(ruta_descarga, nombre_archivo):
     archivo_path = os.path.join(ruta_descarga, nombre_archivo)
     return os.path.exists(archivo_path)
 
+# Verifica si el archivo ya existe en la ruta de descarga o en la carpeta principal de documentos.
 def obtener_ruta_archivo(file_name):
+    # Ruta en /media/documentos
     ruta_documentos = os.path.join(settings.MEDIA_ROOT, 'documentos', file_name)
+    
+    # Ruta en /media/documentos/descargados
     ruta_descargados = os.path.join(settings.MEDIA_ROOT, 'documentos', 'descargados', file_name)
-
+    
+    # Verificar si el archivo existe en alguna de las dos rutas
     if os.path.exists(ruta_documentos):
         return os.path.join(settings.MEDIA_URL, 'documentos', file_name)
     elif os.path.exists(ruta_descargados):
         return os.path.join(settings.MEDIA_URL, 'documentos', 'descargados', file_name)
     else:
         return None
+    
 
 # Nueva función: Descargar archivos desde Google Drive
 def descargar_archivos_nube(request):
