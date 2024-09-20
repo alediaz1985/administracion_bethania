@@ -1,3 +1,4 @@
+import re  
 from django.shortcuts import render, get_object_or_404, redirect
 from django.http import HttpResponse, FileResponse
 from .models import Alumno
@@ -73,15 +74,23 @@ def test_view(request):
         output += f"{alumno.id}: {alumno.nombres} {alumno.apellidos} - {alumno.correo_electronico}<br>"
     return HttpResponse(output)
 
+
 def consultar_alumno(request):
     alumno = None
+    error = None
+
     if request.method == "POST":
         cuil = request.POST.get('cuil')
-        try:
-            alumno = Alumno.objects.get(cuil_alumno=cuil)
-        except Alumno.DoesNotExist:
-            return render(request, 'administracion_alumnos/consultar_alumno.html', {'error': 'No se encontró un alumno con ese CUIL'})
-    return render(request, 'administracion_alumnos/consultar_alumno.html', {'alumno': alumno})
+        # Verifica si el CUIL solo contiene dígitos
+        if not cuil or not re.fullmatch(r'\d+', cuil):
+            error = 'El CUIL debe contener solo números y no puede estar vacío.'
+        else:
+            try:
+                alumno = Alumno.objects.get(cuil_alumno=cuil)
+            except Alumno.DoesNotExist:
+                error = 'No se encontró un alumno con ese CUIL.'
+
+    return render(request, 'administracion_alumnos/consultar_alumno.html', {'alumno': alumno, 'error': error})
 
 def registrar_alumno(request):
     if request.method == 'POST':
