@@ -7,10 +7,14 @@ app_name = 'cuotas'
 urlpatterns = [
     path('habilitar_ciclo_lectivo/', views.habilitar_ciclo_lectivo, name='habilitar_ciclo_lectivo'),
     path('consultar_ciclo_lectivo/', views.consultar_ciclo_lectivo, name='consultar_ciclo_lectivo'),
+    path('listar_ciclos_lectivos/', views.listar_ciclos_lectivos, name='listar_ciclos_lectivos'),
+    path('eliminar_ciclo_lectivo/<str:año_lectivo>/', views.eliminar_ciclo_lectivo, name='eliminar_ciclo_lectivo'),
     path('inscribir_alumno/', views.inscribir_alumno, name='inscribir_alumno'),
     path('pago_cuotas/', views.pago_cuotas, name='pago_cuotas'),
     path('consultar_deudas/', views.consultar_deudas, name='consultar_deudas'),
     path('detalle_deuda/<int:alumno_id>/', views.detalle_deuda, name='detalle_deuda'),
+    path('listar_ciclos_lectivos/', views.listar_ciclos_lectivos, name='listar_ciclos_lectivos'),
+    path('listar-alumnos/', views.listar_alumnos_por_ciclo_lectivo, name='listar_alumnos_por_ciclo_lectivo'),
 ]
 
 

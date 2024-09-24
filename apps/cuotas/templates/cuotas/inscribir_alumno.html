@@ -9,20 +9,20 @@
 {% endblock %}
 
 {% block content %}
-    <h1>Inscripción de Alumnos</h1>
-
-    <!-- Mostrar mensajes de éxito o error -->
-    {% if messages %}
-    <ul class="messages">
-        {% for message in messages %}
-        <li class="{{ message.tags }}">{{ message }}</li>
-        {% endfor %}
-    </ul>
-    {% endif %}
+    
+    
 
     <form method="post">
         {% csrf_token %}
-
+        <h1>Inscripción de Alumnos</h1>
+            <!-- Mostrar mensajes de éxito o error -->
+            {% if messages %}
+            <ul class="messages">
+                {% for message in messages %}
+                <li class="{{ message.tags }}">{{ message }}</li>
+                {% endfor %}
+            </ul>
+            {% endif %}
         <label for="alumno_id">Alumno:</label>
         <select name="alumno_id" id="alumno_id" required>
             <option value="">--- Selecciona un alumno ---</option>

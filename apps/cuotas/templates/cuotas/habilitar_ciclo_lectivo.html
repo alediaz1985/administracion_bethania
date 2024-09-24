@@ -9,8 +9,21 @@
 {% endblock %}
 
 {% block content %}
-    <h1>Habilitar Ciclo Lectivo</h1>
 
+
+    <h1>Habilitar Ciclo Lectivo</h1>
+    
+    {% if error %}
+        <div class="alert alert-danger">
+            {{ error }}
+        </div>
+    {% endif %}
+
+    {% if success %}
+        <div class="alert alert-success">
+            {{ success }}
+        </div>
+    {% endif %}
     <form method="post">
         {% csrf_token %}
         
