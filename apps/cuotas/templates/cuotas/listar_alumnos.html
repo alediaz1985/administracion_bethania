@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Listar Alumnos por Ciclo Lectivo</title>
+</head>
+<body>
+    <h1>Seleccionar Ciclo Lectivo</h1>
+
+    <form method="POST">
+        {% csrf_token %}
+        <label for="ciclo_lectivo">Ciclo Lectivo:</label>
+        <select name="ciclo_lectivo" id="ciclo_lectivo">
+            {% for ciclo in ciclos %}
+                <option value="{{ ciclo.id }}">{{ ciclo.año_lectivo }}</option>
+            {% endfor %}
+        </select>
+        <button type="submit">Listar Alumnos</button>
+    </form>
+
+    {% if ciclo_seleccionado %}
+        <h2>Alumnos Inscritos en el Ciclo Lectivo {{ ciclo_seleccionado.año_lectivo }}</h2>
+        <ul>
+            {% if alumnos %}
+                {% for alumno in alumnos %}
+                    <li>{{ alumno.apellidos_alumno }} {{ alumno.nombres_alumno }}</li>
+                {% endfor %}
+            {% else %}
+                <p>No hay alumnos inscritos en este ciclo lectivo.</p>
+            {% endif %}
+        </ul>
+    {% endif %}
+</body>
+</html>

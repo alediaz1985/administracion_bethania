@@ -23,8 +23,9 @@ def habilitar_ciclo_lectivo(request):
             error = 'El monto de inscripción y el monto de la cuota son obligatorios.'
         
         # Validación: Verificar que el año lectivo sea de 4 dígitos y sea igual al año actual o al siguiente
-        elif not año_lectivo.isdigit() or len(año_lectivo) != 4 or int(año_lectivo) < current_year or int(año_lectivo) > current_year + 1:
-            error = f"El año lectivo debe ser {current_year} o {current_year + 1}."
+        elif not año_lectivo or not año_lectivo.isdigit() or len(año_lectivo) != 4 or int(año_lectivo) < current_year or int(año_lectivo) > current_year + 1:
+            error = f"El año lectivo debe ser {current_year} o {current_year + 1}, y debe ser un número de 4 dígitos."
+            print("Error en validación de año lectivo:", error)  # Depuración
         
         # Validación: Verificar si el ciclo lectivo ya existe
         elif CicloLectivo.objects.filter(año_lectivo=año_lectivo).exists():
@@ -41,10 +42,15 @@ def habilitar_ciclo_lectivo(request):
             )
             success = f'El ciclo lectivo {año_lectivo} ha sido habilitado correctamente.'
     
-    # Renderizar el template con el contexto de éxito o error
+    # Siempre renderizamos la página con o sin errores o éxito
     return render(request, 'cuotas/habilitar_ciclo_lectivo.html', {
         'error': error,
-        'success': success
+        'success': success,
+        'año_lectivo': año_lectivo if error else '',  # Para mantener el valor en caso de error
+        'fecha_inicio': fecha_inicio if error else '',
+        'fecha_fin': fecha_fin if error else '',
+        'monto_inscripcion': monto_inscripcion if error else '',
+        'monto_cuota': monto_cuota if error else '',
     })
 
 #Consultar Ciclo Lectivo
@@ -184,3 +190,42 @@ def actualizar_monto_inscripcion(request, ciclo_id):
         return redirect('lista_ciclos')
 
     return render(request, 'cuotas/actualizar_monto.html', {'ciclo': ciclo_lectivo})
+
+# Función para eliminar un ciclo lectivo
+def eliminar_ciclo_lectivo(request, año_lectivo):
+    # Intentamos obtener el ciclo lectivo por año
+    ciclo_lectivo = get_object_or_404(CicloLectivo, año_lectivo=año_lectivo)
+    
+    # Si es una solicitud POST (confirmación de eliminación)
+    if request.method == 'POST':
+        ciclo_lectivo.delete()
+        success = f'El ciclo lectivo {año_lectivo} ha sido eliminado correctamente.'
+        return redirect('listar_ciclos_lectivos')  # Redirige a una página donde se listan los ciclos lectivos
+    
+    # Si no es POST, mostramos una página de confirmación de eliminación
+    return render(request, 'cuotas/eliminar_ciclo_lectivo.html', {
+        'ciclo_lectivo': ciclo_lectivo
+    })
+
+
+# Finciones para Listar
+
+def listar_ciclos_lectivos(request):
+    ciclos = CicloLectivo.objects.all()
+    return render(request, 'cuotas/listar_ciclos_lectivos.html', {'ciclos': ciclos})
+
+def listar_alumnos_por_ciclo_lectivo(request):
+    ciclos = CicloLectivo.objects.all()
+    alumnos = None
+    ciclo_seleccionado = None
+
+    if request.method == 'POST':
+        ciclo_id = request.POST.get('ciclo_lectivo')
+        ciclo_seleccionado = CicloLectivo.objects.get(id=ciclo_id)
+        alumnos = Alumno.objects.filter(inscripcion__ciclo_lectivo=ciclo_seleccionado)
+
+    return render(request, 'cuotas/listar_alumnos.html', {
+        'ciclos': ciclos,
+        'alumnos': alumnos,
+        'ciclo_seleccionado': ciclo_seleccionado,
+    })
