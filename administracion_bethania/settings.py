@@ -24,13 +24,15 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'crispy_forms',
+    'crispy_bootstrap4', 
     'apps.administracion',
     'apps.autenticacion',
     'apps.cuotas',
     'apps.administracion_docentes',
     'apps.administracion_alumnos',
     'apps.niveles',
-    'apps.documentos',  # Asegúrate de haber agregado la aplicación documentos
+    'apps.documentos',
 ]
 
 MIDDLEWARE = [
@@ -146,3 +148,5 @@ DRIVE_FOLDER_ID = '1lyxImVDTJt9Q2P9QDm0M_wHz9jgodfGp'  # Este es el ID de la car
 
 # Directorio de archivos locales
 ARCHIVOS_DIR = os.path.join(BASE_DIR, 'media', 'documentos')
+
+CRISPY_TEMPLATE_PACK = 'bootstrap4'

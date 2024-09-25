@@ -1,5 +1,6 @@
 from django.contrib import admin
-from .models import CicloLectivo, Inscripcion, Cuota, Pago, MedioPago
+from .models import CicloLectivo,MontosCicloLectivo, Inscripcion, Cuota, Pago, MedioPago, NivelCursado, SubNivelCursado
+
 
 # Admin para Ciclo Lectivo
 @admin.register(CicloLectivo)
@@ -41,3 +42,19 @@ class MedioPagoAdmin(admin.ModelAdmin):
     list_display = ('nombre_medio_pago',)
     search_fields = ('nombre_medio_pago',)
     ordering = ('nombre_medio_pago',)
+
+
+class MontosCicloLectivoAdmin(admin.ModelAdmin):
+    list_display = ('ciclo_lectivo', 'subnivel_cursado', 'monto_inscripcion', 'monto_cuota_mensual', 'fecha_actualizacion')
+    readonly_fields = ('fecha_actualizacion',)  # Hacer solo lectura la fecha de actualización
+
+    def has_change_permission(self, request, obj=None):
+        # Solo permitir cambios si el usuario es un administrador
+        if request.user.is_superuser:
+            return True
+        return False
+
+admin.site.register(MontosCicloLectivo, MontosCicloLectivoAdmin)
+
+admin.site.register(NivelCursado)
+admin.site.register(SubNivelCursado)

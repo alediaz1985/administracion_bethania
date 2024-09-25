@@ -10,39 +10,132 @@
 
 {% block content %}
 
+<h1>Habilitar Ciclo Lectivo</h1>
 
-    <h1>Habilitar Ciclo Lectivo</h1>
+{% if error %}
+    <div class="alert alert-danger">
+        {{ error }}
+    </div>
+{% endif %}
+
+{% if success %}
+    <div class="alert alert-success">
+        {{ success }}
+    </div>
+{% endif %}
+
+<form method="post">
+    {% csrf_token %}
     
-    {% if error %}
-        <div class="alert alert-danger">
-            {{ error }}
-        </div>
-    {% endif %}
+    <label for="año_lectivo">Año Lectivo:</label>
+    <input type="number" name="año_lectivo" id="año_lectivo" min="{{ current_year }}" max="{{ current_year|add:1 }}" required>
 
-    {% if success %}
-        <div class="alert alert-success">
-            {{ success }}
-        </div>
-    {% endif %}
-    <form method="post">
-        {% csrf_token %}
-        
-        <label for="año_lectivo">Año Lectivo:</label>
-        <input type="number" name="año_lectivo" id="año_lectivo" required>
+    <label for="fecha_inicio">Fecha de Inicio:</label>
+    <input type="date" name="fecha_inicio" id="fecha_inicio" required>
 
-        <label for="fecha_inicio">Fecha de Inicio:</label>
-        <input type="date" name="fecha_inicio" id="fecha_inicio" required>
+    <label for="fecha_fin">Fecha de Fin:</label>
+    <input type="date" name="fecha_fin" id="fecha_fin" required>
 
-        <label for="fecha_fin">Fecha de Fin:</label>
-        <input type="date" name="fecha_fin" id="fecha_fin" required>
+    <label for="monto_inscripcion">Monto de Inscripción:</label>
+    <input type="number" name="monto_inscripcion" id="monto_inscripcion" step="0.01" required>
 
-        <label for="monto_inscripcion">Monto de Inscripción:</label>
-        <input type="number" name="monto_inscripcion" id="monto_inscripcion" step="0.01" required>
+    <label for="monto_cuota">Monto de la Cuota Mensual:</label>
+    <input type="number" name="monto_cuota" id="monto_cuota" step="0.01" required>
 
-        <!-- Campo para el valor de la cuota mensual -->
-        <label for="monto_cuota">Monto de la Cuota Mensual:</label>
-        <input type="number" name="monto_cuota" id="monto_cuota" step="0.01" required>
+    <!-- Lista de subniveles -->
+    <label for="subnivel_cursado">Subniveles:</label>
+    <select name="subnivel_cursado" id="subnivel_cursado" multiple required>
+        {% for subnivel in subniveles %}
+            <option value="{{ subnivel.id }}">{{ subnivel.nivel_cursado.nombre }} - {{ subnivel.nombre }}</option>
+        {% endfor %}
+    </select>
 
-        <button type="submit">Habilitar Año Lectivo</button>
-    </form>
+    <button type="submit">Habilitar Año Lectivo</button>
+</form>
+
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const nivelSelect = document.getElementById('nivel_cursado');
+        const subnivelContainer = document.getElementById('subnivel-container');
+        const subnivelSelect = document.getElementById('subnivel_cursado');
+        const montosContainer = document.getElementById('montos-container');
+        const montosList = document.getElementById('montos-list');
+
+        // Datos predefinidos para los subniveles y montos
+        const subnivelesPorNivel = {
+            "inicial": [{ "label": "Salas 1, 2 y 3", "subnivel_id": "1-2-3" }],
+            "primario": [{ "label": "1ro a 7mo Grado", "subnivel_id": "1-7" }],
+            "secundario": [{ "label": "1ro a 5to Año", "subnivel_id": "1-5" }],
+            "superior": [
+                { "label": "Ciencia de Datos", "subnivel_id": "cd" },
+                { "label": "Auxiliar Docente", "subnivel_id": "ad" },
+                { "label": "Ciencias Sagradas", "subnivel_id": "cs" }
+            ]
+        };
+
+        const montosPorNivel = {
+            "inicial": { "inscripcion": 10000, "cuota": 8000 },
+            "primario": { "inscripcion": 12000, "cuota": 10000 },
+            "secundario": { "inscripcion": 15000, "cuota": 12000 },
+            "superior": {
+                "cd": { "inscripcion": 33000, "cuota": 30000 },
+                "ad": { "inscripcion": 22000, "cuota": 20000 },
+                "cs": { "inscripcion": 18000, "cuota": 15000 }
+            }
+        };
+
+        // Función para mostrar los subniveles según el nivel seleccionado
+        nivelSelect.addEventListener('change', function () {
+            const nivel = this.value;
+            if (subnivelesPorNivel[nivel]) {
+                subnivelContainer.style.display = 'block';
+                montosContainer.style.display = 'block';
+                subnivelSelect.innerHTML = ''; // Limpiar subniveles anteriores
+                montosList.innerHTML = ''; // Limpiar montos anteriores
+
+                subnivelesPorNivel[nivel].forEach(function (subnivel) {
+                    const option = document.createElement('option');
+                    option.value = subnivel.subnivel_id;
+                    option.textContent = subnivel.label;
+                    subnivelSelect.appendChild(option);
+                });
+
+                // Para los niveles agrupados (inicial, primario, secundario)
+                if (nivel !== 'superior') {
+                    const li = document.createElement('li');
+                    li.className = "list-group-item";
+
+                    li.innerHTML = `
+                        <div>${subnivelesPorNivel[nivel][0].label}</div>
+                        <label>Inscripción: </label><input type="number" name="monto_inscripcion_${nivel}" value="${montosPorNivel[nivel].inscripcion}" step="0.01" required class="form-control">
+                        <label>Cuota: </label><input type="number" name="monto_cuota_${nivel}" value="${montosPorNivel[nivel].cuota}" step="0.01" required class="form-control">
+                    `;
+                    montosList.appendChild(li);
+                }
+            }
+        });
+
+        // Si selecciona nivel superior, mostrar los montos por subnivel (carrera)
+        subnivelSelect.addEventListener('change', function () {
+            const nivel = nivelSelect.value;
+            const subnivel = this.value;
+
+            montosList.innerHTML = ''; // Limpiar montos anteriores
+
+            if (nivel === 'superior' && montosPorNivel.superior[subnivel]) {
+                const li = document.createElement('li');
+                li.className = "list-group-item";
+                li.innerHTML = `
+                    <div>${subnivelesPorNivel[nivel].find(sn => sn.subnivel_id === subnivel).label}</div>
+                    <label>Inscripción: </label><input type="number" name="monto_inscripcion_${subnivel}" value="${montosPorNivel.superior[subnivel].inscripcion}" step="0.01" required class="form-control">
+                    <label>Cuota: </label><input type="number" name="monto_cuota_${subnivel}" value="${montosPorNivel.superior[subnivel].cuota}" step="0.01" required class="form-control">
+                `;
+                montosList.appendChild(li);
+            }
+        });
+    });
+</script>
 {% endblock %}
