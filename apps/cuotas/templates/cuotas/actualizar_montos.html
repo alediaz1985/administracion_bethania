@@ -1,0 +1,45 @@
+{% extends 'base.html' %}  <!-- Este debe ser el primer tag -->
+
+{% load crispy_forms_tags %}
+{% load static %}
+
+{% block title %}Actualizar Montos del Ciclo Lectivo{% endblock %}
+
+{% block extra_styles %}
+    <link rel="stylesheet" href="{% static 'cuotas/css/cuotas.css' %}">
+{% endblock %}
+
+{% block content %}
+
+<div class="container">
+    <h1>Actualizar Montos del Ciclo Lectivo</h1>
+
+    <!-- Mensaje de éxito al actualizar los montos -->
+    {% if messages %}
+        <div class="alert alert-success" role="alert">
+            {% for message in messages %}
+                <p>{{ message }}</p>
+            {% endfor %}
+        </div>
+    {% endif %}
+
+    <!-- Formulario de actualización -->
+    <form method="post" novalidate class="form-horizontal">
+        {% csrf_token %}
+
+        <!-- Mostrar el formulario con los campos -->
+        <div class="form-group">
+            {{ form|crispy }}
+        </div>
+
+        <!-- Botón de envío -->
+        <div class="form-group">
+            <div class="col-sm-offset-2 col-sm-10">
+                <button type="submit" class="btn btn-primary">Actualizar Montos</button>
+            </div>
+        </div>
+
+    </form>
+</div>
+
+{% endblock %}

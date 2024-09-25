@@ -1,11 +1,31 @@
-from django.shortcuts import render, redirect
-from apps.administracion_alumnos.models import Alumno  
-from .models import CicloLectivo, Inscripcion, Cuota, Pago
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib import messages
 from django.utils import timezone
+from apps.administracion_alumnos.models import Alumno  
+from .models import CicloLectivo, Inscripcion, Cuota, Pago, MontosCicloLectivo, NivelCursado, SubNivelCursado
+from django.contrib.auth.decorators import user_passes_test
+from .forms import MontosCicloLectivoForm
+from .forms import ActualizarMontosForm  # Asegúrate de tener un formulario
 
-# Habilitar Ciclo Lectivo
+from django.http import HttpResponse
+from reportlab.pdfgen import canvas
+from reportlab.lib.pagesizes import A4
+from reportlab.lib import colors
+from reportlab.platypus import Table, TableStyle
+
+
+from django.http import FileResponse
+import os
+from datetime import datetime
+from reportlab.lib.pagesizes import A4
+from reportlab.lib import colors
+from reportlab.lib.units import inch
+from reportlab.platypus import SimpleDocTemplate, Table, TableStyle, Spacer, Paragraph, Image
+from reportlab.lib.styles import getSampleStyleSheet
+from .models import MontosCicloLectivo
+from django.conf import settings
+
+
 def habilitar_ciclo_lectivo(request):
     error = None
     success = None
@@ -17,58 +37,217 @@ def habilitar_ciclo_lectivo(request):
         fecha_fin = request.POST.get('fecha_fin')
         monto_inscripcion = request.POST.get('monto_inscripcion')
         monto_cuota = request.POST.get('monto_cuota')
+        subnivel_cursado_ids = request.POST.getlist('subnivel_cursado')  # Obtener los subniveles seleccionados
 
-        # Validación: Verificar si los montos de inscripción y cuota están vacíos
-        if not monto_inscripcion or not monto_cuota:
-            error = 'El monto de inscripción y el monto de la cuota son obligatorios.'
-        
-        # Validación: Verificar que el año lectivo sea de 4 dígitos y sea igual al año actual o al siguiente
-        elif not año_lectivo or not año_lectivo.isdigit() or len(año_lectivo) != 4 or int(año_lectivo) < current_year or int(año_lectivo) > current_year + 1:
-            error = f"El año lectivo debe ser {current_year} o {current_year + 1}, y debe ser un número de 4 dígitos."
-            print("Error en validación de año lectivo:", error)  # Depuración
-        
-        # Validación: Verificar si el ciclo lectivo ya existe
-        elif CicloLectivo.objects.filter(año_lectivo=año_lectivo).exists():
-            error = f'El ciclo lectivo {año_lectivo} ya existe.'
+        # Verificar que no se habilite el mismo ciclo lectivo para los subniveles seleccionados
+        ciclos_existentes = MontosCicloLectivo.objects.filter(
+            ciclo_lectivo__año_lectivo=año_lectivo,
+            subnivel_cursado__id__in=subnivel_cursado_ids
+        )
 
-        else:
-            # Si todas las validaciones son exitosas, crear el ciclo lectivo
-            CicloLectivo.objects.create(
-                año_lectivo=año_lectivo,
-                fecha_inicio=fecha_inicio,
-                fecha_fin=fecha_fin,
+        if ciclos_existentes.exists():
+            messages.error(request, "Ya existe un ciclo lectivo habilitado para el año seleccionado en algunos de los subniveles.")
+            return redirect('cuotas:habilitar_ciclo_lectivo')
+
+        # Verificación de que los subniveles existen
+        subniveles_validos = SubNivelCursado.objects.filter(id__in=subnivel_cursado_ids)
+        if not subniveles_validos.exists():
+            messages.error(request, "No se han seleccionado subniveles válidos.")
+            return redirect('cuotas:habilitar_ciclo_lectivo')
+
+        # Crear el ciclo lectivo
+        ciclo_lectivo = CicloLectivo.objects.create(
+            año_lectivo=año_lectivo,
+            fecha_inicio=fecha_inicio,
+            fecha_fin=fecha_fin
+        )
+
+        # Crear montos para cada subnivel seleccionado
+        for subnivel in subniveles_validos:
+            MontosCicloLectivo.objects.create(
+                ciclo_lectivo=ciclo_lectivo,
+                subnivel_cursado=subnivel,
                 monto_inscripcion=monto_inscripcion,
-                monto_cuota=monto_cuota
+                monto_cuota_mensual=monto_cuota
             )
-            success = f'El ciclo lectivo {año_lectivo} ha sido habilitado correctamente.'
-    
-    # Siempre renderizamos la página con o sin errores o éxito
+
+        success = f'Ciclo lectivo {año_lectivo} habilitado correctamente con montos para los subniveles seleccionados.'
+        messages.success(request, success)
+        return redirect('cuotas:habilitar_ciclo_lectivo')
+
+    # Obtener los subniveles disponibles para la selección
+    subniveles = SubNivelCursado.objects.all()
+
+    # Pasar el año actual y el año siguiente a la plantilla
     return render(request, 'cuotas/habilitar_ciclo_lectivo.html', {
-        'error': error,
-        'success': success,
-        'año_lectivo': año_lectivo if error else '',  # Para mantener el valor en caso de error
-        'fecha_inicio': fecha_inicio if error else '',
-        'fecha_fin': fecha_fin if error else '',
-        'monto_inscripcion': monto_inscripcion if error else '',
-        'monto_cuota': monto_cuota if error else '',
+        'subniveles': subniveles,
+        'current_year': current_year
     })
 
-#Consultar Ciclo Lectivo
-def consultar_ciclo_lectivo(request):
-    ciclos = CicloLectivo.objects.all()
-    ciclo_seleccionado = None
+# Solo permitir que los administradores accedan
+@user_passes_test(lambda u: u.is_superuser)
+def actualizar_montos(request):
+    if request.method == 'POST':
+        form = ActualizarMontosForm(request.POST)
+        if form.is_valid():
+            form.save()
+            messages.success(request, 'Montos actualizados correctamente.')
+            return redirect('cuotas:actualizar_montos')
+    else:
+        form = ActualizarMontosForm()
 
-    ciclo_id = request.GET.get('ciclo_lectivo_id')
-    if ciclo_id:
-        try:
-            ciclo_seleccionado = CicloLectivo.objects.get(id=ciclo_id)
-        except CicloLectivo.DoesNotExist:
-            ciclo_seleccionado = None
+    context = {
+        'form': form,
+    }
+    return render(request, 'cuotas/actualizar_montos.html', context)
 
-    return render(request, 'cuotas/consultar_ciclo_lectivo.html', {
-        'ciclos': ciclos,
-        'ciclo_seleccionado': ciclo_seleccionado,
-    })
+def listar_montos(request):
+    montos = MontosCicloLectivo.objects.all().order_by('-fecha_actualizacion')
+    return render(request, 'cuotas/listar_montos.html', {'montos': montos})
+
+#OPCION 1
+def generar_pdf_montos_reportlab(request):
+    response = HttpResponse(content_type='application/pdf')
+    response['Content-Disposition'] = 'attachment; filename="montos_ciclo_lectivo_reportlab.pdf"'
+
+    # Crea el objeto PDF
+    p = canvas.Canvas(response, pagesize=A4)
+    width, height = A4
+
+    # Título del PDF
+    p.setFont("Helvetica-Bold", 16)
+    p.drawString(200, height - 50, "Listado de Montos del Ciclo Lectivo")
+
+    # Obtener los datos
+    montos = MontosCicloLectivo.objects.all()
+
+    # Encabezados
+    data = [
+        ['Ciclo Lectivo', 'Subnivel', 'Monto de Inscripción', 'Monto de Cuota Mensual', 'Fecha de Actualización']
+    ]
+
+    # Agregar los datos de los montos
+    for monto in montos:
+        data.append([
+            str(monto.ciclo_lectivo.año_lectivo),
+            monto.subnivel_cursado.nombre,
+            f"${monto.monto_inscripcion}",
+            f"${monto.monto_cuota_mensual}",
+            monto.fecha_actualizacion.strftime("%d/%m/%Y")
+        ])
+
+    # Crear la tabla
+    table = Table(data)
+    table.setStyle(TableStyle([
+        ('BACKGROUND', (0, 0), (-1, 0), colors.grey),
+        ('TEXTCOLOR', (0, 0), (-1, 0), colors.whitesmoke),
+        ('ALIGN', (0, 0), (-1, -1), 'CENTER'),
+        ('FONTNAME', (0, 0), (-1, 0), 'Helvetica-Bold'),
+        ('BOTTOMPADDING', (0, 0), (-1, 0), 12),
+        ('BACKGROUND', (0, 1), (-1, -1), colors.beige),
+        ('GRID', (0, 0), (-1, -1), 1, colors.black),
+    ]))
+
+    # Ajustar la tabla en el PDF
+    table.wrapOn(p, width, height)
+    table.drawOn(p, 30, height - 300)  # Ajusta la posición de la tabla
+
+    # Finaliza el PDF
+    p.showPage()
+    p.save()
+
+    return response
+
+def generar_pdf_montos_view(request):
+    # Datos de la institución (puedes ajustarlos según necesites)
+    datos_institucion = {
+        "Nombre": "U.E.G.P. N°82",
+        "Dirección": "Urquiza Nº 846, Pcia. Roque Sáenz Peña - Chaco",
+        "Teléfono": "1122334455",
+        "Email": "contacto@institucion.edu"
+    }
+
+    logo_path = os.path.join(settings.BASE_DIR, 'cuotas', 'static', 'cuotas', 'img', 'logo.png')
+    pdf_path = generar_pdf_montos(datos_institucion, logo_path)
+    return FileResponse(open(pdf_path, 'rb'), as_attachment=True, filename='listado_montos.pdf')
+
+#OPCION 2
+def generar_pdf_montos(datos_institucion, logo_path):
+    # Nombre y ruta del archivo PDF
+    pdf_path = "Listado_Montos_Ciclo_Lectivo.pdf"
+    fecha_hora_actual = datetime.now().strftime("%Y-%m-%d-%H%M")
+    doc = SimpleDocTemplate(pdf_path, pagesize=A4, rightMargin=10, leftMargin=10, topMargin=10, bottomMargin=10)
+
+    # Establecer los metadatos del documento
+    doc.title = "Listado de Montos del Ciclo Lectivo"
+    doc.author = "Fundación Hogar de Bethania U.E.G.P. N°82"
+
+    # Estilos
+    styles = getSampleStyleSheet()
+    styleN = styles['Normal']
+    styleH = styles['Heading2']
+    styleH.alignment = 1  # Alinear en el centro
+
+    elements = []
+
+    # Insertar el logo
+    try:
+        if os.path.exists(logo_path):
+            logo = Image(logo_path, 1 * inch, 1 * inch)
+            elements.append(logo)
+        else:
+            raise FileNotFoundError
+    except FileNotFoundError:
+        elements.append(Paragraph("Hogar de Bethania", getSampleStyleSheet()['Normal']))
+
+    # Encabezado de la Institución
+    elements.append(Spacer(1, 0.10 * inch))
+    elements.append(Paragraph(datos_institucion["Nombre"], styles['Title']))
+    elements.append(Paragraph(datos_institucion["Dirección"], styleN))
+    elements.append(Paragraph(f"Teléfono: {datos_institucion['Teléfono']}", styleN))
+    elements.append(Paragraph(f"Email: {datos_institucion['Email']}", styleN))
+
+    # Título del listado
+    elements.append(Spacer(1, 0.5 * inch))
+    elements.append(Paragraph("Listado de Montos del Ciclo Lectivo", styles['Title']))
+
+    # Obtener los datos de los montos
+    montos = MontosCicloLectivo.objects.all()
+
+    # Datos a mostrar en la tabla
+    datos_montos = [
+        ["Ciclo Lectivo", "Subnivel", "Monto de Inscripción", "Monto de Cuota Mensual", "Fecha de Actualización"]
+    ]
+
+    # Agregar los datos de cada monto a la tabla
+    for monto in montos:
+        datos_montos.append([
+            f"{monto.ciclo_lectivo.año_lectivo}",
+            monto.subnivel_cursado.nombre,
+            f"${monto.monto_inscripcion}",
+            f"${monto.monto_cuota_mensual}",
+            monto.fecha_actualizacion.strftime("%d/%m/%Y")
+        ])
+
+    # Crear la tabla
+    tabla_montos = Table(datos_montos, colWidths=[1.5*inch, 2*inch, 1.5*inch, 1.5*inch, 1.5*inch])
+    tabla_montos.setStyle(TableStyle([
+        ('BACKGROUND', (0, 0), (-1, 0), colors.black),
+        ('TEXTCOLOR', (0, 0), (-1, 0), colors.whitesmoke),
+        ('ALIGN', (0, 0), (-1, -1), 'CENTER'),
+        ('FONTNAME', (0, 0), (-1, 0), 'Helvetica-Bold'),
+        ('BOTTOMPADDING', (0, 0), (-1, 0), 12),
+        ('BACKGROUND', (0, 1), (-1, -1), colors.beige),
+        ('GRID', (0, 0), (-1, -1), 1, colors.black),
+    ]))
+
+    elements.append(Spacer(1, 0.5 * inch))
+    elements.append(tabla_montos)
+
+    # Generar el documento
+    doc.build(elements)
+
+    return pdf_path
 
 # Inscripción de Alumnos
 def inscribir_alumno(request):
@@ -136,6 +315,23 @@ def inscribir_alumno(request):
         'ciclo_seleccionado': ciclo_seleccionado,
         'monto_inscripcion': monto_inscripcion,
         'pagada': pagada,
+    })
+
+# Consultar Ciclo Lectivo
+def consultar_ciclo_lectivo(request):
+    ciclos = CicloLectivo.objects.all()
+    ciclo_seleccionado = None
+
+    ciclo_id = request.GET.get('ciclo_lectivo_id')
+    if ciclo_id:
+        try:
+            ciclo_seleccionado = CicloLectivo.objects.get(id=ciclo_id)
+        except CicloLectivo.DoesNotExist:
+            ciclo_seleccionado = None
+
+    return render(request, 'cuotas/consultar_ciclo_lectivo.html', {
+        'ciclos': ciclos,
+        'ciclo_seleccionado': ciclo_seleccionado,
     })
 
 # Pago de Cuotas
