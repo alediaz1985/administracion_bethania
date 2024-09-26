@@ -1,43 +1,58 @@
 {% extends 'base.html' %}
-{% load static %}
 
 {% block title %}Consulta de Comprobante{% endblock %}
 
-{% block extra_css %}
-<link rel="stylesheet" type="text/css" href="{% static 'cuotas/css/cuotas.css' %}">
+{% load static %}
+
+{% block extra_styles %}
+<link rel="stylesheet" href="{% static 'cuotas/css/cuotas.css' %}">
 {% endblock %}
 
 {% block content %}
-<h2>Consulta de Comprobante</h2>
-<form method="post">
-    {% csrf_token %}
-    {{ form.as_p }}
-    <button type="submit">Buscar</button>
-</form>
 
-<!-- Formulario para descargar archivos de Google Drive -->
-<form method="get" action="{% url 'descargar_archivos_nube' %}">
-    <button type="submit">Descargar Archivos de la Nube</button>
-</form>
+<!-- Contenedor principal -->
+<div class="consulta-container">
+    <!-- Contenedor de botones superiores -->
+    <div class="consulta-header-buttons">
+        <form method="get" action="{% url 'descargar_archivos_nube' %}" class="consulta-action-buttons">
+            <button type="submit" class="consulta-action-button alumnos-btn">Descargar Archivos de la Nube</button>
+        </form>
 
-<!-- Formulario para vaciar la carpeta de Google Drive -->
-<form method="post" action="{% url 'vaciar_carpeta_drive' %}">
-    {% csrf_token %}
-    <button type="submit">Vaciar Carpeta de Google Drive</button>
-</form>
+        <form method="post" action="{% url 'vaciar_carpeta_drive' %}" class="consulta-action-buttons">
+            {% csrf_token %}
+            <button type="submit" class="consulta-action-button alumnos-btn">Vaciar Carpeta de Google Drive</button>
+        </form>
+    </div>
 
-{% if resultados %}
-<h2>Resultados de la búsqueda</h2>
-<p>Cantidad de archivos encontrados: {{ cantidad_archivos }}</p>
-<ul>
-    {% for resultado in resultados %}
-    <li>
-        <strong>Nombre:</strong> <a href="{{ resultado.url }}" target="_blank">{{ resultado.nombre }}</a><br>
-        <strong>Fecha de subida:</strong> {{ resultado.fecha }}
-    </li>
-    {% endfor %}
-</ul>
-{% else %}
-<p>No se encontraron documentos.</p>
-{% endif %}
+    <!-- Contenedor del formulario de búsqueda -->
+    <div class="consulta-busqueda">
+        <h2>Consulta de Comprobante</h2>
+        <form method="post" class="consulta-form">
+            {% csrf_token %}
+            {{ form.as_p }}
+            <button type="submit" class="consulta-buscar-button alumnos-btn">Buscar</button>
+        </form>
+    </div>
+
+    <!-- Resultados de la búsqueda -->
+    {% if search_done %}
+        {% if resultados %}
+            <div class="consulta-resultados">
+                <h2 class="consulta-resultados-titulo">Resultados de la búsqueda</h2>
+                <p>Cantidad de archivos encontrados: {{ cantidad_archivos }}</p>
+                <ul class="consulta-lista-resultados">
+                    {% for resultado in resultados %}
+                    <li class="consulta-item-resultado">
+                        <strong>Nombre:</strong> <a href="{{ resultado.url }}" target="_blank">{{ resultado.nombre }}</a><br>
+                        <strong>Fecha de modificación:</strong> {{ resultado.fecha }}
+                    </li>
+                    {% endfor %}
+                </ul>
+            </div>
+        {% else %}
+            <p>No se encontraron documentos.</p>
+        {% endif %}
+    {% endif %}
+</div>
+
 {% endblock %}

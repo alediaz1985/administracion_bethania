@@ -1,0 +1,42 @@
+{% extends 'base.html' %}
+
+{% block title %}Listado de Montos del Ciclo Lectivo{% endblock %}
+
+{% block content %}
+<a href="{% url 'cuotas:generar_pdf_montos' %}" class="btn btn-primary mb-3">Descargar Listado de Montos</a>
+
+<div class="container">
+    <h1 class="mb-4">Listado de Montos del Ciclo Lectivo</h1>
+
+    <table class="table table-bordered table-hover">
+        <thead class="thead-dark">
+            <tr>
+                <th>Ciclo Lectivo</th>
+                <th>Subnivel</th>
+                <th>Tipo de Monto</th>
+                <th>Monto</th>
+                <th>Fecha de Actualización</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for monto in montos %}
+                {% if forloop.first or previous_ciclo_lectivo != monto.ciclo_lectivo.año_lectivo %}
+                    <tr class="table-info">
+                        <td rowspan="2">{{ monto.ciclo_lectivo.año_lectivo }}</td>
+                        <td rowspan="2">{{ monto.subnivel_cursado.nombre }}</td>
+                        <td><strong>Inscripción</strong></td>
+                        <td>${{ monto.monto_inscripcion }}</td>
+                        <td>{{ monto.fecha_actualizacion }}</td>
+                    </tr>
+                {% endif %}
+                <tr>
+                    <td><strong>Cuota Mensual</strong></td>
+                    <td>${{ monto.monto_cuota_mensual }}</td>
+                    <td>{{ monto.fecha_actualizacion }}</td>
+                </tr>
+                <!-- Actualizamos previous_ciclo_lectivo en la lógica del backend -->
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

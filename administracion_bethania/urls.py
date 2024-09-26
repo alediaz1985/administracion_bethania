@@ -18,6 +18,7 @@ urlpatterns = [
     path('niveles/', include('apps.niveles.urls')),  # Asegúrate de incluir esta línea
     path('documentos/', include('apps.documentos.urls')),
     path('trigger-error/', views.trigger_error),
+    path('forbidden/', views.forbidden_view, name='forbidden'),  # Ruta para la vista de acceso denegado
 ]
 
 # Manejadores de errores

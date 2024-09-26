@@ -7,22 +7,66 @@ class CicloLectivo(models.Model):
     año_lectivo = models.IntegerField(verbose_name="Año Lectivo")
     fecha_inicio = models.DateField(verbose_name="Fecha de Inicio")
     fecha_fin = models.DateField(verbose_name="Fecha de Fin")
-    monto_inscripcion = models.DecimalField(max_digits=10, decimal_places=2, default=0, verbose_name="Monto de Inscripción")
-    monto_cuota = models.DecimalField(max_digits=10, decimal_places=2, default=0, verbose_name="Monto de la Cuota")
 
     def __str__(self):
         return f"Ciclo {self.año_lectivo}"
 
     class Meta:
-        db_table = 'ciclolectivo'  # Nombre personalizado para la tabla CicloLectivo
+        db_table = 'ciclolectivo'
         verbose_name = "Ciclo Lectivo"
         verbose_name_plural = "Ciclos Lectivos"
+
+
+# Modelo para Nivel de Cursado
+class NivelCursado(models.Model):
+    nombre = models.CharField(max_length=100, verbose_name="Nombre del Nivel")
+    descripcion = models.TextField(verbose_name="Descripción del Nivel")
+
+    def __str__(self):
+        return self.nombre
+
+    class Meta:
+        db_table = 'nivel_cursado'
+        verbose_name = "Nivel de Cursado"
+        verbose_name_plural = "Niveles de Cursado"
+
+
+# Modelo para SubNivel (Ej. Sala 3, 4, Grados o Carreras)
+class SubNivelCursado(models.Model):
+    nivel_cursado = models.ForeignKey(NivelCursado, on_delete=models.CASCADE, verbose_name="Nivel de Cursado")
+    nombre = models.CharField(max_length=100, verbose_name="Nombre del Subnivel")
+
+    def __str__(self):
+        return f'{self.nivel_cursado.nombre} - {self.nombre}'
+
+    class Meta:
+        db_table = 'subnivel_cursado'
+        verbose_name = "Subnivel de Cursado"
+        verbose_name_plural = "Subniveles de Cursado"
+
+
+# Modelo para Montos de Ciclo Lectivo por Subnivel
+class MontosCicloLectivo(models.Model):
+    ciclo_lectivo = models.ForeignKey(CicloLectivo, on_delete=models.CASCADE, verbose_name="Ciclo Lectivo")
+    subnivel_cursado = models.ForeignKey(SubNivelCursado, on_delete=models.CASCADE, verbose_name="Subnivel")
+    monto_inscripcion = models.DecimalField(max_digits=10, decimal_places=2, verbose_name="Monto de Inscripción")
+    monto_cuota_mensual = models.DecimalField(max_digits=10, decimal_places=2, verbose_name="Monto de la Cuota Mensual")
+    fecha_actualizacion = models.DateTimeField(auto_now=True, verbose_name="Fecha de Actualización")  # Auto-actualiza cada vez que se guarda
+
+    def __str__(self):
+        return f'{self.ciclo_lectivo.año_lectivo} - {self.subnivel_cursado.nombre}'
+
+    class Meta:
+        db_table = 'montos_ciclolectivo'
+        verbose_name = "Montos del Ciclo Lectivo"
+        verbose_name_plural = "Montos del Ciclo Lectivo"
 
 
 # Modelo para Inscripción
 class Inscripcion(models.Model):
     cuil_alumno = models.ForeignKey(Alumno, on_delete=models.CASCADE, verbose_name="Alumno")
     ciclo_lectivo = models.ForeignKey(CicloLectivo, on_delete=models.CASCADE, verbose_name="Ciclo Lectivo")
+    subnivel_cursado = models.ForeignKey(SubNivelCursado, on_delete=models.CASCADE, default=1, verbose_name="Subnivel Cursado")  
     fecha_inscripcion = models.DateField(auto_now_add=True, verbose_name="Fecha de Inscripción")
     monto_inscripcion = models.DecimalField(max_digits=10, decimal_places=2, verbose_name="Monto de Inscripción")
     pagada = models.BooleanField(default=False, verbose_name="Pagada")
@@ -53,7 +97,7 @@ class Cuota(models.Model):
         return f'{self.inscripcion} - Mes {self.mes}'
 
     class Meta:
-        db_table = 'cuota'  # Nombre personalizado para la tabla Cuota
+        db_table = 'cuota'
         verbose_name = "Cuota"
         verbose_name_plural = "Cuotas"
 
@@ -66,7 +110,7 @@ class MedioPago(models.Model):
         return self.nombre_medio_pago
 
     class Meta:
-        db_table = 'medio_pago'  # Nombre personalizado para la tabla MedioPago
+        db_table = 'medio_pago'
         verbose_name = "Medio de Pago"
         verbose_name_plural = "Medios de Pago"
 
@@ -83,6 +127,6 @@ class Pago(models.Model):
         return f'Pago por cuota {self.cuota}'
 
     class Meta:
-        db_table = 'pago'  # Nombre personalizado para la tabla Pago
+        db_table = 'pago'
         verbose_name = "Pago"
         verbose_name_plural = "Pagos"

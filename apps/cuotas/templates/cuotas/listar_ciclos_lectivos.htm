@@ -1,0 +1,23 @@
+<!-- listar_ciclos_lectivos.html -->
+<table>
+    <thead>
+        <tr>
+            <th>Año Lectivo</th>
+            <th>Fecha de Inicio</th>
+            <th>Fecha de Fin</th>
+            <th>Acciones</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for ciclo in ciclos %}
+        <tr>
+            <td>{{ ciclo.año_lectivo }}</td>
+            <td>{{ ciclo.fecha_inicio }}</td>
+            <td>{{ ciclo.fecha_fin }}</td>
+            <td>
+                <a href="{% url 'eliminar_ciclo_lectivo' ciclo.año_lectivo %}" class="btn btn-danger">Eliminar</a>
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
