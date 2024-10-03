@@ -1,4 +1,4 @@
-{% extends 'base.html' %}  <!-- Este debe ser el primer tag -->
+{% extends 'base.html' %}
 
 {% load crispy_forms_tags %}
 {% load static %}
@@ -14,7 +14,7 @@
 <div class="container">
     <h1>Actualizar Montos del Ciclo Lectivo</h1>
 
-    <!-- Mensaje de éxito al actualizar los montos -->
+    <!-- Mensaje de éxito o error al actualizar los montos -->
     {% if messages %}
         <div class="alert alert-success" role="alert">
             {% for message in messages %}
@@ -27,9 +27,46 @@
     <form method="post" novalidate class="form-horizontal">
         {% csrf_token %}
 
-        <!-- Mostrar el formulario con los campos -->
+        <!-- Campo para seleccionar Ciclo Lectivo -->
         <div class="form-group">
-            {{ form|crispy }}
+            <label for="ciclo_lectivo_id" class="col-sm-2 control-label">Ciclo Lectivo*</label>
+            <div class="col-sm-10">
+                <select name="ciclo_lectivo_id" id="ciclo_lectivo_id" class="form-control" required>
+                    <option value="">---------</option>
+                    {% for ciclo in ciclos %}
+                    <option value="{{ ciclo.id }}">Ciclo {{ ciclo.año_lectivo }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+        </div>
+
+        <!-- Campo para seleccionar Subnivel -->
+        <div class="form-group">
+            <label for="subnivel_cursado_id" class="col-sm-2 control-label">Subnivel*</label>
+            <div class="col-sm-10">
+                <select name="subnivel_cursado_id" id="subnivel_cursado_id" class="form-control" required>
+                    <option value="">---------</option>
+                    {% for subnivel in subniveles %}
+                    <option value="{{ subnivel.id }}">{{ subnivel.nombre }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+        </div>
+
+        <!-- Campo para Monto de Inscripción -->
+        <div class="form-group">
+            <label for="monto_inscripcion" class="col-sm-2 control-label">Monto de Inscripción*</label>
+            <div class="col-sm-10">
+                <input type="text" name="monto_inscripcion" id="monto_inscripcion" class="form-control" required>
+            </div>
+        </div>
+
+        <!-- Campo para Monto de la Cuota Mensual -->
+        <div class="form-group">
+            <label for="monto_cuota_mensual" class="col-sm-2 control-label">Monto de la Cuota Mensual*</label>
+            <div class="col-sm-10">
+                <input type="text" name="monto_cuota_mensual" id="monto_cuota_mensual" class="form-control" required>
+            </div>
         </div>
 
         <!-- Botón de envío -->

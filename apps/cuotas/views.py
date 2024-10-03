@@ -87,23 +87,45 @@ def habilitar_ciclo_lectivo(request):
 # Solo permitir que los administradores accedan
 @user_passes_test(lambda u: u.is_superuser)
 def actualizar_montos(request):
+    # Obtener los ciclos únicos
+    ciclos_unicos = CicloLectivo.objects.all().distinct()  # Obtener solo ciclos únicos
+    subniveles = SubNivelCursado.objects.all()  # Obtener todos los subniveles
+
     if request.method == 'POST':
-        form = ActualizarMontosForm(request.POST)
-        if form.is_valid():
-            form.save()
-            messages.success(request, 'Montos actualizados correctamente.')
-            return redirect('cuotas:actualizar_montos')
-    else:
-        form = ActualizarMontosForm()
+        ciclo_id = request.POST.get('ciclo_lectivo_id')
+        subnivel_id = request.POST.get('subnivel_cursado_id')
+        monto_inscripcion = request.POST.get('monto_inscripcion')
+        monto_cuota_mensual = request.POST.get('monto_cuota_mensual')
 
-    context = {
-        'form': form,
-    }
-    return render(request, 'cuotas/actualizar_montos.html', context)
+        # Verificar que los IDs de ciclo y subnivel existan
+        ciclo_seleccionado = get_object_or_404(CicloLectivo, id=ciclo_id)
+        subnivel_seleccionado = get_object_or_404(SubNivelCursado, id=subnivel_id)
 
-def listar_montos(request):
-    montos = MontosCicloLectivo.objects.all().order_by('-fecha_actualizacion')
-    return render(request, 'cuotas/listar_montos.html', {'montos': montos})
+        # Verificar si ya existen montos para este ciclo y subnivel
+        monto_existente = MontosCicloLectivo.objects.filter(ciclo_lectivo=ciclo_seleccionado, subnivel_cursado=subnivel_seleccionado).first()
+
+        if monto_existente:
+            # Actualizar montos existentes
+            monto_existente.monto_inscripcion = monto_inscripcion
+            monto_existente.monto_cuota_mensual = monto_cuota_mensual
+            monto_existente.save()
+            messages.success(request, f'Montos actualizados correctamente para el subnivel {subnivel_seleccionado.nombre}.')
+        else:
+            # Crear nuevos montos si no existen
+            MontosCicloLectivo.objects.create(
+                ciclo_lectivo=ciclo_seleccionado,
+                subnivel_cursado=subnivel_seleccionado,
+                monto_inscripcion=monto_inscripcion,
+                monto_cuota_mensual=monto_cuota_mensual
+            )
+            messages.success(request, f'Montos creados correctamente para el subnivel {subnivel_seleccionado.nombre}.')
+
+        return redirect('cuotas:actualizar_montos')
+
+    return render(request, 'cuotas/actualizar_montos.html', {
+        'ciclos': ciclos_unicos,
+        'subniveles': subniveles,
+    })
 
 #OPCION 1
 def generar_pdf_montos_reportlab(request):
@@ -319,21 +341,35 @@ def inscribir_alumno(request):
 
 # Consultar Ciclo Lectivo
 def consultar_ciclo_lectivo(request):
-    ciclos = CicloLectivo.objects.all()
+    # Obtener todos los montos de ciclos lectivos ordenados por fecha de actualización
+    montos_ciclos = MontosCicloLectivo.objects.all().order_by('ciclo_lectivo', 'subnivel_cursado', '-fecha_actualizacion')  
+
+    # Filtrar los montos más recientes para cada combinación de ciclo lectivo y subnivel
+    montos_filtrados = {}
+    for monto in montos_ciclos:
+        key = (monto.ciclo_lectivo, monto.subnivel_cursado)
+        if key not in montos_filtrados:
+            montos_filtrados[key] = monto
+
+    montos_ciclos_unicos = list(montos_filtrados.values())
+
     ciclo_seleccionado = None
+    montos_subniveles = None
 
     ciclo_id = request.GET.get('ciclo_lectivo_id')
     if ciclo_id:
         try:
             ciclo_seleccionado = CicloLectivo.objects.get(id=ciclo_id)
+            # Obtener los montos más recientes por ciclo lectivo y subnivel seleccionados
+            montos_subniveles = MontosCicloLectivo.objects.filter(ciclo_lectivo=ciclo_seleccionado).order_by('-fecha_actualizacion').first()  # Obtener solo el más reciente
         except CicloLectivo.DoesNotExist:
             ciclo_seleccionado = None
 
     return render(request, 'cuotas/consultar_ciclo_lectivo.html', {
-        'ciclos': ciclos,
+        'montos_ciclos': montos_ciclos_unicos,  # Pasar los montos de los ciclos únicos para el dropdown
         'ciclo_seleccionado': ciclo_seleccionado,
+        'montos_subniveles': [montos_subniveles] if montos_subniveles else [],  # Asegurarse de que solo sea el último monto
     })
-
 # Pago de Cuotas
 def pago_cuotas(request):
     if request.method == 'POST':
@@ -425,3 +461,11 @@ def listar_alumnos_por_ciclo_lectivo(request):
         'alumnos': alumnos,
         'ciclo_seleccionado': ciclo_seleccionado,
     })
+
+
+def listar_montos(request):
+    # Obtiene todos los montos de ciclo lectivo ordenados por fecha de actualización
+    montos = MontosCicloLectivo.objects.all().order_by('-fecha_actualizacion')
+    
+    # Renderiza el template de listar montos
+    return render(request, 'cuotas/listar_montos.html', {'montos': montos})
