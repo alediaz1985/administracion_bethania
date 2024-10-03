@@ -145,7 +145,7 @@
     }
 
     .block-content-hero .image-box {
-        flex-basis: 65%; /* Ajustar el tamaño de la caja de la imagen */
+        flex-basis: 75%; /* Ajustar el tamaño de la caja de la imagen */
     }
 
     .block-content-hero .carousel-controls {
