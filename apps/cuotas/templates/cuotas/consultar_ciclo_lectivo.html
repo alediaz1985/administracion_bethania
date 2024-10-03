@@ -13,14 +13,13 @@
 
 <!-- Formulario para seleccionar el año lectivo -->
 <form method="get" action="{% url 'cuotas:consultar_ciclo_lectivo' %}">
-    <label for="ciclo_lectivo">Selecciona un Año Lectivo:</label>
+    <label for="ciclo_lectivo">Selecciona un Ciclo Lectivo y Subnivel:</label>
     <select name="ciclo_lectivo_id" id="ciclo_lectivo_id" required>
-        <option value="">Seleccione un año lectivo</option>
-        {% for ciclo in ciclos %}
-        <option value="{{ ciclo.id }}">{{ ciclo.año_lectivo }}</option>
+        <option value="">Seleccione un ciclo lectivo</option>
+        {% for monto in montos_ciclos %}
+        <option value="{{ monto.ciclo_lectivo.id }}">{{ monto.ciclo_lectivo.año_lectivo }} - {{ monto.subnivel_cursado.nombre }}</option>
         {% endfor %}
     </select>
-
     <button type="submit">Consultar</button>
 </form>
 
@@ -29,8 +28,33 @@
     <h2>Detalles del Ciclo Lectivo {{ ciclo_seleccionado.año_lectivo }}</h2>
     <p><strong>Fecha de Inicio:</strong> {{ ciclo_seleccionado.fecha_inicio }}</p>
     <p><strong>Fecha de Fin:</strong> {{ ciclo_seleccionado.fecha_fin }}</p>
-    <p><strong>Monto de Inscripción:</strong> ${{ ciclo_seleccionado.monto_inscripcion }}</p>
-    <p><strong>Monto de la Cuota Mensual:</strong> ${{ ciclo_seleccionado.monto_cuota }}</p>
+    
+    <!-- Iterar sobre los montos por subnivel -->
+    <h3>Montos por Subnivel</h3>
+    <table>
+        <thead>
+            <tr>
+                <th>Subnivel</th>
+                <th>Monto de Inscripción</th>
+                <th>Monto de la Cuota Mensual</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% if montos_subniveles %}
+                {% for monto in montos_subniveles %}
+                <tr>
+                    <td>{{ monto.subnivel_cursado.nombre }}</td>
+                    <td>${{ monto.monto_inscripcion }}</td>
+                    <td>${{ monto.monto_cuota_mensual }}</td>
+                </tr>
+                {% endfor %}
+            {% else %}
+                <tr>
+                    <td colspan="3">No hay montos disponibles para este ciclo lectivo.</td>
+                </tr>
+            {% endif %}
+        </tbody>
+    </table>
 {% elif request.GET.ciclo_lectivo_id %}
     <p>No se encontró ningún ciclo lectivo con ese ID.</p>
 {% endif %}

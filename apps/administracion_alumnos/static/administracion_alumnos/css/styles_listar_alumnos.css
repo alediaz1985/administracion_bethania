@@ -78,7 +78,7 @@ body {
 
 .alumnos-btn {
     padding: 10px 20px;
-    background-color: #4CAF50; /* Verde suave */
+    background-color: rgb(161, 41, 255);
     color: white;
     border: none;
     cursor: pointer;
@@ -88,13 +88,13 @@ body {
 }
 
 .alumnos-btn:hover {
-    background-color: #3e8e41; /* Verde más oscuro elegante */
+    background-color:rgb(144, 25, 235);
     transform: translateY(-3px); /* Efecto de "levantamiento" al pasar el mouse */
     box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2); /* Sombra más marcada */
 }
 
 .alumnos-btn:active {
-    background-color: #357a38; /* Verde aún más oscuro al hacer clic */
+    background-color: rgb(46, 13, 72);
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Sombra más ligera al presionar */
     transform: translateY(0); /* Efecto de "presión" */
 }
