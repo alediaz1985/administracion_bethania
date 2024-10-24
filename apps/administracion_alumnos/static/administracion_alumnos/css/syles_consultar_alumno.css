@@ -65,7 +65,7 @@ body {
 
 /* Botón con gradiente */
 .gradient-button {
-    background-color: rgb(161, 41, 255);
+    background-color: rgb(66 149 33);
     color: white;
     border: none;
     padding: 10px 20px;
@@ -78,13 +78,13 @@ body {
 }
 
 .gradient-button:hover {
-    background-color: rgb(144, 25, 235);
+    background-color: rgb(68, 123, 46);
     transform: translateY(-3px); /* Efecto de "levantamiento" al pasar el mouse */
     box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2); /* Sombra más marcada */
 }
 
 .gradient-button:active {
-    background-color:  rgb(46, 13, 72);
+    background-color:  rgb(39, 70, 27);
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Sombra más ligera al presionar */
     transform: translateY(0); /* Efecto de "presión" */
   }
