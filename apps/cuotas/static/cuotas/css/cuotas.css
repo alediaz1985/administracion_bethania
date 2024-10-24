@@ -37,7 +37,7 @@ input[type="checkbox"] {
 }
 
 button {
-    background-color: rgb(161, 41, 255);
+    background-color: rgb(66 149 33);
     color: white;
     padding: 10px 20px;
     border: none;
@@ -50,7 +50,7 @@ button {
 }
 
 button:hover {
-    background-color: rgb(161, 41, 255);
+    background-color: rgb(39, 70, 27);
 }
 
 /* Mensajes de éxito o error */
