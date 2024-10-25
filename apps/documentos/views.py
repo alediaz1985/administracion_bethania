@@ -119,7 +119,9 @@ def consulta_view(request):
         if form.is_valid():
             search_done = True
             consulta = form.cleaned_data['consulta']
-            logger.info(f"Consulta: {consulta}")
+            fecha_inicio = form.cleaned_data['fecha_inicio']
+            fecha_fin = form.cleaned_data['fecha_fin']
+            logger.info(f"Consulta: {consulta}, Fecha desde: {fecha_inicio}, Fecha hasta: {fecha_fin}")
             resultados = []
 
             archivos_dir = settings.ARCHIVOS_DIR
@@ -128,6 +130,13 @@ def consulta_view(request):
                     try:
                         archivo_path = os.path.join(root, file_name)
                         texto = ""
+                        fecha_modificacion = datetime.fromtimestamp(os.path.getmtime(archivo_path)).date()
+
+                        # Filtro por fecha de modificación
+                        if fecha_inicio and fecha_modificacion < fecha_inicio:
+                            continue
+                        if fecha_fin and fecha_modificacion > fecha_fin:
+                            continue
 
                         if file_name.lower().endswith('.pdf'):
                             texto = extract_text_from_pdf(archivo_path)
@@ -139,14 +148,12 @@ def consulta_view(request):
                             texto = extract_text_from_xlsx(archivo_path)
 
                         if buscar_termino(texto, consulta):
-                            # Verificar si el archivo está en la carpeta de documentos o descargados
                             ruta_archivo = obtener_ruta_archivo(file_name)
                             if ruta_archivo:
-                                fecha_modificacion = datetime.fromtimestamp(os.path.getmtime(archivo_path)).strftime('%d/%m/%Y')
                                 resultados.append({
                                     'nombre': file_name,
                                     'url': ruta_archivo,
-                                    'fecha': fecha_modificacion
+                                    'fecha': fecha_modificacion.strftime('%d/%m/%Y')
                                 })
                     except Exception as e:
                         logger.error(f"Error procesando archivo {file_name}: {e}")
