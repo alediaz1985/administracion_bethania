@@ -25,14 +25,25 @@
     </div>
 
     <!-- Contenedor del formulario de búsqueda -->
-    <div class="consulta-busqueda">
-        <h2>Consulta de Comprobante</h2>
-        <form method="post" class="consulta-form">
-            {% csrf_token %}
-            {{ form.as_p }}
-            <button type="submit" class="consulta-buscar-button alumnos-btn">Buscar</button>
-        </form>
-    </div>
+<div class="consulta-busqueda">
+    <h2>Consulta de Comprobante</h2>
+    <form method="post" class="consulta-form">
+        {% csrf_token %}
+        <div class="form-group">
+            <label for="id_consulta">DNI:</label>
+            {{ form.consulta }}
+        </div>
+        <div class="form-group">
+            <label for="id_fecha_inicio">Desde (Fecha inicio):</label>
+            {{ form.fecha_inicio }}
+        </div>
+        <div class="form-group">
+            <label for="id_fecha_fin">Hasta (Fecha fin):</label>
+            {{ form.fecha_fin }}
+        </div>
+        <button type="submit" class="consulta-buscar-button alumnos-btn">Buscar</button>
+    </form>
+</div>
 
     <!-- Resultados de la búsqueda -->
     {% if search_done %}
