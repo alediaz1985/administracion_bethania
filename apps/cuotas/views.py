@@ -276,7 +276,6 @@ def inscribir_alumno(request):
     alumnos = Alumno.objects.all()  # Obtener todos los alumnos
     ciclos = CicloLectivo.objects.all()  # Obtener todos los ciclos lectivos
 
-    # Inicializamos las variables para alumno, ciclo lectivo y monto de inscripción
     alumno_seleccionado = None
     ciclo_seleccionado = None
     monto_inscripcion = 0
@@ -285,41 +284,51 @@ def inscribir_alumno(request):
     if request.method == 'POST':
         alumno_cuil = request.POST.get('alumno_id')
         ciclo_lectivo_id = request.POST.get('ciclo_lectivo')
-        pagada = request.POST.get('pagada') == 'on'  # Verificar si el checkbox está marcado
+        subnivel_id = request.POST.get('subnivel_cursado')  # Capturar el subnivel seleccionado
+        pagada = request.POST.get('pagada') == 'on'
 
-        # Verificamos si se ha seleccionado un alumno
+        # Verificar selección de alumno
         if alumno_cuil:
             alumno_seleccionado = Alumno.objects.get(cuil_alumno=alumno_cuil)
 
-        # Verificamos si se ha seleccionado un ciclo lectivo
-        if ciclo_lectivo_id:
+        # Verificar selección de ciclo y subnivel
+        if ciclo_lectivo_id and subnivel_id:
             try:
                 ciclo_seleccionado = CicloLectivo.objects.get(id=ciclo_lectivo_id)
-                monto_inscripcion = ciclo_seleccionado.monto_inscripcion  # Traer el monto de inscripción desde la base de datos
+                subnivel = SubNivelCursado.objects.get(id=subnivel_id)
+
+                # Obtener monto de inscripción desde MontosCicloLectivo
+                montos_ciclo = MontosCicloLectivo.objects.get(
+                    ciclo_lectivo=ciclo_seleccionado,
+                    subnivel_cursado=subnivel
+                )
+                monto_inscripcion = montos_ciclo.monto_inscripcion
+
             except CicloLectivo.DoesNotExist:
                 ciclo_seleccionado = None
+            except SubNivelCursado.DoesNotExist:
+                subnivel = None
+            except MontosCicloLectivo.DoesNotExist:
                 monto_inscripcion = 0
 
-        # Crear la inscripción solo si se ha seleccionado un alumno y un ciclo lectivo
-        if alumno_seleccionado and ciclo_seleccionado:
-            # Verificar si el alumno ya está inscrito en ese ciclo
+        # Crear la inscripción solo si se seleccionaron todos los datos
+        if alumno_seleccionado and ciclo_seleccionado and subnivel:
             if Inscripcion.objects.filter(cuil_alumno=alumno_seleccionado, ciclo_lectivo=ciclo_seleccionado).exists():
-                # Redirigir a la página donde se indica que el alumno ya está inscrito
                 messages.error(request, "El alumno ya está inscrito en este ciclo lectivo.")
                 return render(request, 'cuotas/alumno_ya_inscrito.html', {
                     'alumno': alumno_seleccionado,
                     'ciclo': ciclo_seleccionado,
                 })
             else:
-                # Crear la inscripción
+                # Crear inscripción
                 Inscripcion.objects.create(
                     cuil_alumno=alumno_seleccionado,
-                    ciclo_lectivo_id=ciclo_seleccionado.id,  # Usamos solo el ID del ciclo
+                    ciclo_lectivo=ciclo_seleccionado,
+                    subnivel_cursado=subnivel,
                     monto_inscripcion=monto_inscripcion,
                     pagada=pagada
                 )
-                # Mostrar mensaje de éxito
-                messages.success(request, f"El alumno {alumno_seleccionado.nombres_alumno} {alumno_seleccionado.apellidos_alumno} ha sido inscrito con éxito en el ciclo {ciclo_seleccionado.año_lectivo}.")
+                messages.success(request, f"Alumno {alumno_seleccionado.nombres_alumno} inscrito en el ciclo {ciclo_seleccionado.año_lectivo}.")
                 return render(request, 'cuotas/inscripcion_exitosa.html', {
                     'alumno': alumno_seleccionado,
                     'ciclo': ciclo_seleccionado,
@@ -327,9 +336,8 @@ def inscribir_alumno(request):
                     'pagada': pagada,
                 })
         else:
-            messages.error(request, "Debes seleccionar un alumno y un ciclo lectivo válido.")
+            messages.error(request, "Debes seleccionar un alumno, ciclo y subnivel válidos.")
     
-    # Renderizamos el formulario si no es un POST
     return render(request, 'cuotas/inscribir_alumno.html', {
         'alumnos': alumnos,
         'ciclos': ciclos,
@@ -338,6 +346,7 @@ def inscribir_alumno(request):
         'monto_inscripcion': monto_inscripcion,
         'pagada': pagada,
     })
+
 
 # Consultar Ciclo Lectivo
 def consultar_ciclo_lectivo(request):

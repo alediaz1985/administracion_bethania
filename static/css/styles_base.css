@@ -108,7 +108,7 @@ body {
 .submenu li a {
     padding: 8px 30px;
     display: block;
-    color: rgb(161, 41, 255);
+    color: rgb(0, 0, 0);
     text-decoration: none;
     transition: background 0.3s ease;
 }
