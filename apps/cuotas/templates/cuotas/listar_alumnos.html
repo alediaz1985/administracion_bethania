@@ -1,32 +1,31 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <title>Listar Alumnos por Ciclo Lectivo</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lista de Alumnos</title>
 </head>
 <body>
-    <h1>Seleccionar Ciclo Lectivo</h1>
-
-    <form method="POST">
+    <h1>Lista de Alumnos por Ciclo Lectivo</h1>
+    <form method="post">
         {% csrf_token %}
-        <label for="ciclo_lectivo">Ciclo Lectivo:</label>
+        <label for="ciclo_lectivo">Seleccionar Ciclo Lectivo:</label>
         <select name="ciclo_lectivo" id="ciclo_lectivo">
-            {% for ciclo in ciclos %}
-                <option value="{{ ciclo.id }}">{{ ciclo.año_lectivo }}</option>
+            {% for ciclo in ciclos_lectivos %}
+                <option value="{{ ciclo.id }}" {% if ciclo == ciclo_seleccionado %}selected{% endif %}>
+                    {{ ciclo }}
+                </option>
             {% endfor %}
         </select>
-        <button type="submit">Listar Alumnos</button>
+        <button type="submit">Ver Alumnos</button>
     </form>
 
     {% if ciclo_seleccionado %}
-        <h2>Alumnos Inscritos en el Ciclo Lectivo {{ ciclo_seleccionado.año_lectivo }}</h2>
+        <h2>Alumnos inscritos en el ciclo: {{ ciclo_seleccionado }}</h2>
         <ul>
-            {% if alumnos %}
-                {% for alumno in alumnos %}
-                    <li>{{ alumno.apellidos_alumno }} {{ alumno.nombres_alumno }}</li>
-                {% endfor %}
-            {% else %}
-                <p>No hay alumnos inscritos en este ciclo lectivo.</p>
-            {% endif %}
+            {% for inscripcion in alumnos %}
+                <li>{{ inscripcion.cuil_alumno }} - {{ inscripcion.cuil_alumno.nombres_alumno }} {{ inscripcion.cuil_alumno.apellidos_alumno }}</li>
+            {% endfor %}
         </ul>
     {% endif %}
 </body>
