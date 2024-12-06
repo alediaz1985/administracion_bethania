@@ -12,7 +12,7 @@
 
 <div class="alumnos-container">
     <div class="alumnos">
-        <h1 class="alumnos-titulo">LISTA DE ALUMNOS</h1>
+        <h1 class="alumnos-titulo">Lista de Estudiantes</h1>
 
         <form class="alumnos-controls" action="{% url 'generar_pdf_lista_alumnos' %}" method="get">
             <button class="alumnos-btn" type="submit">Generar PDF</button>
@@ -24,19 +24,21 @@
             <thead>
                 <tr>
                     <th>CUIL</th>
-                    <th>Apellidos</th>
-                    <th>Nombres</th>
+                    <th>Apellido/s</th>
+                    <th>Nombre/s</th>
+                    <th>Teléfono</th>
                     <th></th>
                 </tr>
             </thead>
             <tbody id="table-body">
                 <!-- Filas de datos iniciales -->
-                {% if alumnos %}
-                    {% for alumno in alumnos %}
+                {% if estudiantes %}
+                    {% for estudiante in estudiantes %}
                         <tr>
-                            <td><a href="{% url 'alumno_detail' pk=alumno.pk %}">{{ alumno.cuil_alumno }}</a></td>
-                            <td>{{ alumno.apellidos_alumno }}</td>
-                            <td>{{ alumno.nombres_alumno }}</td>
+                            <td><a href="{% url 'alumno_detail' pk=estudiante.pk %}">{{ estudiante.cuil_estudiante }}</a></td>
+                            <td>{{ estudiante.apellidos_estudiante }}</td>
+                            <td>{{ estudiante.nombres_estudiante }}</td>
+                            <td>{{ estudiante.tel_cel_estudiante }}</td>
                             <td><button class="alumnos-btn-1" onclick="toggleDetails(this)">Ver más</button></td>
                         </tr>
                         <!-- Detalles adicionales ocultos en forma de tabla -->

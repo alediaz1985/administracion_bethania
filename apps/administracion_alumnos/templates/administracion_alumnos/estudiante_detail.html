@@ -9,8 +9,8 @@
         <p>CUIL: {{ alumno.cuil_alumno }}</p>
         <!-- Agrega más campos según sea necesario -->
         <div class="button-group">
-            <a href="{% url 'alumno_edit' pk=alumno.pk %}" class="button-submit">Editar</a>
-            <a href="{% url 'alumno_list' %}" class="button-cancel">Volver a la lista</a>
+            <a href="{% url 'estidiante_edit' pk=alumno.pk %}" class="button-submit">Editar</a>
+            <a href="{% url 'estudiante_list' %}" class="button-cancel">Volver a la lista</a>
         </div>
     </div>
 {% endblock %}
