@@ -23,7 +23,7 @@ def estudiante_list(request):
     estudiantes = Estudiante.objects.all()
     if not estudiantes:
         return HttpResponse("No se encontraron estudiantes en la base de datos.")
-    return render(request, 'administracion_estudiantes/estudiante_list.html', {'estudiantes': estudiantes})
+    return render(request, 'administracion_alumnos/estudiante_list.html', {'alumnos': alumnos})
 
 
 def estudiante_detail(request, pk):
@@ -58,22 +58,6 @@ def estudiante_delete(request, pk):
         return redirect('estudiante_list')
     return render(request, 'administracion_estudiantes/estudiante_confirm_delete.html', {'estudiante': estudiante})
 
-
-def consultar_estudiante(request):
-    estudiante = None
-    error = None
-
-    if request.method == "POST":
-        cuil = request.POST.get('cuil')
-        if not cuil or not re.fullmatch(r'\d+', cuil):
-            error = 'El CUIL debe contener solo números y no puede estar vacío.'
-        else:
-            try:
-                estudiante = Estudiante.objects.get(cuil=cuil)
-            except Estudiante.DoesNotExist:
-                error = 'No se encontró un estudiante con ese CUIL.'
-
-    return render(request, 'administracion_estudiantes/consultar_estudiante.html', {'estudiante': estudiante, 'error': error})
 
 
 def registrar_estudiante(request):
@@ -272,6 +256,7 @@ def generar_pdf_estudiante(estudiante, datos_institucion, logo_path):
 
 
 def generar_pdf_lista_estudiantes_view(request):
+    # Configuración del PDF
     response = HttpResponse(content_type='application/pdf')
     response['Content-Disposition'] = 'attachment; filename="lista_estudiantes.pdf"'
 
@@ -281,46 +266,53 @@ def generar_pdf_lista_estudiantes_view(request):
     styles = getSampleStyleSheet()
     elements = []
 
+    # Agregar el logo de la institución
     logo_path = os.path.join(settings.BASE_DIR, 'static', 'img', 'logo.png')
     try:
         if os.path.exists(logo_path):
-            logo = Image(logo_path, 1*inch, 1*inch)
+            logo = Image(logo_path, 1 * inch, 1 * inch)
             elements.append(logo)
     except FileNotFoundError:
         elements.append(Paragraph("Logo no disponible", styles['Normal']))
 
+    # Título del PDF
     elements.append(Paragraph("Lista de Estudiantes", styles['Title']))
 
-    estudiantes = Estudiante.objects.all().order_by('nivel', 'apellidos')
+    # Obtener los datos de los estudiantes
+    estudiantes = Estudiante.objects.all().order_by('nivel_estudiante', 'apellidos_estudiante')
 
     # Encabezados de la tabla
-    data = [["CUIL", "Apellido", "Nombre", "Nivel", "Teléfono"]]
+    data = [["CUIL", "Apellido/s", "Nombre/s", "Nivel", "Teléfono"]]
+
+    # Filas de datos
     for estudiante in estudiantes:
         data.append([
-            estudiante.cuil,
-            estudiante.apellidos,
-            estudiante.nombres,
-            estudiante.nivel,
-            estudiante.telefono_celular
+            estudiante.cuil_estudiante,
+            estudiante.apellidos_estudiante,
+            estudiante.nombres_estudiante,
+            estudiante.nivel_estudiante,
+            estudiante.tel_cel_estudiante
         ])
 
-    tabla = Table(data, colWidths=[1.5*inch, 1.5*inch, 1.5*inch, 1*inch, 1.5*inch])
+    # Configuración de la tabla
+    tabla = Table(data, colWidths=[1.5 * inch, 1.5 * inch, 1.5 * inch, 1 * inch, 1.5 * inch])
     tabla.setStyle(TableStyle([
-        ('BACKGROUND', (0, 0), (-1, 0), colors.grey),
-        ('TEXTCOLOR', (0, 0), (-1, 0), colors.whitesmoke),
-        ('ALIGN', (0, 0), (-1, -1), 'LEFT'),
-        ('FONTNAME', (0, 0), (-1, 0), 'Helvetica-Bold'),
-        ('FONTSIZE', (0, 0), (-1, -1), 9),
-        ('GRID', (0, 0), (-1, -1), 0.5, colors.black),
+        ('BACKGROUND', (0, 0), (-1, 0), colors.grey),  # Color de encabezado
+        ('TEXTCOLOR', (0, 0), (-1, 0), colors.whitesmoke),  # Color del texto del encabezado
+        ('ALIGN', (0, 0), (-1, -1), 'LEFT'),  # Alineación de texto
+        ('FONTNAME', (0, 0), (-1, 0), 'Helvetica-Bold'),  # Fuente del encabezado
+        ('FONTSIZE', (0, 0), (-1, -1), 9),  # Tamaño de la fuente
+        ('GRID', (0, 0), (-1, -1), 0.5, colors.black),  # Líneas de la tabla
+        ('BACKGROUND', (0, 1), (-1, -1), colors.beige),  # Fondo de las celdas
     ]))
     elements.append(tabla)
 
+    # Generar el PDF
     doc.build(elements)
     pdf = buffer.getvalue()
     buffer.close()
     response.write(pdf)
     return response
-
 
 from django.shortcuts import render
 from .models import Estudiante  # Importar el modelo Estudiante
@@ -343,7 +335,7 @@ from django.shortcuts import render, get_object_or_404, redirect
 from .models import Estudiante  # Asegúrate de importar el modelo correcto
 from .forms import EstudianteForm  # Asegúrate de tener un formulario definido
 
-def alumno_edit(request, pk):
+def estudiante_edit(request, pk):
     """
     Vista para editar la información de un alumno.
     """
@@ -355,13 +347,13 @@ def alumno_edit(request, pk):
             return redirect('alumno_detail', pk=alumno.pk)  # Redirige al detalle del alumno
     else:
         form = EstudianteForm(instance=alumno)
-    return render(request, 'administracion_alumnos/alumno_edit.html', {'form': form})
+    return render(request, 'administracion_alumnos/estudiante_edit.html', {'form': form})
 
 from django.shortcuts import render, get_object_or_404, redirect
 from django.urls import reverse
 from .models import Estudiante  # Asegúrate de usar el modelo correcto
 
-def alumno_delete(request, pk):
+def estudiante_delete(request, pk):
     """
     Vista para eliminar un alumno.
     """
@@ -376,7 +368,7 @@ from django.shortcuts import render, get_object_or_404, redirect
 from django.urls import reverse
 from .models import Estudiante  # Asegúrate de usar el modelo correcto
 
-def alumno_delete(request, pk):
+def estudiante_delete(request, pk):
     """
     Vista para eliminar un alumno.
     """
@@ -387,14 +379,31 @@ def alumno_delete(request, pk):
     return render(request, 'administracion_alumnos/alumno_confirm_delete.html', {'alumno': alumno})
 
 
-def consultar_alumno(request):
-    """
+"""def estudiante_consultar(request):
+
     Vista para consultar alumnos.
-    """
+
     query = request.GET.get('query', '')  # Captura el término de búsqueda del formulario
     alumnos = Alumno.objects.filter(
         nombres_alumno__icontains=query
     ) | Alumno.objects.filter(
         apellidos_alumno__icontains=query
     )  # Filtra por nombre o apellido
-    return render(request, 'administracion_alumnos/consultar_alumno.html', {'alumnos': alumnos, 'query': query})
+    return render(request, 'administracion_alumnos/estudiante_consultar.html', {'alumnos': alumnos, 'query': query})
+"""
+def estudiante_consultar(request):
+    estudiante = None
+    error = None
+
+    if request.method == "POST":
+        cuil = request.POST.get('cuil')
+        if not cuil or not re.fullmatch(r'\d+', cuil):
+            error = 'El CUIL debe contener solo números y no puede estar vacío.'
+        else:
+            try:
+                estudiante = Estudiante.objects.get(cuil_estudiante=cuil)
+            except Estudiante.DoesNotExist:
+                error = 'No se encontró un estudiante con ese CUIL.'
+
+    return render(request, 'administracion_alumnos/estudiante_consultar.html', {'estudiante': estudiante, 'error': error})
+
