@@ -3,6 +3,8 @@ body {
     background-size: cover;  /* Asegura que la imagen cubra todo el fondo */
     background-position: center; /* Centra la imagen */
     background-repeat: no-repeat; /* Evita que la imagen se repita */
+    width: 96%;
+    float: right;
 }
 
 /* Contenedor general con un fondo más fuerte */

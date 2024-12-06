@@ -1,0 +1,79 @@
+document.addEventListener('DOMContentLoaded', function() {
+    const menuItems = document.querySelectorAll('.menu-item');
+
+    menuItems.forEach(item => {
+        item.addEventListener('mouseenter', () => {
+            const submenu = item.querySelector('.submenu');
+            if (submenu) {
+                submenu.style.display = 'block';
+                submenu.style.opacity = '1';
+                submenu.style.transform = 'translateY(0)';
+            }
+        });
+
+        item.addEventListener('mouseleave', () => {
+            const submenu = item.querySelector('.submenu');
+            if (submenu) {
+                submenu.style.opacity = '0';
+                submenu.style.transform = 'translateY(-20px)';
+                setTimeout(() => {
+                    submenu.style.display = 'none';
+                }, 300); // Esperar a que la transición termine antes de ocultarlo
+            }
+        });
+    });
+});
+
+
+
+function toggleSidebar() {
+    const sidebar = document.getElementById("sidebar");
+    const content = document.querySelector(".open-btn");
+
+    // Alterna la clase 'active' en la barra lateral
+    sidebar.classList.toggle("active");
+
+    // Ajusta el margen del contenido principal
+    if (sidebar.classList.contains("active")) {
+        content.style.marginLeft = "0.5%";
+    } else {
+        content.style.marginLeft = "0px";
+    }
+
+}
+
+// Función para expandir los subitems de un ítem específico
+const expandBtns = document.querySelectorAll('.sidebar-items > li > a');
+
+expandBtns.forEach(btn => {
+    btn.addEventListener('click', function(e) {
+        e.preventDefault();  // Prevenir la acción predeterminada del enlace
+
+        const sidebar = document.getElementById("sidebar");
+        const subitems = this.nextElementSibling;  // Los subitems del ítem clickeado
+
+        // Si la barra lateral está cerrada, la expandimos
+        if (!sidebar.classList.contains('active')) {
+            sidebar.classList.add('active');  // Expande la barra lateral
+        }
+
+        // Verificar si ya está abierto
+        const isActive = subitems.classList.contains('active');
+        
+        // Si el subitem ya está abierto, lo cerramos
+        if (isActive) {
+            subitems.classList.remove('active');
+            this.querySelector('.expand-btn').textContent = '+';  // Cambiar icono a '+'
+        } else {
+            // Si no está abierto, cerramos todos los subitems primero
+            document.querySelectorAll('.subitems').forEach(sub => {
+                sub.classList.remove('active');
+                sub.previousElementSibling.querySelector('.expand-btn').textContent = '+';  // Revertir todos los iconos a '+'
+            });
+
+            // Abrimos el subitem del ítem seleccionado
+            subitems.classList.add('active');
+            this.querySelector('.expand-btn').textContent = '-';  // Cambiar icono a '-'
+        }
+    });
+});

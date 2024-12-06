@@ -9,8 +9,9 @@ body {
 }
 
 .alumnos-container {
-    width: 100%;
+    width: 96%;
     padding: 50px 40px;
+    float: right;
 }
 
 .alumnos-titulo {
@@ -88,6 +89,25 @@ body {
 }
 
 .alumnos-btn:hover {
+    background-color:rgb(68, 123, 46);
+    transform: translateY(-3px); /* Efecto de "levantamiento" al pasar el mouse */
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2); /* Sombra más marcada */
+}
+
+.alumnos-btn-1 {
+    padding: 6px 12px;
+    background-color: rgb(66 149 33);
+    color: white;
+    border: none;
+    cursor: pointer;
+    border-radius: 5px;
+    transition: all 0.3s ease; /* Transición suave para todos los efectos */
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Sombra sutil inicial */
+    float: right;
+    font-size: 10px;
+}
+
+.alumnos-btn-1:hover {
     background-color:rgb(68, 123, 46);
     transform: translateY(-3px); /* Efecto de "levantamiento" al pasar el mouse */
     box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2); /* Sombra más marcada */
