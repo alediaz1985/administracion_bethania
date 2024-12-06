@@ -9,7 +9,7 @@
 
     <!-- Estilos -->
     <link rel="stylesheet" href="{% static 'css/styles_home.css' %}">
-    <link rel="stylesheet" href="{% static 'css/styles_base.css' %}">
+    <link rel="stylesheet" href="{% static 'css/base.css' %}">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@500&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
     {% block extra_styles %}
@@ -23,48 +23,81 @@
 
     {% if user.is_authenticated %}
     <!-- Mostrar contenido solo si el usuario ha iniciado sesión -->
-    
-        <!-- Barra de navegación -->
+
+        <!-- Barra de navegación Lateral -->
+        <div id="sidebar" class="sidebar">
+            
+            <ul class="sidebar-items">
+                <li>
+                    <a href="{% url 'home' %}">
+                        <i class="fas fa-home"></i>
+                        <span class="text">Inicio</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="#">
+                        <i class="fas fa-user-graduate"></i>
+                        <span class="text">Alumno</span>
+                        <button class="expand-btn">+</button>
+                    </a>
+                    <ul class="subitems">
+                        <li><a href="{% url 'alumno_list' %}">● Lista de Alumnos</a></li>
+                        <li><a href="{% url 'consultar_alumno' %}">● Consultar Alumnos</a></li>
+                        <li><a href="{% url 'registrar_alumno' %}">● Registrar Alumno</a></li>
+                    </ul>
+                </li>
+                <li>
+                    <a href="#">
+                        <i class="fas fa-briefcase"></i>
+                        <span class="text">Administración</span>
+                        <button class="expand-btn">+</button>
+                    </a>
+                    <ul class="subitems">
+                        <li><a href="{% url 'cuotas:habilitar_ciclo_lectivo' %}">● Habilitar Ciclo Lectivo</a></li>
+                        <li><a href="{% url 'cuotas:actualizar_montos' %}">● Actualizar Montos</a></li>
+                        <li><a href="{% url 'cuotas:listar_montos' %}">● Listar Montos</a></li>
+                        <li><a href="{% url 'cuotas:consultar_ciclo_lectivo' %}">● Consultar Ciclo Lectivo</a></li>
+                        <li><a href="{% url 'cuotas:inscribir_alumno' %}">● Inscribir Alumno</a></li>
+                        <li><a href="{% url 'consulta' %}">● Consultar Comprobante</a></li>
+                    </ul>
+                </li>
+                <li>
+                    <a href="#">
+                        <i class="fas fa-layer-group"></i>
+                        <span class="text">Niveles</span>
+                        <button class="expand-btn">+</button>
+                    </a>
+                    <ul class="subitems">
+                        <li><a href="{% url 'niveles_list' %}">● Lista de Niveles</a></li>
+                        <li><a href="{% url 'registrar_nivel' %}">● Registrar Nivel</a></li>
+                        <li><a href="{% url 'editar_nivel' %}">● Editar Nivel</a></li>
+                    </ul>
+                </li>
+                <li>
+                    <a href="#">
+                        <i class="fas fa-cogs"></i>
+                        <span class="text">Configuración</span>
+                        <button class="expand-btn">+</button>
+                    </a>
+                    <ul class="subitems">
+                        <li><a href="#">● Configurar Usuario</a></li>
+                    </ul>
+                </li>
+            </ul>
+        </div>
+        <button class="open-btn" onclick="toggleSidebar()">
+            <i class="fas fa-bars" id="toggle-icon"></i>
+        </button>
+
         <nav class="navbar">
             <ul class="nav-items">
-                <li class="menu-item"><a href="{% url 'home' %}">INICIO</a></li>
-                <li class="menu-item">
-                    <a href="#">ALUMNOS</a>
-                    <ul class="submenu">
-                        <li><a href="{% url 'estudiante_list' %}">Lista de Alumnos</a></li>
-                        <li><a href="{% url 'consultar_alumno' %}">Consultar Alumnos</a></li>
-                        <li><a href="{% url 'registrar_alumno' %}">Registrar Alumno</a></li>
-                    </ul>
-                </li>
                 <li class="logo"><img src="{% static 'img/logo1.png' %}" alt="Poseidon"></li>
-                <li class="menu-item">
-                    <a href="#">ADMINISTRACIÓN</a>
-                    <ul class="submenu">
-                        <li><a href="{% url 'cuotas:habilitar_ciclo_lectivo' %}">Habilitar Ciclo Lectivo</a></li>
-                        <li><a href="{% url 'cuotas:actualizar_montos' %}">Actualizar Montos</a></li>
-                        <li><a href="{% url 'cuotas:listar_montos' %}">Listar Montos</a></li>
-                        <li><a href="{% url 'cuotas:consultar_ciclo_lectivo' %}">Consultar Ciclo Lectivo</a></li>
-                        <li><a href="{% url 'cuotas:inscribir_alumno' %}">Inscribir Alumno</a></li>
-                        <li><a href="{% url 'consulta' %}">Consultar Comprobante</a></li>
-                        
-                    </ul>
-                </li>
-                <li class="menu-item">
-                    <a href="#">NIVELES</a>
-                    <ul class="submenu">
-                        <li><a href="{% url 'niveles_list' %}">Lista de Niveles</a></li>
-                        <li><a href="{% url 'registrar_nivel' %}">Registrar Nivel</a></li>
-                        <li><a href="{% url 'editar_nivel' %}">Editar Nivel</a></li>
-                    </ul>
-                </li>
             </ul>
             <div class="signin-btn">
                 <a href="{% url 'cerrar_sesion' %}">Cerrar Sesión</a>
             </div>
         </nav>
-
     
-
         <!-- Contenido del sitio -->
         {% block content %}
         {% endblock %}
@@ -121,7 +154,7 @@
 
     <!-- Scripts -->
     <script src="{% static 'js/scripts.js' %}"></script>
-    <script defer src="{% static 'js/script_base.js' %}"></script> <!-- Incluye el script -->
+    <script defer src="{% static 'js/base.js' %}"></script> <!-- Incluye el script -->
 
 </body>
 </html>

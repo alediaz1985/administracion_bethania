@@ -26,12 +26,7 @@
                     <th>CUIL</th>
                     <th>Apellidos</th>
                     <th>Nombres</th>
-                    <th>Fecha de Nacimiento</th>
-                    <th>Género</th>
-                    <th>Domicilio</th>
-                    <th>Teléfono</th>
-                    <th>Localidad</th>
-                    <th>Acción</th>
+                    <th></th>
                 </tr>
             </thead>
             <tbody id="table-body">
@@ -42,18 +37,36 @@
                             <td><a href="{% url 'alumno_detail' pk=alumno.pk %}">{{ alumno.cuil_alumno }}</a></td>
                             <td>{{ alumno.apellidos_alumno }}</td>
                             <td>{{ alumno.nombres_alumno }}</td>
-                            <td>{{ alumno.fecha_nacimiento_alumno }}</td>
-                            <td>{{ alumno.genero_alumno }}</td>
-                            <td>{{ alumno.domicilio_residencia_alumno }}</td>
-                            <td>{{ alumno.numero_telefonico_alumno }}</td>
-                            <td>{{ alumno.localidad_residencia_alumno }}</td>
-                            <td><button class="alumnos-btn" onclick="toggleDetails(this)">Ver más</button></td>
+                            <td><button class="alumnos-btn-1" onclick="toggleDetails(this)">Ver más</button></td>
                         </tr>
                         <!-- Detalles adicionales ocultos en forma de tabla -->
                         <tr class="alumnos-details-row" style="display:none;">
                             <td colspan="9">
                                 <table class="alumnos-details-table">
                                     <tr>
+                                        <td>
+                                            <div class="alumnos-cell-header">Fecha de Nacimiento</div>
+                                            <div class="alumnos-cell-content">{{ alumno.fecha_nacimiento_alumno }}</div>
+                                        </td>
+                                        <td>
+                                            <div class="alumnos-cell-header">Género</div>
+                                            <div class="alumnos-cell-content">{{ alumno.genero_alumno }}</div>
+                                        </td>
+                                        <td>
+                                            <div class="alumnos-cell-header">Domicilio</div>
+                                            <div class="alumnos-cell-content">{{ alumno.domicilio_residencia_alumno }}</div>
+                                        </td>
+                                        <td>
+                                            <div class="alumnos-cell-header">Teléfono</div>
+                                            <div class="alumnos-cell-content">{{ alumno.numero_telefonico_alumno }}</div>
+                                        </td>
+                                        
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                            <div class="alumnos-cell-header">Localidad</div>
+                                            <div class="alumnos-cell-content">{{ alumno.localidad_residencia_alumno }}</div>
+                                        </td>
                                         <td>
                                             <div class="alumnos-cell-header">Provincia</div>
                                             <div class="alumnos-cell-content">{{ alumno.provincia_residencia_alumno }}</div>
@@ -66,12 +79,13 @@
                                             <div class="alumnos-cell-header">Localidad de Nacimiento</div>
                                             <div class="alumnos-cell-content">{{ alumno.localidad_nacimiento_alumno }}</div>
                                         </td>
+                                        
+                                    </tr>
+                                    <tr>
                                         <td>
                                             <div class="alumnos-cell-header">Provincia de Nacimiento</div>
                                             <div class="alumnos-cell-content">{{ alumno.provincia_nacimiento_alumno }}</div>
                                         </td>
-                                    </tr>
-                                    <tr>
                                         <td>
                                             <div class="alumnos-cell-header">Nacionalidad</div>
                                             <div class="alumnos-cell-content">{{ alumno.nacionalidad_alumno }}</div>
@@ -84,12 +98,13 @@
                                             <div class="alumnos-cell-header">Año de Ingreso</div>
                                             <div class="alumnos-cell-content">{{ alumno.ingreso_alumno }}</div>
                                         </td>
+                                        
+                                    </tr>
+                                    <tr>
                                         <td>
                                             <div class="alumnos-cell-header">Medicamento</div>
                                             <div class="alumnos-cell-content">{{ alumno.medicamento_alumno }}</div>
                                         </td>
-                                    </tr>
-                                    <tr>
                                         <td>
                                             <div class="alumnos-cell-header">Alergia</div>
                                             <div class="alumnos-cell-content">{{ alumno.alergia_alumno }}</div>
@@ -102,12 +117,13 @@
                                             <div class="alumnos-cell-header">Condición Médica</div>
                                             <div class="alumnos-cell-content">{{ alumno.condicion_medica_alumno }}</div>
                                         </td>
+                                        
+                                    </tr>
+                                    <tr>
                                         <td>
                                             <div class="alumnos-cell-header">CUIL Tutor</div>
                                             <div class="alumnos-cell-content">{{ alumno.cuil_tutor }}</div>
                                         </td>
-                                    </tr>
-                                    <tr>
                                         <td>
                                             <div class="alumnos-cell-header">Apellido y Nombre del Tutor</div>
                                             <div class="alumnos-cell-content">{{ alumno.apellido_nombre_tutor }}</div>
@@ -120,12 +136,13 @@
                                             <div class="alumnos-cell-header">Domicilio del Tutor</div>
                                             <div class="alumnos-cell-content">{{ alumno.domicilio_tutor }}</div>
                                         </td>
+                                        
+                                    </tr>
+                                    <tr>
                                         <td>
                                             <div class="alumnos-cell-header">Localidad del Tutor</div>
                                             <div class="alumnos-cell-content">{{ alumno.localidad_tutor }}</div>
                                         </td>
-                                    </tr>
-                                    <tr>
                                         <td>
                                             <div class="alumnos-cell-header">Provincia del Tutor</div>
                                             <div class="alumnos-cell-content">{{ alumno.provincia_tutor }}</div>
