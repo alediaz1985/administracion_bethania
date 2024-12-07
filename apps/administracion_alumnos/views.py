@@ -33,8 +33,16 @@ def estudiante_detail(request, pk):
 
 def ver_datos_estudiante(request, pk):
     estudiante = get_object_or_404(Estudiante, pk=pk)
-    campos_estudiante = {field.name: getattr(estudiante, field.name) for field in estudiante._meta.fields}
-    return render(request, 'administracion_estudiantes/ver_datos_estudiante.html', {'estudiante': estudiante, 'campos_estudiante': campos_estudiante})
+    # Crea un diccionario dinámico con todos los campos del modelo
+    campos_estudiante = {
+        field.verbose_name: getattr(estudiante, field.name)
+        for field in estudiante._meta.fields
+    }
+    return render(
+        request,
+        'administracion_alumnos/ver_datos_estudiante.html',
+        {'estudiante': estudiante, 'campos_estudiante': campos_estudiante}
+    )
 
 
 def estudiante_edit(request, pk):
@@ -391,7 +399,7 @@ def estudiante_delete(request, pk):
     )  # Filtra por nombre o apellido
     return render(request, 'administracion_alumnos/estudiante_consultar.html', {'alumnos': alumnos, 'query': query})
 """
-def estudiante_consultar(request):
+"""def estudiante_consultar(request):
     estudiante = None
     error = None
 
@@ -407,3 +415,30 @@ def estudiante_consultar(request):
 
     return render(request, 'administracion_alumnos/estudiante_consultar.html', {'estudiante': estudiante, 'error': error})
 
+"""
+def estudiante_consultar(request):
+    estudiante = None
+    error = None
+
+    if request.method == "POST":
+        cuil = request.POST.get('cuil')
+        if not cuil or not re.fullmatch(r'\d+', cuil):
+            error = 'El CUIL debe contener solo números y no puede estar vacío.'
+        else:
+            try:
+                # Obtén el registro más reciente para el CUIL
+                estudiante = (
+                    Estudiante.objects.filter(cuil_estudiante=cuil)
+                    .order_by('-marca_temporal')  # Ordena por la última marca temporal
+                    .first()  # Obtén el primer registro
+                )
+                if not estudiante:
+                    error = 'No se encontró un estudiante con ese CUIL.'
+            except Exception as e:
+                error = f'Ocurrió un error inesperado: {e}'
+
+    return render(
+        request,
+        'administracion_alumnos/estudiante_consultar.html',
+        {'estudiante': estudiante, 'error': error}
+    )
