@@ -21,11 +21,14 @@
         <div class="resultado-alumno">
             <h2>Alumno encontrado</h2>
             <div class="alumno-datos">
-                <p><strong>CUIL:</strong> {{ estudiante.cuil_estudiante }}</p>
-                <p><strong>Nombre:</strong> {{ estudiante.apellidos_estudiante }} {{ estudiante.nombres_estudiante }}</p>
-            </div>
+                <h2>Datos del Alumno</h2>
+                    <p><strong>CUIL:</strong> {{ estudiante.cuil_estudiante }}</p>
+                    <p><strong>Nombre:</strong> {{ estudiante.apellidos_estudiante }}, {{ estudiante.nombres_estudiante }}</p>
+                    <p><strong>Tel-Cel:</strong> {{ estudiante.tel_cel_estudiante }}</p>
+                    <p><strong>Última Actualización:</strong> {{ estudiante.marca_temporal }}</p>
+                </div>
             <div class="button-group">
-                <form method="get" action="{% url 'ver_datos_alumno' pk=estudiante.pk %}">
+                <form method="get" action="{% url 'ver_datos_estudiante' pk=estudiante.pk %}">
                     <button type="submit" class="button-submit gradient-button">Ver Datos</button>
                 </form>
                 <form method="post" action="{% url 'estudiante_delete' pk=estudiante.pk %}" id="delete-form">
