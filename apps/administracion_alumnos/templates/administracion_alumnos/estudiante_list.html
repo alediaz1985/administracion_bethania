@@ -18,170 +18,154 @@
             <button class="alumnos-btn" type="submit">Generar PDF</button>
         </form>
     </div>
-
+    <div class="tabs">
+        <button class="tab-button active" onclick="showTab('todos')">Todos</button>
+        <button class="tab-button" onclick="showTab('pendientes')">Pendientes</button>
+        <button class="tab-button" onclick="showTab('aprobados')">Aprobados</button>
+    </div>
     <div class="alumnos-scroll-container">
-        <table class="alumnos-table" id="data-table">
-            <thead>
-                <tr>
-                    <th>CUIL</th>
-                    <th>Apellido/s</th>
-                    <th>Nombre/s</th>
-                    <th>Teléfono</th>
-                    <th></th>
-                </tr>
-            </thead>
-            <tbody id="table-body">
-                <!-- Filas de datos iniciales -->
-                {% if estudiantes %}
-                    {% for estudiante in estudiantes %}
-                        <tr>
-                            <td><a href="{% url 'alumno_detail' pk=estudiante.pk %}">{{ estudiante.cuil_estudiante }}</a></td>
-                            <td>{{ estudiante.apellidos_estudiante }}</td>
-                            <td>{{ estudiante.nombres_estudiante }}</td>
-                            <td>{{ estudiante.tel_cel_estudiante }}</td>
-                            <td><button class="alumnos-btn-1" onclick="toggleDetails(this)">Ver más</button></td>
-                        </tr>
-                        <!-- Detalles adicionales ocultos en forma de tabla -->
-                        <tr class="alumnos-details-row" style="display:none;">
-                            <td colspan="9">
-                                <table class="alumnos-details-table">
-                                    <tr>
-                                        <td>
-                                            <div class="alumnos-cell-header">Fecha de Nacimiento</div>
-                                            <div class="alumnos-cell-content">{{ alumno.fecha_nacimiento_alumno }}</div>
-                                        </td>
-                                        <td>
-                                            <div class="alumnos-cell-header">Género</div>
-                                            <div class="alumnos-cell-content">{{ alumno.genero_alumno }}</div>
-                                        </td>
-                                        <td>
-                                            <div class="alumnos-cell-header">Domicilio</div>
-                                            <div class="alumnos-cell-content">{{ alumno.domicilio_residencia_alumno }}</div>
-                                        </td>
-                                        <td>
-                                            <div class="alumnos-cell-header">Teléfono</div>
-                                            <div class="alumnos-cell-content">{{ alumno.numero_telefonico_alumno }}</div>
-                                        </td>
-                                        
-                                    </tr>
-                                    <tr>
-                                        <td>
-                                            <div class="alumnos-cell-header">Localidad</div>
-                                            <div class="alumnos-cell-content">{{ alumno.localidad_residencia_alumno }}</div>
-                                        </td>
-                                        <td>
-                                            <div class="alumnos-cell-header">Provincia</div>
-                                            <div class="alumnos-cell-content">{{ alumno.provincia_residencia_alumno }}</div>
-                                        </td>
-                                        <td>
-                                            <div class="alumnos-cell-header">Código Postal</div>
-                                            <div class="alumnos-cell-content">{{ alumno.codigo_postal_alumno }}</div>
-                                        </td>
-                                        <td>
-                                            <div class="alumnos-cell-header">Localidad de Nacimiento</div>
-                                            <div class="alumnos-cell-content">{{ alumno.localidad_nacimiento_alumno }}</div>
-                                        </td>
-                                        
-                                    </tr>
-                                    <tr>
-                                        <td>
-                                            <div class="alumnos-cell-header">Provincia de Nacimiento</div>
-                                            <div class="alumnos-cell-content">{{ alumno.provincia_nacimiento_alumno }}</div>
-                                        </td>
-                                        <td>
-                                            <div class="alumnos-cell-header">Nacionalidad</div>
-                                            <div class="alumnos-cell-content">{{ alumno.nacionalidad_alumno }}</div>
-                                        </td>
-                                        <td>
-                                            <div class="alumnos-cell-header">Nivel Cursado</div>
-                                            <div class="alumnos-cell-content">{{ alumno.nivel_cursado_alumno }}</div>
-                                        </td>
-                                        <td>
-                                            <div class="alumnos-cell-header">Año de Ingreso</div>
-                                            <div class="alumnos-cell-content">{{ alumno.ingreso_alumno }}</div>
-                                        </td>
-                                        
-                                    </tr>
-                                    <tr>
-                                        <td>
-                                            <div class="alumnos-cell-header">Medicamento</div>
-                                            <div class="alumnos-cell-content">{{ alumno.medicamento_alumno }}</div>
-                                        </td>
-                                        <td>
-                                            <div class="alumnos-cell-header">Alergia</div>
-                                            <div class="alumnos-cell-content">{{ alumno.alergia_alumno }}</div>
-                                        </td>
-                                        <td>
-                                            <div class="alumnos-cell-header">Alergia a Medicamentos</div>
-                                            <div class="alumnos-cell-content">{{ alumno.alergico_medicamento_alumno }}</div>
-                                        </td>
-                                        <td>
-                                            <div class="alumnos-cell-header">Condición Médica</div>
-                                            <div class="alumnos-cell-content">{{ alumno.condicion_medica_alumno }}</div>
-                                        </td>
-                                        
-                                    </tr>
-                                    <tr>
-                                        <td>
-                                            <div class="alumnos-cell-header">CUIL Tutor</div>
-                                            <div class="alumnos-cell-content">{{ alumno.cuil_tutor }}</div>
-                                        </td>
-                                        <td>
-                                            <div class="alumnos-cell-header">Apellido y Nombre del Tutor</div>
-                                            <div class="alumnos-cell-content">{{ alumno.apellido_nombre_tutor }}</div>
-                                        </td>
-                                        <td>
-                                            <div class="alumnos-cell-header">Teléfono del Tutor</div>
-                                            <div class="alumnos-cell-content">{{ alumno.telefono_tutor }}</div>
-                                        </td>
-                                        <td>
-                                            <div class="alumnos-cell-header">Domicilio del Tutor</div>
-                                            <div class="alumnos-cell-content">{{ alumno.domicilio_tutor }}</div>
-                                        </td>
-                                        
-                                    </tr>
-                                    <tr>
-                                        <td>
-                                            <div class="alumnos-cell-header">Localidad del Tutor</div>
-                                            <div class="alumnos-cell-content">{{ alumno.localidad_tutor }}</div>
-                                        </td>
-                                        <td>
-                                            <div class="alumnos-cell-header">Provincia del Tutor</div>
-                                            <div class="alumnos-cell-content">{{ alumno.provincia_tutor }}</div>
-                                        </td>
-                                        <td>
-                                            <div class="alumnos-cell-header">Código Postal del Tutor</div>
-                                            <div class="alumnos-cell-content">{{ alumno.codigo_postal_tutor }}</div>
-                                        </td>
-                                    </tr>
-                                </table>
-                            </td>
-                        </tr>
-                    {% endfor %}
-                {% else %}
+        <div class="tab-content active" id="todos">
+            <table class="alumnos-table" id="data-table">
+                <thead>
                     <tr>
-                        <td colspan="26">No hay alumnos en la base de datos.</td>
+                        <th>CUIL</th>
+                        <th>Apellido/s</th>
+                        <th>Nombre/s</th>
+                        <th>Nivel</th>
+                        <th></th>
+                        <th></th>
                     </tr>
-                {% endif %}
-            <tbody>
-        </table>
+                </thead>
+                <tbody id="table-body">
+                    {% if estudiantes %}
+                        {% for estudiante in estudiantes %}
+                            <tr>
+                                <td>{{ estudiante.cuil_estudiante }}</td>
+                                <td>{{ estudiante.apellidos_estudiante }}</td>
+                                <td>{{ estudiante.nombres_estudiante }}</td>
+                                <td>{{ estudiante.nivel_estudiante }}</td>
+                                <td>
+                                    {% for estado in estudiante.estados_documentacion.all %}
+                                        {{ estado.estado }}
+                                    {% endfor %}
+                                </td>
+                                <td>
+                                    <form class="alumnos-controls" action="{% url 'estudiante_detail' pk=estudiante.pk %}" method="get">
+                                        <button class="alumnos-btn-1" type="submit"><i class="fas fa-eye"></i></button>
+                                    </form>
+                                </td>
+                            </tr>  
+                        {% endfor %}
+                    {% else %}
+                        <tr>
+                            <td colspan="26">No hay alumnos en la base de datos.</td>
+                        </tr>
+                    {% endif %}
+                <tbody>
+            </table>
+        </div>
+        <div class="tab-content" id="pendientes">
+            <table class="alumnos-table" id="data-table">
+                <thead>
+                    <tr>
+                        <th>CUIL</th>
+                        <th>Apellido/s</th>
+                        <th>Nombre/s</th>
+                        <th>Nivel</th>
+                        <th></th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody id="table-body">
+                    <!-- Filas de datos iniciales -->
+                    {% if estudiantes_pendientes %}
+                        {% for estudiante in estudiantes_pendientes %}
+                            <tr>
+                                <td>{{ estudiante.cuil_estudiante }}</td>
+                                <td>{{ estudiante.apellidos_estudiante }}</td>
+                                <td>{{ estudiante.nombres_estudiante }}</td>
+                                <td>{{ estudiante.nivel_estudiante }}</td>
+                                <td>
+                                    {% for estado in estudiante.estados_documentacion.all %}
+                                        {{ estado.estado }}
+                                    {% endfor %}
+                                </td>
+                                <td>
+                                    <form class="alumnos-controls" action="{% url 'alumno_detail' pk=estudiante.pk %}" method="get">
+                                        <button class="alumnos-btn-1" type="submit">Ver Datos</button>
+                                    </form>
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    {% else %}
+                        <tr>
+                            <td colspan="5">No hay alumnos en la base de datos.</td>
+                        </tr>
+                    {% endif %}
+                </tbody>
+            </table>
+        </div>
+        <div class="tab-content" id="aprobados">
+            <table class="alumnos-table" id="data-table">
+                <thead>
+                    <tr>
+                        <th>CUIL</th>
+                        <th>Apellido/s</th>
+                        <th>Nombre/s</th>
+                        <th>Nivel</th>
+                        <th></th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody id="table-body">
+                    {% if estudiantes_aprobados %}
+                        {% for estudiante in estudiantes_aprobados %}
+                            <tr>
+                                <td>{{ estudiante.cuil_estudiante }}</td>
+                                <td>{{ estudiante.apellidos_estudiante }}</td>
+                                <td>{{ estudiante.nombres_estudiante }}</td>
+                                <td>{{ estudiante.nivel_estudiante }}</td>
+                                <td>
+                                    {% for estado in estudiante.estados_documentacion.all %}
+                                        {{ estado.estado }}
+                                    {% endfor %}
+                                </td>
+                                <td>
+                                    <form class="alumnos-controls" action="{% url 'alumno_detail' pk=estudiante.pk %}" method="get">
+                                        <button class="alumnos-btn-1" type="submit">Ver Datos</button>
+                                    </form>
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    {% else %}
+                        <tr>
+                            <td colspan="5">No hay alumnos aprobados.</td>
+                        </tr>
+                    {% endif %}
+                </tbody>
+            </table>
+        </div>
     </div>
 </div>
 
 <script>
 
-    function toggleDetails(button) {
-        const row = button.closest('tr');
-        const detailsRow = row.nextElementSibling;
+function showTab(tabName) {
+    // Ocultar todas las pestañas
+    const tabs = document.querySelectorAll('.tab-content');
+    tabs.forEach(tab => tab.classList.remove('active'));
+    
+    // Mostrar la pestaña seleccionada
+    const activeTab = document.getElementById(tabName);
+    activeTab.classList.add('active');
+    
+    // Cambiar estilo de botones
+    const buttons = document.querySelectorAll('.tab-button');
+    buttons.forEach(button => button.classList.remove('active'));
+    const activeButton = document.querySelector(`.tab-button[onclick="showTab('${tabName}')"]`);
+    activeButton.classList.add('active');
+}
 
-        if (detailsRow.style.display === "none") {
-            detailsRow.style.display = "table-row";
-            button.textContent = "Ver menos";
-        } else {
-            detailsRow.style.display = "none";
-            button.textContent = "Ver más";
-        }
-    }
 
 </script>
 

@@ -14,18 +14,167 @@
         <form method="post" enctype="multipart/form-data" class="see-student-form">
             <table class="student-table">
                 <tbody>
-                    {% for key, value in campos_alumno.items %}
+                    <div>
+                        <h1>Datos</h1>
                         <tr>
-                            <th>{{ key|capfirst }}</th>
-                            <td>{{ value }}</td>
+                            <th>Foto</th>
+                            <td>{{ estudiante.foto_estudiante }}</td>
                         </tr>
-                    {% endfor %}
+                        <tr>
+                            <th>Salita/Grado/Año</th>
+                            <td>{{ estudiante.salita_grado_anio_estudiante }}</td>
+                        </tr>
+                        <tr>
+                            <th>Nivel</th>
+                            <td>{{ estudiante.nivel_estudiante }}</td>
+                        </tr>
+                        <tr>
+                            <th>N de Legajo</th>
+                            <td>{{ estudiante.num_legajo_estudiante }}</td>
+                        </tr>
+                        <tr>
+                            <th>Fecha de Recepción</th>
+                            <td>{{ estudiante.fecha_recepcion }}</td>
+                        </tr>
+                    </div>
+                    <div>
+                        <h1>Datos del Alumno</h1>
+                        <tr>
+                            <th>Apellido/s</th>
+                            <td>{{ estudiante.apellido }}</td>
+                        </tr>
+                        <tr>
+                            <th>Nombre/s</th>
+                            <td>{{ estudiante.nombres_estudiante }}</td>
+                        </tr>
+                        <tr>
+                            <th>Sexo</th>
+                            <td>{{ estudiante.sexo_estudiante }}</td>
+                        </tr>
+                        <tr>
+                            <th>Fecha de Nacimiento</th>
+                            <td>{{ estudiante.fecha_nac_estudiante }}</td>
+                        </tr>
+                        <tr>
+                            <th>Nacionalidad</th>
+                            <td>{{ estudiante.nacionalidad_estudiante }}</td>
+                        </tr>
+                        <tr>
+                            <th>Ciudad</th>
+                            <td>{{ estudiante.ciudad_estudiante }}</td>
+                        </tr>
+                    </div>
+                    <div>
+                        <h1>Domicilio</h1>
+                        <tr>
+                            <th>Calle</th>
+                            <td>{{ estudiante.calle_estudiante }}</td>
+                        </tr>
+                        <tr>
+                            <th>N / MZ / PC</th>
+                            <td>{{ estudiante.n_mz_pc_estudiante }}</td>
+                        </tr>
+                        <tr>
+                            <th>Barrio</th>
+                            <td>{{ estudiante.barrio_estudiante }}</td>
+                        </tr>
+                        <tr>
+                            <th>Código Postal</th>
+                            <td>{{ estudiante.codigo_postal_estudiante }}</td>
+                        </tr>
+                        <tr>
+                            <th>Provincia</th>
+                            <td>{{ estudiante.provincia_estudiante }}</td>
+                        </tr>
+                    </div>
+                    <div>
+                        <h1>Salud</h1>
+                        <tr>
+                            <th>Obra Social</th>
+                            <td>{{ estudiante.obra_social_estudiante }}</td>
+                        </tr>
+                        <tr>
+                            <th>Detalles</th>
+                            <td>{{ estudiante.cual_osocial_estudiante }}</td>
+                        </tr>
+                        <tr>
+                            <th>Problemas Neurologicos</th>
+                            <td>{{ estudiante.problema_neurologico_estudiante }}</td>
+                        </tr>
+                        <tr>
+                            <th>Detalles</th>
+                            <td>{{ estudiante.cual_prob_neurologico_estudiante }}</td>
+                        </tr>
+                        <tr>
+                            <th>Problemas Fisicos</th>
+                            <td>{{ estudiante.problema_fisico_estudiante }}</td>
+                        </tr>
+                        <tr>
+                            <th>Certificado Medico</th>
+                            <td>{{ estudiante.certificado_medico_estudiante }}</td>
+                        </tr>
+                        <tr>
+                            <th>Problemas de Aprendizaje</th>
+                            <td>{{ estudiante.problema_aprendizaje_estudiante }}</td>
+                        </tr>
+                        <tr>
+                            <th>Detalles</th>
+                            <td>{{ estudiante.cual_aprendizaje_estudiante }}</td>
+                        </tr>
+                        <tr>
+                            <th>Atencion Medica</th>
+                            <td>{{ estudiante.atencion_medica_estudiante }}</td>
+                        </tr>
+                        <tr>
+                            <th>Alergias</th>
+                            <td>{{ estudiante.alergia_estudiante }}</td>
+                        </tr>
+                    </div>
+                    <div>
+                        <h1>Datos de los Responsables Parentales</h1>
+                        <h1>Responsable N 1</h1>
+                        <tr>
+                            <th>Alergias</th>
+                            <td>{{ estudiante.alergia_estudiante }}</td>
+                        </tr>
+                        <tr>
+                            <th>Alergias</th>
+                            <td>{{ estudiante.alergia_estudiante }}</td>
+                        </tr>
+                        <tr>
+                            <th>Alergias</th>
+                            <td>{{ estudiante.alergia_estudiante }}</td>
+                        </tr>
+                        <tr>
+                            <th>Alergias</th>
+                            <td>{{ estudiante.alergia_estudiante }}</td>
+                        </tr>
+                        <tr>
+                            <th>Alergias</th>
+                            <td>{{ estudiante.alergia_estudiante }}</td>
+                        </tr>
+                        <tr>
+                            <th>Alergias</th>
+                            <td>{{ estudiante.alergia_estudiante }}</td>
+                        </tr>
+                        <tr>
+                            <th>Alergias</th>
+                            <td>{{ estudiante.alergia_estudiante }}</td>
+                        </tr>
+                        <tr>
+                            <th>Alergias</th>
+                            <td>{{ estudiante.alergia_estudiante }}</td>
+                        </tr>
+                    </div>
+
+                    
+                    <!-- Añadir más campos según sea necesario -->
                 </tbody>
             </table>
         </form>
         <div class="button-group">
             <a href="{% url 'consultar_alumno' %}" class="button-submit">Volver</a>
-            <a href="{% url 'generar_pdf_alumno' alumno_id=campos_alumno.cuil_alumno %}" class="button-submit">Generar PDF</a>
+            <a href="{% url 'generar_pdf_estudiante' estudiante_id=estudiante.pk %}" class="button-submit">Generar PDF</a>
         </div>
     </div>
 {% endblock %}

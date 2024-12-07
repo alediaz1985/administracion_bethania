@@ -20,6 +20,7 @@ class Estudiante(models.Model):
     barrio_estudiante = models.CharField(max_length=100)
     codigo_postal_estudiante = models.CharField(max_length=100)
     provincia_estudiante = models.CharField(max_length=100)
+
     cuil_estudiante = models.CharField(max_length=100)
     dni_estudiante = models.CharField(max_length=100)
     email_estudiante = models.CharField(max_length=100)
@@ -30,6 +31,7 @@ class Estudiante(models.Model):
     parentesco_estudiante = models.CharField(max_length=100)
     peso_estudiante = models.CharField(max_length=100)
     talla_estudiante = models.CharField(max_length=100)
+
     obra_social_estudiante = models.CharField(max_length=100)
     cual_osocial_estudiante = models.CharField(max_length=100)
     problema_neurologico_estudiante = models.CharField(max_length=100)
@@ -40,6 +42,7 @@ class Estudiante(models.Model):
     cual_aprendizaje_estudiante = models.CharField(max_length=100)
     atencion_medica_estudiante = models.CharField(max_length=100)
     alergia_estudiante = models.CharField(max_length=100)
+    
     dni_responsable1 = models.CharField(max_length=100)
     apellidos_responsable1 = models.CharField(max_length=100)
     nombres_responsable1 = models.CharField(max_length=100)
@@ -143,9 +146,24 @@ class Estudiante(models.Model):
     autoriza_facturacion = models.CharField(max_length=100)
     autoriza_imagen = models.CharField(max_length=100)
 
-
     def __str__(self):
         return f"{self.apellidos_estudiante}, {self.nombres_estudiante}"
 
     class Meta:
         db_table = 'estudiante'
+
+class EstadoDocumentacion(models.Model):
+    ESTADO_CHOICES = [
+        ('pendiente', 'Pendiente'),
+        ('aprobado', 'Aprobado'),
+    ]
+
+    estudiante = models.ForeignKey(Estudiante, on_delete=models.CASCADE, related_name='estados_documentacion')
+    estado = models.CharField(max_length=10, choices=ESTADO_CHOICES, default='pendiente')
+    fecha_actualizacion = models.DateTimeField(auto_now=True)
+
+    def __str__(self):
+        return f"{self.estudiante} - {self.estado}"
+
+    class Meta:
+        db_table = 'estado_documentacion'

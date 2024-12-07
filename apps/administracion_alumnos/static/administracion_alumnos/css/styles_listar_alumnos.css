@@ -95,7 +95,7 @@ body {
 }
 
 .alumnos-btn-1 {
-    padding: 6px 12px;
+    padding: 6px 22px;
     background-color: rgb(66 149 33);
     color: white;
     border: none;
@@ -104,7 +104,7 @@ body {
     transition: all 0.3s ease; /* Transición suave para todos los efectos */
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Sombra sutil inicial */
     float: right;
-    font-size: 10px;
+    font-size: 14px;
 }
 
 .alumnos-btn-1:hover {
@@ -153,6 +153,28 @@ body {
 .alumnos-table td {
     word-wrap: break-word;
     max-width: 200px; /* Limitar la anchura de las celdas */
+}
+
+.tab-content {
+    display: none;
+}
+
+.tab-content.active {
+    display: block;
+}
+
+.tabs button {
+    padding: 10px 40px;
+    cursor: pointer;
+    background-color: #f1f1f1;
+    border: none;
+    border-bottom: 2px solid transparent;
+    transition: background-color 0.3s;
+}
+
+.tabs button.active {
+    background-color: #ddd;
+    border-color: #fa020b;
 }
 
 /* Media queries para pantallas más pequeñas */

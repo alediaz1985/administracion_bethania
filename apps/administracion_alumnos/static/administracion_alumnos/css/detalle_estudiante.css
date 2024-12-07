@@ -1,0 +1,160 @@
+body {
+    background-image: url('../img/fondo1.png'); /* Cambia por la ruta de tu imagen */
+    background-size: cover;  /* Asegura que la imagen cubra todo el fondo */
+    background-position: center; /* Centra la imagen */
+    background-repeat: no-repeat; /* Evita que la imagen se repita */
+    width: 96%;
+    float: right;
+}
+
+/* Estilo para el contenedor de detalles del alumno */
+.detail-student-container {
+    font-family: 'Helvetica Neue', Arial, sans-serif;
+    background-color: #c9c9ca;
+    color: #1b1b1b;
+    padding: 50px;
+    margin: 30px auto;
+    max-width: 600px;
+    height: 420px;
+    border-radius: 15px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.9);
+}
+
+/* Estilo para el título del detalle */
+.detail-student-container h1 {
+    font-size: 22px;
+    color: #282929;
+    text-align: center;
+    margin-bottom: 30px;
+}
+
+.detail-student-container h2 {
+    font-size: 19px;
+    color: #282929;
+    text-align: center;
+    margin-bottom: 30px;
+}
+
+/* Estilo para los párrafos con los detalles del alumno */
+.detail-student-container p {
+    font-size: 17px;
+    margin-bottom: 15px;
+}
+
+.detail-student-container strong {
+    color: #202020;
+}
+
+/* Botones de acción (Editar y Volver) */
+.button-group {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 70px;
+}
+
+/* Estilo del botón de acción */
+.button-submit {
+    padding: 12px 25px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    color: white;
+    font-size: 16px;
+    transition: background 0.3s ease;
+    text-decoration: none;
+}
+
+/* Botón con gradiente */
+.gradient-button {
+    background-color: rgb(66 149 33);
+    color: white;
+    font-size: 16px;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.gradient-button:hover {
+    background-color: rgb(68, 123, 46);
+    transform: translateY(-3px);
+}
+
+.gradient-button:active {
+    background-color: rgb(39, 70, 27);
+    transform: translateY(0);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.alumnos-btn-1 {
+    padding: 10px 40px;
+    background-color: rgb(66 149 33);
+    color: white;
+    border: none;
+    cursor: pointer;
+    border-radius: 5px;
+    transition: all 0.3s ease; /* Transición suave para todos los efectos */
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Sombra sutil inicial */
+    font-size: 14px;
+}
+
+.alumnos-btn-1:hover {
+    background-color:rgb(68, 123, 46);
+    transform: translateY(-3px); /* Efecto de "levantamiento" al pasar el mouse */
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2); /* Sombra más marcada */
+}
+
+.alumnos-btn-2 {
+    padding: 10px 40px;
+    background-color: rgb(226, 22, 22);
+    color: white;
+    border: none;
+    cursor: pointer;
+    border-radius: 5px;
+    transition: all 0.3s ease; /* Transición suave para todos los efectos */
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Sombra sutil inicial */
+    font-size: 14px;
+}
+
+.alumnos-btn-2:hover {
+    background-color:rgb(153, 50, 50);
+    transform: translateY(-3px); /* Efecto de "levantamiento" al pasar el mouse */
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2); /* Sombra más marcada */
+}
+
+@media (max-width: 1366px) {
+    .detail-student-container {
+        padding: 50px;
+        margin: 30px auto;
+        max-width: 550px;
+        height: 370px;
+    }
+    .detail-student-container h1 {
+        font-size: 19px;
+        margin-bottom: 20px;
+    }
+
+    .detail-student-container h2 {
+        font-size: 16px;
+        margin-bottom: 30px;
+    }
+
+    .detail-student-container p {
+        font-size: 14px;
+        margin-bottom: 15px;
+    }
+
+    .button-group {
+        margin-top: 55px;
+    }
+
+    .alumnos-btn-1 {
+        padding: 10px 30px;
+        font-size: 12px;
+    }
+    
+    .alumnos-btn-2 {
+        padding: 10px 30px;
+        font-size: 12px;
+    }
+
+}

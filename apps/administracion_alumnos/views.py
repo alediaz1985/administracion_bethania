@@ -15,27 +15,60 @@ from django.conf import settings
 import os
 from datetime import datetime
 from django.utils import timezone
+from .models import EstadoDocumentacion  # Agrega esta línea si no está
 
-
-
-
-def estudiante_list(request):
-    estudiantes = Estudiante.objects.all()
+def estudiante_lista(request):
+    estudiantes = Estudiante.objects.all().prefetch_related('estados_documentacion')
     if not estudiantes:
         return HttpResponse("No se encontraron estudiantes en la base de datos.")
     return render(request, 'administracion_alumnos/estudiante_list.html', {'alumnos': alumnos})
 
+def estudiante_list(request):
+    # Obtener todos los estudiantes con sus estados de documentación
+    estudiantes = Estudiante.objects.all().prefetch_related('estados_documentacion')
+
+    # Inicializar listas vacías para los estudiantes pendientes y aprobados
+    estudiantes_pendientes = []
+    estudiantes_aprobados = []
+
+    # Recorrer todos los estudiantes y separarlos según su estado
+    for estudiante in estudiantes:
+        # Verificar si existe un estado 'pendiente' en los estados de documentación
+        if estudiante.estados_documentacion.filter(estado='pendiente'):
+            estudiantes_pendientes.append(estudiante)
+        # Verificar si existe un estado 'aprobado' en los estados de documentación
+        elif estudiante.estados_documentacion.filter(estado='aprobado'):
+            estudiantes_aprobados.append(estudiante)
+
+    # Verificar si no existen estudiantes en ninguno de los estados
+    if not estudiantes_pendientes and not estudiantes_aprobados:
+        return HttpResponse("No se encontraron estudiantes en la base de datos.")
+    
+    # Renderizar la plantilla y pasar los resultados de las consultas
+    return render(request, 'administracion_alumnos/estudiante_list.html', {
+        'estudiantes_pendientes': estudiantes_pendientes,
+        'estudiantes_aprobados': estudiantes_aprobados
+    })
+
+def cambiar_estado(request, estudiante_id):
+    # Obtener el registro de estado_documentacion
+    estado_doc = get_object_or_404(EstadoDocumentacion, estudiante_id=estudiante_id, estado='pendiente')
+
+    # Actualizar el estado a aprobado
+    estado_doc.estado = 'aprobado'
+    estado_doc.save()
+
+    # Redirigir a una vista de éxito o listado, por ejemplo
+    return redirect('estado_documentacion_list')
 
 def estudiante_detail(request, pk):
     estudiante = get_object_or_404(Estudiante, pk=pk)
-    return render(request, 'administracion_estudiantes/estudiante_detail.html', {'estudiante': estudiante})
-
+    return render(request, 'administracion_alumnos/estudiante_detail.html', {'estudiante': estudiante})
 
 def ver_datos_estudiante(request, pk):
     estudiante = get_object_or_404(Estudiante, pk=pk)
     campos_estudiante = {field.name: getattr(estudiante, field.name) for field in estudiante._meta.fields}
-    return render(request, 'administracion_estudiantes/ver_datos_estudiante.html', {'estudiante': estudiante, 'campos_estudiante': campos_estudiante})
-
+    return render(request, 'administracion_alumnos/ver_datos_estudiante.html', {'estudiante': estudiante, 'campos_estudiante': campos_estudiante})
 
 def estudiante_edit(request, pk):
     estudiante = get_object_or_404(Estudiante, pk=pk)
