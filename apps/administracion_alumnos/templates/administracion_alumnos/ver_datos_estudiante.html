@@ -2,13 +2,12 @@
 
 {% block title %}Datos del Alumno{% endblock %}
 
-{% load static %}
-
 {% block extra_styles %}
     <link rel="stylesheet" href="{% static 'administracion_alumnos/css/styles_ver_datos.css' %}">
 {% endblock %}
 
 {% block content %}
+<<<<<<< HEAD
     <div class="see-student-container">
         <h1>DATOS DEL ALUMNO</h1>
         <form method="post" enctype="multipart/form-data" class="see-student-form">
@@ -176,5 +175,23 @@
             <a href="{% url 'consultar_alumno' %}" class="button-submit">Volver</a>
             <a href="{% url 'generar_pdf_estudiante' estudiante_id=estudiante.pk %}" class="button-submit">Generar PDF</a>
         </div>
+=======
+<div class="see-student-container">
+    <h1>Datos del Alumno</h1>
+    <table class="student-table">
+        <tbody>
+            {% for key, value in campos_estudiante.items %}
+                <tr>
+                    <th>{{ key|capfirst }}</th>
+                    <td>{{ value }}</td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    <div class="button-group">
+        <a href="{% url 'consultar_alumno' %}" class="button-submit">Volver</a>
+        <a href="{% url 'generar_pdf_estudiante' estudiante_id=estudiante.pk %}" class="button-submit">Generar PDF</a>
+>>>>>>> dfbd9f80903f70d78a94bf859dff0db4511d34bd
     </div>
+</div>
 {% endblock %}

@@ -10,8 +10,13 @@ urlpatterns = [
     path('consultar/', views.estudiante_consultar, name='consultar_alumno'),
     #path('ver-datos/<int:pk>/', views.ver_datos_estudiante, name='ver_datos_estudiante'),
     path('ver-datos-estudiante/<int:pk>/', views.ver_datos_estudiante, name='ver_datos_estudiante'),
+<<<<<<< HEAD
+=======
+    #path('ver-datos-estudiante/<int:estudiante_id>/', views.ver_datos_estudiante, name='ver_datos_estudiante'),
+>>>>>>> dfbd9f80903f70d78a94bf859dff0db4511d34bd
     path('generar_pdf_estudiante/<int:estudiante_id>/', views.generar_pdf_estudiante_view, name='generar_pdf_estudiante'),
     path('generar_pdf_lista_estudiantes/', views.generar_pdf_lista_estudiantes_view, name='generar_pdf_lista_alumnos'),
     path('registrar_estudiante/', views.registrar_estudiante, name='registrar_alumno'),
     path('cambiar_estado/<int:estudiante_id>/', views.cambiar_estado, name='cambiar_estado'),
 ]
+
