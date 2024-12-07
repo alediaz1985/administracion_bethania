@@ -67,10 +67,6 @@ def estudiante_detail(request, pk):
 
 def ver_datos_estudiante(request, pk):
     estudiante = get_object_or_404(Estudiante, pk=pk)
-<<<<<<< HEAD
-    campos_estudiante = {field.name: getattr(estudiante, field.name) for field in estudiante._meta.fields}
-    return render(request, 'administracion_alumnos/ver_datos_estudiante.html', {'estudiante': estudiante, 'campos_estudiante': campos_estudiante})
-=======
     # Crea un diccionario dinámico con todos los campos del modelo
     campos_estudiante = {
         field.verbose_name: getattr(estudiante, field.name)
@@ -81,8 +77,6 @@ def ver_datos_estudiante(request, pk):
         'administracion_alumnos/ver_datos_estudiante.html',
         {'estudiante': estudiante, 'campos_estudiante': campos_estudiante}
     )
-
->>>>>>> dfbd9f80903f70d78a94bf859dff0db4511d34bd
 
 def estudiante_edit(request, pk):
     estudiante = get_object_or_404(Estudiante, pk=pk)
