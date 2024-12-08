@@ -11,6 +11,7 @@
     <link rel="stylesheet" href="{% static 'css/styles_home.css' %}">
     <link rel="stylesheet" href="{% static 'css/base.css' %}">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@500&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Verdana&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
     {% block extra_styles %}
     <link rel="stylesheet" href="../apps/administracion_alumnos/static/administracion_alumnos/css/styles_listar_alumnos.css">
@@ -95,7 +96,7 @@
                 <li class="logo"><img src="{% static 'img/logo1.png' %}" alt="Poseidon"></li>
             </ul>
             <div class="signin-btn">
-                <a href="{% url 'cerrar_sesion' %}">Cerrar Sesión</a>
+                <a href="{% url 'cerrar_sesion' %}" id="signin-link"></a>
             </div>
         </nav>
     

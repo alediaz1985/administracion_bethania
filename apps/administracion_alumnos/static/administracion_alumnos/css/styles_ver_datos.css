@@ -11,7 +11,6 @@ body {
 
 h1 {
     text-align: center;
-    margin-bottom: 55px;
     font-size: 18px;
 }
 
@@ -20,7 +19,15 @@ h1 {
     padding: 20px;
     display: flex;
     flex-direction: column;
-    align-items: center;
+    align-items: stretch; /* Permite que los hijos se expandan a todo el ancho */
+}
+
+.see-student-container h1 {
+    padding-bottom: 50px;
+}
+
+.alumno-section {
+    margin: auto;
 }
 
 /* Dividir la sección de Alumno en dos columnas */
@@ -160,7 +167,9 @@ td {
     border-radius: 5px;
     box-shadow: 0 2px 10px rgba(0, 0, 0, 0.4);
     width: 98%;
-    margin-bottom: 40px;
+    margin-left: auto; /* Centra horizontalmente */
+    margin-right: auto; /* Centra horizontalmente */
+    margin-bottom: 40px; /* Espacio específico en la parte inferior */
 }
 
 .health-section:hover {
@@ -197,7 +206,9 @@ td {
     border-radius: 5px;
     box-shadow: 0 2px 10px rgba(0, 0, 0, 0.4);
     width: 98%;
-    margin-bottom: 40px;
+    margin-left: auto; /* Centra horizontalmente */
+    margin-right: auto; /* Centra horizontalmente */
+    margin-bottom: 40px; /* Espacio específico en la parte inferior */
 }
 
 .parent-responsibles-container:hover {
@@ -413,10 +424,10 @@ tbody td {
     justify-content: flex-end; /* Alinea los botones a la derecha */
     padding-right: 28px; /* Espacio al lado derecho */
     position: absolute; /* Lo hace absoluto respecto al contenedor */
-    top: 100px; /* Ajusta este valor para que quede debajo del título */
     right: 0;
     z-index: 10; /* Asegura que los botones no cubran el contenido */
-    margin-top: 20px;
+    align-items: center; /* Asegura que el contenido esté alineado verticalmente */
+    top: 115px;
 }
 
 .button-group {
@@ -484,4 +495,94 @@ tbody td {
     background-color: rgb(105, 26, 26); /* Rojo aún más oscuro */
     transform: translateY(0);
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+/* From Uiverse.io by vinodjangid07 */ 
+
+.contenedor {
+    position: absolute;
+    z-index: 20; /* Asegura que los botones no cubran el contenido */
+    top: 115px;
+}
+
+.Documents-btn {
+    display: flex;
+    align-items: center;
+    width: fit-content;
+    height: 35px;
+    border: none;
+    padding: 0px 5px;
+    border-radius: 5px;
+    background-color: rgb(66 149 33);
+    gap: 10px;
+    cursor: pointer;
+    transition: all 0.3s;
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.4); /* Sombra más marcada */
+    float: left; /* Lleva el botón al borde izquierdo */
+    margin-left: 13px; /* Asegura que no haya margen extra a la izquierda */
+    margin-bottom: 20px;
+    padding-right: 10px;
+  }
+
+.folderContainer {
+    width: 30px;
+    height: fit-content;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-end;
+    position: relative;
+  }
+  .fileBack {
+    z-index: 1;
+    width: 80%;
+    height: auto;
+  }
+  .filePage {
+    width: 60%;
+    height: auto;
+    position: absolute;
+    z-index: 2;
+    transition: all 0.3s ease-out;
+  }
+  .fileFront {
+    width: 90%;
+    height: auto;
+    position: absolute;
+    z-index: 3;
+    opacity: 0.95;
+    transform-origin: bottom;
+    transition: all 0.3s ease-out;
+  }
+  .text {
+    color: white;
+    font-size: 10px;
+    font-weight: 400;
+    letter-spacing: 0.5px;
+  }
+  .Documents-btn:hover .filePage {
+    transform: translateY(-5px);
+  }
+  .Documents-btn:hover {
+    background-color:rgb(68, 123, 46);
+    transform: translateY(-3px); /* Efecto de "levantamiento" al pasar el mouse */
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1); /* Sombra más marcada */
+  }
+  .Documents-btn:active {
+    transform: scale(0.95);
+  }
+  .Documents-btn:hover .fileFront {
+    transform: rotateX(30deg);
+  }
+  
+  @media (min-width: 1920px) {
+    .contenedor  {
+        top: 125px;
+        left: 100px;
+    }
+
+    .button-container  {
+        top: 125px;
+        right: 5px;
+    }
 }

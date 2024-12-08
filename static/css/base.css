@@ -268,7 +268,7 @@ body {
     width: 90px;
 }
 
-/* Botón de Sign In */
+/* Estilo del botón de Sign In */
 .signin-btn {
     position: absolute;
     right: 50px;
@@ -282,12 +282,29 @@ body {
     border-radius: 5px;
     background-color: transparent;
     transition: background 0.4s ease, color 0.4s ease;
+    position: relative;  /* Necesario para el pseudo-elemento */
+    display: inline-block; /* Asegura que el texto se comporte como un bloque */
+    font-size: 16px; /* Definir un tamaño de fuente común */
+    width: 100px; /* Establece un ancho fijo para el botón */
+    height: 30px; /* Establece una altura fija para el botón */
+    text-align: center; /* Centra el texto */
+    line-height: 15px; /* Centra el texto verticalmente */
 }
 
-/* Efecto hover en el botón de Sign In */
+/* Efecto cuando el mouse pasa por encima */
 .signin-btn a:hover {
-    background: linear-gradient(45deg, rgba(255, 0, 0, 0.7), rgba(0, 0, 255, 0.7));
+    background: linear-gradient(135deg, white, #C62828, #1565C0);
     color: white;
+}
+
+/* Cambiar el texto cuando el mouse pasa por encima */
+.signin-btn a::before {
+    content: "Cerrar Sesión";
+    transition: all 0.1s ease;
+}
+
+.signin-btn a:hover::before {
+    content: "Adios!";  /* Cambia el texto */
 }
 
 

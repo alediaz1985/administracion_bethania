@@ -21,6 +21,7 @@ body {
     font-family: 'Poppins', sans-serif;
     font-weight: 400;
     /* font-weight: bold; */
+    margin-bottom: 25px;
 }
 
 .alumnos-controls {
@@ -73,17 +74,6 @@ body {
 /* Resalta el enlace cuando el mouse está sobre él */
 .alumnos-table a:hover {
     color: blue; /* Cambia el color cuando el mouse está sobre el enlace */
-}
-
-.alumnos-btn {
-    padding: 10px 20px;
-    background-color: rgb(66 149 33);
-    color: white;
-    border: none;
-    cursor: pointer;
-    border-radius: 5px;
-    transition: all 0.3s ease; /* Transición suave para todos los efectos */
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Sombra sutil inicial */
 }
 
 .alumnos-btn:hover {
@@ -172,7 +162,7 @@ body {
 
 .tabs button.active {
     background-color: #ddd;
-    border-color: #fa020b;
+    border-color: #5a2c85;
 }
 
 /* Media queries para pantallas más pequeñas */
@@ -255,3 +245,74 @@ body {
         font-size: 8px; /* Texto muy pequeño para pantallas pequeñas */
     }
 }
+
+/* From Uiverse.io by vinodjangid07 */ 
+.Documents-btn {
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    width: fit-content;
+    height: 35px;
+    border: none;
+    padding: 0px 5px;
+    border-radius: 5px;
+    background-color: rgb(66 149 33);
+    gap: 10px;
+    cursor: pointer;
+    transition: all 0.3s;
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.4); /* Sombra más marcada */
+    float: right;
+    padding-right: 10px;
+  }
+
+.folderContainer {
+    width: 30px;
+    height: fit-content;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-end;
+    position: relative;
+  }
+  .fileBack {
+    z-index: 1;
+    width: 80%;
+    height: auto;
+  }
+  .filePage {
+    width: 60%;
+    height: auto;
+    position: absolute;
+    z-index: 2;
+    transition: all 0.3s ease-out;
+  }
+  .fileFront {
+    width: 90%;
+    height: auto;
+    position: absolute;
+    z-index: 3;
+    opacity: 0.95;
+    transform-origin: bottom;
+    transition: all 0.3s ease-out;
+  }
+  .text {
+    color: white;
+    font-size: 10px;
+    font-weight: 400;
+    letter-spacing: 0.5px;
+  }
+  .Documents-btn:hover .filePage {
+    transform: translateY(-5px);
+  }
+  .Documents-btn:hover {
+    background-color:rgb(68, 123, 46);
+    transform: translateY(-3px); /* Efecto de "levantamiento" al pasar el mouse */
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1); /* Sombra más marcada */
+  }
+  .Documents-btn:active {
+    transform: scale(0.95);
+  }
+  .Documents-btn:hover .fileFront {
+    transform: rotateX(30deg);
+  }
+  
