@@ -42,7 +42,6 @@ class Estudiante(models.Model):
     cual_aprendizaje_estudiante = models.CharField(max_length=100)
     atencion_medica_estudiante = models.CharField(max_length=100)
     alergia_estudiante = models.CharField(max_length=100)
-    
     dni_responsable1 = models.CharField(max_length=100)
     apellidos_responsable1 = models.CharField(max_length=100)
     nombres_responsable1 = models.CharField(max_length=100)

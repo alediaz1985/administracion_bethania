@@ -21,7 +21,7 @@ body {
 
 /* Estilo del título */
 .consulta-alumno-container h1 {
-    font-size: 32px;
+    font-size: 18px;
     color: #282929;
     text-align: center;
     margin-bottom: 30px;
@@ -148,7 +148,7 @@ body {
     }
 
     .consulta-alumno-container h1 {
-        font-size: 20px; /* Reduce tamaño del título */
+        font-size: 18px; /* Reduce tamaño del título */
     }
 
     .styled-form {

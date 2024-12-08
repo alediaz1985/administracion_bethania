@@ -10,15 +10,14 @@ body {
 
 .alumnos-container {
     width: 96%;
-    padding: 50px 40px;
+    padding: 25px 40px;
     float: right;
 }
 
 .alumnos-titulo {
-    font-size: 36px;
+    font-size: 18px;
     color: #000000;
     text-align: center;
-    margin-bottom: 20px;
     font-family: 'Poppins', sans-serif;
     font-weight: 400;
     /* font-weight: bold; */
@@ -26,7 +25,6 @@ body {
 
 .alumnos-controls {
     text-align: right;
-    margin-bottom: 20px;
 }
 
 .alumnos-scroll-container {
@@ -180,7 +178,7 @@ body {
 /* Media queries para pantallas más pequeñas */
 @media (max-width: 1366px) {
     .alumnos-titulo {
-        font-size: 22px; /* Reduce el tamaño del título */
+        font-size: 18px; /* Reduce el tamaño del título */
     }
 
     .alumnos-table th, .alumnos-table td {

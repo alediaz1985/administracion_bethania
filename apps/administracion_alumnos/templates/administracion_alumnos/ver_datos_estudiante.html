@@ -2,26 +2,1065 @@
 
 {% block title %}Datos del Alumno{% endblock %}
 
+{% load static %}
+
 {% block extra_styles %}
-    <link rel="stylesheet" href="../../static/administracion_alumnos/css/styles_ver_datos.css">
+    <link rel="stylesheet" href="{% static 'administracion_alumnos/css/styles_ver_datos.css' %}">
 {% endblock %}
 
 {% block content %}
 <div class="see-student-container">
-    <h1>Datos del Alumno</h1>
-    <table class="student-table">
-        <tbody>
-            {% for key, value in campos_estudiante.items %}
-                <tr>
-                    <th>{{ key|capfirst }}</th>
-                    <td>{{ value }}</td>
-                </tr>
-            {% endfor %}
-        </tbody>
-    </table>
-    <div class="button-group">
-        <a href="{% url 'consultar_alumno' %}" class="button-submit">Volver</a>
-        <a href="{% url 'generar_pdf_estudiante' estudiante_id=estudiante.pk %}" class="button-submit">Generar PDF</a>
+    <h1>DATOS DEL ESTUDIANTE</h1>
+    <div class="button-container">
+        <div class="button-group">
+            <a href="{% url 'generar_pdf_estudiante' estudiante_id=estudiante.pk %}" class="button-submit alumnos-btn-1">
+                <i class="fas fa-file-pdf"></i> <!-- Icono de PDF -->
+            </a>
+            <a href="{% url 'consultar_alumno' %}" class="button-submit alumnos-btn-1">
+                <i class="fas fa-check"></i> <!-- Icono de aprobar -->
+            </a>
+            <a href="{% url 'consultar_alumno' %}" class="button-submit alumnos-btn-1">
+                <i class="fas fa-edit"></i> <!-- Icono de editar -->
+            </a>
+            <a href="{% url 'consultar_alumno' %}" class="button-submit alumnos-btn-2">
+                <i class="fas fa-trash-alt"></i> <!-- Icono de eliminar -->
+            </a>
+            <a href="{% url 'consultar_alumno' %}" class="button-submit alumnos-btn-1">
+                <i class="fas fa-arrow-left"></i> <!-- Icono de volver -->
+            </a>
+        </div>
+    </div>
+    
+    <!-- Bloque de Alumno (ocupa el 90% de la pantalla) -->
+    <div class="alumno-section">
+        <h2>Alumno</h2>
+        <div class="student-info">
+            <!-- Columna 1: Foto y Legajo -->
+            <div class="column-left">
+                <table>
+                    <tr>
+                        <th>Foto</th>
+                    </tr>
+                    <tr>
+                        <!-- Mostrar la foto con la URL generada en la vista -->
+                        <td><img src="{{ image_url }}" alt="Foto del estudiante" style="max-width: 200px; max-height: 200px;"></td>
+                    </tr>
+                    <tr>
+                        <th>N de Legajo</th>
+                    </tr>
+                    <tr>
+                        <td>{{ estudiante.num_legajo_estudiante }}</td>
+                    </tr>
+                </table>
+            </div>
+
+            <!-- Columna 2: Salita, Nivel y Fecha de Recepción -->
+            <div class="column-right">
+                <table>
+                    <tr>
+                        <th>Salita/Grado/Año</th>
+                    </tr>
+                    <tr>
+                        <td>{{ estudiante.salita_grado_anio_estudiante }}</td>
+                    </tr>
+                    <tr>
+                        <th>Nivel</th>
+                    </tr>
+                    <tr>
+                        <td>{{ estudiante.nivel_estudiante }}</td>
+                    </tr>
+                    <tr>
+                        <th>Fecha de Recepción</th>
+                    </tr>
+                    <tr>
+                        <td class="fecha">{{ estudiante.fecha_recepcion }}</td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+    </div>
+    <div class="academic-info-5-container">
+        <h2>Datos del Alumno y Domicilio</h2>
+    
+        <div class="academic-info-3-grid">
+            <!-- Columna 1: Datos del Alumno -->
+            <div class="academic-info-3-column">
+                <table>
+                    <tr>
+                        <th>Apellido/s</th>
+                    </tr>
+                    <tr>
+                        <td>{{ estudiante.apellidos_estudiante }}</td>
+                    </tr>
+                    <tr>
+                        <th>Nombre</th>
+                    </tr>
+                    <tr>
+                        <td>{{ estudiante.nombres_estudiante }}</td>
+                    </tr>
+                    <tr>
+                        <th>Sexo</th>
+                    </tr>
+                    <tr>
+                        <td>{{ estudiante.sexo_estudiante }}</td>
+                    </tr>
+                    <tr>
+                        <th>Fecha de Nacimiento</th>
+                    </tr>
+                    <tr>
+                        <td class="fecha">{{ estudiante.fecha_nac_estudiante }}</td>
+                    </tr>
+                    <tr>
+                        <th>Nacionalidad</th>
+                    </tr>
+                    <tr>
+                        <td>{{ estudiante.nacionalidad_estudiante }}</td>
+                    </tr>
+                    <tr>
+                        <th>Ciudad</th>
+                    </tr>
+                    <tr>
+                        <td>{{ estudiante.ciudad_estudiante }}</td>
+                    </tr>
+                </table>
+            </div>
+    
+            <!-- Columna 2: Domicilio -->
+            <div class="academic-info-3-column">
+                <table>
+                    <tr>
+                        <th>Calle</th>
+                    </tr>
+                    <tr>
+                        <td>{{ estudiante.calle_estudiante }}</td>
+                    </tr>
+                    <tr>
+                        <th>N / MZ / PC</th>
+                    </tr>
+                    <tr>
+                        <td>{{ estudiante.n_mz_pc_estudiante }}</td>
+                    </tr>
+                    <tr>
+                        <th>Barrio</th>
+                    </tr>
+                    <tr>
+                        <td>{{ estudiante.barrio_estudiante }}</td>
+                    </tr>
+                    <tr>
+                        <th>Código Postal</th>
+                    </tr>
+                    <tr>
+                        <td>{{ estudiante.codigo_postal_estudiante }}</td>
+                    </tr>
+                    <tr>
+                        <th>Provincia</th>
+                    </tr>
+                    <tr>
+                        <td>{{ estudiante.provincia_estudiante }}</td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Sección de Salud (4 columnas) -->
+    <div class="health-section">
+        <h4>Salud</h4>
+        <div class="health-columns">
+            <!-- Columna 1 -->
+            <div class="health-column">
+                <table>
+                    <tr>
+                        <th>Obra Social</th>
+                    </tr>
+                    <tr>
+                        <td>{{ estudiante.obra_social_estudiante }}</td>
+                    </tr>
+                    <tr>
+                        <th>Detalles</th>
+                    </tr>
+                    <tr>
+                        <td>{{ estudiante.cual_osocial_estudiante }}</td>
+                    </tr>
+                    <tr>
+                        <th>Problemas Neurologicos</th>
+                    </tr>
+                    <tr>
+                        <td>{{ estudiante.problema_neurologico_estudiante }}</td>
+                    </tr>
+                    <tr>
+                        <th>Detalles</th>
+                    </tr>
+                    <tr>
+                        <td>{{ estudiante.cual_prob_neurologico_estudiante }}</td>
+                    </tr>
+                </table>
+            </div>
+            <!-- Columna 2 -->
+            <div class="health-column">
+                <table>
+                    <tr>
+                        <th>Problemas Fisicos</th>
+                    </tr>
+                    <tr>
+                        <td>{{ estudiante.problema_fisico_estudiante }}</td>
+                    </tr>
+                    <tr>
+                        <th>Certificado Medico</th>
+                    </tr>
+                    <tr>
+                        <td>{{ estudiante.certificado_medico_estudiante }}</td>
+                    </tr>
+                    <tr>
+                        <th>Problemas de Aprendizaje</th>
+                    </tr>
+                    <tr>
+                        <td>{{ estudiante.problema_aprendizaje_estudiante }}</td>
+                    </tr>
+                    <tr>
+                        <th>Detalles</th>
+                    </tr>
+                    <tr>
+                        <td>{{ estudiante.cual_aprendizaje_estudiante }}</td>
+                    </tr>
+                </table>
+            </div>
+            <!-- Columna 3 -->
+            <div class="health-column">
+                <table>
+                    <tr>
+                        <th>Atencion Medica</th>
+                    </tr>
+                    <tr>
+                        <td>{{ estudiante.atencion_medica_estudiante }}</td>
+                    </tr>
+                    <tr>
+                        <th>Alergias</th>
+                    </tr>
+                    <tr>
+                        <td>{{ estudiante.alergia_estudiante }}</td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+    </div>
+    <div class="parent-responsibles-container">
+        <h2>Datos de los Responsables Parentales</h2>
+        <div class="responsibles-grid">
+            <!-- Responsable 1 -->
+            <div class="responsible-card">
+                <h3>Información del Responsable 1</h3>
+                <div class="responsible-section">
+                    <h4>Datos Personales</h4>
+                    <table>
+                        <tr>
+                            <th>D.N.I</th>
+                        </tr>
+                        <tr>
+                            <td>{{ estudiante.dni_responsable1 }}</td>
+                        </tr>
+                        <tr>
+                            <th>Apellidos</th>
+                        </tr>
+                        <tr>
+                            <td>{{ estudiante.apellidos_responsable1 }}</td>
+                        </tr>
+                        <tr>
+                            <th>Nombres</th>
+                        </tr>
+                        <tr>
+                            <td>{{ estudiante.nombres_responsable1 }}</td>
+                        </tr>
+                        <tr>
+                            <th>Nacionalidad</th>
+                        </tr>
+                        <tr>
+                            <td>{{ estudiante.nacionalidad_responsable1 }}</td>
+                        </tr>
+                        <tr>
+                            <th>Fecha de Nacimiento</th>
+                        </tr>
+                        <tr>
+                            <td class="fecha">{{ estudiante.fecha_nac_responsable1 }}</td>
+                        </tr>
+                        <tr>
+                            <th>Estado Civil</th>
+                        </tr>
+                        <tr>
+                            <td>{{ estudiante.estado_civil_responsable1 }}</td>
+                        </tr>
+                        <tr>
+                            <th>CUIL</th>
+                        </tr>
+                        <tr>
+                            <td>{{ estudiante.cuil_responsable1 }}</td>
+                        </tr>
+                        <tr>
+                            <th>Nivel de Instrucción</th>
+                        </tr>
+                        <tr>
+                            <td>{{ estudiante.nivel_instruccion_responsable1 }}</td>
+                        </tr>
+                    </table>
+                </div>
+                <div class="responsible-section">
+                    <h4>Domicilio</h4>
+                    <table>
+                        <tr>
+                            <th>Calle</th>
+                        </tr>
+                        <tr>
+                            <td>{{ estudiante.calle_responsable1 }}</td>
+                        </tr>
+                        <tr>
+                            <th>Número/Mz/Pc</th>
+                        </tr>
+                        <tr>
+                            <td>{{ estudiante.n_mz_pc_responsable1 }}</td>
+                        </tr>
+                        <tr>
+                            <th>Barrio</th>
+                        </tr>
+                        <tr>
+                            <td>{{ estudiante.barrio_responsable1 }}</td>
+                        </tr>
+                        <tr>
+                            <th>Ciudad</th>
+                        </tr>
+                        <tr>
+                            <td>{{ estudiante.ciudad_responsable1 }}</td>
+                        </tr>
+                        <tr>
+                            <th>Código Postal</th>
+                        </tr>
+                        <tr>
+                            <td>{{ estudiante.codigo_postal_responsable1 }}</td>
+                        </tr>
+                        <tr>
+                            <th>Provincia</th>
+                        </tr>
+                        <tr>
+                            <td>{{ estudiante.provincia_responsable1 }}</td>
+                        </tr>
+                    </table>
+                </div>
+                <div class="responsible-section">
+                    <h4>Datos de Contacto</h4>
+                    <table>
+                        <tr>
+                            <th>Email</th>
+                        </tr>
+                        <tr>
+                            <td>{{ estudiante.email_responsable1 }}</td>
+                        </tr>
+                        <tr>
+                            <th>Religión</th>
+                        </tr>
+                        <tr>
+                            <td>{{ estudiante.religion_responsable1 }}</td>
+                        </tr>
+                        <tr>
+                            <th>Teléfono Fijo</th>
+                        </tr>
+                        <tr>
+                            <td>{{ estudiante.tel_fijo_responsable1 }}</td>
+                        </tr>
+                        <tr>
+                            <th>Teléfono Celular</th>
+                        </tr>
+                        <tr>
+                            <td>{{ estudiante.tel_cel_responsable1 }}</td>
+                        </tr>
+                        <tr>
+                            <th>Ocupación</th>
+                        </tr>
+                        <tr>
+                            <td>{{ estudiante.ocupacion_responsable1 }}</td>
+                        </tr>
+                        <tr>
+                            <th>Teléfono Laboral</th>
+                        </tr>
+                        <tr>
+                            <td>{{ estudiante.tel_laboral_responsable1 }}</td>
+                        </tr>
+                        <tr>
+                            <th>Horario de Trabajo</th>
+                        </tr>
+                        <tr>
+                            <td>{{ estudiante.horario_trab_responsable1 }}</td>
+                        </tr>
+                    </table>
+                </div>
+            </div>
+            <div class="responsible-card">
+                <h3>Información del Responsable 2</h3>
+                <div class="responsible-section">
+                    <h4>Datos Personales</h4>
+                    <table>
+                        <tr>
+                            <th>D.N.I</th>
+                        </tr>
+                        <tr>
+                            <td>{{ estudiante.dni_responsable2 }}</td>
+                        </tr>
+                        <tr>
+                            <th>Apellidos</th>
+                        </tr>
+                        <tr>
+                            <td>{{ estudiante.apellidos_responsable2 }}</td>
+                        </tr>
+                        <tr>
+                            <th>Nombres</th>
+                        </tr>
+                        <tr>
+                            <td>{{ estudiante.nombres_responsable2 }}</td>
+                        </tr>
+                        <tr>
+                            <th>Nacionalidad</th>
+                        </tr>
+                        <tr>
+                            <td>{{ estudiante.nacionalidad_responsable2 }}</td>
+                        </tr>
+                        <tr>
+                            <th>Fecha de Nacimiento</th>
+                        </tr>
+                        <tr>
+                            <td class="fecha">{{ estudiante.fecha_nac_responsable2 }}</td>
+                        </tr>
+                        <tr>
+                            <th>Estado Civil</th>
+                        </tr>
+                        <tr>
+                            <td>{{ estudiante.estado_civil_responsable2 }}</td>
+                        </tr>
+                        <tr>
+                            <th>CUIL</th>
+                        </tr>
+                        <tr>
+                            <td>{{ estudiante.cuil_responsable2 }}</td>
+                        </tr>
+                        <tr>
+                            <th>Nivel de Instrucción</th>
+                        </tr>
+                        <tr>
+                            <td>{{ estudiante.nivel_instruccion_responsable2 }}</td>
+                        </tr>
+                    </table>
+                </div>
+                <div class="responsible-section">
+                    <h4>Domicilio</h4>
+                    <table>
+                        <tr>
+                            <th>Calle</th>
+                        </tr>
+                        <tr>
+                            <td>{{ estudiante.calle_responsable2 }}</td>
+                        </tr>
+                        <tr>
+                            <th>Número/Mz/Pc</th>
+                        </tr>
+                        <tr>
+                            <td>{{ estudiante.n_mz_pc_responsable2 }}</td>
+                        </tr>
+                        <tr>
+                            <th>Barrio</th>
+                        </tr>
+                        <tr>
+                            <td>{{ estudiante.barrio_responsable2 }}</td>
+                        </tr>
+                        <tr>
+                            <th>Ciudad</th>
+                        </tr>
+                        <tr>
+                            <td>{{ estudiante.ciudad_responsable2 }}</td>
+                        </tr>
+                        <tr>
+                            <th>Código Postal</th>
+                        </tr>
+                        <tr>
+                            <td>{{ estudiante.codigo_postal_responsable2 }}</td>
+                        </tr>
+                        <tr>
+                            <th>Provincia</th>
+                        </tr>
+                        <tr>
+                            <td>{{ estudiante.provincia_responsable2 }}</td>
+                        </tr>
+                    </table>
+                </div>
+                <div class="responsible-section">
+                    <h4>Datos de Contacto</h4>
+                    <table>
+                        <tr>
+                            <th>Email</th>
+                        </tr>
+                        <tr>
+                            <td>{{ estudiante.email_responsable2 }}</td>
+                        </tr>
+                        <tr>
+                            <th>Religión</th>
+                        </tr>
+                        <tr>
+                            <td>{{ estudiante.religion_responsable2 }}</td>
+                        </tr>
+                        <tr>
+                            <th>Teléfono Fijo</th>
+                        </tr>
+                        <tr>
+                            <td>{{ estudiante.tel_fijo_responsable2 }}</td>
+                        </tr>
+                        <tr>
+                            <th>Teléfono Celular</th>
+                        </tr>
+                        <tr>
+                            <td>{{ estudiante.tel_cel_responsable2 }}</td>
+                        </tr>
+                        <tr>
+                            <th>Ocupación</th>
+                        </tr>
+                        <tr>
+                            <td>{{ estudiante.ocupacion_responsable2 }}</td>
+                        </tr>
+                        <tr>
+                            <th>Teléfono Laboral</th>
+                        </tr>
+                        <tr>
+                            <td>{{ estudiante.tel_laboral_responsable2 }}</td>
+                        </tr>
+                        <tr>
+                            <th>Horario de Trabajo</th>
+                        </tr>
+                        <tr>
+                            <td>{{ estudiante.horario_trab_responsable2 }}</td>
+                        </tr>
+                    </table>
+                </div>
+            </div>
+            <div class="responsible-card">
+                <h3>Información del Responsable Adicional</h3>
+                <div class="responsible-section">
+                    <h4>Datos Personales</h4>
+                    <table>
+                        <tr>
+                            <th>D.N.I</th>
+                        </tr>
+                        <tr>
+                            <td>{{ estudiante.dni_responsable_otro }}</td>
+                        </tr>
+                        <tr>
+                            <th>Apellidos</th>
+                        </tr>
+                        <tr>
+                            <td>{{ estudiante.apellidos_responsable_otro }}</td>
+                        </tr>
+                        <tr>
+                            <th>Nombres</th>
+                        </tr>
+                        <tr>
+                            <td>{{ estudiante.nombres_responsable_otro }}</td>
+                        </tr>
+                        <tr>
+                            <th>Nacionalidad</th>
+                        </tr>
+                        <tr>
+                            <td>{{ estudiante.nacionalidad_responsable_otro }}</td>
+                        </tr>
+                        <tr>
+                            <th>Fecha de Nacimiento</th>
+                        </tr>
+                        <tr>
+                            <td class="fecha">{{ estudiante.fecha_nac_responsable_otro }}</td>
+                        </tr>
+                        <tr>
+                            <th>Estado Civil</th>
+                        </tr>
+                        <tr>
+                            <td>{{ estudiante.estado_civil_responsable_otro }}</td>
+                        </tr>
+                        <tr>
+                            <th>CUIL</th>
+                        </tr>
+                        <tr>
+                            <td>{{ estudiante.cuil_responsable_otro }}</td>
+                        </tr>
+                        <tr>
+                            <th>Nivel de Instrucción</th>
+                        </tr>
+                        <tr>
+                            <td>{{ estudiante.nivel_instruccion_responsable_otro }}</td>
+                        </tr>
+                    </table>
+                </div>
+                <div class="responsible-section">
+                    <h4>Domicilio</h4>
+                    <table>
+                        <tr>
+                            <th>Calle</th>
+                        </tr>
+                        <tr>
+                            <td>{{ estudiante.calle_responsable_otro }}</td>
+                        </tr>
+                        <tr>
+                            <th>Número/Mz/Pc</th>
+                        </tr>
+                        <tr>
+                            <td>{{ estudiante.n_mz_pc_responsable_otro }}</td>
+                        </tr>
+                        <tr>
+                            <th>Barrio</th>
+                        </tr>
+                        <tr>
+                            <td>{{ estudiante.barrio_responsable_otro }}</td>
+                        </tr>
+                        <tr>
+                            <th>Ciudad</th>
+                        </tr>
+                        <tr>
+                            <td>{{ estudiante.ciudad_responsable_otro }}</td>
+                        </tr>
+                        <tr>
+                            <th>Código Postal</th>
+                        </tr>
+                        <tr>
+                            <td>{{ estudiante.codigo_postal_responsable_otro }}</td>
+                        </tr>
+                        <tr>
+                            <th>Provincia</th>
+                        </tr>
+                        <tr>
+                            <td>{{ estudiante.provincia_responsable_otro }}</td>
+                        </tr>
+                    </table>
+                </div>
+                <div class="responsible-section">
+                    <h4>Datos de Contacto</h4>
+                    <table>
+                        <tr>
+                            <th>Email</th>
+                        </tr>
+                        <tr>
+                            <td>{{ estudiante.email_responsable_otro }}</td>
+                        </tr>
+                        <tr>
+                            <th>Religión</th>
+                        </tr>
+                        <tr>
+                            <td>{{ estudiante.religion_responsable_otro }}</td>
+                        </tr>
+                        <tr>
+                            <th>Teléfono Fijo</th>
+                        </tr>
+                        <tr>
+                            <td>{{ estudiante.tel_fijo_responsable_otro }}</td>
+                        </tr>
+                        <tr>
+                            <th>Teléfono Celular</th>
+                        </tr>
+                        <tr>
+                            <td>{{ estudiante.tel_cel_responsable_otro }}</td>
+                        </tr>
+                        <tr>
+                            <th>Ocupación</th>
+                        </tr>
+                        <tr>
+                            <td>{{ estudiante.ocupacion_responsable_otro }}</td>
+                        </tr>
+                        <tr>
+                            <th>Teléfono Laboral</th>
+                        </tr>
+                        <tr>
+                            <td>{{ estudiante.tel_laboral_responsable_otro }}</td>
+                        </tr>
+                        <tr>
+                            <th>Horario de Trabajo</th>
+                        </tr>
+                        <tr>
+                            <td>{{ estudiante.horario_trab_responsable_otro }}</td>
+                        </tr>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="academic-info-container">
+        <!-- Título dentro del contenedor -->
+        <h2>Información Académica</h2>
+    
+        <!-- Contenedor con tres columnas -->
+        <div class="academic-info-grid">
+            <div class="academic-info-column">
+                <table>
+                    <tr>
+                        <th>Año de Cursado</th>
+                    </tr>
+                    <tr>
+                        <td>{{ estudiante.anio_cursado }}</td>
+                    </tr>
+                    <tr>
+                        <tr>
+                            <th>Cursado Anterior</th>
+                        </tr>
+                        <tr>
+                            <tr><td>{{ estudiante.donde_cursado }}</td></tr>
+                        </tr>
+                    </tr>
+                </table>
+            </div>
+            <div class="academic-info-column">
+                <table>
+                    <tr>
+                        <th>Asignaturas Pendientes</th>
+                    </tr>
+                    <tr>
+                        <td>{{ estudiante.asignaturas_pendientes }}</td>
+                    </tr>
+                    <tr>
+                        <th>Número de Asignaturas Pendientes</th>
+                    </tr>
+                    <tr>
+                        <td>{{ estudiante.indica_asig_pendientes }}</td>
+                    </tr>
+                </table>
+            </div>
+            <div class="academic-info-column">
+                <table>
+                    <tr>
+                        <th>Hermanos en la Institución</th>
+                    </tr>
+                    <tr>
+                        <td>{{ estudiante.tiene_hermanos_institucion }}</td>
+                    </tr>
+                    <tr>
+                        <th>Cuántos Hermanos</th></tr>
+                    </tr>
+                    <tr>
+                        <td>{{ estudiante.cuantos_hermanos }}</td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <div class="academic-info-container">
+        <!-- Título dentro del contenedor -->
+        <h2>Solicita Ingresar</h2>
+        <div class="academic-info-2-grid">
+            <div class="academic-info-2-column">
+                <table>
+                    <tbody>
+                        {% if estudiante.nivel_inicial3 %}
+                        <tr>
+                            <th>Nivel Inicial 3</th>
+                        </tr>
+                        <tr>
+                            <td>{{ estudiante.nivel_inicial3 }}</td>
+                        </tr>
+                        {% endif %}
+            
+                        {% if estudiante.nivel_inicial4 %}
+                        <tr>
+                            <th>Nivel Inicial 4</th>
+                        </tr>
+                        <tr>
+                            <td>{{ estudiante.nivel_inicial4 }}</td>
+                        </tr>
+                        {% endif %}
+            
+                        {% if estudiante.nivel_inicial5 %}
+                        <tr>
+                            <th>Nivel Inicial 5</th>
+                        </tr>
+                        <tr>
+                            <td>{{ estudiante.nivel_inicial5 }}</td>
+                        </tr>
+                        {% endif %}
+            
+                        {% if estudiante.nivel_primario1 %}
+                        <tr>
+                            <th>Nivel Primario 1</th>
+                        </tr>
+                        <tr>
+                            <td>{{ estudiante.nivel_primario1 }}</td>
+                        </tr>
+                        {% endif %}
+            
+                        {% if estudiante.nivel_primario2 %}
+                        <tr>
+                            <th>Nivel Primario 2</th>
+                        </tr>
+                        <tr>
+                            <td>{{ estudiante.nivel_primario2 }}</td>
+                        </tr>
+                        {% endif %}
+            
+                        {% if estudiante.nivel_primario3 %}
+                        <tr>
+                            <th>Nivel Primario 3</th>
+                        </tr>
+                        <tr>
+                            <td>{{ estudiante.nivel_primario3 }}</td>
+                        </tr>
+                        {% endif %}
+            
+                        {% if estudiante.nivel_primario4 %}
+                        <tr>
+                            <th>Nivel Primario 4</th>
+                        </tr>
+                        <tr>
+                            <td>{{ estudiante.nivel_primario4 }}</td>
+                        </tr>
+                        {% endif %}
+            
+                        {% if estudiante.nivel_primario5 %}
+                        <tr>
+                            <th>Nivel Primario 5</th>
+                        </tr>
+                        <tr>
+                            <td>{{ estudiante.nivel_primario5 }}</td>
+                        </tr>
+                        {% endif %}
+            
+                        {% if estudiante.nivel_primario6 %}
+                        <tr>
+                            <th>Nivel Primario 6</th>
+                        </tr>
+                        <tr>
+                            <td>{{ estudiante.nivel_primario6 }}</td>
+                        </tr>
+                        {% endif %}
+            
+                        {% if estudiante.nivel_primario7 %}
+                        <tr>
+                            <th>Nivel Primario 7</th>
+                        </tr>
+                        <tr>
+                            <td>{{ estudiante.nivel_primario7 }}</td>
+                        </tr>
+                        {% endif %}
+            
+                        {% if estudiante.nivel_secundario1 %}
+                        <tr>
+                            <th>Nivel Secundario 1</th>
+                        </tr>
+                        <tr>
+                            <td>{{ estudiante.nivel_secundario1 }}</td>
+                        </tr>
+                        {% endif %}
+            
+                        {% if estudiante.nivel_secundario2 %}
+                        <tr>
+                            <th>Nivel Secundario 2</th>
+                        </tr>
+                        <tr>
+                            <td>{{ estudiante.nivel_secundario2 }}</td>
+                        </tr>
+                        {% endif %}
+            
+                        {% if estudiante.nivel_secundario3 %}
+                        <tr>
+                            <th>Nivel Secundario 3</th>
+                        </tr>
+                        <tr>
+                            <td>{{ estudiante.nivel_secundario3 }}</td>
+                        </tr>
+                        {% endif %}
+            
+                        {% if estudiante.nivel_secundario4 %}
+                        <tr>
+                            <th>Nivel Secundario 4</th>
+                        </tr>
+                        <tr>
+                            <td>{{ estudiante.nivel_secundario4 }}</td>
+                        </tr>
+                        {% endif %}
+            
+                        {% if estudiante.nivel_secundario5 %}
+                        <tr>
+                            <th>Nivel Secundario 5</th>
+                        </tr>
+                        <tr>
+                            <td>{{ estudiante.nivel_secundario5 }}</td>
+                        </tr>
+                        {% endif %}
+            
+                        <tr>
+                            <th>¿Cómo Conociste la Institución?</th>
+                        </tr>
+                        <tr>
+                            <td>{{ estudiante.como_conociste_institucion }}</td>
+                        </tr>
+            
+                        <tr>
+                            <th>¿Por Qué Eligió la Institución?</th>
+                        </tr>
+                        <tr>
+                            <td>{{ estudiante.eligio_institucion }}</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+    <div class="academic-info-3-container">
+        <!-- Título dentro del contenedor -->
+        <h2>Contrato de Enseñanza Educativa Ciclo Electivo 2025</h2>
+    
+        <!-- Contenedor con dos columnas -->
+        <div class="academic-info-3-grid">
+            <div class="academic-info-3-column">
+                <table>
+                    <tr>
+                        <th>Nivel de Enseñanza</th> 
+                    </tr>
+                    <tr>
+                        <td>{{ estudiante.nivel_ensenanza }}</td> 
+                    </tr>
+                    <tr>
+                        <th>Ciudad a los Días</th>
+                    </tr>
+                    <tr>
+                        <td class="fecha">{{ estudiante.ciudad_a_los_dias }}</td> 
+                    </tr>
+                    <tr>
+                        <th>Señores (1)</th>
+                    </tr>
+                    <tr>
+                        <td>{{ estudiante.senores1 }}</td> 
+                    </tr>
+                    <tr>
+                        <th>DNI Señores (1)</th>
+                    </tr>
+                    <tr>
+                        <td>{{ estudiante.dni_senores1 }}</td> 
+                    </tr>
+                    <tr>
+                        <th>Señores (2)</th>
+                    </tr>
+                    <tr>
+                        <td>{{ estudiante.senores2 }}</td> 
+                    </tr>
+                    <tr>
+                        <th>DNI Señores (2)</th>
+                    </tr>
+                    <tr>
+                        <td>{{ estudiante.dni_senores2 }}</td> 
+                    </tr>
+                </table>
+            </div>
+            <div class="academic-info-3-column">
+                <table>
+                    <tr>
+                        <th>Domicilios de los Señores</th>
+                    </tr>
+                    <tr>
+                        <td>{{ estudiante.domicilios_senores }}</td> 
+                    </tr>
+                    <tr>
+                        <th>Domicilio Especial Electrónico</th>
+                    </tr>
+                    <tr>
+                        <td>{{ estudiante.domicilio_especial_electronico }}</td> 
+                    </tr>
+                    <tr>
+                        <th>Nombres Actúan por el Estudiante</th>
+                    </tr>
+                    <tr>
+                        <td>{{ estudiante.actuan_nombres_estudiante }}</td> 
+                    </tr>
+                    <tr>
+                        <th>DNI Actúan por el Estudiante</th>
+                    </tr>
+                    <tr>
+                        <td>{{ estudiante.dni_acutan_estudiante }}</td> 
+                    </tr>
+                    <tr>
+                        <th>Domicilio Actúan por el Estudiante</th>
+                    </tr> 
+                    <tr>
+                        <td>{{ estudiante.domicilio_actuan_estudiante }}</td> 
+                    </tr> 
+                </table>                   
+            </div>
+        </div>
+    </div>
+    <div class="academic-info-4-container">
+        <!-- Título dentro del contenedor -->
+        <h2>Responsable de Pago</h2>
+    
+        <!-- Contenedor con dos columnas -->
+        <div class="academic-info-4-grid">
+            <div class="academic-info-4-column">
+                <table>
+                    <tr>
+                        <th>Responsable de Pago</th>
+                    </tr>
+                    <tr>
+                        <td>{{ estudiante.responsable_pago }}</td> 
+                    </tr>
+                    <tr>
+                        <th>DNI del Responsable de Pago</th>
+                    </tr>
+                    <tr>
+                        <td>{{ estudiante.dni_responsable_pago }}</td> 
+                    </tr>
+                </table>
+            </div>
+            <div class="academic-info-4-column">
+                <table>
+                    <tr>
+                        <th>Manifiesta el Responsable</th>
+                    </tr>
+                    <tr>
+                        <td>{{ estudiante.manifiesta_responsable }}</td> 
+                    </tr>
+                    <tr>
+                        <th>Autoriza Facturación</th>
+                    </tr>
+                    <tr>
+                        <td>{{ estudiante.autoriza_facturacion }}</td> 
+                    </tr>                  
+                </table>
+            </div>
+        </div>
+    </div>
+    <div class="academic-info-container">
+        <!-- Título dentro del contenedor -->
+        <h2>Autorizacion</h2>
+    
+        <!-- Contenedor con una columnas -->
+        <div class="academic-info-2-grid">
+            <div class="academic-info-2-column">
+                <table>
+                    <tr>
+                        <th>Autorizacion de Imagen</th>
+                    </tr>
+                    <tr>
+                        <td>{{ estudiante.autoriza_imagen }}</td> 
+                    </tr>  
+                </table>
+            </div>
+        </div>
     </div>
 </div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        let dateElements = document.querySelectorAll('.fecha');
+        dateElements.forEach(function(el) {
+            let dateValue = el.textContent.trim();
+            if (dateValue) {
+                let date = new Date(dateValue);
+                // Verificar si la fecha es válida
+                if (!isNaN(date)) {
+                    el.textContent = date.toLocaleDateString('es-AR'); // dd/mm/yyyy
+                } else {
+                    el.textContent = ''; // Dejar vacío si la fecha es inválida
+                }
+            } else {
+                el.textContent = ''; // Dejar vacío si no hay valor
+            }
+        });
+    });
+</script>
+
 {% endblock %}

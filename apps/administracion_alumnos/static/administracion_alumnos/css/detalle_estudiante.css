@@ -22,7 +22,7 @@ body {
 
 /* Estilo para el título del detalle */
 .detail-student-container h1 {
-    font-size: 22px;
+    font-size: 18px;
     color: #282929;
     text-align: center;
     margin-bottom: 30px;
@@ -129,7 +129,7 @@ body {
         height: 370px;
     }
     .detail-student-container h1 {
-        font-size: 19px;
+        font-size: 18px;
         margin-bottom: 20px;
     }
 
