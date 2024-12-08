@@ -31,7 +31,7 @@
             
             <ul class="sidebar-items">
                 <li>
-                    <a href="{% url 'home' %}">
+                    <a href="{% url 'home' %}" onclick="window.location.href=this.href; return false;">
                         <i class="fas fa-home"></i>
                         <span class="text">Inicio</span>
                     </a>
@@ -63,6 +63,7 @@
                         <li><a href="{% url 'consulta' %}">● Consultar Comprobante</a></li>
                     </ul>
                 </li>
+                <!--
                 <li>
                     <a href="#">
                         <i class="fas fa-layer-group"></i>
@@ -75,6 +76,7 @@
                         <li><a href="{% url 'editar_nivel' %}">● Editar Nivel</a></li>
                     </ul>
                 </li>
+            -->
                 <li>
                     <a href="#">
                         <i class="fas fa-cogs"></i>
@@ -129,19 +131,21 @@
 
             <div class="middle-footer">
                 <ul class="footer-nav">
-                    <li><a href="#">Inicio</a></li>
-                    <li><a href="#">Alumnos</a></li>
-                    <li><a href="#">Cuotas</a></li>
+                    <li><a href="{% url 'home' %}">Inicio</a></li>
+                    <li><a href="{% url 'consultar_alumno' %}">Consultar Alumnos</a></li>
+                    <li><a href="{% url 'consulta' %}">Consultar Comprobante</a></li>
+                    <!--<li><a href="#">Cuotas</a></li>
                     <li><a href="#">Niveles</a></li>
+                    -->
                 </ul>
             </div>
 
             <div class="bottom-footer">
                 <div class="social-icons">
-                    <a href="#"><i class="fab fa-facebook-f"></i></a>
-                    <a href="#"><i class="fab fa-instagram"></i></a>
-                    <a href="#"><i class="fab fa-github"></i></a>
-                    <a href="#"><i class="fab fa-youtube"></i></a>
+                    <a href="https://facebook.com/hdebethania" target="_blank" rel="noopener noreferrer"><i class="fab fa-facebook-f"></i></a>
+                    <a href="https://www.instagram.com/hdebethania" target="_blank" rel="noopener noreferrer"><i class="fab fa-instagram"></i></a>
+                    <a href="https://hdebethania.edu.ar/" target="_blank" rel="noopener noreferrer"><i class="fab fa-user-graduate"></i></a>
+                    <a href="https://www.youtube.com/c/HogardeBethania" target="_blank" rel="noopener noreferrer"><i class="fab fa-youtube"></i></a>
                 </div>
                 <div>
                     <p class="copyright">&copy; 2024 Hogar de Bethania. Todos los derechos reservados.</p>

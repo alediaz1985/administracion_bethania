@@ -365,12 +365,12 @@ def estudiante_list(request):
 from django.shortcuts import render, get_object_or_404
 from .models import Estudiante  # Asegúrate de importar el modelo correcto
 
-def alumno_detail(request, pk):
+def estudiante_detail(request, pk):
     """
     Vista para mostrar los detalles de un alumno específico.
     """
     alumno = get_object_or_404(Estudiante, pk=pk)  # Buscar al alumno por su clave primaria
-    return render(request, 'administracion_alumnos/alumno_detail.html', {'alumno': alumno})
+    return render(request, 'administracion_alumnos/estudiante_detail.html', {'alumno': alumno})
 
 from django.shortcuts import render, get_object_or_404, redirect
 from .models import Estudiante  # Asegúrate de importar el modelo correcto
@@ -385,7 +385,7 @@ def estudiante_edit(request, pk):
         form = EstudianteForm(request.POST, instance=alumno)
         if form.is_valid():
             form.save()
-            return redirect('alumno_detail', pk=alumno.pk)  # Redirige al detalle del alumno
+            return redirect('estudiante_detail', pk=alumno.pk)  # Redirige al detalle del alumno
     else:
         form = EstudianteForm(instance=alumno)
     return render(request, 'administracion_alumnos/estudiante_edit.html', {'form': form})

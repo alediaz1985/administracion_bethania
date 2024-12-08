@@ -5,7 +5,7 @@
 {% load static %}
 
 {% block extra_styles %}
-<link rel="stylesheet" href="{% static 'cuotas/css/cuotas.css' %}">
+    <link rel="stylesheet" href="../../static/documentos/css/consulta.css">
 {% endblock %}
 
 {% block content %}
@@ -15,35 +15,35 @@
     <!-- Contenedor de botones superiores -->
     <div class="consulta-header-buttons">
         <form method="get" action="{% url 'descargar_archivos_nube' %}" class="consulta-action-buttons">
-            <button type="submit" class="consulta-action-button alumnos-btn">Descargar Archivos de la Nube</button>
+            <button type="submit" class="consulta-action-button">Descargar Archivos de la Nube</button>
         </form>
 
         <form method="post" action="{% url 'vaciar_carpeta_drive' %}" class="consulta-action-buttons">
             {% csrf_token %}
-            <button type="submit" class="consulta-action-button alumnos-btn">Vaciar Carpeta de Google Drive</button>
+            <button type="submit" class="consulta-action-button">Vaciar Carpeta de Google Drive</button>
         </form>
     </div>
 
     <!-- Contenedor del formulario de búsqueda -->
-<div class="consulta-busqueda">
-    <h2>Consulta de Comprobante</h2>
-    <form method="post" class="consulta-form">
-        {% csrf_token %}
-        <div class="form-group">
-            <label for="id_consulta">DNI:</label>
-            {{ form.consulta }}
-        </div>
-        <div class="form-group">
-            <label for="id_fecha_inicio">Desde (Fecha inicio):</label>
-            {{ form.fecha_inicio }}
-        </div>
-        <div class="form-group">
-            <label for="id_fecha_fin">Hasta (Fecha fin):</label>
-            {{ form.fecha_fin }}
-        </div>
-        <button type="submit" class="consulta-buscar-button alumnos-btn">Buscar</button>
-    </form>
-</div>
+    <div class="consulta-busqueda">
+        <h2>Consulta de Comprobante</h2>
+        <form method="post" class="consulta-form">
+            {% csrf_token %}
+            <div class="form-group">
+                <label for="id_consulta">DNI:</label>
+                {{ form.consulta }}
+            </div>
+            <div class="form-group">
+                <label for="id_fecha_inicio">Desde (Fecha inicio):</label>
+                {{ form.fecha_inicio }}
+            </div>
+            <div class="form-group">
+                <label for="id_fecha_fin">Hasta (Fecha fin):</label>
+                {{ form.fecha_fin }}
+            </div>
+            <button type="submit" class="consulta-buscar-button">Buscar</button>
+        </form>
+    </div>
 
     <!-- Resultados de la búsqueda -->
     {% if search_done %}
