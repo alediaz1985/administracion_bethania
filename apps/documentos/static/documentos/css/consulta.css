@@ -1,0 +1,149 @@
+/* Estilos generales */
+body {
+    font-family: Arial, sans-serif;
+    background-image: url('../img/fondo1.png'); /* Cambia por la ruta de tu imagen */
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    margin: 0;
+    padding: 0;
+}
+
+/* Contenedor principal */
+.consulta-container {
+    width: 90%;
+    margin: 20px auto;
+    padding: 20px;
+    background-color: #f7f7f7;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    border-radius: 8px;
+}
+
+/* Contenedor de botones superiores */
+.consulta-header-buttons {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 20px;
+}
+
+/* Botones de acción */
+.consulta-action-button {
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    background-color: #428545;
+    color: white;
+    font-size: 14px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.consulta-action-button:hover {
+    background-color: #306635;
+    transform: translateY(-3px);
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+}
+
+.consulta-action-button:active {
+    background-color: #204923;
+    transform: translateY(0);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+/* Contenedor del formulario de búsqueda */
+.consulta-busqueda {
+    margin-bottom: 30px;
+    text-align: center;
+}
+
+.consulta-busqueda h2 {
+    font-size: 18px;
+    color: #333;
+    margin-bottom: 20px;
+}
+
+.consulta-form {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 15px;
+    justify-items: center;
+}
+
+.form-group {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+}
+
+.form-group label {
+    font-size: 14px;
+    margin-bottom: 5px;
+    color: #555;
+}
+
+.consulta-buscar-button {
+    grid-column: span 3;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    background-color: #428545;
+    color: white;
+    font-size: 14px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.consulta-buscar-button:hover {
+    background-color: #306635;
+    transform: translateY(-3px);
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+}
+
+.consulta-buscar-button:active {
+    background-color: #204923;
+    transform: translateY(0);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+/* Resultados de la búsqueda */
+.consulta-resultados {
+    margin-top: 30px;
+}
+
+.consulta-resultados-titulo {
+    font-size: 18px;
+    color: #333;
+    margin-bottom: 15px;
+    text-align: center;
+}
+
+.consulta-lista-resultados {
+    list-style: none;
+    padding: 0;
+}
+
+.consulta-item-resultado {
+    margin-bottom: 15px;
+    padding: 10px;
+    background-color: #f9f9f9;
+    border-radius: 5px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.consulta-item-resultado a {
+    color: #428545;
+    text-decoration: none;
+    font-weight: bold;
+}
+
+.consulta-item-resultado a:hover {
+    text-decoration: underline;
+}
+
+.consulta-item-resultado strong {
+    display: block;
+    margin-bottom: 5px;
+    color: #555;
+}
