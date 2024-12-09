@@ -17,14 +17,17 @@ from datetime import datetime
 from django.utils import timezone
 from .models import EstadoDocumentacion  # Agrega esta línea si no está
 
+
+
 def estudiante_lista(request):
-    estudiantes = Estudiante.objects.all().prefetch_related('estados_documentacion')
+    estudiantes = Estudiante.objects.all()
     if not estudiantes:
         return HttpResponse("No se encontraron estudiantes en la base de datos.")
     return render(request, 'administracion_alumnos/estudiante_list.html', {'alumnos': alumnos})
 
 def estudiante_list(request):
     # Obtener todos los estudiantes con sus estados de documentación
+    estudiantes = Estudiante.objects.all()
     estudiantes = Estudiante.objects.all().prefetch_related('estados_documentacion')
 
     # Inicializar listas vacías para los estudiantes pendientes y aprobados
@@ -46,9 +49,14 @@ def estudiante_list(request):
     
     # Renderizar la plantilla y pasar los resultados de las consultas
     return render(request, 'administracion_alumnos/estudiante_list.html', {
+        'estudiantes': estudiantes,
         'estudiantes_pendientes': estudiantes_pendientes,
         'estudiantes_aprobados': estudiantes_aprobados
     })
+
+# def estudiante_list(request):
+#     estudiantes = Estudiante.objects.all()
+#     return render(request, 'administracion_alumnos/estudiante_list.html',  {'estudiantes': estudiantes})
 
 def cambiar_estado(request, estudiante_id):
     # Obtener el registro de estado_documentacion

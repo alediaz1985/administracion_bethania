@@ -127,11 +127,6 @@
                                 <td>{{ estudiante.nombres_estudiante }}</td>
                                 <td>{{ estudiante.nivel_estudiante }}</td>
                                 <td>
-                                    {% for estado in estudiante.estados_documentacion.all %}
-                                        {{ estado.estado }}
-                                    {% endfor %}
-                                </td>
-                                <td>
                                     <form class="alumnos-controls" action="{% url 'estudiante_detail' pk=estudiante.pk %}" method="get">
                                         <div class="tooltip-container">
                                             <span class="tooltip-text">Ver Datos</span>
