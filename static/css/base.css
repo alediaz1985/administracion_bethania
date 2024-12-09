@@ -24,6 +24,7 @@ body {
     z-index: 1001;
     overflow: hidden; /* Oculta el contenido fuera del área visible */
     padding: 35px 0;
+    color: #000;
 }
 
 /* Cuando la barra está activa */
@@ -437,6 +438,16 @@ body {
     font-size: 14px;
 }
 
+/* Media query para pantallas de 1366px de ancho */
+@media screen and (min-width: 1920px) {
+    .signin-btn a {
+        width: 150px; /* Establece un ancho fijo para el botón */
+        height: 40px; /* Establece una altura fija para el botón */
+        text-align: center; /* Centra el texto */
+        line-height: 20px; /* Centra el texto verticalmente */
+    }
+
+}
 
 /* Media query para pantallas de 1366px de ancho */
 @media screen and (max-width: 1366px) {

@@ -33,15 +33,14 @@ body {
     overflow-y: auto;  /* Activar scroll vertical */
     border: 1px solid #ccc;
     padding: 10px;
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+    box-shadow: 0 4px 25px rgba(0, 0, 0, 0.5);
     background-color: #fff;
-    border-radius: 7px;
+    border-radius: 10px;
 }
 
 .alumnos-table {
     width: 100%;
     border-collapse: collapse;
-    margin: 20px 0;
     box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
 }
 
@@ -83,28 +82,84 @@ body {
 }
 
 .alumnos-btn-1 {
-    padding: 6px 22px;
-    background-color: rgb(66 149 33);
+    padding: 3px 13px;
+    background-color: rgb(66, 149, 33);
     color: white;
     border: none;
     cursor: pointer;
-    border-radius: 5px;
-    transition: all 0.3s ease; /* Transición suave para todos los efectos */
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Sombra sutil inicial */
+    border-radius: 10px;
+    transition: all 0.1s ease;
+    box-shadow: 0 8px 4px rgba(0, 0, 0, 0.4); /* Sombra dura */
     float: right;
-    font-size: 14px;
+    font-size: 20px;
+    position: relative;
+    overflow: hidden; /* Para evitar que los pseudo-elementos sobresalgan */
 }
 
-.alumnos-btn-1:hover {
-    background-color:rgb(68, 123, 46);
-    transform: translateY(-3px); /* Efecto de "levantamiento" al pasar el mouse */
-    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2); /* Sombra más marcada */
+/* Contenedor del mensaje */
+.tooltip-container {
+    position: relative;
+    display: inline-block;
+}
+
+/* Estilo del globo de diálogo */
+.tooltip-text {
+    visibility: hidden;
+    background-color: rgb(167, 167, 167);
+    color: white;
+    font-size: 8px;
+    padding: 10px 15px;
+    border-radius: 65px; /* Redondeo para forma de globo */
+    position: absolute;
+    top: -35px;
+    left: 50%;
+    transform: translateX(-50%);
+    opacity: 0;
+    white-space: nowrap;
+    transition: opacity 0.3s ease, transform 0.3s ease;
+    z-index: 10;
+    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.2);
+}
+
+/* Triángulo debajo del globo */
+.tooltip-text::after {
+    content: '';
+    position: absolute;
+    top: 100%;
+    left: 50%;
+    transform: translateX(-50%);
+    border-width: 8px;
+    border-style: solid;
+    border-color: rgb(167, 167, 167) transparent transparent transparent;
+}
+
+/* Mostrar el mensaje al hacer hover */
+.tooltip-container:hover .tooltip-text {
+    visibility: visible;
+    opacity: 1;
+    transform: translateX(-50%) translateY(2px); /* Movimiento sutil hacia arriba */
+}
+
+/* Animación del parpadeo en el ícono */
+.alumnos-btn-1:hover i {
+    position: relative;
+    animation: blink 1.5s infinite;
+}
+
+/* Efecto de parpadeo (línea que cruza el ojo) */
+@keyframes blink {
+    0%, 100% {
+        clip-path: inset(0% 0% 0% 0%); /* Ojo completamente visible */
+    }
+    50% {
+        clip-path: inset(50% 0% 50% 0%); /* Ojo parcialmente cerrado (línea horizontal) */
+    }
 }
 
 .alumnos-btn:active {
     background-color: rgb(39, 70, 27);
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Sombra más ligera al presionar */
-    transform: translateY(0); /* Efecto de "presión" */
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); 
+    transform: translateY(0); 
 }
 
 .alumnos-details-row {
@@ -161,7 +216,7 @@ body {
 }
 
 .tabs button.active {
-    background-color: #ddd;
+    background-color: #b8b7b7;
     border-color: #5a2c85;
 }
 

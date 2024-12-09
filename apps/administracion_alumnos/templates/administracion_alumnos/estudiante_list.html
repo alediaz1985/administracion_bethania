@@ -133,9 +133,14 @@
                                 </td>
                                 <td>
                                     <form class="alumnos-controls" action="{% url 'estudiante_detail' pk=estudiante.pk %}" method="get">
-                                        <button class="alumnos-btn-1" type="submit"><i class="fas fa-eye"></i></button>
+                                        <div class="tooltip-container">
+                                            <span class="tooltip-text">Ver Datos</span>
+                                            <button class="alumnos-btn-1" type="submit">
+                                                <i class="fas fa-eye"></i>
+                                            </button>
+                                        </div>
                                     </form>
-                                </td>
+                                </td>                                
                             </tr>  
                         {% endfor %}
                     {% else %}
