@@ -6,6 +6,7 @@ body {
     background-size: cover;  /* Asegura que la imagen cubra todo el fondo */
     background-position: center; /* Centra la imagen */
     background-repeat: no-repeat; /* Evita que la imagen se repita */
+    color: #000000;
 }
 
 .alumnos-container {
@@ -108,12 +109,12 @@ body {
     background-color: rgb(167, 167, 167);
     color: white;
     font-size: 8px;
-    padding: 10px 15px;
+    padding: 5px 10px;
     border-radius: 65px; /* Redondeo para forma de globo */
     position: absolute;
     top: -35px;
     left: 50%;
-    transform: translateX(-50%);
+    transform: translateX(-40%);
     opacity: 0;
     white-space: nowrap;
     transition: opacity 0.3s ease, transform 0.3s ease;
@@ -127,7 +128,7 @@ body {
     position: absolute;
     top: 100%;
     left: 50%;
-    transform: translateX(-50%);
+    transform: translateX(-40%);
     border-width: 8px;
     border-style: solid;
     border-color: rgb(167, 167, 167) transparent transparent transparent;
@@ -315,7 +316,7 @@ body {
     gap: 10px;
     cursor: pointer;
     transition: all 0.3s;
-    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.4); /* Sombra más marcada */
+    box-shadow: 0 1px 16px rgba(0, 0, 0, 0.4); /* Sombra más marcada */
     float: right;
     padding-right: 10px;
   }

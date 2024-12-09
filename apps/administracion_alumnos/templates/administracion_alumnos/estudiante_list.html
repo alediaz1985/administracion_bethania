@@ -127,7 +127,12 @@
                                 <td>{{ estudiante.nombres_estudiante }}</td>
                                 <td>{{ estudiante.nivel_estudiante }}</td>
                                 <td>
-                                    <form class="alumnos-controls" action="{% url 'estudiante_detail' pk=estudiante.pk %}" method="get">
+                                    {% for estado in estudiante.estados_documentacion.all %}
+                                        {{ estado.estado }}
+                                    {% endfor %}
+                                </td>
+                                <td>
+                                    <form class="alumnos-controls" action="{% url 'ver_datos_estudiante' pk=estudiante.pk %}" method="get">
                                         <div class="tooltip-container">
                                             <span class="tooltip-text">Ver Datos</span>
                                             <button class="alumnos-btn-1" type="submit">
@@ -173,8 +178,13 @@
                                     {% endfor %}
                                 </td>
                                 <td>
-                                    <form class="alumnos-controls" action="{% url 'estudiante_detail' pk=estudiante.pk %}" method="get">
-                                        <button class="alumnos-btn-1" type="submit">Ver Datos</button>
+                                    <form class="alumnos-controls" action="{% url 'ver_datos_estudiante' pk=estudiante.pk %}" method="get">
+                                        <div class="tooltip-container">
+                                            <span class="tooltip-text">Ver Datos</span>
+                                            <button class="alumnos-btn-1" type="submit">
+                                                <i class="fas fa-eye"></i>
+                                            </button>
+                                        </div>
                                     </form>
                                 </td>
                             </tr>
@@ -213,8 +223,13 @@
                                     {% endfor %}
                                 </td>
                                 <td>
-                                    <form class="alumnos-controls" action="{% url 'estudiante_detail' pk=estudiante.pk %}" method="get">
-                                        <button class="alumnos-btn-1" type="submit">Ver Datos</button>
+                                    <form class="alumnos-controls" action="{% url 'ver_datos_estudiante' pk=estudiante.pk %}" method="get">
+                                        <div class="tooltip-container">
+                                            <span class="tooltip-text">Ver Datos</span>
+                                            <button class="alumnos-btn-1" type="submit">
+                                                <i class="fas fa-eye"></i>
+                                            </button>
+                                        </div>
                                     </form>
                                 </td>
                             </tr>
