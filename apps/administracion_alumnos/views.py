@@ -357,20 +357,14 @@ def generar_pdf_lista_estudiantes_view(request):
 
 from django.shortcuts import render
 from .models import Estudiante  # Importar el modelo Estudiante
-def estudiante_list(request):
-    estudiantes = Estudiante.objects.all()
-    return render(request, 'administracion_alumnos/estudiante_list.html',  {'estudiantes': estudiantes})
+
+# def estudiante_list(request):
+#     estudiantes = Estudiante.objects.all()
+#     return render(request, 'administracion_alumnos/estudiante_list.html',  {'estudiantes': estudiantes})
 
 
 from django.shortcuts import render, get_object_or_404
 from .models import Estudiante  # Asegúrate de importar el modelo correcto
-
-def estudiante_detail(request, pk):
-    """
-    Vista para mostrar los detalles de un alumno específico.
-    """
-    alumno = get_object_or_404(Estudiante, pk=pk)  # Buscar al alumno por su clave primaria
-    return render(request, 'administracion_alumnos/estudiante_detail.html', {'alumno': alumno})
 
 from django.shortcuts import render, get_object_or_404, redirect
 from .models import Estudiante  # Asegúrate de importar el modelo correcto
