@@ -1,8 +1,8 @@
+import os
 import re
 from .models import Estudiante
 from django.shortcuts import render, get_object_or_404, redirect
 from django.http import HttpResponse, FileResponse
-from .models import Estudiante
 from .forms import EstudianteForm
 from django.contrib import messages
 from reportlab.lib.pagesizes import A4
@@ -12,11 +12,10 @@ from reportlab.platypus import Image, Paragraph, SimpleDocTemplate, Spacer, Tabl
 from reportlab.lib import colors
 from io import BytesIO
 from django.conf import settings
-import os
 from datetime import datetime
 from django.utils import timezone
-from .models import EstadoDocumentacion  # Agrega esta línea si no está
-
+from .models import EstadoDocumentacion
+from django.urls import reverse
 
 
 def estudiante_lista(request):
@@ -130,9 +129,9 @@ def generar_pdf_estudiante_view(request, estudiante_id):
     estudiante = get_object_or_404(Estudiante, pk=estudiante_id)
     datos_institucion = {
         "Nombre": "U.E.G.P. N°82",
-        "Dirección": "Urquiza Nº 846, Pcia. Roque Sáenz Peña - Chaco",
-        "Teléfono": "1122334455",
-        "Email": "contacto@institucion.edu"
+        "Dirección": "Urquiza 768 / 846 Presidencia Roque Sáenz Peña.",
+        "Teléfono": "0364-4423041 / 0364-4436798",
+        "Email": "contacto@hdebethania.edu.ar"
     }
     logo_path = os.path.join(settings.BASE_DIR, 'static', 'img', 'logo.png')
     pdf_path = generar_pdf_estudiante(estudiante, datos_institucion, logo_path)
@@ -140,9 +139,24 @@ def generar_pdf_estudiante_view(request, estudiante_id):
 
 
 def generar_pdf_estudiante(estudiante, datos_institucion, logo_path):
-    pdf_path = "Ficha del Estudiante.pdf"
+    
+    pdf_path = f"Ficha del Estudiante - {estudiante.cuil_estudiante}.pdf"
+
     fecha_hora_actual = datetime.now().strftime("%Y-%m-%d-%H%M")
-    doc = SimpleDocTemplate(pdf_path, pagesize=A4, rightMargin=20, leftMargin=20, topMargin=20, bottomMargin=20)
+    
+    doc = SimpleDocTemplate(
+        pdf_path,
+        pagesize=A4,
+        rightMargin=20,
+        leftMargin=20,
+        topMargin=20,
+        bottomMargin=20,
+        title="Ficha del Estudiante",  # Título del documento
+        author="Hogar de Bethania",  # Autor
+        subject="Ficha del estudiante - Campos informativos",  # Asunto
+        creator="SEIS - || Gestión de Datos ||"  # Creador
+    )
+
 
     styles = getSampleStyleSheet()
     elements = []
@@ -154,6 +168,8 @@ def generar_pdf_estudiante(estudiante, datos_institucion, logo_path):
             elements.append(logo)
     except FileNotFoundError:
         elements.append(Paragraph("Logo no disponible", styles['Normal']))
+
+
 
     # Información de la institución
     elements.append(Paragraph(datos_institucion["Nombre"], styles['Title']))
@@ -168,48 +184,48 @@ def generar_pdf_estudiante(estudiante, datos_institucion, logo_path):
     # Crear una lista con todos los campos del estudiante
     datos_estudiante = [
         ["Marca Temporal", estudiante.marca_temporal],
-        ["Formulario Email", estudiante.formulario_email],
-        ["Foto", estudiante.foto],
-        ["Salita/Grado/Año", estudiante.salita_grado_ano],
-        ["Nivel", estudiante.nivel],
-        ["Número Legajo", estudiante.numero_legajo],
+        ["Formulario Email", estudiante.email_registro],
+        ["Foto", estudiante.foto_estudiante],
+        ["Salita/Grado/Año", estudiante.salita_grado_anio_estudiante],
+        ["Nivel", estudiante.nivel_estudiante],
+        ["Número Legajo", estudiante.num_legajo_estudiante],
         ["Fecha Recepción", estudiante.fecha_recepcion],
-        ["Apellidos", estudiante.apellidos],
-        ["Nombres", estudiante.nombres],
-        ["Sexo", estudiante.sexo],
-        ["Fecha Nacimiento", estudiante.fecha_nacimiento],
-        ["Nacionalidad", estudiante.nacionalidad],
-        ["Ciudad", estudiante.ciudad],
-        ["Calle", estudiante.calle],
-        ["Número Casa", estudiante.numero_casa],
-        ["Barrio", estudiante.barrio],
-        ["Código Postal", estudiante.codigo_postal],
-        ["Provincia", estudiante.provincia],
-        ["CUIL", estudiante.cuil],
-        ["DNI", estudiante.dni],
-        ["Email Alumno", estudiante.email_alumno],
-        ["Religión", estudiante.religion],
-        ["Teléfono Fijo", estudiante.telefono_fijo],
-        ["Teléfono Celular", estudiante.telefono_celular],
-        ["Teléfono Emergencia", estudiante.telefono_emergencia],
-        ["Parentesco", estudiante.parentesco],
-        ["Peso", estudiante.peso],
-        ["Talla", estudiante.talla],
-        ["Obra Social", estudiante.obra_social],
-        ["Cuál Obra Social", estudiante.cual_obra_social],
-        ["Problema Neurológico", estudiante.problema_neurologico],
-        ["Cuál Problema Neurológico", estudiante.cual_problema_neurologico],
-        ["Problema Actividad Física", estudiante.problema_actividad_fisica],
-        ["Certificado Médico", estudiante.certificado_medico],
-        ["Problema Aprendizaje", estudiante.problema_aprendizaje],
-        ["Cuál Problema Aprendizaje", estudiante.cual_problema_aprendizaje],
-        ["Atención Médica", estudiante.atencion_medica],
-        ["Alérgico", estudiante.alergico],
+        ["Apellidos", estudiante.apellidos_estudiante],
+        ["Nombres", estudiante.nombres_estudiante],
+        ["Sexo", estudiante.sexo_estudiante],
+        ["Fecha Nacimiento", estudiante.fecha_nac_estudiante],
+        ["Nacionalidad", estudiante.nacionalidad_estudiante],
+        ["Ciudad", estudiante.ciudad_estudiante],
+        ["Calle", estudiante.calle_estudiante],
+        ["Número Casa", estudiante.n_mz_pc_estudiante],
+        ["Barrio", estudiante.barrio_estudiante],
+        ["Código Postal", estudiante.codigo_postal_estudiante],
+        ["Provincia", estudiante.provincia_estudiante],
+        ["CUIL", estudiante.cuil_estudiante],
+        ["DNI", estudiante.dni_estudiante],
+        ["Email Alumno", estudiante.email_estudiante],
+        ["Religión", estudiante.religion_estudiante],
+        ["Teléfono Fijo", estudiante.tel_fijo_estudiante],
+        ["Teléfono Celular", estudiante.tel_cel_estudiante],
+        ["Teléfono Emergencia", estudiante.tel_emergencia_estudiante],
+        ["Parentesco", estudiante.parentesco_estudiante],
+        ["Peso", estudiante.peso_estudiante],
+        ["Talla", estudiante.talla_estudiante],
+        ["Obra Social", estudiante.obra_social_estudiante],
+        ["Cuál Obra Social", estudiante.cual_osocial_estudiante],
+        ["Problema Neurológico", estudiante.problema_neurologico_estudiante],
+        ["Cuál Problema Neurológico", estudiante.cual_prob_neurologico_estudiante],
+        ["Problema Actividad Física", estudiante.problema_fisico_estudiante],
+        ["Certificado Médico", estudiante.certificado_medico_estudiante],
+        ["Problema Aprendizaje", estudiante.problema_aprendizaje_estudiante],
+        ["Cuál Problema Aprendizaje", estudiante.cual_aprendizaje_estudiante],
+        ["Atención Médica", estudiante.atencion_medica_estudiante],
+        ["Alérgico", estudiante.alergia_estudiante],
         ["DNI Responsable 1", estudiante.dni_responsable1],
-        ["Apellido Responsable 1", estudiante.apellido_responsable1],
-        ["Nombre Responsable 1", estudiante.nombre_responsable1],
+        ["Apellido Responsable 1", estudiante.apellidos_responsable1],
+        ["Nombre Responsable 1", estudiante.nombres_responsable1],
         ["Nacionalidad Responsable 1", estudiante.nacionalidad_responsable1],
-        ["Fecha Nacimiento Responsable 1", estudiante.fecha_nacimiento_responsable1],
+        ["Fecha Nacimiento Responsable 1", estudiante.fecha_nac_responsable1],
         ["Estado Civil Responsable 1", estudiante.estado_civil_responsable1],
         ["CUIL Responsable 1", estudiante.cuil_responsable1],
         ["Nivel Instrucción Responsable 1", estudiante.nivel_instruccion_responsable1],
@@ -221,16 +237,16 @@ def generar_pdf_estudiante(estudiante, datos_institucion, logo_path):
         ["Provincia Responsable 1", estudiante.provincia_responsable1],
         ["Email Responsable 1", estudiante.email_responsable1],
         ["Religión Responsable 1", estudiante.religion_responsable1],
-        ["Teléfono Fijo Responsable 1", estudiante.telefono_fijo_responsable1],
-        ["Teléfono Celular Responsable 1", estudiante.telefono_celular_responsable1],
+        ["Teléfono Fijo Responsable 1", estudiante.tel_fijo_responsable1],
+        ["Teléfono Celular Responsable 1", estudiante.tel_cel_responsable1],
         ["Ocupación Responsable 1", estudiante.ocupacion_responsable1],
-        ["Teléfono Laboral Responsable 1", estudiante.telefono_laboral_responsable1],
-        ["Horario Laboral Responsable 1", estudiante.horario_laboral_responsable1],
+        ["Teléfono Laboral Responsable 1", estudiante.tel_laboral_responsable1],
+        ["Horario Laboral Responsable 1", estudiante.horario_trab_responsable1],
         ["DNI Responsable 2", estudiante.dni_responsable2],
-        ["Apellido Responsable 2", estudiante.apellido_responsable2],
-        ["Nombre Responsable 2", estudiante.nombre_responsable2],
+        ["Apellido Responsable 2", estudiante.apellidos_responsable2],
+        ["Nombre Responsable 2", estudiante.nombres_responsable2],
         ["Nacionalidad Responsable 2", estudiante.nacionalidad_responsable2],
-        ["Fecha Nacimiento Responsable 2", estudiante.fecha_nacimiento_responsable2],
+        ["Fecha Nacimiento Responsable 2", estudiante.fecha_nac_responsable2],
         ["Estado Civil Responsable 2", estudiante.estado_civil_responsable2],
         ["CUIL Responsable 2", estudiante.cuil_responsable2],
         ["Nivel Instrucción Responsable 2", estudiante.nivel_instruccion_responsable2],
@@ -242,67 +258,91 @@ def generar_pdf_estudiante(estudiante, datos_institucion, logo_path):
         ["Provincia Responsable 2", estudiante.provincia_responsable2],
         ["Email Responsable 2", estudiante.email_responsable2],
         ["Religión Responsable 2", estudiante.religion_responsable2],
-        ["Teléfono Fijo Responsable 2", estudiante.telefono_fijo_responsable2],
-        ["Teléfono Celular Responsable 2", estudiante.telefono_celular_responsable2],
+        ["Teléfono Fijo Responsable 2", estudiante.tel_fijo_responsable2],
+        ["Teléfono Celular Responsable 2", estudiante.tel_cel_responsable2],
         ["Ocupación Responsable 2", estudiante.ocupacion_responsable2],
-        ["Teléfono Laboral Responsable 2", estudiante.telefono_laboral_responsable2],
-        ["Horario Laboral Responsable 2", estudiante.horario_laboral_responsable2],
-        ["DNI Responsable Otro", estudiante.dni_responsableOtro],
-        ["Apellido Responsable Otro", estudiante.apellido_responsableOtro],
-        ["Nombre Responsable Otro", estudiante.nombre_responsableOtro],
-        ["Nacionalidad Responsable Otro", estudiante.nacionalidad_responsableOtro],
-        ["Fecha Nacimiento Responsable Otro", estudiante.fechaNacimiento_responsableOtro],
-        ["Estado Civil Responsable Otro", estudiante.estadoCivil_responsableOtro],
-        ["CUIL Responsable Otro", estudiante.cuil_responsableOtro],
-        ["Nivel Instrucción Responsable Otro", estudiante.NivelInstruccion_responsableOtro],
-        ["Calle Responsable Otro", estudiante.calle_responsableOtro],
-        ["N°/MZ/PC Responsable Otro", estudiante.n_mz_pc_responsableOtro],
-        ["Barrio Responsable Otro", estudiante.barrio_responsableOtro],
-        ["Ciudad Responsable Otro", estudiante.ciudad_responsableOtro],
-        ["Código Postal Responsable Otro", estudiante.codigoPostal_responsableOtro],
-        ["Provincia Responsable Otro", estudiante.provincia_responsableOtro],
-        ["Email Responsable Otro", estudiante.email_responsableOtro],
-        ["Religión Responsable Otro", estudiante.religion_responsableOtro],
-        ["Teléfono Fijo Responsable Otro", estudiante.telefonoFijo_responsableOtro],
-        ["Teléfono Celular Responsable Otro", estudiante.telefonoCelular_responsableOtro],
-        ["Ocupación Responsable Otro", estudiante.ocupacion_responsableOtro],
-        ["Teléfono Laboral Responsable Otro", estudiante.telefonoLaboral_responsableOtro],
-        ["Horario Laboral Responsable Otro", estudiante.horarioLaboral_ResponsableOtro],
-        ["Nivel Enseñanza", estudiante.nivel_ensenanza],
-        ["Contrato Fecha", estudiante.contrato_fecha],
-        ["Contrato Señores 1", estudiante.contrato_senores1],
-        ["Contrato DNI Señores 1", estudiante.contrato_dniSenores1],
-        ["Contrato Señores 2", estudiante.contrato_senores2],
-        ["Contrato DNI Señores 2", estudiante.contrato_dniSenores2],
-        ["Contrato Domicilio Señores", estudiante.contrato_domicilioSenores],
-        ["Contrato Email Señores", estudiante.contrato_emailSenores],
-        ["Contrato Representación Alumno", estudiante.contrato_representacionAlumno],
-        ["Contrato DNI Alumno", estudiante.contrato_dniAlumno],
-        ["Contrato Domicilio Alumno", estudiante.contrato_domicilioAlumno],
-        ["Contrato Responsable", estudiante.contrato_responsable],
-        ["Contrato DNI Responsable", estudiante.contrato_dniResponsable],
-        ["Contrato Cumplimiento", estudiante.contrato_cumplimiento],
-        ["Contrato Autorización Facturación", estudiante.contrato_autorizacionFacturacion],
-        ["Imagen Autorizado", estudiante.imagen_autorizado],
+        ["Teléfono Laboral Responsable 2", estudiante.tel_laboral_responsable2],
+        ["Horario Laboral Responsable 2", estudiante.horario_trab_responsable2],
+        ["DNI Responsable Otro", estudiante.dni_responsable_otro],
+        ["Apellido Responsable Otro", estudiante.apellidos_responsable_otro],
+        ["Nombre Responsable Otro", estudiante.nombres_responsable_otro],
+        ["Nacionalidad Responsable Otro", estudiante.nacionalidad_responsable_otro],
+        ["Fecha Nacimiento Responsable Otro", estudiante.fecha_nac_responsable_otro],
+        ["Estado Civil Responsable Otro", estudiante.estado_civil_responsable_otro],
+        ["CUIL Responsable Otro", estudiante.cuil_responsable_otro],
+        ["Nivel Instrucción Responsable Otro", estudiante.nivel_instruccion_responsable_otro],
+        ["Calle Responsable Otro", estudiante.calle_responsable_otro],
+        ["N°/MZ/PC Responsable Otro", estudiante.n_mz_pc_responsable_otro],
+        ["Barrio Responsable Otro", estudiante.barrio_responsable_otro],
+        ["Ciudad Responsable Otro", estudiante.ciudad_responsable_otro],
+        ["Código Postal Responsable Otro", estudiante.codigo_postal_responsable_otro],
+        ["Provincia Responsable Otro", estudiante.provincia_responsable_otro],
+        ["Email Responsable Otro", estudiante.email_responsable_otro],
+        ["Religión Responsable Otro", estudiante.religion_responsable_otro],
+        ["Teléfono Fijo Responsable Otro", estudiante.tel_fijo_responsable_otro],
+        ["Teléfono Celular Responsable Otro", estudiante.tel_cel_responsable_otro],
+        ["Ocupación Responsable Otro", estudiante.ocupacion_responsable_otro],
+        ["Teléfono Laboral Responsable Otro", estudiante.tel_laboral_responsable_otro],
+        ["Horario Laboral Responsable Otro", estudiante.horario_trab_responsable_otro],
+        ["Año Cursado", estudiante.anio_cursado],
+        ["Dónde Cursado", estudiante.donde_cursado],
+        ["Asignaturas Pendientes", estudiante.asignaturas_pendientes],
+        ["Indica Asignaturas Pendientes", estudiante.indica_asig_pendientes],
+        ["Tiene Hermanos en la Institución", estudiante.tiene_hermanos_institucion],
+        ["Cuántos Hermanos", estudiante.cuantos_hermanos],
+        ["Nivel Inicial 3", estudiante.nivel_inicial3],
+        ["Nivel Inicial 4", estudiante.nivel_inicial4],
+        ["Nivel Inicial 5", estudiante.nivel_inicial5],
+        ["Nivel Primario 1", estudiante.nivel_primario1],
+        ["Nivel Primario 2", estudiante.nivel_primario2],
+        ["Nivel Primario 3", estudiante.nivel_primario3],
+        ["Nivel Primario 4", estudiante.nivel_primario4],
+        ["Nivel Primario 5", estudiante.nivel_primario5],
+        ["Nivel Primario 6", estudiante.nivel_primario6],
+        ["Nivel Primario 7", estudiante.nivel_primario7],
+        ["Nivel Secundario 1", estudiante.nivel_secundario1],
+        ["Nivel Secundario 2", estudiante.nivel_secundario2],
+        ["Nivel Secundario 3", estudiante.nivel_secundario3],
+        ["Nivel Secundario 4", estudiante.nivel_secundario4],
+        ["Nivel Secundario 5", estudiante.nivel_secundario5],
+        ["Cómo Conociste la Institución", estudiante.como_conociste_institucion],
+        ["Eligió la Institución", estudiante.eligio_institucion],
+        ["Nivel de Enseñanza", estudiante.nivel_ensenanza],
+        ["Ciudad a los Días", estudiante.ciudad_a_los_dias],
+        ["Señores 1", estudiante.senores1],
+        ["DNI Señores 1", estudiante.dni_senores1],
+        ["Señores 2", estudiante.senores2],
+        ["DNI Señores 2", estudiante.dni_senores2],
+        ["Domicilios Señores", estudiante.domicilios_senores],
+        ["Domicilio Especial Electrónico", estudiante.domicilio_especial_electronico],
+        ["Actúan Nombres Estudiante", estudiante.actuan_nombres_estudiante],
+        ["DNI Actúan Estudiante", estudiante.dni_acutan_estudiante],
+        ["Domicilio Actúan Estudiante", estudiante.domicilio_actuan_estudiante],
+        ["Responsable de Pago", estudiante.responsable_pago],
+        ["DNI Responsable de Pago", estudiante.dni_responsable_pago],
+        ["Manifiesta Responsable", estudiante.manifiesta_responsable],
+        ["Autoriza Facturación", estudiante.autoriza_facturacion],
+        ["Autoriza Imagen", estudiante.autoriza_imagen]
     ]
+    # Filtrar campos completos
+    datos_estudiante = [[label, value] for label, value in datos_estudiante if value]
 
-    # Crear una tabla con los datos
+    # Crear una tabla con los datos filtrados
     tabla = Table(datos_estudiante, colWidths=[3*inch, 3.5*inch])
     tabla.setStyle(TableStyle([
-        ('BACKGROUND', (0, 0), (-1, 0), colors.grey),  # Encabezado
-        ('TEXTCOLOR', (0, 0), (-1, 0), colors.whitesmoke),  # Color texto encabezado
-        ('ALIGN', (0, 0), (-1, -1), 'LEFT'),  # Alineación
-        ('FONTNAME', (0, 0), (-1, 0), 'Helvetica-Bold'),  # Fuente del encabezado
-        ('FONTSIZE', (0, 0), (-1, -1), 9),  # Tamaño de fuente
-        ('GRID', (0, 0), (-1, -1), 0.5, colors.black),  # Líneas de la tabla
-        ('BACKGROUND', (0, 1), (-1, -1), colors.beige),  # Fondo de celdas
+        ('BACKGROUND', (0, 0), (-1, 0), colors.grey),
+        ('TEXTCOLOR', (0, 0), (-1, 0), colors.whitesmoke),
+        ('ALIGN', (0, 0), (-1, -1), 'LEFT'),
+        ('FONTNAME', (0, 0), (-1, 0), 'Helvetica-Bold'),
+        ('FONTSIZE', (0, 0), (-1, -1), 9),
+        ('GRID', (0, 0), (-1, -1), 0.5, colors.black),
+        ('BACKGROUND', (0, 1), (-1, -1), colors.beige),
     ]))
     elements.append(tabla)
 
     # Generar el PDF
     doc.build(elements)
     return pdf_path
-
 
 def generar_pdf_lista_estudiantes_view(request):
     # Configuración del PDF
@@ -363,20 +403,6 @@ def generar_pdf_lista_estudiantes_view(request):
     response.write(pdf)
     return response
 
-from django.shortcuts import render
-from .models import Estudiante  # Importar el modelo Estudiante
-
-# def estudiante_list(request):
-#     estudiantes = Estudiante.objects.all()
-#     return render(request, 'administracion_alumnos/estudiante_list.html',  {'estudiantes': estudiantes})
-
-
-from django.shortcuts import render, get_object_or_404
-from .models import Estudiante  # Asegúrate de importar el modelo correcto
-
-from django.shortcuts import render, get_object_or_404, redirect
-from .models import Estudiante  # Asegúrate de importar el modelo correcto
-from .forms import EstudianteForm  # Asegúrate de tener un formulario definido
 
 def estudiante_edit(request, pk):
     """
@@ -392,10 +418,6 @@ def estudiante_edit(request, pk):
         form = EstudianteForm(instance=alumno)
     return render(request, 'administracion_alumnos/estudiante_edit.html', {'form': form})
 
-from django.shortcuts import render, get_object_or_404, redirect
-from django.urls import reverse
-from .models import Estudiante  # Asegúrate de usar el modelo correcto
-
 def estudiante_delete(request, pk):
     """
     Vista para eliminar un alumno.
@@ -407,10 +429,6 @@ def estudiante_delete(request, pk):
     return render(request, 'administracion_alumnos/alumno_confirm_delete.html', {'alumno': alumno})
 
 
-from django.shortcuts import render, get_object_or_404, redirect
-from django.urls import reverse
-from .models import Estudiante  # Asegúrate de usar el modelo correcto
-
 def estudiante_delete(request, pk):
     """
     Vista para eliminar un alumno.
@@ -421,36 +439,6 @@ def estudiante_delete(request, pk):
         return redirect(reverse('estudiante_list'))  # Redirige a la lista de alumnos
     return render(request, 'administracion_alumnos/alumno_confirm_delete.html', {'alumno': alumno})
 
-
-"""def estudiante_consultar(request):
-
-    Vista para consultar alumnos.
-
-    query = request.GET.get('query', '')  # Captura el término de búsqueda del formulario
-    alumnos = Alumno.objects.filter(
-        nombres_alumno__icontains=query
-    ) | Alumno.objects.filter(
-        apellidos_alumno__icontains=query
-    )  # Filtra por nombre o apellido
-    return render(request, 'administracion_alumnos/estudiante_consultar.html', {'alumnos': alumnos, 'query': query})
-"""
-"""def estudiante_consultar(request):
-    estudiante = None
-    error = None
-
-    if request.method == "POST":
-        cuil = request.POST.get('cuil')
-        if not cuil or not re.fullmatch(r'\d+', cuil):
-            error = 'El CUIL debe contener solo números y no puede estar vacío.'
-        else:
-            try:
-                estudiante = Estudiante.objects.get(cuil_estudiante=cuil)
-            except Estudiante.DoesNotExist:
-                error = 'No se encontró un estudiante con ese CUIL.'
-
-    return render(request, 'administracion_alumnos/estudiante_consultar.html', {'estudiante': estudiante, 'error': error})
-
-"""
 def estudiante_consultar(request):
     estudiante = None
     error = None
@@ -477,3 +465,40 @@ def estudiante_consultar(request):
         'administracion_alumnos/estudiante_consultar.html',
         {'estudiante': estudiante, 'error': error}
     )
+
+
+
+
+"""def estudiante_consultar(request):
+
+    Vista para consultar alumnos.
+
+    query = request.GET.get('query', '')  # Captura el término de búsqueda del formulario
+    alumnos = Alumno.objects.filter(
+        nombres_alumno__icontains=query
+    ) | Alumno.objects.filter(
+        apellidos_alumno__icontains=query
+    )  # Filtra por nombre o apellido
+    return render(request, 'administracion_alumnos/estudiante_consultar.html', {'alumnos': alumnos, 'query': query})
+
+def estudiante_consultar(request):
+    estudiante = None
+    error = None
+
+    if request.method == "POST":
+        cuil = request.POST.get('cuil')
+        if not cuil or not re.fullmatch(r'\d+', cuil):
+            error = 'El CUIL debe contener solo números y no puede estar vacío.'
+        else:
+            try:
+                estudiante = Estudiante.objects.get(cuil_estudiante=cuil)
+            except Estudiante.DoesNotExist:
+                error = 'No se encontró un estudiante con ese CUIL.'
+
+    return render(request, 'administracion_alumnos/estudiante_consultar.html', {'estudiante': estudiante, 'error': error})
+
+"""
+
+# def estudiante_list(request):
+#     estudiantes = Estudiante.objects.all()
+#     return render(request, 'administracion_alumnos/estudiante_list.html',  {'estudiantes': estudiantes})
