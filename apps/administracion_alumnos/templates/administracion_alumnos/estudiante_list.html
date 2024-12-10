@@ -116,6 +116,7 @@
                         <th>Nivel</th>
                         <th></th>
                         <th></th>
+                        <th></th>
                     </tr>
                 </thead>
                 <tbody id="table-body">
@@ -140,7 +141,17 @@
                                             </button>
                                         </div>
                                     </form>
-                                </td>                                
+                                </td>   
+                                <td>
+                                    <form class="alumnos-controls" action="{% url 'generar_contrato' estudiante.pk %}" method="get">
+                                        <div class="tooltip-container">
+                                            <span class="tooltip-text">Generar Contrato</span>
+                                            <button class="alumnos-btn-1" type="submit">
+                                                <i class="fas fa-file-pdf"></i>
+                                            </button>
+                                        </div>
+                                    </form>
+                                </td>                             
                             </tr>  
                         {% endfor %}
                     {% else %}
@@ -159,6 +170,7 @@
                         <th>Apellido/s</th>
                         <th>Nombre/s</th>
                         <th>Nivel</th>
+                        <th></th>
                         <th></th>
                         <th></th>
                     </tr>
@@ -187,6 +199,16 @@
                                         </div>
                                     </form>
                                 </td>
+                                <td>
+                                    <form class="alumnos-controls" action="{% url 'generar_contrato' estudiante.pk %}" method="get">
+                                        <div class="tooltip-container">
+                                            <span class="tooltip-text">Generar Contrato</span>
+                                            <button class="alumnos-btn-1" type="submit">
+                                                <i class="fas fa-file-pdf"></i>
+                                            </button>
+                                        </div>
+                                    </form>
+                                </td>
                             </tr>
                         {% endfor %}
                     {% else %}
@@ -205,6 +227,7 @@
                         <th>Apellido/s</th>
                         <th>Nombre/s</th>
                         <th>Nivel</th>
+                        <th></th>
                         <th></th>
                         <th></th>
                     </tr>
@@ -228,6 +251,16 @@
                                             <span class="tooltip-text">Ver Datos</span>
                                             <button class="alumnos-btn-1" type="submit">
                                                 <i class="fas fa-eye"></i>
+                                            </button>
+                                        </div>
+                                    </form>
+                                </td>
+                                <td>
+                                    <form class="alumnos-controls" action="{% url 'generar_contrato' estudiante.pk %}" method="get">
+                                        <div class="tooltip-container">
+                                            <span class="tooltip-text">Generar Contrato</span>
+                                            <button class="alumnos-btn-1" type="submit">
+                                                <i class="fas fa-file-pdf"></i>
                                             </button>
                                         </div>
                                     </form>
