@@ -453,6 +453,79 @@ def listar_alumnos_por_ciclo_lectivo(request):
         'ciclo_seleccionado': ciclo_seleccionado,
     })
 
+import locale
+from datetime import datetime
+from django.shortcuts import get_object_or_404
+from django.http import FileResponse
+from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer
+from reportlab.lib.pagesizes import A4
+from reportlab.lib.styles import getSampleStyleSheet
+from .models import Estudiante
+
+def generar_contrato_view(request, estudiante_id):
+    # Establecer el idioma a español
+    locale.setlocale(locale.LC_TIME, 'es_ES.UTF-8')
+
+    # Obtener el mes en español
+    mes_en_espanol = datetime.now().strftime('%B')
+
+    # Obtener los datos del estudiante
+    estudiante = get_object_or_404(Estudiante, pk=estudiante_id)
+
+    # Configuración del nombre del archivo
+    fecha_hora_actual = datetime.now().strftime("%Y-%m-%d_%H-%M")
+    pdf_path = f"Contrato - {estudiante.cuil_estudiante} - {fecha_hora_actual}.pdf"
+
+    # Crear el PDF
+    doc = SimpleDocTemplate(
+        pdf_path,
+        pagesize=A4,
+        rightMargin=20,
+        leftMargin=20,
+        topMargin=20,
+        bottomMargin=20,
+    )
+
+    # Metadata del PDF
+    doc.title = "Contrato de Enseñanza Educativa"
+    doc.author = "Hogar de Bethania"
+    doc.subject = "Contrato personalizado para el estudiante"
+    doc.creator = "Hogar de Bethania - Sistema de Gestión Educativa"
+
+    styles = getSampleStyleSheet()
+    elements = []
+
+    # Título del contrato
+    elements.append(Paragraph("CONTRATO DE ENSEÑANZA EDUCATIVA CICLO LECTIVO 2025", styles['Title']))
+    elements.append(Spacer(1, 0.5 * inch))
+
+    # Contenido del contrato (rellenado con datos del estudiante)
+    contrato_texto = f"""
+        En la ciudad de Presidencia Roque Sáenz Peña, Provincia del Chaco, a los {datetime.now().day} días del mes de {mes_en_espanol} del año {datetime.now().year}, 
+        entre la UNIDAD EDUCATIVA DE GESTIÓN PRIVADA N° 82 “HOGAR DE BETHANIA” y los responsables del estudiante {estudiante.apellidos_responsable1} {estudiante.nombres_responsable1}, 
+        D.N.I. N° {estudiante.dni_estudiante}, acuerdan suscribir el presente Contrato de Enseñanza, que es anual y que se regirá por las cláusulas que a continuación se detallan:
+        
+        PRIMERA: ...
+        SEGUNDA: ...
+    """
+    elements.append(Paragraph(contrato_texto, styles['Normal']))
+
+    # Firma de los responsables
+    elements.append(Spacer(1, 0.5 * inch))
+    firma_texto = f"""
+        FIRMA DEL RESPONSABLE PARENTAL 1: ____________________________  DNI: {estudiante.dni_senores1}<br/>
+        ACLARACIÓN: {estudiante.apellidos_responsable1} {estudiante.nombres_responsable1}<br/>
+        FECHA: ____________________________
+    """
+    elements.append(Paragraph(firma_texto, styles['Normal']))
+
+    # Generar el PDF
+    doc.build(elements)
+
+    # Devolver el PDF como respuesta
+    return FileResponse(open(pdf_path, 'rb'), as_attachment=True, filename=f"Contrato_{estudiante.cuil_estudiante}.pdf")
+
+
     
 """from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib import messages
