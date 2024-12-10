@@ -511,6 +511,8 @@ from django.conf import settings
 from reportlab.lib import colors
 from reportlab.lib.styles import ParagraphStyle
 
+from reportlab.lib.enums import TA_JUSTIFY
+
 def generar_contrato_view(request, estudiante_id):
     # Establecer el idioma a español
     locale.setlocale(locale.LC_TIME, 'es_ES.UTF-8')
@@ -533,9 +535,9 @@ def generar_contrato_view(request, estudiante_id):
         pdf_path,
         pagesize=A4,
         rightMargin=20,
-        leftMargin=10,
+        leftMargin=25,
         topMargin=10,
-        bottomMargin=20,
+        bottomMargin=10,
     )
 
     # Metadata del PDF
@@ -567,18 +569,29 @@ def generar_contrato_view(request, estudiante_id):
         backColor=colors.navy,  # Color de fondo
         padding=10,  # Margen interno
     )
-    elements.append(Spacer(1, 0.5 * inch))
+    elements.append(Spacer(1, 0.3 * inch))
     # Usar el estilo personalizado Título del contrato
     elements.append(Paragraph("CONTRATO DE ENSEÑANZA EDUCATIVA CICLO LECTIVO 2025", custom_title_style))
 
-    elements.append(Spacer(1, 0.5 * inch))
+    elements.append(Spacer(1, 0.2 * inch))
 
     # Obtener el nivel de enseñanza actual desde la base de datos
     nivel_ensenanza_texto = "Nivel de Enseñanza: " + "  " + estudiante.nivel_ensenanza.strip().upper()
-
+   
     # Agregarlo al contenido del PDF
     elements.append(Paragraph(nivel_ensenanza_texto, styles['Normal']))
 
+    elements.append(Spacer(1, 0.1 * inch))
+
+    contrato_style = ParagraphStyle(
+    'ContratoStyle',
+    fontName='Times-Roman',
+    fontSize=12,
+    leading=14,  # Espaciado entre líneas
+    alignment=TA_JUSTIFY,  # Justificar el texto
+    #leftIndent=30,  # Sangría en todos los párrafos
+    firstLineIndent=25,  # Sangría solo para la primera línea
+)
     # Contenido del contrato (rellenado con datos del estudiante)
     contrato_texto = f"""
         En la ciudad de Presidencia Roque Sáenz Peña, Provincia del Chaco, a los {datetime.now().day} días del mes de {mes_en_espanol} del año {datetime.now().year}, 
@@ -588,31 +601,30 @@ def generar_contrato_view(request, estudiante_id):
         señores(1) {estudiante.senores1} D.N.I.: {estudiante.dni_senores1} y (2) {estudiante.senores2} D.N.I.: {estudiante.dni_senores2} con domicilio en {estudiante.domicilios_senores} y domicilio especial
         electrónico {estudiante.domicilio_especial_electronico} actúan en su propio nombre y en representación del estudiante, menor de edad, {estudiante.actuan_nombres_estudiante} D.N.I. N° {estudiante.dni_acutan_estudiante}, domiciliado
         realmente en {estudiante.domicilio_actuan_estudiante},en adelante denominado LOS RESPONSABLES,
-        acuerdan suscribir el presente Contrato de Enseñanza, que es anual y que se regirá por las cláusulas que a continuación se detallan:
+        acuerdan suscribir el presente Contrato de Enseñanza, que es anual y que se regirá por las cláusulas que a continuación se detallan:<br/>
         PRIMERA: LOS RESPONSABLES reconocen que LA INSTITUCIÓN es una Unidad Educativa de Gestión Privada, cuyo objetivo es
         promover la formación integral del estudiante, capacitándolo para que a partir de la apropiación de los distintos saberes, y de una línea de
-        principios y valores cristianos que se desprenden de la Biblia, logre construir su propio proyecto de vida.-
-        SEGUNDA: LOS RESPONSABLES y el estudiante1
-        , al solicitar la inscripción del menor (reserva de vacante), eligen libremente dentro
+        principios y valores cristianos que se desprenden de la Biblia, logre construir su propio proyecto de vida.- <br/>
+        SEGUNDA: LOS RESPONSABLES y el estudiante1, al solicitar la inscripción del menor (reserva de vacante), eligen libremente dentro
         de las opciones que ofrece el medio, contratar los servicios educativos de LA INSTITUCIÓN durante el ciclo lectivo 2025 con arreglo a
         las condiciones y lineamientos establecidos en el presente Contrato. En consecuencia, declaran haber leído, aceptado y adherido al Ideario
         Institucional (I.I), el Proyecto Educativo, Reglamento Interno (R.I.) y Acuerdo de Convivencia (A.C.), asumiendo como propios los
-        objetivos educativos, la identidad cristiana y los principios morales de LA INSTITUCIÓN. -
+        objetivos educativos, la identidad cristiana y los principios morales de LA INSTITUCIÓN.- <br/>
         TERCERA: LOS RESPONSABLES se comprometen personalmente a cumplir y a hacer cumplir al estudiante el Reglamento Interno (R.I.),
         Acuerdo de Convivencia (A.C.) y el compromiso educativo que suscriben, coadyuvando con LA INSTITUCIÓN en su calidad de
         integrantes de la Comunidad Educativa para llevar adelante el I.I. y el Proyecto Educativo (el cual incluye el uso de la plataforma digital
         como herramienta de acompañamiento en el proceso enseñanza y aprendizaje) al que adhieren, procurando mantener sus principios sin que
-        se pierda la causa y los objetivos originarios.-
+        se pierda la causa y los objetivos originarios.- <br/>
         CUARTA: LA INSTITUCIÓN prestará a los estudiantes sus servicios educativos de acuerdo a los planes de estudios oficiales que aplica
         la misma, y demás actividades extracurriculares que sus Directivos resuelvan implementar, cumpliendo en un todo las obligaciones a su
         cargo establecidas en el presente contrato.
         Entendiéndose a la educación como una tarea compartida por LOS RESPONSABLES e INSTITUCIÓN EDUCATIVA, cuya finalidad es
         llevar adelante acciones educativas de manera conjunta; es necesario mantener entre ambas partes la cooperación, colaboración, confianza,
         y la buena fe, que una educación responsable exige en su proceder. Cuando dichos principios no estén presentes en la tarea educativa, es
-        imposible llevar delante de manera eficaz.-
+        imposible llevar delante de manera eficaz.- <br/>
         QUINTA: En este acto LA INSTITUCIÓN pone en conocimiento de LOS RESPONSABLES el contenido del I.I., el R.I. y el A.C., no
         pudiendo en adelante alegar desconocimiento de la reglamentación y/o espíritu de los términos que rigen la relación y convivencia de las
-        partes.-
+        partes.- <br/>
         SEXTA: En contraprestación por la enseñanza que LA INSTITUCIÓN brindará al alumno, LOS RESPONSABLES se comprometen a
         abonar un arancel anual dividido en diez cuotas mensuales y consecutivas, pagaderas por adelantado desde el día que se emite la factura
         hasta la fecha que les será comunicado juntamente con el valor del arancel mensual. Asimismo, corresponde abonar como condición previa
@@ -624,37 +636,36 @@ def generar_contrato_view(request, estudiante_id):
         abonan las familias. De allí que cada familia al elegir esta INSTITUCIÓN para sus hijos, debe asumir el compromiso de abonar los aranceles
         por enseñanza conforme lo detallado a continuación.
         Del analisis que actualmente vive nuestro país, el cual es de resultado incierto, hemos acordado para el CICLO ESCOLAR 2025 un arancel
-        inicial por enseñanza según el nivel:
-        - Nivel Inicial = CIENTO CINCO MIL ($105.000).
-        - Nivel Primario = NOVENTA MIL ($90.000).
-        - Nivel Secundario = SETENTA Y NUEVE MIL ($79.000).
+        inicial por enseñanza según el nivel: <br/>
+        - Nivel Inicial = CIENTO CINCO MIL ($105.000). <br/>
+        - Nivel Primario = NOVENTA MIL ($90.000). <br/>
+        - Nivel Secundario = SETENTA Y NUEVE MIL ($79.000). <br/>
         Para tener la posibilidad de re-inscribirse, que no es automático, deberá tener la totalidad de las cuotas canceladas y realizarse en la fecha
         definida por la institución para cada nivel. Por lo tanto, para la inscripción (a través de la presentación de la solicitud de vacante) deberá
         presentar constancia de libre deuda a la fecha y recibo de pago. De no ser así, la vacante dejará de estar reservada.
         Los aranceles por enseñanza incluyen además de la propuesta educativa los siguientes servicios: enseñanza de idioma, educación cristiana,
-        entre otros.
+        entre otros.<br/>
         No incluyen: excursiones, salidas didácticas, jornadas educativas, campamentos, pileta, congresos, Fiesta de la Familia, Fiesta de la
         Educación Física, viajes de estudio, salidas especiales; como así también útiles escolares, libreta de calificaciones , inasistencias e informe
         pedagógico, material de uso didáctico exclusivo para el alumno, comidas de ningún tipo, entre otros.
         El costo de las actividades antes mencionadas no están incluidas en los aranceles. Por lo tanto, se condicionará la asistencia de los alumnos
         a cualquier actividad curricular o extracurricular, al pago en tiempo y forma de los importes que se fijen para su realización. LOS
-        RESPONSABLES prestarán su colaboración y aceptación manifestada a través del presente Contrato de Enseñanza. Esto implica convalidar
+        RESPONSABLES prestarán su colaboración y aceptación manifestada a través del presente Contrato de Enseñanza. Esto implica convalidar
         todas las acciones y decisiones necesarias para el logro de los objetivos escolares planteados y la entrega de la documentación necesaria
-        para cada actividad.-
-        SEPTIMA: ARANCELES POR ENSEÑANZA, lineamientos:
+        para cada actividad.- <br/>
+        SEPTIMA: ARANCELES POR ENSEÑANZA, lineamientos:<br/>
         a) La matrícula o reserva de vacante se abona al momento de la firma del presente contrato, entregándose el recibo correspondiente
-        al pagador en formato digital vía email.
+        al pagador en formato digital vía email.<br/>
         b) La Matrícula o reserva de vacante podrá ser desistida por LOS RESPONSABLES del alumno, en caso de mediar razones de
         fuerza mayor, dando lugar a la devolución del importe abonado por tal concepto a valores históricos si tal decisión es comunicada
         fehacientemente al establecimiento antes del 31/12/2024. Con posterioridad a dicha fecha, así como en los casos en que el
         desistimiento obedezca a causas imputables a los responsables y/o alumnos, los importes abonados por tal concepto no serán
-        reintegrados. Sin excepción.
+        reintegrados. Sin excepción.<br/>
         c) LA INSTITUCIÓN se reserva la facultad de incrementar unilateralmente el monto de las cuotas teniendo en cuenta la evolución
         general de la economía del país y si se produjeren modificaciones en los regímenes laborales y/o previsionales e/o impositivos
         que por su incidencia pudieran comprometer el normal cumplimiento del servicio educativo, conforme a la normativa vigente.
-        d) Los aranceles por enseñanza fijados, son estimados teniendo en cuenta el receso escolar invernal, feriados, etc.-
-        1
-        Sólo en el caso de los alumnos mayores de 13 años.
+        d) Los aranceles por enseñanza fijados, son estimados teniendo en cuenta el receso escolar invernal, feriados, etc.-<br/>
+        (1) Sólo en el caso de los alumnos mayores de 13 años.<br/>
         e) La escuela se reserva el derecho de cobrar la totalidad de las cuotas, ya que las mismas son indivisibles, es decir son
         independientes de la cantidad de días de asistencia que se registre de cada alumno en cuestión, sea por causas particulares o
         propias del calendario escolar y/o caso fortuito o fuerza mayor (por disposición de las autoridades nacionales y/o provinciales
@@ -662,68 +673,68 @@ def generar_contrato_view(request, estudiante_id):
         INSTITUCIÓN EDUCATIVA es indivisible, ya que los aranceles se establecen considerando toda la enseñanza a impartir en
         el año 2025 para todo el plan de continuidad pedagógica, ya sea presencial o virtual o ambos conjuntamente, siendo la obligación
         de pago única aun cuando pueda ser cancelada en cuotas mensuales. Por esta razón, bajo ninguna circunstancia podrán LOS
-        RESPONSABLES solicitar ni pretender que se les exima de cumplir una parte cualquiera de la obligación de pago que se asume.
+        RESPONSABLES solicitar ni pretender que se les exima de cumplir una parte cualquiera de la obligación de pago que se asume.<br/>
         f) En caso que LOS RESPONSABLES soliciten la recisión del presente contrato antes de finalizar el ciclo lectivo, deberán
         comunicarlo por escrito a la Dirección de la escuela exclusivamente, siempre y cuando la cuota correspondiente al mes de la
         solicitud se encuentre al día, sin obligación de abonar el importe total del arancel anual. En caso de NO AVISAR, el sistema
-        continuará facturando las cuotas hasta que se haga efectiva dicha notificación.
+        continuará facturando las cuotas hasta que se haga efectiva dicha notificación.<br/>
         g) Cuando un alumno se retire durante el mes de noviembre, cualquiera fuera la fecha, deberá abonar la cuota Nº10
-        indefectiblemente. -
+        indefectiblemente. -<br/>
         h) Cuando el ingreso a la escuela se realice en un determinado mes, en cualquier época del año (por alguna circunstancia
         extraordinaria), se deberá abonar íntegramente tanto la matrícula como el mes en curso cualquiera fuera la fecha de ingreso.
         i) Los estudiantes que perdieran la regularidad por causa de inasistencias tendrán derecho a solicitar reincorporación; para lo cuál
-        deberán: presentar la solicitud de reincorporación, libre deuda y abonar el arancel correspondiente (Nivel Secundario).
+        deberán: presentar la solicitud de reincorporación, libre deuda y abonar el arancel correspondiente (Nivel Secundario).<br/>
         j) En caso de que en el ciclo lectivo se incumplan con algunos de los aspectos referenciados en el R.I. y el A.C., especialmente en
         el caso del retiro del alumno fuera de los horarios establecidos, LA INSTITUCIÓN determinará, para los casos repetidos y
         constantes, el pago de una cuota adicional a fin de solventar los gastos que ocasione la contratación de un personal para el
         cuidado del alumno. Dicha facultad se sustenta en el deber de colaboración mutua entre escuela-familia, ya que como institución
         no se cuenta con recursos humanos para dicha función específica, no obstante institucionalmente somos conscientes del deber
         de protección de la vida, salud y seguridad del alumno. La determinación de dicha cuota adicional le será notificada
-        previamente.-
+        previamente.-<br/>
         OCTAVA: Las Diez (10) cuotas en que se divide el arancel por enseñanza anual se abonarán mensualmente en el domicilio de LA
         INSTITUCIÓN por los medios de pago que oportunamente se informen; la primera en el mes de marzo, y por adelantado, del uno (1) al
-        diez (10) de cada mes, entregándose el recibo correspondiente al pagador. -
+        diez (10) de cada mes, entregándose el recibo correspondiente al pagador.-<br/>
         NOVENA: Mora en el pago de aranceles: se prevé que para los supuestos de atraso en el pago del arancel, la mora se producirá de pleno
         derecho sin necesidad de interpelación judicial o extrajudicial alguna; queda facultada LA INSTITUCIÓN a exigir a LOS
         RESPONSABLES PARENTALES Y/U OTRO RESPONSABLE DE PAGO el abono de los recargos por mora que devengará un interés
-        equivalente a la tasa pasiva del BNA, sobre el valor factura, como así también las costas de recupero, a cuenta de su abono. -
+        equivalente a la tasa pasiva del BNA, sobre el valor factura, como así también las costas de recupero, a cuenta de su abono.- <br/>
         DÉCIMA: La falta de pago de dos (2) cuotas mensuales, continuas o alteradas, hará incurrir en mora de pleno derecho sin necesidad de
         interpelación judicial o extrajudicial alguna, quedando facultada LA INSTITUCIÓN para exigir a LOS RESPONSABLES, su pago con
         más tasa pasiva judicial.
         Sólo se podrá acreditar el pago de las cuotas mediante la exhibición de los recibos emitidos por la administración del establecimiento. -
         * En caso de realizar transferencia bancaria deberá presentar o enviar vía email el comprobante emitido por la entidad, así luego el área de administración podrá realizar la
-        acreditación correspondiente.
+        acreditación correspondiente.<br/>
         DÉCIMA PRIMERA: En el caso de incumplimiento en el pago de dos (2) cuotas mensuales, de los aranceles pactados entre las partes o
         ruptura contractual, las mismas convienen de común acuerdo que las deudas serán remitidas automáticamente a un estudio jurídico y podrán
         cobrarse por el mecanismo de la preparación de vía ejecutiva, constituyendo el presente contrato suficiente título ejecutivo, pudiendo
         dirigirse la acción judicial en forma conjunta, separada, o indistinta contra cualquiera de los RESPONSABLES PARENTALES Y/U OTRO
-        RESPONSABLE DE PAGO. -
+        RESPONSABLE DE PAGO.-<br/>
         DÉCIMA SEGUNDA: LA INSTITUCIÓN se reserva en cualquier época, el ejercicio pleno de la permanencia del estudiante, pudiendo
         separar del establecimiento a aquellos que cometan faltas graves y/o incumplan con lo acordado en el I.I., R.I. y A.C. Como así también,
         la admisión del estudiante en ciclos lectivos anteriores no implicará la continuidad con posterioridad, no existiendo por parte de LA
-        INSTITUCIÓN ni del RESPONSABLE obligación alguna de renovar el presente contrato.-
-        DÉCIMA TERCERA: LA INSTITUCIÓN no renovará la matrícula, entre otros, en los siguientes casos:
-        a) No existan vacantes disponibles y/o el cupo este cubierto.
-        b) El estudiante que haya evidenciado problemas reiterados de disciplina y/o integración con la Comunidad Educativa.
-        c) Hayan violado las normas de la Institución y/o sus objetivos, sin evidenciar cambios de actitud.
-        d) Hayan atentado en forma grave contra el buen nombre y prestigio de la Institución.
+        INSTITUCIÓN ni del RESPONSABLE obligación alguna de renovar el presente contrato.-<br/>
+        DÉCIMA TERCERA: LA INSTITUCIÓN no renovará la matrícula, entre otros, en los siguientes casos:<br/>
+        a) No existan vacantes disponibles y/o el cupo este cubierto.<br/>
+        b) El estudiante que haya evidenciado problemas reiterados de disciplina y/o integración con la Comunidad Educativa.<br/>
+        c) Hayan violado las normas de la Institución y/o sus objetivos, sin evidenciar cambios de actitud.<br/>
+        d) Hayan atentado en forma grave contra el buen nombre y prestigio de la Institución.<br/>
         e) Necesitando reincorporarse el estudiante por inasistencias, su comportamiento integral y su rendimiento no sean aptos conforme
-        las bases y principios del I.I., R.I., A.C., y Proyecto Educativo de LA INSTITUCIÓN.-
-        f) El estudiante haya incumplido el cronograma arancelario de LA INSTITUCIÓN al momento de la reserva de vacante.
-        g) En los demás casos contemplados expresa o tácitamente en el R.I. y A.C. de LA INSTITUCIÓN. -
+        las bases y principios del I.I., R.I., A.C., y Proyecto Educativo de LA INSTITUCIÓN.-<br/>
+        f) El estudiante haya incumplido el cronograma arancelario de LA INSTITUCIÓN al momento de la reserva de vacante.<br/>
+        g) En los demás casos contemplados expresa o tácitamente en el R.I. y A.C. de LA INSTITUCIÓN. -<br/>
         * A fin de no vulnerar el derecho de aprender, el Establecimiento asegura que en caso de uso del Derecho de Admisión, se comunicará con la antelación necesaria a efectos
-        de posibilitar la matriculación del estudiante en otra Institución Educativa.
+        de posibilitar la matriculación del estudiante en otra Institución Educativa.<br/>
         DÉCIMA CUARTA: LOS RESPONSABLES se obligan a mantener actualizado desde el ingreso hasta el egreso todos los datos de
         identidad propios del alumno, que resulten ser atributos de la personalidad, así como también aquellos que por su especificidad resulten
         indispensables para su inscripción, reinscripción y mantenimiento de la condición de alumno, conforme a las disposiciones vigentes. El
         ocultamiento de información será considerado falta grave en el presente contrato. Asimismo, LOS RESPONSABLES deberán mantener
-        una regular comunicación con LA INSTITUCIÓN, notificándose y haciéndole saber a ésta de todas las novedades que resulten necesarias,
+        una regular comunicación con LA INSTITUCIÓN, notificándose y haciéndole saber a ésta de todas las novedades que resulten necesarias,
         mediante el mecanismo de comunicación que determine la misma. Como así también deberán asistir al establecimiento las veces que sean
-        citados en el día y hora establecidos.-
+        citados en el día y hora establecidos.-<br/>
         DÉCIMA QUINTA: LOS RESPONSABLES se obligan a controlar que el alumno no ingrese al establecimiento con objetos, sustancias
         y/o elementos ajenos o innecesarios para la enseñanza que se imparta, o los que pudieren ser -cierta o potencialmente- perjudiciales, tanto
         para la salud del alumno como para la de cualquiera de los demás miembros de la comunidad educativa; facultando por este acto al
-        establecimiento a proceder al retiro de dichos objetos. -
+        establecimiento a proceder al retiro de dichos objetos.-<br/>
         DÉCIMA SEXTA: Dado que nuestra institución es una escuela común (no especial) e integradora, con capacidad limitada en cuanto a la
         posibilidad de integración, tanto en recursos humanos como edilicios, por tanto, LOS RESPONSABLES se comprometen a informar en el
         proceso de reserva de vacante, de cualquier necesidad educativa especial, a fin de evaluar si LA INSTITUCIÓN posee los recursos
@@ -731,46 +742,47 @@ def generar_contrato_view(request, estudiante_id):
         información, LA INSTITUCIÓN no puede responsabilizarse que dicha integración puede ser llevada a cabo con éxito; reservándose la
         institución educativa el derecho de rescindir el presente contrato. LA INSTITUCIÓN considera como factor determinante para el abordaje
         y continuidad del proceso de inclusión, el beneficio mutuo a efectos de que sea una experiencia cabalmente enriquecedora y el resultado
-        de un trabajo colaborativo y cooperativo con la familia.
+        de un trabajo colaborativo y cooperativo con la familia.<br/>
         DÉCIMA SÉPTIMA: LOS RESPONSABLES se comprometen a abonar en concepto de resarcimiento las sumas dinerarias que, resulten
         pertinentes por todo daño que pudiere generar de manera voluntaria y/o por su culpa o negligencia el alumno, tanto en los bienes propios
-        del establecimiento, como en la integridad psíquica o física de los miembros de la comunidad educativa, en su persona o pertenencias.. –
+        del establecimiento, como en la integridad psíquica o física de los miembros de la comunidad educativa, en su persona o pertenencias.. <br/>
         DÉCIMA OCTAVA: Se deja expresa constancia que LA INSTITUCIÓN no participa ni adhiere a ningún evento que sea ajeno a la tarea
         educativa o aquellas no organizadas por ella misma. A título meramente enunciativo se mencionan: viajes de egresados, fiestas de fin de
         curso, veladas, rifas o sorteos de cualquier índole que se realicen a tal fin, etc. En caso que LOS RESPONSABLES decidan por sí o
         mediante terceros la realización de alguno de estos eventos, harán constar fehacientemente por escrito que las contrataciones que realicen
-        en tales ocasiones las asumen a título personal, debiendo deslindar expresamente de toda responsabilidad al Establecimiento Educativo.
+        en tales ocasiones las asumen a título personal, debiendo deslindar expresamente de toda responsabilidad al Establecimiento Educativo.<br/>
         DÉCIMA NOVENA: EL RESPONSABLE se obliga a completar todos y cada uno de los documentos emitidos por LA INSTITUCION,
-        como así también los referentes a aptos físicos y calendarios de vacunación completos.
+        como así también los referentes a aptos físicos y calendarios de vacunación completos.<br/>
         VIGÉSIMA: A los efectos del presente contrato las partes fijan domicilio legal y especial electrónico en los lugares ut-supra mencionados,
         donde serán válidas todas las comunicaciones y/o notificaciones judiciales y extrajudiciales, y subsistirán aun cuando no se encuentren o
         residan allí. LOS RESPONSABLES, en consecuencia, se compromete a comunicar a LA INSTITUCIÓN por medio fehaciente la
-        modificación de su domicilio dentro de las 48hs de producido. -
+        modificación de su domicilio dentro de las 48hs de producido.-<br/>
         VIGÉSIMA PRIMERA: Quienes suscriben el presente contrato en carácter de RESPONSABLES actúan en forma solidaria e
         ilimitadamente, constituyéndose en recíprocos fiadores y principales pagadores entre sí, con renuncia a los beneficios de excusión y
-        división. -
+        división.-<br/>
         VIGÉSIMA SEGUNDA: A todos los efectos del presente contrato las partes se someten voluntariamente a los tribunales ordinarios,
-        correspondientes al domicilio de LA INSTITUCION, renunciando a cualquier otro fuero o jurisdicción que pudiere corresponder. -
-
-        Se firma un ejemplar a modo CONTRATO DE ADHESION en la ciudad de Presidencia Roque Sáenz Peña, Chaco a los {datetime.now().day} días del mes de {mes_en_espanol} del año {datetime.now().year}
+        correspondientes al domicilio de LA INSTITUCION, renunciando a cualquier otro fuero o jurisdicción que pudiere corresponder. -<br/>
+        <br/>
+        Se firma un ejemplar a modo CONTRATO DE ADHESION en la ciudad de Presidencia Roque Sáenz Peña, Chaco a los {datetime.now().day} días del mes de {mes_en_espanol} del año {datetime.now().year}.-
 
         """
-        elements.append(Paragraph(contrato_texto, styles['Normal']))
+
+    elements.append(Paragraph(contrato_texto, contrato_style))
 
         # Firma de los responsables
-        elements.append(Spacer(1, 0.5 * inch))
-        firma_texto = f"""
+    elements.append(Spacer(1, 0.5 * inch))
+    firma_texto = f"""
             FIRMA DEL RESPONSABLE PARENTAL 1: ____________________________  DNI: {estudiante.dni_senores1}<br/>
             ACLARACIÓN: {estudiante.apellidos_responsable1} {estudiante.nombres_responsable1}<br/>
             FECHA: ____________________________
         """
-        elements.append(Paragraph(firma_texto, styles['Normal']))
+    elements.append(Paragraph(firma_texto, styles['Normal']))
 
         # Generar el PDF
-        doc.build(elements)
+    doc.build(elements)
 
         # Devolver el PDF como respuesta
-        return FileResponse(open(pdf_path, 'rb'), as_attachment=True, filename=f"Contrato_{estudiante.cuil_estudiante}.pdf")
+    return FileResponse(open(pdf_path, 'rb'), as_attachment=True, filename=f"Contrato_{estudiante.cuil_estudiante}.pdf")
 
 
 """def estudiante_consultar(request):
