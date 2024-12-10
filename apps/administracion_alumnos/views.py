@@ -479,6 +479,38 @@ from reportlab.lib.pagesizes import A4
 from reportlab.lib.styles import getSampleStyleSheet
 from .models import Estudiante
 
+
+"""
+ estudiante = get_object_or_404(Estudiante, pk=estudiante_id)
+    datos_institucion = {
+        "Nombre": "U.E.G.P. N°82",
+        "Dirección": "Urquiza 768 / 846 Presidencia Roque Sáenz Peña.",
+        "Teléfono": "0364-4423041 / 0364-4436798",
+        "Email": "contacto@hdebethania.edu.ar"
+    }
+    logo_path = os.path.join(settings.BASE_DIR, 'static', 'img', 'logo.png')
+    pdf_path = generar_pdf_estudiante(estudiante, datos_institucion, logo_path)
+
+    # Incluir el CUIL, fecha y hora en el nombre del archivo
+    fecha_hora_actual = datetime.now().strftime("%Y-%m-%d_%H-%M")
+    filename = f"Ficha del Estudiante - {estudiante.cuil_estudiante} - {fecha_hora_actual}.pdf"
+
+    return FileResponse(open(pdf_path, 'rb'), as_attachment=True, filename=filename)
+"""
+from reportlab.lib.pagesizes import A4
+from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer, Image
+from reportlab.lib.styles import getSampleStyleSheet
+from reportlab.lib.units import inch
+from django.shortcuts import get_object_or_404
+from django.http import FileResponse
+from datetime import datetime
+import locale
+import os
+from django.conf import settings
+
+from reportlab.lib import colors
+from reportlab.lib.styles import ParagraphStyle
+
 def generar_contrato_view(request, estudiante_id):
     # Establecer el idioma a español
     locale.setlocale(locale.LC_TIME, 'es_ES.UTF-8')
@@ -493,13 +525,16 @@ def generar_contrato_view(request, estudiante_id):
     fecha_hora_actual = datetime.now().strftime("%Y-%m-%d_%H-%M")
     pdf_path = f"Contrato - {estudiante.cuil_estudiante} - {fecha_hora_actual}.pdf"
 
+    # Ruta del logo
+    logo_path = os.path.join(settings.BASE_DIR, 'static', 'img', 'logo.png')
+
     # Crear el PDF
     doc = SimpleDocTemplate(
         pdf_path,
         pagesize=A4,
         rightMargin=20,
-        leftMargin=20,
-        topMargin=20,
+        leftMargin=10,
+        topMargin=10,
         bottomMargin=20,
     )
 
@@ -512,8 +547,31 @@ def generar_contrato_view(request, estudiante_id):
     styles = getSampleStyleSheet()
     elements = []
 
-    # Título del contrato
-    elements.append(Paragraph("CONTRATO DE ENSEÑANZA EDUCATIVA CICLO LECTIVO 2025", styles['Title']))
+    # Agregar el logo al PDF
+    #elements.append(Spacer(1, 0.5 * inch))  # Espaciado inicial
+    logo = Image(logo_path)
+    logo.drawHeight = 0.5 * inch  # Altura del logo
+    logo.drawWidth = 0.5 * inch  # Ancho del logo
+    logo.hAlign = 'CENTER'  # Centrar el logo
+    elements.append(logo)
+    #elements.append(Spacer(1, 0.5 * inch))  # Espaciado debajo del logo
+
+
+    # Crear un estilo personalizado
+    custom_title_style = ParagraphStyle(
+        'CustomTitle',  # Nombre del estilo
+        fontName='Times-Bold',  # Times New Roman en negrita
+        fontSize=16,  # Tamaño de la fuente
+        leading=22,  # Espaciado entre líneas
+        alignment=1,  # Centrar el texto
+        textColor=colors.white,  # Color del texto
+        backColor=colors.navy,  # Color de fondo
+        padding=10,  # Margen interno
+    )
+    elements.append(Spacer(1, 0.5 * inch))
+    # Usar el estilo personalizado Título del contrato
+    elements.append(Paragraph("CONTRATO DE ENSEÑANZA EDUCATIVA CICLO LECTIVO 2025", custom_title_style))
+
     elements.append(Spacer(1, 0.5 * inch))
 
     # Contenido del contrato (rellenado con datos del estudiante)
