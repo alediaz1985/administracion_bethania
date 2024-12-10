@@ -513,6 +513,10 @@ from reportlab.lib.styles import ParagraphStyle
 
 from reportlab.lib.enums import TA_JUSTIFY
 
+from reportlab.lib.styles import ParagraphStyle
+from reportlab.lib.enums import TA_LEFT
+from reportlab.lib.enums import TA_CENTER
+
 def generar_contrato_view(request, estudiante_id):
     # Establecer el idioma a español
     locale.setlocale(locale.LC_TIME, 'es_ES.UTF-8')
@@ -586,7 +590,7 @@ def generar_contrato_view(request, estudiante_id):
     contrato_style = ParagraphStyle(
     'ContratoStyle',
     fontName='Times-Roman',
-    fontSize=12,
+    fontSize=10,
     leading=14,  # Espaciado entre líneas
     alignment=TA_JUSTIFY,  # Justificar el texto
     #leftIndent=30,  # Sangría en todos los párrafos
@@ -769,22 +773,84 @@ def generar_contrato_view(request, estudiante_id):
 
     elements.append(Paragraph(contrato_texto, contrato_style))
 
-        # Firma de los responsables
-    elements.append(Spacer(1, 0.5 * inch))
-    firma_texto = f"""
-            FIRMA DEL RESPONSABLE PARENTAL 1: ____________________________  DNI: {estudiante.dni_senores1}<br/>
+    # Firma de los responsables
+    elements.append(Spacer(1, 0.2 * inch))
+
+    # Definir el estilo para las firmas
+    firma_style = ParagraphStyle(
+        'FirmaStyle',
+        fontName='Times-Roman',
+        fontSize=9,  # Tamaño de la fuente
+        leading=11,  # Espaciado entre líneas
+        alignment=TA_CENTER,  # Alineación centrada
+        spaceBefore=0,  # Espaciado antes del texto
+        spaceAfter=0,  # Espaciado después del texto
+    )
+
+    # Datos para la tabla de firmas (convertidos a Paragraphs)
+    firma_datos = [
+        [
+            Paragraph(f"""
+            FIRMA DEL RESPONSABLE PARENTAL 1:<br/><br/><br/>
+            ____________________________<br/>
+            DNI: {estudiante.dni_senores1}<br/>
             ACLARACIÓN: {estudiante.apellidos_responsable1} {estudiante.nombres_responsable1}<br/>
             FECHA: ____________________________
-        """
-    elements.append(Paragraph(firma_texto, styles['Normal']))
+            """, firma_style),
+            Paragraph(f"""
+            FIRMA DEL RESPONSABLE PARENTAL 2:<br/><br/><br/>
+            ____________________________<br/>
+            DNI: {estudiante.dni_senores2}<br/>
+            ACLARACIÓN: {estudiante.apellidos_responsable2} {estudiante.nombres_responsable2}<br/>
+            FECHA: ____________________________
+            """, firma_style),
+        ],
+        [
+            Paragraph(f"""
+            FIRMA DEL RESPONSABLE PARENTAL 1:<br/><br/><br/>
+            ____________________________<br/>
+            DNI: {estudiante.dni_senores1}<br/>
+            ACLARACIÓN: {estudiante.apellidos_responsable1} {estudiante.nombres_responsable1}<br/>
+            FECHA: ____________________________
+            """, firma_style),
+            Paragraph(f"""
+            FIRMA DEL RESPONSABLE PARENTAL 2:<br/><br/><br/>
+            ____________________________<br/>
+            DNI: {estudiante.dni_senores2}<br/>
+            ACLARACIÓN: {estudiante.apellidos_responsable2} {estudiante.nombres_responsable2}<br/>
+            FECHA: ____________________________
+            """, firma_style),
+        ]
+    ]
 
-        # Generar el PDF
+    # Crear una tabla con las firmas
+    firma_tabla = Table(firma_datos, colWidths=[250, 250])  # Ancho de columnas
+
+    # Estilo para la tabla
+    firma_tabla.setStyle(TableStyle([
+        ('VALIGN', (0, 0), (-1, -1), 'TOP'),  # Alineación vertical
+        ('ALIGN', (0, 0), (-1, -1), 'CENTER'),  # Alineación horizontal
+        ('BOX', (0, 0), (-1, -1), 0, colors.white),  # Sin borde externo
+        ('INNERGRID', (0, 0), (-1, -1), 0, colors.white),  # Sin líneas internas
+    ]))
+
+    # Agregar la tabla al PDF
+    elements.append(firma_tabla)
+
+    # Agregar espacio para la firma de la institución
+    elements.append(Spacer(1, 0.5 * inch))
+    elements.append(Paragraph("""
+        FIRMA DE REPRESENTANTE DE LA INSTITUCIÓN:<br/><br/>
+        ____________________________<br/>
+        ACLARACIÓN: Moreno, Rodolfo Jonatan<br/>
+        FECHA: ____________________________
+    """, firma_style))
+
+    # Generar el PDF
     doc.build(elements)
 
-        # Devolver el PDF como respuesta
+    # Devolver el PDF como respuesta
     return FileResponse(open(pdf_path, 'rb'), as_attachment=True, filename=f"Contrato_{estudiante.cuil_estudiante}.pdf")
-
-
 """def estudiante_consultar(request):
 
     Vista para consultar alumnos.
