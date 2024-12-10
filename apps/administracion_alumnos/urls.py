@@ -13,4 +13,5 @@ urlpatterns = [
     path('generar_pdf_estudiante/<int:estudiante_id>/', views.generar_pdf_estudiante_view, name='generar_pdf_estudiante'),
     path('generar_pdf_lista_estudiantes/', views.generar_pdf_lista_estudiantes_view, name='generar_pdf_lista_alumnos'),
     path('registrar_estudiante/', views.registrar_estudiante, name='registrar_alumno'),
+    path('generar-contrato/<int:estudiante_id>/', views.generar_contrato_view, name='generar_contrato'),
 ]
