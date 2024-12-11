@@ -17,6 +17,8 @@ from django.utils import timezone
 from .models import EstadoDocumentacion
 from django.urls import reverse
 
+from .utils import search_files_in_drive, download_file, archivo_existe
+
 
 def estudiante_lista(request):
     estudiantes = Estudiante.objects.all()
@@ -850,6 +852,116 @@ def generar_contrato_view(request, estudiante_id):
 
     # Devolver el PDF como respuesta
     return FileResponse(open(pdf_path, 'rb'), as_attachment=True, filename=f"Contrato_{estudiante.cuil_estudiante}.pdf")
+
+
+from django.shortcuts import render
+from django.conf import settings
+from googleapiclient.discovery import build
+from google.oauth2.service_account import Credentials
+import os
+import logging
+from datetime import datetime
+from .utils import search_files_in_drive, download_file, archivo_existe
+
+logger = logging.getLogger(__name__)
+
+def get_drive_service():
+    """
+    Crea y devuelve un cliente de Google Drive API usando las credenciales de la aplicación.
+    """
+    credentials_path = settings.GOOGLE_CREDENTIALS_ALUMNOS  # Configuración específica para administracion_alumnos
+    if not os.path.exists(credentials_path):
+        raise FileNotFoundError(f"No se encontró el archivo de credenciales en: {credentials_path}")
+
+    credentials = Credentials.from_service_account_file(
+        credentials_path, scopes=["https://www.googleapis.com/auth/drive"]
+    )
+    return build("drive", "v3", credentials=credentials)
+
+
+def descargar_archivos_alumnos(request):
+    """
+    Descarga archivos desde la carpeta de Google Drive asociada a la aplicación administracion_alumnos.
+    """
+    try:
+        drive_folder_id = settings.DRIVE_FOLDER_ID_ALUMNOS  # ID de la carpeta específica
+        service = get_drive_service()
+
+        # Buscar archivos en la carpeta de Google Drive
+        drive_files = search_files_in_drive(drive_folder_id, service)
+
+        if not drive_files:
+            logger.info("No se encontraron archivos en la carpeta de Google Drive.")
+            return render(request, 'administracion_alumnos/sin_archivos.html')
+
+        # Ruta para guardar los archivos descargados
+        ruta_descarga = os.path.join(settings.MEDIA_ROOT, 'administracion_alumnos', 'descargados')
+        if not os.path.exists(ruta_descarga):
+            os.makedirs(ruta_descarga)
+
+        archivos_descargados = []
+        archivos_omitidos = []
+
+        # Procesar cada archivo en la carpeta de Google Drive
+        for file in drive_files:
+            try:
+                file_id = file['id']
+                file_name = file['name']
+                file_data = download_file(service, file_id)
+
+                if file_data:
+                    created_time = file.get('createdTime', '')
+
+                    # Formatear fecha de creación
+                    if created_time:
+                        try:
+                            fecha_formateada = datetime.strptime(
+                                created_time, "%Y-%m-%dT%H:%M:%S.%fZ"
+                            ).strftime("%Y%m%d_%H%M%S")
+                        except ValueError:
+                            logger.error(f"Error al formatear la fecha {created_time}. Usando 'Fecha_desconocida'.")
+                            fecha_formateada = "Fecha_desconocida"
+                    else:
+                        logger.warning(f"El archivo {file_name} no tiene 'createdTime'. Usando 'Fecha_desconocida'.")
+                        fecha_formateada = "Fecha_desconocida"
+
+                    # Generar un nuevo nombre único para el archivo
+                    extension = os.path.splitext(file_name)[1]
+                    id_corto = file_id[:8]
+                    nuevo_nombre = f"alumno-{fecha_formateada}-{id_corto}{extension}"
+
+                    # Verificar si el archivo ya existe
+                    if archivo_existe(ruta_descarga, nuevo_nombre):
+                        logger.info(f"El archivo {nuevo_nombre} ya existe. Omitiendo descarga.")
+                        archivos_omitidos.append(nuevo_nombre)
+                    else:
+                        archivo_path = os.path.join(ruta_descarga, nuevo_nombre)
+                        with open(archivo_path, 'wb') as archivo_local:
+                            archivo_local.write(file_data)
+                        logger.info(f"Archivo {file_name} descargado exitosamente como {nuevo_nombre}.")
+                        archivos_descargados.append(nuevo_nombre)
+
+                else:
+                    logger.error(f"No se pudo obtener el contenido del archivo {file_name}.")
+            except Exception as e:
+                logger.error(f"Error descargando archivo {file_name}: {e}")
+                return render(request, 'administracion_alumnos/error_descarga.html', {
+                    'mensaje_error': f"Error descargando archivo {file_name}: {e}"
+                })
+
+        # Renderizar el resumen de la descarga
+        return render(request, 'administracion_alumnos/resumen_descarga.html', {
+            'archivos_descargados': archivos_descargados,
+            'archivos_omitidos': archivos_omitidos
+        })
+
+    except Exception as e:
+        logger.error(f"Error en la descarga de archivos: {e}")
+        return render(request, 'administracion_alumnos/error_descarga.html', {
+            'mensaje_error': f"Error en la descarga de archivos: {e}"
+        })
+
+
 """def estudiante_consultar(request):
 
     Vista para consultar alumnos.

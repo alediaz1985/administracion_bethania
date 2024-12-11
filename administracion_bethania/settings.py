@@ -4,6 +4,7 @@ from pathlib import Path
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
+
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/5.0/howto/deployment/checklist/
 
@@ -138,7 +139,21 @@ LOGIN_URL = 'iniciar_sesion'
 
 
 
-GOOGLE_CREDENTIALS = os.path.join(BASE_DIR, 'credentials.json')
+#GOOGLE_CREDENTIALS = os.path.join(BASE_DIR, 'credentials.json')
+
+GOOGLE_CREDENTIALS = os.path.join(BASE_DIR, 'administracion_bethania', 'credentials.json')
+
+
+GOOGLE_CREDENTIALS_ALUMNOS = os.path.join(
+    BASE_DIR, 'apps', 'administracion_alumnos', 'credentials.json'
+)
+
+
+print(f"Ruta calculada: {GOOGLE_CREDENTIALS_ALUMNOS}")
+print(f"Archivo existe: {os.path.exists(GOOGLE_CREDENTIALS_ALUMNOS)}")
+
+
+DRIVE_FOLDER_ID_ALUMNOS = '1lyxImVDTJt9Q2P9QDm0M_wHz9jgodfGp'  # ID de la carpeta de Google Drive
 
 #DRIVE_FOLDER_ID = '1lyxImVDTJt9Q2P9QDm0M_wHz9jgodfGp'
 # Configura la ruta a tu archivo de credenciales
@@ -150,3 +165,4 @@ DRIVE_FOLDER_ID = '1lyxImVDTJt9Q2P9QDm0M_wHz9jgodfGp'  # Este es el ID de la car
 ARCHIVOS_DIR = os.path.join(BASE_DIR, 'media', 'documentos')
 
 CRISPY_TEMPLATE_PACK = 'bootstrap4'
+

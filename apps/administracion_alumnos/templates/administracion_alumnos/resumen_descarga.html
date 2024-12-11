@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Resumen de Descarga</title>
+</head>
+<body>
+    <h1>Archivos Descargados</h1>
+    <ul>
+        {% for archivo in archivos_descargados %}
+        <li>{{ archivo }}</li>
+        {% endfor %}
+    </ul>
+    <h1>Archivos Omitidos</h1>
+    <ul>
+        {% for archivo in archivos_omitidos %}
+        <li>{{ archivo }}</li>
+        {% endfor %}
+    </ul>
+</body>
+</html>
