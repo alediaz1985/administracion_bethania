@@ -960,6 +960,143 @@ def descargar_archivos_alumnos(request):
             'mensaje_error': f"Error en la descarga de archivos: {e}"
         })
 
+from googleapiclient.http import MediaIoBaseDownload
+import io
+
+def download_file(service, file_id):
+    """
+    Descarga un archivo desde Google Drive usando su ID.
+    """
+    try:
+        request = service.files().get_media(fileId=file_id)
+        file_data = io.BytesIO()  # Buffer para almacenar los datos descargados
+        downloader = MediaIoBaseDownload(file_data, request)
+
+        done = False
+        while not done:
+            status, done = downloader.next_chunk()
+            print(f"Progreso de descarga: {int(status.progress() * 100)}%")
+
+        file_data.seek(0)  # Reiniciar el puntero del buffer
+        return file_data.read()  # Retornar el contenido del archivo
+    except Exception as e:
+        print(f"Error descargando el archivo con ID {file_id}: {e}")
+        return None
+    
+
+def descargar_archivo_por_id(request, file_id):
+    """
+    Descarga un archivo específico desde Google Drive usando su ID.
+    """
+    try:
+        service = get_drive_service()
+        file_data = download_file(service, file_id)
+
+        if not file_data:
+            logger.error(f"No se pudo descargar el archivo con ID {file_id}.")
+            return render(request, 'administracion_alumnos/error_descarga.html', {
+                'mensaje_error': f"No se pudo descargar el archivo con ID {file_id}."
+            })
+
+        # Guardar el archivo localmente
+        ruta_descarga = os.path.join(settings.MEDIA_ROOT, 'administracion_alumnos', 'descargados')
+        os.makedirs(ruta_descarga, exist_ok=True)
+
+        # Obtener información del archivo para nombrarlo correctamente
+        file_metadata = service.files().get(fileId=file_id, fields="name").execute()
+        file_name = file_metadata['name']
+        archivo_path = os.path.join(ruta_descarga, file_name)
+
+        with open(archivo_path, 'wb') as archivo_local:
+            archivo_local.write(file_data)
+
+        logger.info(f"Archivo {file_name} descargado exitosamente en {archivo_path}.")
+        return render(request, 'administracion_alumnos/exito_descarga.html', {
+            'archivo': file_name,
+            'ruta': archivo_path
+        })
+
+    except Exception as e:
+        logger.error(f"Error descargando el archivo con ID {file_id}: {e}")
+        return render(request, 'administracion_alumnos/error_descarga.html', {
+            'mensaje_error': f"Error descargando el archivo con ID {file_id}: {e}"
+        })
+
+
+from django.shortcuts import render
+from django.conf import settings
+from googleapiclient.discovery import build
+from google.oauth2.service_account import Credentials
+import os
+import logging
+
+logger = logging.getLogger(__name__)
+
+def get_drive_service():
+    """
+    Crea y devuelve un cliente de Google Drive API usando las credenciales.
+    """
+    credentials_path = settings.GOOGLE_CREDENTIALS_ALUMNOS
+    if not os.path.exists(credentials_path):
+        raise FileNotFoundError(f"No se encontró el archivo de credenciales en: {credentials_path}")
+
+    credentials = Credentials.from_service_account_file(
+        credentials_path, scopes=["https://www.googleapis.com/auth/drive"]
+    )
+    return build("drive", "v3", credentials=credentials)
+
+
+def descargar_todos_archivos(request):
+    """
+    Descarga todos los archivos desde la carpeta de Google Drive asociada.
+    """
+    try:
+        service = get_drive_service()
+        folder_id = settings.DRIVE_FOLDER_ID_ALUMNOS  # ID de la carpeta específica
+
+        # Obtener archivos de la carpeta
+        query = f"'{folder_id}' in parents and trashed=false"
+        results = service.files().list(q=query, fields="files(id, name)").execute()
+        drive_files = results.get('files', [])
+
+        if not drive_files:
+            logger.info("No se encontraron archivos en la carpeta de Google Drive.")
+            return render(request, 'administracion_alumnos/sin_archivos.html')
+
+        # Crear carpeta local para guardar los archivos
+        ruta_descarga = os.path.join(settings.MEDIA_ROOT, 'administracion_alumnos', 'descargados')
+        os.makedirs(ruta_descarga, exist_ok=True)
+
+        archivos_descargados = []
+        for file in drive_files:
+            file_id = file['id']
+            file_name = file['name']
+            try:
+                # Descargar archivo
+                request = service.files().get_media(fileId=file_id)
+                archivo_path = os.path.join(ruta_descarga, file_name)
+
+                with open(archivo_path, 'wb') as archivo_local:
+                    downloader = MediaIoBaseDownload(archivo_local, request)
+                    done = False
+                    while not done:
+                        status, done = downloader.next_chunk()
+                        logger.info(f"Descarga {int(status.progress() * 100)}% completada para {file_name}.")
+
+                archivos_descargados.append(file_name)
+            except Exception as e:
+                logger.error(f"Error descargando {file_name}: {e}")
+
+        # Renderizar resumen
+        return render(request, 'administracion_alumnos/resumen_descarga.html', {
+            'archivos_descargados': archivos_descargados,
+        })
+
+    except Exception as e:
+        logger.error(f"Error en la descarga de archivos: {e}")
+        return render(request, 'administracion_alumnos/error_descarga.html', {
+            'mensaje_error': f"Error en la descarga de archivos: {e}"
+        })
 
 """def estudiante_consultar(request):
 

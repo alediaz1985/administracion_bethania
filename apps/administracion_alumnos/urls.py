@@ -15,4 +15,5 @@ urlpatterns = [
     path('registrar_estudiante/', views.registrar_estudiante, name='registrar_alumno'),
     path('generar-contrato/<int:estudiante_id>/', views.generar_contrato_view, name='generar_contrato'),
     path('descargar_archivos/', views.descargar_archivos_alumnos, name='descargar_archivos_alumnos'),
+    path('alumnos/descargar_todos/', views.descargar_todos_archivos, name='descargar_todos_archivos'),
 ]
