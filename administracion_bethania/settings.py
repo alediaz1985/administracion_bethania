@@ -153,7 +153,7 @@ print(f"Ruta calculada: {GOOGLE_CREDENTIALS_ALUMNOS}")
 print(f"Archivo existe: {os.path.exists(GOOGLE_CREDENTIALS_ALUMNOS)}")
 
 
-DRIVE_FOLDER_ID_ALUMNOS = '1lyxImVDTJt9Q2P9QDm0M_wHz9jgodfGp'  # ID de la carpeta de Google Drive
+DRIVE_FOLDER_ID_ALUMNOS = '1dg5zdw8DjvxM4mprYddLsMWVz5EhatVpkiaI1LTYXIUIt5-rCNwuduzYr4fQbsW60PU8So2H'  # ID de la carpeta de Google Drive
 
 #DRIVE_FOLDER_ID = '1lyxImVDTJt9Q2P9QDm0M_wHz9jgodfGp'
 # Configura la ruta a tu archivo de credenciales
