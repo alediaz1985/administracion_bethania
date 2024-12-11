@@ -274,24 +274,34 @@ def es_superadministrador(user):
 @user_passes_test(es_superadministrador, login_url='/forbidden/')
 def vaciar_carpeta_drive(request):
     try:
+        # Verificar si el archivo de credenciales existe
+        credentials_path = settings.GOOGLE_CREDENTIALS
+        if not os.path.exists(credentials_path):
+            return render(request, 'documentos/error_credenciales.html', {'error': 'Archivo de credenciales no encontrado.'})
+
+        # Obtener el servicio de Google Drive
         service = get_drive_service()
         folder_id = settings.DRIVE_FOLDER_ID
         results = service.files().list(q=f"'{folder_id}' in parents").execute()
         files = results.get('files', [])
 
+        # Verificar si la carpeta está vacía
         if not files:
             return render(request, 'documentos/carpeta_vacia.html')
 
+        # Eliminar archivos de la carpeta
         for file in files:
             try:
                 service.files().delete(fileId=file['id']).execute()
             except Exception as error:
                 logger.error(f"Error al eliminar el archivo {file['name']}: {error}")
 
+        # Éxito al vaciar la carpeta
         return render(request, 'documentos/carpeta_vaciada_exito.html')
     except Exception as e:
         logger.error(f"Error vaciando la carpeta: {e}")
-        return HttpResponse(f"Error vaciando la carpeta: {e}")
+        return render(request, 'documentos/error_general.html', {'error': str(e)})
+
 
 def forbidden_view(request):
     """Muestra un mensaje de error cuando el usuario no tiene permisos suficientes."""

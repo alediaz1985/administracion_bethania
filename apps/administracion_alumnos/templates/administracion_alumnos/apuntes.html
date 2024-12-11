@@ -1,0 +1,306 @@
+<tr class="alumnos-details-row" style="display:none;">
+    <td colspan="9">
+        <table class="alumnos-details-table">
+            <tr>
+                <td>
+                    <div class="alumnos-cell-header">Fecha de Nacimiento</div>
+                    <div class="alumnos-cell-content">{{ alumno.fecha_nacimiento_alumno }}</div>
+                </td>
+                <td>
+                    <div class="alumnos-cell-header">Género</div>
+                    <div class="alumnos-cell-content">{{ alumno.genero_alumno }}</div>
+                </td>
+                <td>
+                    <div class="alumnos-cell-header">Domicilio</div>
+                    <div class="alumnos-cell-content">{{ alumno.domicilio_residencia_alumno }}</div>
+                </td>
+                <td>
+                    <div class="alumnos-cell-header">Teléfono</div>
+                    <div class="alumnos-cell-content">{{ alumno.numero_telefonico_alumno }}</div>
+                </td>
+                
+            </tr>
+            <tr>
+                <td>
+                    <div class="alumnos-cell-header">Localidad</div>
+                    <div class="alumnos-cell-content">{{ alumno.localidad_residencia_alumno }}</div>
+                </td>
+                <td>
+                    <div class="alumnos-cell-header">Provincia</div>
+                    <div class="alumnos-cell-content">{{ alumno.provincia_residencia_alumno }}</div>
+                </td>
+                <td>
+                    <div class="alumnos-cell-header">Código Postal</div>
+                    <div class="alumnos-cell-content">{{ alumno.codigo_postal_alumno }}</div>
+                </td>
+                <td>
+                    <div class="alumnos-cell-header">Localidad de Nacimiento</div>
+                    <div class="alumnos-cell-content">{{ alumno.localidad_nacimiento_alumno }}</div>
+                </td>
+                
+            </tr>
+            <tr>
+                <td>
+                    <div class="alumnos-cell-header">Provincia de Nacimiento</div>
+                    <div class="alumnos-cell-content">{{ alumno.provincia_nacimiento_alumno }}</div>
+                </td>
+                <td>
+                    <div class="alumnos-cell-header">Nacionalidad</div>
+                    <div class="alumnos-cell-content">{{ alumno.nacionalidad_alumno }}</div>
+                </td>
+                <td>
+                    <div class="alumnos-cell-header">Nivel Cursado</div>
+                    <div class="alumnos-cell-content">{{ alumno.nivel_cursado_alumno }}</div>
+                </td>
+                <td>
+                    <div class="alumnos-cell-header">Año de Ingreso</div>
+                    <div class="alumnos-cell-content">{{ alumno.ingreso_alumno }}</div>
+                </td>
+                
+            </tr>
+            <tr>
+                <td>
+                    <div class="alumnos-cell-header">Medicamento</div>
+                    <div class="alumnos-cell-content">{{ alumno.medicamento_alumno }}</div>
+                </td>
+                <td>
+                    <div class="alumnos-cell-header">Alergia</div>
+                    <div class="alumnos-cell-content">{{ alumno.alergia_alumno }}</div>
+                </td>
+                <td>
+                    <div class="alumnos-cell-header">Alergia a Medicamentos</div>
+                    <div class="alumnos-cell-content">{{ alumno.alergico_medicamento_alumno }}</div>
+                </td>
+                <td>
+                    <div class="alumnos-cell-header">Condición Médica</div>
+                    <div class="alumnos-cell-content">{{ alumno.condicion_medica_alumno }}</div>
+                </td>
+                
+            </tr>
+            <tr>
+                <td>
+                    <div class="alumnos-cell-header">CUIL Tutor</div>
+                    <div class="alumnos-cell-content">{{ alumno.cuil_tutor }}</div>
+                </td>
+                <td>
+                    <div class="alumnos-cell-header">Apellido y Nombre del Tutor</div>
+                    <div class="alumnos-cell-content">{{ alumno.apellido_nombre_tutor }}</div>
+                </td>
+                <td>
+                    <div class="alumnos-cell-header">Teléfono del Tutor</div>
+                    <div class="alumnos-cell-content">{{ alumno.telefono_tutor }}</div>
+                </td>
+                <td>
+                    <div class="alumnos-cell-header">Domicilio del Tutor</div>
+                    <div class="alumnos-cell-content">{{ alumno.domicilio_tutor }}</div>
+                </td>
+                
+            </tr>
+            <tr>
+                <td>
+                    <div class="alumnos-cell-header">Localidad del Tutor</div>
+                    <div class="alumnos-cell-content">{{ alumno.localidad_tutor }}</div>
+                </td>
+                <td>
+                    <div class="alumnos-cell-header">Provincia del Tutor</div>
+                    <div class="alumnos-cell-content">{{ alumno.provincia_tutor }}</div>
+                </td>
+                <td>
+                    <div class="alumnos-cell-header">Código Postal del Tutor</div>
+                    <div class="alumnos-cell-content">{{ alumno.codigo_postal_tutor }}</div>
+                </td>
+            </tr>
+        </table>
+    </td>
+</tr>
+
+<script>
+
+    function toggleDetails(button) {
+        const row = button.closest('tr');
+        const detailsRow = row.nextElementSibling;
+
+        if (detailsRow.style.display === "none") {
+            detailsRow.style.display = "table-row";
+            button.textContent = "Ver menos";
+        } else {
+            detailsRow.style.display = "none";
+            button.textContent = "Ver más";
+        }
+    }
+
+        // Función para mostrar la ventana modal de confirmación
+    function showModal(estudianteId) {
+        var modal = document.getElementById("confirm-modal");
+        modal.style.display = "block";
+
+        // Confirmar la aprobación
+        document.getElementById("confirm-approve").onclick = function() {
+            approveStudent(estudianteId);
+        };
+
+        // Cancelar la aprobación
+        document.getElementById("cancel-approve").onclick = function() {
+            closeModal();
+        };
+    }
+
+</script>
+
+<div class="see-student-container">
+    <h1>DATOS DEL ALUMNO</h1>
+    <form method="post" enctype="multipart/form-data" class="see-student-form">
+        <table class="student-table">
+            <tbody>
+                <div>
+                    <h1>Datos</h1>
+                    <tr>
+                        <th>Foto</th>
+                        <td>{{ estudiante.foto_estudiante }}</td>
+                    </tr>
+                    <tr>
+                        <th>Salita/Grado/Año</th>
+                        <td>{{ estudiante.salita_grado_anio_estudiante }}</td>
+                    </tr>
+                    <tr>
+                        <th>Nivel</th>
+                        <td>{{ estudiante.nivel_estudiante }}</td>
+                    </tr>
+                    <tr>
+                        <th>N de Legajo</th>
+                        <td>{{ estudiante.num_legajo_estudiante }}</td>
+                    </tr>
+                    <tr>
+                        <th>Fecha de Recepción</th>
+                        <td>{{ estudiante.fecha_recepcion }}</td>
+                    </tr>
+                </div>
+                <div>
+                    <h1>Datos del Alumno</h1>
+                    <tr>
+                        <th>Apellido/s</th>
+                        <td>{{ estudiante.apellido }}</td>
+                    </tr>
+                    <tr>
+                        <th>Nombre/s</th>
+                        <td>{{ estudiante.nombres_estudiante }}</td>
+                    </tr>
+                    <tr>
+                        <th>Sexo</th>
+                        <td>{{ estudiante.sexo_estudiante }}</td>
+                    </tr>
+                    <tr>
+                        <th>Fecha de Nacimiento</th>
+                        <td>{{ estudiante.fecha_nac_estudiante }}</td>
+                    </tr>
+                    <tr>
+                        <th>Nacionalidad</th>
+                        <td>{{ estudiante.nacionalidad_estudiante }}</td>
+                    </tr>
+                    <tr>
+                        <th>Ciudad</th>
+                        <td>{{ estudiante.ciudad_estudiante }}</td>
+                    </tr>
+                </div>
+                <div>
+                    <h1>Domicilio</h1>
+                    <tr>
+                        <th>Calle</th>
+                        <td>{{ estudiante.calle_estudiante }}</td>
+                    </tr>
+                    <tr>
+                        <th>N / MZ / PC</th>
+                        <td>{{ estudiante.n_mz_pc_estudiante }}</td>
+                    </tr>
+                    <tr>
+                        <th>Barrio</th>
+                        <td>{{ estudiante.barrio_estudiante }}</td>
+                    </tr>
+                    <tr>
+                        <th>Código Postal</th>
+                        <td>{{ estudiante.codigo_postal_estudiante }}</td>
+                    </tr>
+                    <tr>
+                        <th>Provincia</th>
+                        <td>{{ estudiante.provincia_estudiante }}</td>
+                    </tr>
+                </div>
+                <div>
+                    <h1>Salud</h1>
+                    <tr>
+                        <th>Obra Social</th>
+                        <td>{{ estudiante.obra_social_estudiante }}</td>
+                    </tr>
+                    <tr>
+                        <th>Detalles</th>
+                        <td>{{ estudiante.cual_osocial_estudiante }}</td>
+                    </tr>
+                    <tr>
+                        <th>Problemas Neurologicos</th>
+                        <td>{{ estudiante.problema_neurologico_estudiante }}</td>
+                    </tr>
+                    <tr>
+                        <th>Detalles</th>
+                        <td>{{ estudiante.cual_prob_neurologico_estudiante }}</td>
+                    </tr>
+                    <tr>
+                        <th>Problemas Fisicos</th>
+                        <td>{{ estudiante.problema_fisico_estudiante }}</td>
+                    </tr>
+                    <tr>
+                        <th>Certificado Medico</th>
+                        <td>{{ estudiante.certificado_medico_estudiante }}</td>
+                    </tr>
+                    <tr>
+                        <th>Problemas de Aprendizaje</th>
+                        <td>{{ estudiante.problema_aprendizaje_estudiante }}</td>
+                    </tr>
+                    <tr>
+                        <th>Detalles</th>
+                        <td>{{ estudiante.cual_aprendizaje_estudiante }}</td>
+                    </tr>
+                    <tr>
+                        <th>Atencion Medica</th>
+                        <td>{{ estudiante.atencion_medica_estudiante }}</td>
+                    </tr>
+                    <tr>
+                        <th>Alergias</th>
+                        <td>{{ estudiante.alergia_estudiante }}</td>
+                    </tr>
+                </div>
+                <div>
+                    <h1>Datos de los Responsables Parentales</h1>
+                    <h1>Responsable N 1</h1>
+                    <tr>
+                        <th>Alergias</th>
+                        <td>{{ estudiante.alergia_estudiante }}</td>
+                    </tr>
+                    <tr>
+                        <th>Alergias</th>
+                        <td>{{ estudiante.alergia_estudiante }}</td>
+                    </tr>
+                    <tr>
+                        <th>Alergias</th>
+                        <td>{{ estudiante.alergia_estudiante }}</td>
+                    </tr>
+                    <tr>
+                        <th>Alergias</th>
+                        <td>{{ estudiante.alergia_estudiante }}</td>
+                    </tr>
+                    <tr>
+                        <th>Alergias</th>
+                        <td>{{ estudiante.alergia_estudiante }}</td>
+                    </tr>
+                    <tr>
+                        <th>Alergias</th>
+                        <td>{{ estudiante.alergia_estudiante }}</td>
+                    </tr>
+                    <tr>
+                        <th>Alergias</th>
+                        <td>{{ estudiante.alergia_estudiante }}</td>
+                    </tr>
+                    <tr>
+                        <th>Alergias</th>
+                        <td>{{ estudiante.alergia_estudiante }}</td>
+                    </tr>
+                </div>

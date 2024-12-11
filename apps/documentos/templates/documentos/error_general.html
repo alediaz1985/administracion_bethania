@@ -1,0 +1,11 @@
+{% extends 'base.html' %}
+
+{% block title %}Error de Credenciales{% endblock %}
+
+{% block content %}
+<div class="error-container">
+    <h1>Error de Credenciales</h1>
+    <p>{{ error }}</p>
+    <a href="{% url 'consulta' %}" class="error-button">Volver a la consulta</a>
+</div>
+{% endblock %}

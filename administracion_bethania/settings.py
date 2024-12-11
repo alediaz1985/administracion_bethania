@@ -72,10 +72,10 @@ WSGI_APPLICATION = 'administracion_bethania.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'bethania2024',
+        'NAME': 'bethania2025',
         'USER': 'admin_remoto',
         'PASSWORD': 'admin123_remoto',
-        'HOST': '190.137.235.91',
+        'HOST': '190.136.146.162',
         'PORT': '3307',
     }
 }

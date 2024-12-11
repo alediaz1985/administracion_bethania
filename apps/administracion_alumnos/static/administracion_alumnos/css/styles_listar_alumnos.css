@@ -6,26 +6,27 @@ body {
     background-size: cover;  /* Asegura que la imagen cubra todo el fondo */
     background-position: center; /* Centra la imagen */
     background-repeat: no-repeat; /* Evita que la imagen se repita */
+    color: #000000;
 }
 
 .alumnos-container {
-    width: 100%;
-    padding: 50px 40px;
+    width: 96%;
+    padding: 25px 40px;
+    float: right;
 }
 
 .alumnos-titulo {
-    font-size: 36px;
+    font-size: 18px;
     color: #000000;
     text-align: center;
-    margin-bottom: 20px;
     font-family: 'Poppins', sans-serif;
     font-weight: 400;
     /* font-weight: bold; */
+    margin-bottom: 25px;
 }
 
 .alumnos-controls {
     text-align: right;
-    margin-bottom: 20px;
 }
 
 .alumnos-scroll-container {
@@ -33,15 +34,14 @@ body {
     overflow-y: auto;  /* Activar scroll vertical */
     border: 1px solid #ccc;
     padding: 10px;
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+    box-shadow: 0 4px 25px rgba(0, 0, 0, 0.5);
     background-color: #fff;
-    border-radius: 7px;
+    border-radius: 10px;
 }
 
 .alumnos-table {
     width: 100%;
     border-collapse: collapse;
-    margin: 20px 0;
     box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
 }
 
@@ -76,27 +76,91 @@ body {
     color: blue; /* Cambia el color cuando el mouse está sobre el enlace */
 }
 
-.alumnos-btn {
-    padding: 10px 20px;
-    background-color: rgb(66 149 33);
-    color: white;
-    border: none;
-    cursor: pointer;
-    border-radius: 5px;
-    transition: all 0.3s ease; /* Transición suave para todos los efectos */
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Sombra sutil inicial */
-}
-
 .alumnos-btn:hover {
     background-color:rgb(68, 123, 46);
     transform: translateY(-3px); /* Efecto de "levantamiento" al pasar el mouse */
     box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2); /* Sombra más marcada */
 }
 
+.alumnos-btn-1 {
+    padding: 3px 13px;
+    background-color: rgb(66, 149, 33);
+    color: white;
+    border: none;
+    cursor: pointer;
+    border-radius: 10px;
+    transition: all 0.1s ease;
+    box-shadow: 0 8px 4px rgba(0, 0, 0, 0.4); /* Sombra dura */
+    float: right;
+    font-size: 20px;
+    position: relative;
+    overflow: hidden; /* Para evitar que los pseudo-elementos sobresalgan */
+}
+
+/* Contenedor del mensaje */
+.tooltip-container {
+    position: relative;
+    display: inline-block;
+}
+
+/* Estilo del globo de diálogo */
+.tooltip-text {
+    visibility: hidden;
+    background-color: rgb(167, 167, 167);
+    color: white;
+    font-size: 8px;
+    padding: 5px 10px;
+    border-radius: 65px; /* Redondeo para forma de globo */
+    position: absolute;
+    top: -35px;
+    left: 50%;
+    transform: translateX(-40%);
+    opacity: 0;
+    white-space: nowrap;
+    transition: opacity 0.3s ease, transform 0.3s ease;
+    z-index: 10;
+    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.2);
+}
+
+/* Triángulo debajo del globo */
+.tooltip-text::after {
+    content: '';
+    position: absolute;
+    top: 100%;
+    left: 50%;
+    transform: translateX(-40%);
+    border-width: 8px;
+    border-style: solid;
+    border-color: rgb(167, 167, 167) transparent transparent transparent;
+}
+
+/* Mostrar el mensaje al hacer hover */
+.tooltip-container:hover .tooltip-text {
+    visibility: visible;
+    opacity: 1;
+    transform: translateX(-50%) translateY(2px); /* Movimiento sutil hacia arriba */
+}
+
+/* Animación del parpadeo en el ícono */
+.alumnos-btn-1:hover i {
+    position: relative;
+    animation: blink 1.5s infinite;
+}
+
+/* Efecto de parpadeo (línea que cruza el ojo) */
+@keyframes blink {
+    0%, 100% {
+        clip-path: inset(0% 0% 0% 0%); /* Ojo completamente visible */
+    }
+    50% {
+        clip-path: inset(50% 0% 50% 0%); /* Ojo parcialmente cerrado (línea horizontal) */
+    }
+}
+
 .alumnos-btn:active {
     background-color: rgb(39, 70, 27);
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Sombra más ligera al presionar */
-    transform: translateY(0); /* Efecto de "presión" */
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); 
+    transform: translateY(0); 
 }
 
 .alumnos-details-row {
@@ -135,10 +199,32 @@ body {
     max-width: 200px; /* Limitar la anchura de las celdas */
 }
 
+.tab-content {
+    display: none;
+}
+
+.tab-content.active {
+    display: block;
+}
+
+.tabs button {
+    padding: 10px 40px;
+    cursor: pointer;
+    background-color: #f1f1f1;
+    border: none;
+    border-bottom: 2px solid transparent;
+    transition: background-color 0.3s;
+}
+
+.tabs button.active {
+    background-color: #b8b7b7;
+    border-color: #5a2c85;
+}
+
 /* Media queries para pantallas más pequeñas */
 @media (max-width: 1366px) {
     .alumnos-titulo {
-        font-size: 22px; /* Reduce el tamaño del título */
+        font-size: 18px; /* Reduce el tamaño del título */
     }
 
     .alumnos-table th, .alumnos-table td {
@@ -215,3 +301,74 @@ body {
         font-size: 8px; /* Texto muy pequeño para pantallas pequeñas */
     }
 }
+
+/* From Uiverse.io by vinodjangid07 */ 
+.Documents-btn {
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    width: fit-content;
+    height: 35px;
+    border: none;
+    padding: 0px 5px;
+    border-radius: 5px;
+    background-color: rgb(66 149 33);
+    gap: 10px;
+    cursor: pointer;
+    transition: all 0.3s;
+    box-shadow: 0 1px 16px rgba(0, 0, 0, 0.4); /* Sombra más marcada */
+    float: right;
+    padding-right: 10px;
+  }
+
+.folderContainer {
+    width: 30px;
+    height: fit-content;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-end;
+    position: relative;
+  }
+  .fileBack {
+    z-index: 1;
+    width: 80%;
+    height: auto;
+  }
+  .filePage {
+    width: 60%;
+    height: auto;
+    position: absolute;
+    z-index: 2;
+    transition: all 0.3s ease-out;
+  }
+  .fileFront {
+    width: 90%;
+    height: auto;
+    position: absolute;
+    z-index: 3;
+    opacity: 0.95;
+    transform-origin: bottom;
+    transition: all 0.3s ease-out;
+  }
+  .text {
+    color: white;
+    font-size: 10px;
+    font-weight: 400;
+    letter-spacing: 0.5px;
+  }
+  .Documents-btn:hover .filePage {
+    transform: translateY(-5px);
+  }
+  .Documents-btn:hover {
+    background-color:rgb(68, 123, 46);
+    transform: translateY(-3px); /* Efecto de "levantamiento" al pasar el mouse */
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1); /* Sombra más marcada */
+  }
+  .Documents-btn:active {
+    transform: scale(0.95);
+  }
+  .Documents-btn:hover .fileFront {
+    transform: rotateX(30deg);
+  }
+  

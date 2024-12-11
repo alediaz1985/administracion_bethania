@@ -5,24 +5,22 @@
 {% load static %}
 
 {% block extra_styles %}
-    <link rel="stylesheet" href="{% static 'cuotas/css/cuotas.css' %}">
+    <link rel="stylesheet" href="{% static 'cuotas/css/inscribir_alumno.css' %}">
 {% endblock %}
 
 {% block content %}
-    
-    
-
     <form method="post">
         {% csrf_token %}
         <h1>Inscripción de Alumnos</h1>
-            <!-- Mostrar mensajes de éxito o error -->
-            {% if messages %}
-            <ul class="messages">
-                {% for message in messages %}
-                <li class="{{ message.tags }}">{{ message }}</li>
-                {% endfor %}
-            </ul>
-            {% endif %}
+        <!-- Mostrar mensajes de éxito o error -->
+        {% if messages %}
+        <ul class="messages">
+            {% for message in messages %}
+            <li class="{{ message.tags }}">{{ message }}</li>
+            {% endfor %}
+        </ul>
+        {% endif %}
+        
         <label for="alumno_id">Alumno:</label>
         <select name="alumno_id" id="alumno_id" required>
             <option value="">--- Selecciona un alumno ---</option>

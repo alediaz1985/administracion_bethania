@@ -1,0 +1,574 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Poppins', sans-serif;
+}
+
+body {
+    background-color: #f4f4f4;
+}
+
+/* Barra Lateral */
+
+/* Estilo general de la barra lateral */
+.sidebar {
+    width: 4%; /* Ocupa el 4% de la pantalla cuando está minimizada */
+    height: 100vh;
+    background-color: #f9f9f9;
+    color: #ecf0f1;
+    position: fixed;
+    top: 0;
+    left: 0;
+    transition: width 0.3s ease; /* Animación al cambiar el tamaño */
+    z-index: 1001;
+    overflow: hidden; /* Oculta el contenido fuera del área visible */
+    padding: 35px 0;
+    color: #000;
+}
+
+/* Cuando la barra está activa */
+.sidebar.active {
+    width: 15%; /* Se expande al 20% de la pantalla */
+}
+
+/* Botón para cerrar la barra lateral */
+.close-btn {
+    background-color: transparent;
+    border: none;
+    color: #ecf0f1;
+    font-size: 1.5em;
+    font-weight: bold;
+    cursor: pointer;
+    padding: 5px 5px;
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    display: none; /* Oculto en estado minimizado */
+}
+
+/* Mostrar el botón cerrar en estado expandido */
+.sidebar.active .close-btn {
+    display: block;
+    color: #1d1d1d;
+}
+
+/* Lista de elementos de la barra lateral */
+.sidebar-items {
+    list-style: none;
+    padding: 30px 0;
+    margin: 0;
+    color: #000;
+}
+
+.sidebar-items li {
+    text-align: start;
+    margin: 5px 5px;
+    position: relative; /* Necesario para los subitems */
+    color: #000
+}
+
+/* Íconos y texto */
+.sidebar-items li a {
+    display: flex; /* Para alinear icono y texto */
+    align-items: center;
+    text-decoration: none;
+    color: #1d1d1d;
+    font-size: 1em;
+    transition: color 0.3s, background 0.3s;
+    padding: 10px 15px;
+    color: #000
+}
+
+.sidebar-items li a i {
+    padding: 4px 5px;
+}
+
+.sidebar.active .sidebar-items li a i {
+    display: none; /* Oculta todos los subitems */
+}
+
+.sidebar:not(.active) .sidebar-items li a i {
+    margin-right: 10px; /* Espaciado entre ícono y texto */
+    font-size: 1.5em; /* Ajusta el tamaño del ícono */
+    display: inline-block;
+    margin: auto
+}
+
+.sidebar-items li a span {
+    padding: 6px;
+    color: #000;
+    font-family: 'Poppins', sans-serif;
+}
+
+/* Solo íconos visibles en estado minimizado */
+.sidebar:not(.active) .sidebar-items li a span.text {
+    display: none; /* Oculta el texto */
+}
+
+.sidebar-items li a:hover {
+    background-color: rgba(0, 0, 0, 0.5);
+    color: white;
+    border-radius: 5px;
+}
+
+/* Estilo para los subitems */
+.subitems {
+    display: none; /* Ocultos por defecto */
+    list-style-type: none;
+    margin: 0;
+    padding-left: 20px; /* Separación de los subitems */
+}
+
+.subitems li {
+    margin: 5px 0; /* Espaciado vertical entre subitems */
+}
+
+.subitems a {
+    text-decoration: none;
+    color: black;
+    font-size: 0.9em; /* Tamaño ligeramente menor */
+    padding: 5px 10px; /* Espaciado interno para subitems */
+}
+
+.subitems a:hover {
+    color: #ffffff;
+    background-color: #1abc9c;
+    border-radius: 5px;
+}
+
+/* Ocultar subitems cuando la barra lateral está minimizada */
+.sidebar:not(.active) .subitems {
+    display: none; /* Oculta todos los subitems */
+}
+
+/* Botón para expandir/cerrar subitems */
+.expand-btn {
+    background: none;
+    border: none;
+    color: black;
+    cursor: pointer;
+    font-size: 1.3em; /* Ajusta el tamaño del botón */
+    margin-left: auto; /* Empuja el botón a la derecha */
+    padding: 5px; /* Espaciado interno */
+    display: none; /* Ocultamos el botón por defecto */
+}
+
+/* Mostrar el botón cuando la barra lateral está abierta */
+.sidebar.active .expand-btn {
+    display: block; /* Muestra el botón solo cuando la barra está activa */
+}
+
+.expand-btn:hover {
+    color: #fa020b;
+}
+
+/* Subitems visibles */
+.subitems.active {
+    display: block; /* Subitems visibles */
+}
+
+/* Botón para abrir/cerrar la barra lateral */
+.open-btn {
+    background-color: #f9f9f9;
+    border: none;
+    color: black;
+    font-size: 1.5em;
+    cursor: pointer;
+    padding: 8px 22px;
+    margin: 6px 0;
+    position: fixed;
+    top: 5px;
+    left: 5px;
+    border-radius: 5px;
+    z-index: 1100;
+    transition: left 0.3s ease, background 0.3s ease; /* Transición añadida para 'left' */
+}
+
+.open-btn:hover {
+    background-color: rgba(0, 0, 0, 0.5);
+    color: #ffffff;
+}
+
+/* Cuando la barra lateral está activa (expandida) */
+.sidebar.active ~ .open-btn {
+    left: 15%; /* Cambia este valor al ancho de tu barra lateral expandida */
+}
+
+/* Cuando la barra lateral está minimizada */
+.sidebar:not(.active) ~ .open-btn {
+    left:5px; /* Vuelve a la posición inicial */
+}
+
+/* Contenido principal */
+.main-content {
+    margin-left: 5%; /* Ajusta el espacio según la barra lateral minimizada */
+    transition: margin-left 0.3s ease; /* Animación al cambiar el margen */
+}
+
+.sidebar.active ~ .main-content {
+    margin-left: 20%; /* Ajusta el espacio cuando la barra lateral está expandida */
+}
+
+/* Solo el texto está oculto en estado minimizado */
+.sidebar:not(.active) .sidebar-items li a span.text {
+    display: none; /* Oculta el texto */
+}
+
+/* Solo muestra el texto cuando la barra lateral está activa */
+.sidebar.active .sidebar-items li a .text {
+    display: inline-block; /* Muestra el texto */
+}
+
+
+/* Estilos para el navbar */
+.navbar {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 15px 0;
+    background-color: #f9f9f9;
+    border-bottom: 1px solid #e5e5e5;
+    position: relative;
+    height: 70px;
+    z-index: 1000;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+/* Opciones del menú centradas */
+.nav-items {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    list-style: none;
+    flex-grow: 1;
+}
+
+.nav-items li {
+    margin: 0 25px;
+    position: relative; /* Necesario para posicionar el submenu */
+}
+
+.nav-items li a {
+    text-decoration: none;
+    color: #333;
+    font-size: 12px;
+    font-weight: 500;
+    letter-spacing: 1px;
+    transition: color 0.4s ease, text-shadow 0.4s ease, transform 0.4s ease;
+    padding: 20px 0;
+}
+
+/* Efecto de hover con degradado suave y aumento de tamaño */
+.nav-items li a:hover {
+    color:  rgb(46, 13, 72);
+    text-shadow: none;
+    background: linear-gradient(90deg, rgba(255, 0, 0), rgba(0, 0, 255));
+    -webkit-background-clip: text;
+    background-clip: text;
+    transform: scale(1.1); /* Aumento de tamaño */
+}
+
+/* Logo centrado */
+.logo img {
+    width: 90px;
+}
+
+/* Estilo del botón de Sign In */
+.signin-btn {
+    position: absolute;
+    right: 50px;
+}
+
+.signin-btn a {
+    text-decoration: none;
+    color: #333;
+    font-weight: 500;
+    padding: 10px 15px;
+    border-radius: 5px;
+    background-color: transparent;
+    transition: background 0.4s ease, color 0.4s ease;
+    position: relative;  /* Necesario para el pseudo-elemento */
+    display: inline-block; /* Asegura que el texto se comporte como un bloque */
+    font-size: 16px; /* Definir un tamaño de fuente común */
+    width: 100px; /* Establece un ancho fijo para el botón */
+    height: 30px; /* Establece una altura fija para el botón */
+    text-align: center; /* Centra el texto */
+    line-height: 15px; /* Centra el texto verticalmente */
+}
+
+/* Efecto cuando el mouse pasa por encima */
+.signin-btn a:hover {
+    background: linear-gradient(135deg, white, #C62828, #1565C0);
+    color: white;
+}
+
+/* Cambiar el texto cuando el mouse pasa por encima */
+.signin-btn a::before {
+    content: "Cerrar Sesión";
+    transition: all 0.1s ease;
+}
+
+.signin-btn a:hover::before {
+    content: "Adios!";  /* Cambia el texto */
+}
+
+
+.footer {
+    background-color: #f2f2f2; /* Fondo blanco claro */
+    color: #333;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    position: relative;
+    box-shadow: 0 -4px 10px rgba(0, 0, 0, 0.1);
+}
+
+/* Rectángulo superior vacío */
+.top-footer {
+    background-color: #f9f9f9;
+    height: 200px;
+}
+
+/* Rectángulo del medio */
+.middle-footer {
+    background-color: #eaeaea;
+    display: flex;
+    justify-content: center;
+    align-items: flex-end;
+    height: 200px;
+}
+
+.footer-nav {
+    display: flex;
+    gap: 20px;
+    list-style: none;
+    padding: 0;
+    margin-bottom: 10px;
+}
+
+.footer-nav li a {
+    text-decoration: none;
+    color: #333;
+    transition: color 0.3s ease;
+}
+
+.footer-nav li a:hover {
+    color: #000;
+}
+
+/* Rectángulo inferior */
+.bottom-footer {
+    background-color: #dcdcdc;
+    text-align: center;
+    padding: 20px 0;
+}
+
+.social-icons {
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+}
+
+.social-icons a {
+    color: #555;
+    font-size: 18px;
+    transition: color 0.3s ease;
+}
+
+.social-icons a:hover {
+    color: #000;
+}
+
+.copyright {
+    margin: 3px;
+}
+
+/* Rectángulo flotante */
+.floating-box {
+    position: absolute;
+    top: 60px; /* Subir el rectángulo para no tapar el medio */
+    left: 50%;
+    transform: translateX(-50%);
+    background-color: #e0e0e0;
+    padding: 5px 20px;
+    width: 60%;
+    border-radius: 8px;
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.5);
+}
+
+/* Contenido del rectángulo flotante */
+.box-content {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+/* Estilo del logo */
+.logo1 {
+    text-align: right;
+    flex: 1;
+    display: flex;
+    justify-content: center; /* Centrar el logo horizontalmente */
+}
+
+.logo-image {
+    width: 250px; /* Logo más grande */
+}
+
+/* Desarrollado por: centrado a la izquierda */
+.developers {
+    text-align: left;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center; /* Centrar horizontalmente los nombres */
+}
+
+.developers p {
+    margin: 10px;
+    font-size: 16px;
+    font-weight: bold;
+}
+
+.developers ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.developers li {
+    margin-bottom: 2px;
+    color: #333;
+    font-size: 14px;
+}
+
+/* Media query para pantallas de 1366px de ancho */
+@media screen and (min-width: 1920px) {
+    .signin-btn a {
+        width: 150px; /* Establece un ancho fijo para el botón */
+        height: 40px; /* Establece una altura fija para el botón */
+        text-align: center; /* Centra el texto */
+        line-height: 20px; /* Centra el texto verticalmente */
+    }
+
+    .sidebar-items li a span {
+        padding: 6px;
+        color: #000;
+        font-family: 'Poppins', sans-serif;
+        font-size: 1em;
+    }
+
+}
+
+/* Media query para pantallas de 1366px de ancho */
+@media screen and (max-width: 1366px) {
+    .sidebar {
+        width: 4%; /* Ajusta el ancho en estado minimizado */
+    }
+
+    .sidebar.active {
+        width: 15%; /* Ajusta el ancho en estado expandido */
+    }
+
+    .sidebar-items li a {
+        font-size: 0.8em; /* Ajusta el tamaño del texto */
+        padding: 5px 0;
+    }
+
+    .sidebar-items li a i {
+        font-size: 0.2em; /* Ajusta el tamaño del ícono */
+    }
+
+    .sidebar-items li a span {
+        font-size: 0.9em;
+        padding: 5px 15px;
+    }
+
+    .expand-btn {
+        font-size: 1em; /* Ajusta el tamaño del botón */
+        padding: 5px 15px; /* Espaciado interno */
+    }
+
+    .open-btn {
+        left: 5%; /* Ajusta la posición del botón abrir/cerrar */
+        padding: 6px 15px;
+        font-size: 1em;
+    }
+
+    .sidebar.active ~ .open-btn {
+        left: 15%; /* Ajusta el desplazamiento del botón cuando está expandido */
+    }
+
+    .main-content {
+        margin-left: 5%; /* Ajusta el espacio cuando la barra está minimizada */
+    }
+
+    .sidebar.active ~ .main-content {
+        margin-left: 20%; /* Ajusta el espacio cuando la barra está expandida */
+    }
+
+    .subitems {
+        padding-left: 15px; /* Separación de los subitems */
+        font-size: 0.8em;
+    }
+
+    .subitems li a {
+        padding: 10px 10px; /* Espaciado interno para subitems */
+    }
+
+    .navbar {
+        padding: 10px 0; /* Reduce el padding del navbar */
+        height: 60px; /* Ajusta la altura del navbar */
+    }
+
+    .nav-items li a {
+        font-size: 10px; /* Reduce el tamaño de las fuentes del menú */
+    }
+
+    .logo img {
+        width: 70px; /* Ajusta el tamaño del logo */
+    }
+
+    .signin-btn a {
+        font-size: 0.7em;
+        padding: 8px 12px;
+    }
+
+    /* Rectángulo superior vacío */
+    .top-footer {
+        height: 170px;
+    }
+
+    /* Rectángulo del medio */
+    .middle-footer {
+        height: 170px;
+    }
+
+    /* Rectángulo inferior */
+    .bottom-footer {
+        padding: 10px 0;
+    }
+
+    .floating-box {
+        top: 40px; /* Subir el rectángulo para no tapar el medio */
+        padding: 0;
+    }
+
+    .footer-nav li a {
+        font-size: 14px;
+    }
+
+    .developers p {
+        font-size: 0.8em;
+    }
+
+    .developers li {
+        font-size: 0.7em;
+    }
+
+    .copyright {
+        font-size: 13px;
+    }
+}
+

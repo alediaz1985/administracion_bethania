@@ -1,5 +1,5 @@
 from django.db import models
-from apps.administracion_alumnos.models import Alumno  # Importamos el modelo Alumno desde administracion_alumnos
+from apps.administracion_alumnos.models import Estudiante  # Importa el modelo Estudiante
 
 
 # Modelo para Ciclo Lectivo
@@ -64,9 +64,9 @@ class MontosCicloLectivo(models.Model):
 
 # Modelo para Inscripción
 class Inscripcion(models.Model):
-    cuil_alumno = models.ForeignKey(Alumno, on_delete=models.CASCADE, verbose_name="Alumno")
+    cuil_alumno = models.ForeignKey(Estudiante, on_delete=models.CASCADE, verbose_name="Estudiante")  # Cambiado Alumno -> Estudiante
     ciclo_lectivo = models.ForeignKey(CicloLectivo, on_delete=models.CASCADE, verbose_name="Ciclo Lectivo")
-    subnivel_cursado = models.ForeignKey(SubNivelCursado, on_delete=models.CASCADE, default=1, verbose_name="Subnivel Cursado")  
+    subnivel_cursado = models.ForeignKey(SubNivelCursado, on_delete=models.CASCADE, default=1, verbose_name="Subnivel Cursado")
     fecha_inscripcion = models.DateField(auto_now_add=True, verbose_name="Fecha de Inscripción")
     monto_inscripcion = models.DecimalField(max_digits=10, decimal_places=2, verbose_name="Monto de Inscripción")
     pagada = models.BooleanField(default=False, verbose_name="Pagada")
@@ -74,7 +74,7 @@ class Inscripcion(models.Model):
     debe_inscripcion = models.BooleanField(default=True, verbose_name="Debe Inscripción")
 
     def __str__(self):
-        return f'{self.cuil_alumno.nombres_alumno} {self.cuil_alumno.apellidos_alumno} - {self.ciclo_lectivo.año_lectivo}'
+        return f'{self.cuil_alumno.nombres} {self.cuil_alumno.apellidos} - {self.ciclo_lectivo.año_lectivo}'
 
     class Meta:
         db_table = 'inscripcion'
