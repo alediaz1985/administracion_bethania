@@ -526,6 +526,22 @@ def generar_contrato_view(request, estudiante_id):
     return FileResponse(open(pdf_path, 'rb'), as_attachment=True, filename=f"Contrato_{estudiante.cuil_estudiante}.pdf")
 
 
+def lista_fotos_estudiantes(request):
+    estudiantes = Estudiante.objects.all()
+
+    # Construir la URL de la foto para cada estudiante
+    for estudiante in estudiantes:
+        if estudiante.foto_estudiante:  # Si el estudiante tiene una foto asociada
+            estudiante.image_url = os.path.join(
+                settings.MEDIA_URL, 'administracion_alumnos', 'descargados', estudiante.foto_estudiante
+            )
+        else:  # Foto predeterminada si no tiene asociada
+            estudiante.image_url = os.path.join(settings.STATIC_URL, 'images/default_profile.png')
+
+    context = {
+        'estudiantes': estudiantes,
+    }
+    return render(request, 'administracion_alumnos/lista_fotos_estudiantes.html', context)
     
 """from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib import messages

@@ -159,10 +159,16 @@ DRIVE_FOLDER_ID_ALUMNOS = '1dg5zdw8DjvxM4mprYddLsMWVz5EhatVpkiaI1LTYXIUIt5-rCNwu
 # Configura la ruta a tu archivo de credenciales
 #GOOGLE_CREDENTIALS = os.path.join(BASE_DIR, 'administracion_bethania', 'credentials.json')
 # Configura la ID de la carpeta de Google Drive
-DRIVE_FOLDER_ID = '1lyxImVDTJt9Q2P9QDm0M_wHz9jgodfGp'  # Este es el ID de la carpeta de Google Drive
+#DRIVE_FOLDER_ID = '1lyxImVDTJt9Q2P9QDm0M_wHz9jgodfGp'  # Este es el ID de la carpeta de Google Drive
 
-# Directorio de archivos locales
-ARCHIVOS_DIR = os.path.join(BASE_DIR, 'media', 'documentos')
+
+DRIVE_FOLDER_ID = 'I1dg5zdw8DjvxM4mprYddLsMWVz5EhatVpkiaI1LTYXIUIt5-rCNwuduzYr4fQbsW60PU8So2H'  # Reemplaza con el ID de tu carpeta en Google Drive# Directorio de archivos locales
+ARCHIVOS_DIR = os.path.join(BASE_DIR, 'media', 'documentos') 
+
+FOTO_PERFIL_ESTUDIANTE_DIR = os.path.join(BASE_DIR, 'media', 'documentos', 'fotoPerfilEstudiante') #En esta Carpeta Guarda los archivos de perfil del Estudiante
+
+FOTO_ESTUDIANTE_DIR = os.path.join(MEDIA_ROOT, 'administracion_alumnos', 'descargados')
+
 
 CRISPY_TEMPLATE_PACK = 'bootstrap4'
 

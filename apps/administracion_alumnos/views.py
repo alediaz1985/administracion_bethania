@@ -20,6 +20,10 @@ from django.urls import reverse
 from .utils import search_files_in_drive, download_file, archivo_existe
 
 
+from googleapiclient.http import MediaIoBaseDownload
+
+
+
 def estudiante_lista(request):
     estudiantes = Estudiante.objects.all()
     if not estudiantes:
@@ -961,6 +965,119 @@ def descargar_archivos_alumnos(request):
             'mensaje_error': f"Error en la descarga de archivos: {e}"
         })
 
+
+
+def descargar_todos_archivos(request):
+    """
+    Descarga todos los archivos desde la carpeta de Google Drive asociada,
+    guardándolos con su ID como nombre.
+    """
+    try:
+        # Autenticación y servicio de Google Drive
+        service = get_drive_service()
+        folder_id = settings.DRIVE_FOLDER_ID_ALUMNOS  # ID de la carpeta específica
+
+        # Consultar archivos en la carpeta de Google Drive
+        query = f"'{folder_id}' in parents and trashed=false"
+        results = service.files().list(q=query, fields="files(id, name)").execute()
+        drive_files = results.get('files', [])
+
+        if not drive_files:
+            logger.info("No se encontraron archivos en la carpeta de Google Drive.")
+            return render(request, 'administracion_alumnos/sin_archivos.html')
+
+        # Crear carpeta local para guardar los archivos
+        ruta_descarga = settings.FOTO_PERFIL_ESTUDIANTE_DIR
+        os.makedirs(ruta_descarga, exist_ok=True)
+
+        archivos_descargados = []
+        for file in drive_files:
+            file_id = file['id']
+            file_name = file['name']
+            try:
+                # Descargar archivo
+                request_media = service.files().get_media(fileId=file_id)
+
+                # Cambiar el nombre del archivo al ID del archivo
+                extension = os.path.splitext(file_name)[1]  # Obtener la extensión original
+                nuevo_nombre = f"{file_id}{extension}"  # Nuevo nombre con ID y extensión
+                archivo_path = os.path.join(ruta_descarga, nuevo_nombre)
+
+                # Guardar el archivo localmente
+                with open(archivo_path, 'wb') as archivo_local:
+                    downloader = MediaIoBaseDownload(archivo_local, request_media)
+                    done = False
+                    while not done:
+                        status, done = downloader.next_chunk()
+                        logger.info(f"Descarga {int(status.progress() * 100)}% completada para {nuevo_nombre}.")
+
+                archivos_descargados.append(nuevo_nombre)
+            except Exception as e:
+                logger.error(f"Error descargando {file_name}: {e}")
+
+        # Renderizar el resumen de descarga
+        return render(request, 'administracion_alumnos/resumen_descarga.html', {
+            'archivos_descargados': archivos_descargados,
+        })
+
+    except Exception as e:
+        logger.error(f"Error en la descarga de archivos: {e}")
+        return render(request, 'administracion_alumnos/error_descarga.html', {
+            'mensaje_error': f"Error en la descarga de archivos: {e}"
+        })
+
+from django.shortcuts import render
+from .models import Estudiante
+import os
+from django.conf import settings
+
+from django.shortcuts import render
+from .models import Estudiante
+import os
+from django.conf import settings
+
+def lista_fotos_estudiantes(request):
+    """
+    Genera una lista de estudiantes con sus fotos correspondientes.
+    """
+    # Ruta base donde se almacenan las fotos localmente
+    fotos_path = settings.FOTO_PERFIL_ESTUDIANTE_DIR  # Cambiar para usar la ruta correcta
+
+    # Lista para almacenar los datos que enviaremos al template
+    fotos_estudiantes = []
+
+    # Obtén todos los estudiantes de la base de datos
+    estudiantes = Estudiante.objects.all()
+
+    for estudiante in estudiantes:
+        # Extraer el ID de la foto desde el enlace almacenado en foto_estudiante
+        foto_id = None
+        if estudiante.foto_estudiante:
+            # Extrae el ID del enlace de Google Drive
+            if "id=" in estudiante.foto_estudiante:
+                foto_id = estudiante.foto_estudiante.split("id=")[-1]
+
+        # Buscar el archivo con el ID, sin importar la extensión
+        foto_url = None
+        if foto_id:
+            # Verifica si existe algún archivo con el ID en su nombre en la carpeta local
+            for archivo in os.listdir(fotos_path):
+                if archivo.startswith(foto_id):  # Busca archivos que comiencen con el ID
+                    # Genera la URL para acceder a la foto desde el navegador
+                    foto_url = os.path.join(
+                        settings.MEDIA_URL, 'documentos', 'fotoPerfilEstudiante', archivo
+                    )
+                    break  # Deja de buscar después de encontrar el archivo
+
+        # Agregar los datos del estudiante y su foto al listado
+        fotos_estudiantes.append({
+            "cuil": estudiante.cuil_estudiante,  # Asegúrate de que este sea el campo correcto
+            "foto_url": foto_url,  # Foto del estudiante (si existe)
+        })
+
+    return render(request, 'administracion_alumnos/lista_fotos_estudiantes.html', {
+        'fotos_estudiantes': fotos_estudiantes
+    })
 
 """def estudiante_consultar(request):
 
