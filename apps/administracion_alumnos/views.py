@@ -78,18 +78,50 @@ def estudiante_detail(request, pk):
     estudiante = get_object_or_404(Estudiante, pk=pk)
     return render(request, 'administracion_alumnos/estudiante_detail.html', {'estudiante': estudiante})
 
+import os
+from django.shortcuts import render, get_object_or_404
+from django.conf import settings
+from .models import Estudiante
+
 def ver_datos_estudiante(request, pk):
+    """
+    Muestra los datos de un estudiante, incluyendo su foto si está disponible.
+    """
+    # Ruta base donde se almacenan las fotos localmente
+    fotos_path = os.path.join(settings.MEDIA_ROOT, 'documentos', 'fotoPerfilEstudiante')
+
+    # Obtener el estudiante según su ID (pk)
     estudiante = get_object_or_404(Estudiante, pk=pk)
-    # Crea un diccionario dinámico con todos los campos del modelo
-    campos_estudiante = {
-        field.verbose_name: getattr(estudiante, field.name)
-        for field in estudiante._meta.fields
-    }
-    return render(
-        request,
-        'administracion_alumnos/ver_datos_estudiante.html',
-        {'estudiante': estudiante, 'campos_estudiante': campos_estudiante}
-    )
+
+    # Buscar la foto del estudiante basada en el CUIL o ID de Google Drive
+    foto_id = None
+    if estudiante.foto_estudiante:
+        # Extrae el ID del enlace de Google Drive si está en el campo
+        if "id=" in estudiante.foto_estudiante:
+            foto_id = estudiante.foto_estudiante.split("id=")[-1]
+
+    # Inicializar la URL de la foto
+    foto_url = None
+    if foto_id:
+        # Verifica si existe algún archivo con el ID en su nombre en la carpeta local
+        for archivo in os.listdir(fotos_path):
+            if archivo.startswith(foto_id):  # Busca archivos que comiencen con el ID
+                # Genera la URL para acceder a la foto desde el navegador
+                foto_url = os.path.join(
+                    settings.MEDIA_URL, 'documentos', 'fotoPerfilEstudiante', archivo
+                )
+                break
+
+    # Si no se encuentra la foto, usar una imagen por defecto
+    if not foto_url:
+        foto_url = os.path.join(settings.STATIC_URL, 'images/default.jpg')
+
+    # Renderizar la vista con los datos del estudiante y su foto
+    return render(request, 'administracion_alumnos/ver_datos_estudiante.html', {
+        'estudiante': estudiante,
+        'image_url': foto_url  # URL de la foto del estudiante
+    })
+
 
 # def estudiante_edit(request, pk):
 #     estudiante = get_object_or_404(Estudiante, pk=pk)

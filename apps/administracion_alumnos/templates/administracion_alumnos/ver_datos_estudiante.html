@@ -125,10 +125,15 @@
                     <tr>
                         <th>Foto</th>
                     </tr>
-                    <tr>
-                        <!-- Mostrar la foto con la URL generada en la vista -->
-                        <td><img src="{{ image_url }}" alt="Foto del estudiante" style="max-width: 200px; max-height: 200px;"></td>
-                    </tr>
+                    <td>
+                        {% if image_url %}
+                            <!-- Mostrar la imagen del estudiante si existe la URL -->
+                            <img src="{{ image_url }}" alt="Foto del estudiante" style="max-width: 200px; max-height: 200px; object-fit: cover;">
+                        {% else %}
+                            <!-- Mostrar una imagen por defecto si no existe la URL -->
+                            <img src="{% static 'images/default.jpg' %}" alt="Foto no disponible" style="max-width: 200px; max-height: 200px; object-fit: cover;">
+                        {% endif %}
+                    </td>
                     <tr>
                         <th>N de Legajo</th>
                     </tr>
