@@ -82,20 +82,104 @@ body {
     box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2); /* Sombra más marcada */
 }
 
-.alumnos-btn-1 {
+/* Segundo botón */
+/* Botón Ver Datos */
+.alumnos-btn-ver {
     padding: 3px 13px;
     background-color: rgb(66, 149, 33);
     color: white;
     border: none;
     cursor: pointer;
     border-radius: 10px;
-    transition: all 0.1s ease;
-    box-shadow: 0 8px 4px rgba(0, 0, 0, 0.4); /* Sombra dura */
-    float: right;
+    transition: all 0.3s ease;
+    box-shadow: 0 8px 4px rgba(0, 0, 0, 0.4);
     font-size: 20px;
-    position: relative;
-    overflow: hidden; /* Para evitar que los pseudo-elementos sobresalgan */
 }
+
+/* Contenedor del mensaje */
+.tooltip-container-1 {
+    position: relative;
+    display: inline-block;
+}
+
+/* Estilo del globo de diálogo */
+.tooltip-text-1 {
+    visibility: hidden;
+    background-color: rgb(167, 167, 167);
+    color: white;
+    font-size: 8px;
+    padding: 5px 10px;
+    border-radius: 65px; /* Redondeo para forma de globo */
+    position: absolute;
+    top: -35px;
+    left: 50%;
+    transform: translateX(-40%);
+    opacity: 0;
+    white-space: nowrap;
+    transition: opacity 0.3s ease, transform 0.3s ease;
+    z-index: 10;
+    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.2);
+}
+
+/* Triángulo debajo del globo */
+.tooltip-text-1::after {
+    content: '';
+    position: absolute;
+    top: 100%;
+    left: 50%;
+    transform: translateX(-40%);
+    border-width: 8px;
+    border-style: solid;
+    border-color: rgb(167, 167, 167) transparent transparent transparent;
+}
+
+/* Mostrar el mensaje al hacer hover */
+.tooltip-container-1:hover .tooltip-text-1 {
+    visibility: visible;
+    opacity: 1;
+    transform: translateX(-50%) translateY(2px); /* Movimiento sutil hacia arriba */
+}
+
+/* Animación del parpadeo en el ícono */
+.alumnos-btn-ver:hover i {
+    animation: blink 1.5s infinite;
+}
+
+/* Efecto de parpadeo (línea que cruza el ojo) */
+@keyframes blink {
+    0%, 100% {
+        clip-path: inset(0% 0% 0% 0%); /* Ojo completamente visible */
+    }
+    50% {
+        clip-path: inset(50% 0% 50% 0%); /* Ojo parcialmente cerrado (línea horizontal) */
+    }
+}
+
+/* Botón Generar Contrato */
+.alumnos-btn-pdf {
+    padding: 3px 13px;
+    background-color: rgb(149, 33, 33);
+    color: white;
+    border: none;
+    cursor: pointer;
+    border-radius: 10px;
+    transition: all 0.3s ease;
+    box-shadow: 0 8px 4px rgba(0, 0, 0, 0.4);
+    font-size: 20px;
+}
+
+.alumnos-btn-pdf:hover {
+    animation: shake 0.5s ease-in-out;
+}
+
+@keyframes shake {
+    0% { transform: translateX(0); }
+    25% { transform: translateX(-5px); }
+    50% { transform: translateX(5px); }
+    75% { transform: translateX(-5px); }
+    100% { transform: translateX(0); }
+}
+
 
 /* Contenedor del mensaje */
 .tooltip-container {

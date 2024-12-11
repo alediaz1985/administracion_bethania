@@ -2,7 +2,42 @@
 
 {% block title %}Editar Alumno{% endblock %}
 
+{% load static %}
+
+{% block extra_styles %}
+    <link rel="stylesheet" href="{% static 'administracion_alumnos/css/editar_alumno.css' %}">
+{% endblock %}
+
 {% block content %}
+    
+    <!-- <div class="edit-student-container">
+        <h1>Editar Alumno</h1>
+
+        <input type="text" id="searchField" placeholder="Buscar campo..." onkeyup="filterFields()">
+
+        <div id="form-fields">
+            {% for field in form %}
+                <div class="form-group" id="field-{{ forloop.counter }}">
+                    {{ field.label_tag }}
+                    {{ field }}
+                    
+                    {% if field.errors %}
+                        <div class="error">
+                            {% for error in field.errors %}
+                                <p>{{ error }}</p>
+                            {% endfor %}
+                        </div>
+                    {% endif %}
+                </div>
+            {% endfor %}
+        </div>
+
+        <div class="button">
+            <a href="{% url 'estudiante_detail' pk=form.instance.pk %}" class="button-cancel">Cancelar</a>
+            <button type="submit" class="button-submit">Guardar</button>
+        </div>
+    </div> -->
+
     <div class="edit-student-container">
         <h1>Editar {{ form.instance.nombres }} {{ form.instance.apellidos }}</h1>
         <form method="post" enctype="multipart/form-data" class="edit-student-form">
@@ -25,4 +60,50 @@
             </div>
         </form>
     </div>
+
+
+<script>
+function filterFields() {
+    var input = document.getElementById("searchField");
+    var filter = input.value.toUpperCase();
+    var formFields = document.getElementById("form-fields").getElementsByClassName("form-group");
+
+    for (var i = 0; i < formFields.length; i++) {
+        var label = formFields[i].getElementsByTagName("label")[0];
+        if (label) {
+            var text = label.textContent || label.innerText;
+            if (text.toUpperCase().indexOf(filter) > -1) {
+                formFields[i].style.display = "";
+            } else {
+                formFields[i].style.display = "none";
+            }
+        }
+    }
+}
+</script>
+
 {% endblock %}
+
+
+<!-- <div class="edit-student-container">
+        <h1>Editar {{ form.instance.nombres }} {{ form.instance.apellidos }}</h1>
+        <form method="post" enctype="multipart/form-data" class="edit-student-form">
+            {% csrf_token %}
+            {% for field in form %}
+                <div class="form-group">
+                    {{ field.label_tag }}
+                    {{ field }}
+                    {% if field.help_text %}
+                        <small>{{ field.help_text }}</small>
+                    {% endif %}
+                    {% if field.errors %}
+                        <div class="error">{{ field.errors }}</div>
+                    {% endif %}
+                </div>
+            {% endfor %}
+            <div class="button">
+                <button type="submit" class="button-submit">Guardar</button>
+                <a href="{% url 'estudiante_detail' pk=form.instance.pk %}" class="button-cancel">Cancelar</a>
+            </div>
+        </form>
+    </div> -->

@@ -85,17 +85,17 @@ def ver_datos_estudiante(request, pk):
         {'estudiante': estudiante, 'campos_estudiante': campos_estudiante}
     )
 
-def estudiante_edit(request, pk):
-    estudiante = get_object_or_404(Estudiante, pk=pk)
-    if request.method == "POST":
-        form = EstudianteForm(request.POST, request.FILES, instance=estudiante)
-        if form.is_valid():
-            form.save()
-            messages.success(request, 'Los cambios han sido guardados correctamente.')
-            return redirect('estudiante_detail', pk=estudiante.pk)
-    else:
-        form = EstudianteForm(instance=estudiante)
-    return render(request, 'administracion_estudiantes/estudiante_edit.html', {'form': form})
+# def estudiante_edit(request, pk):
+#     estudiante = get_object_or_404(Estudiante, pk=pk)
+#     if request.method == "POST":
+#         form = EstudianteForm(request.POST, request.FILES, instance=estudiante)
+#         if form.is_valid():
+#             form.save()
+#             messages.success(request, 'Los cambios han sido guardados correctamente.')
+#             return redirect('estudiante_detail', pk=estudiante.pk)
+#     else:
+#         form = EstudianteForm(instance=estudiante)
+#     return render(request, 'administracion_estudiantes/estudiante_edit.html', {'form': form})
 
 
 def estudiante_delete(request, pk):
@@ -409,18 +409,19 @@ def generar_pdf_lista_estudiantes_view(request):
 
 
 def estudiante_edit(request, pk):
-    """
-    Vista para editar la información de un alumno.
-    """
     alumno = get_object_or_404(Estudiante, pk=pk)
     if request.method == "POST":
         form = EstudianteForm(request.POST, instance=alumno)
         if form.is_valid():
             form.save()
-            return redirect('estudiante_detail', pk=alumno.pk)  # Redirige al detalle del alumno
+            return redirect('estudiante_detail', pk=alumno.pk)
+        else:
+            print(form.errors)  # Esto te dará detalles de cualquier error en el formulario
     else:
         form = EstudianteForm(instance=alumno)
     return render(request, 'administracion_alumnos/estudiante_edit.html', {'form': form})
+
+
 
 def estudiante_delete(request, pk):
     """

@@ -14,7 +14,12 @@
         {% csrf_token %}
         <label for="cuil">CUIL del Alumno:</label>
         <input type="text" id="cuil" name="cuil" required>
-        <button type="submit" class="button-submit gradient-button">Buscar</button>
+        <button class="learn-more">
+            <span class="circle" aria-hidden="true">
+            <span class="icon arrow"></span>
+            </span>
+            <span class="button-text">Buscar</span>
+        </button>
     </form>
 
     {% if estudiante %}
@@ -29,14 +34,24 @@
                 </div>
             <div class="button-group">
                 <form method="get" action="{% url 'ver_datos_estudiante' pk=estudiante.pk %}">
-                    <button type="submit" class="button-submit gradient-button">Ver Datos</button>
+                    <button class="learn-more">
+                        <span class="circle" aria-hidden="true">
+                        <span class="icon arrow"></span>
+                        </span>
+                        <span class="button-text">Ver</span>
+                    </button>
                 </form>
-                <form method="post" action="{% url 'estudiante_delete' pk=estudiante.pk %}" id="delete-form">
+                <!-- <form method="post" action="{% url 'estudiante_delete' pk=estudiante.pk %}" id="delete-form">
                     {% csrf_token %}
                     <button type="button" class="button-submit gradient-button" id="delete-button">Eliminar</button>
-                </form>
+                </form> -->
                 <form method="get" action="{% url 'estudiante_edit' pk=estudiante.pk %}">
-                    <button type="submit" class="button-submit gradient-button">Modificar</button>
+                    <button class="learn-more">
+                        <span class="circle" aria-hidden="true">
+                        <span class="icon arrow"></span>
+                        </span>
+                        <span class="button-text">Editar</span>
+                    </button>
                 </form>
             </div>
         </div>

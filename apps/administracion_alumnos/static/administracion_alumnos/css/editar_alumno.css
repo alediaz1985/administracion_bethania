@@ -1,0 +1,96 @@
+/* Contenedor principal de la página de edición */
+.edit-student-container {
+    width: 96%;
+    margin: 0 auto;
+    padding: 20px;
+    background-color: #f9f9f9;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    float: right;
+
+}
+
+/* Título de la página */
+.edit-student-container h1 {
+    text-align: center;
+    font-size: 24px;
+    color: #333;
+    margin-bottom: 20px;
+}
+
+/* Estilo para el formulario */
+.edit-student-form {
+    display: flex;
+    flex-direction: column;
+}
+
+/* Estilo de los campos de formulario */
+.form-group {
+    margin-bottom: 15px;
+}
+
+/* Etiquetas de los campos */
+.form-group label {
+    display: block;
+    font-size: 16px;
+    color: #555;
+    margin-bottom: 5px;
+}
+
+/* Campos de entrada */
+.form-group input, .form-group select, .form-group textarea {
+    width: 100%;
+    padding: 10px;
+    font-size: 14px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    box-sizing: border-box;
+}
+
+/* Estilo para los textos de ayuda y los errores */
+.form-group small {
+    font-size: 12px;
+    color: #777;
+}
+
+.error {
+    font-size: 12px;
+    color: #e74c3c;
+    margin-top: 5px;
+}
+
+/* Botones */
+.button {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 20px;
+}
+
+.button-submit, .button-cancel {
+    padding: 10px 20px;
+    font-size: 16px;
+    border-radius: 4px;
+    cursor: pointer;
+    text-align: center;
+    text-decoration: none;
+}
+
+.button-submit {
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+}
+
+.button-submit:hover {
+    background-color: #45a049;
+}
+
+.button-cancel {
+    background-color: #f44336;
+    color: white;
+    border: none;
+}
+
+.button-cancel:hover {
+    background-color: #e53935;
+}

@@ -136,22 +136,22 @@
                                     <form class="alumnos-controls" action="{% url 'ver_datos_estudiante' pk=estudiante.pk %}" method="get">
                                         <div class="tooltip-container">
                                             <span class="tooltip-text">Ver Datos</span>
-                                            <button class="alumnos-btn-1" type="submit">
+                                            <button class="alumnos-btn-ver" type="submit">
                                                 <i class="fas fa-eye"></i>
                                             </button>
                                         </div>
                                     </form>
-                                </td>   
+                                </td>
                                 <td>
                                     <form class="alumnos-controls" action="{% url 'generar_contrato' estudiante.pk %}" method="get">
                                         <div class="tooltip-container">
                                             <span class="tooltip-text">Generar Contrato</span>
-                                            <button class="alumnos-btn-1" type="submit">
+                                            <button class="alumnos-btn-pdf" type="submit">
                                                 <i class="fas fa-file-pdf"></i>
                                             </button>
                                         </div>
                                     </form>
-                                </td>                             
+                                </td>                           
                             </tr>  
                         {% endfor %}
                     {% else %}
@@ -193,7 +193,7 @@
                                     <form class="alumnos-controls" action="{% url 'ver_datos_estudiante' pk=estudiante.pk %}" method="get">
                                         <div class="tooltip-container">
                                             <span class="tooltip-text">Ver Datos</span>
-                                            <button class="alumnos-btn-1" type="submit">
+                                            <button class="alumnos-btn-ver" type="submit">
                                                 <i class="fas fa-eye"></i>
                                             </button>
                                         </div>
@@ -203,12 +203,12 @@
                                     <form class="alumnos-controls" action="{% url 'generar_contrato' estudiante.pk %}" method="get">
                                         <div class="tooltip-container">
                                             <span class="tooltip-text">Generar Contrato</span>
-                                            <button class="alumnos-btn-1" type="submit">
+                                            <button class="alumnos-btn-pdf" type="submit">
                                                 <i class="fas fa-file-pdf"></i>
                                             </button>
                                         </div>
                                     </form>
-                                </td>
+                                </td>                                
                             </tr>
                         {% endfor %}
                     {% else %}
@@ -249,7 +249,7 @@
                                     <form class="alumnos-controls" action="{% url 'ver_datos_estudiante' pk=estudiante.pk %}" method="get">
                                         <div class="tooltip-container">
                                             <span class="tooltip-text">Ver Datos</span>
-                                            <button class="alumnos-btn-1" type="submit">
+                                            <button class="alumnos-btn-ver" type="submit">
                                                 <i class="fas fa-eye"></i>
                                             </button>
                                         </div>
@@ -259,12 +259,12 @@
                                     <form class="alumnos-controls" action="{% url 'generar_contrato' estudiante.pk %}" method="get">
                                         <div class="tooltip-container">
                                             <span class="tooltip-text">Generar Contrato</span>
-                                            <button class="alumnos-btn-1" type="submit">
+                                            <button class="alumnos-btn-pdf" type="submit">
                                                 <i class="fas fa-file-pdf"></i>
                                             </button>
                                         </div>
                                     </form>
-                                </td>
+                                </td> 
                             </tr>
                         {% endfor %}
                     {% else %}
