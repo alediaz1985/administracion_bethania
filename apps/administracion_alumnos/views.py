@@ -433,7 +433,6 @@ def estudiante_delete(request, pk):
         return redirect(reverse('estudiante_list'))  # Redirige a la lista de alumnos
     return render(request, 'administracion_alumnos/alumno_confirm_delete.html', {'alumno': alumno})
 
-
 def estudiante_delete(request, pk):
     """
     Vista para eliminar un alumno.

@@ -40,6 +40,9 @@
 
     <div class="edit-student-container">
         <h1>Editar {{ form.instance.nombres }} {{ form.instance.apellidos }}</h1>
+
+        <input type="text" id="searchField" placeholder="Buscar campo..." onkeyup="filterFields()">
+
         <form method="post" enctype="multipart/form-data" class="edit-student-form">
             {% csrf_token %}
             {% for field in form %}

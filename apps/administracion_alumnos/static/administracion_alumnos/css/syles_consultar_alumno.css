@@ -140,8 +140,10 @@ body {
 
 .button-group {
     display: flex;
-    justify-content: space-between;
-    margin: 0 40px;
+    justify-content: flex-start;
+    align-items: center;
+    gap: 10px; /* Espacio entre los botones */
+    margin: 0 40px; /* Ajusta si es necesario */
 }
 
 /* From Uiverse.io by cssbuttons-io */ 
@@ -271,6 +273,14 @@ button {
         padding: 14px;
         font-size: 14px;
     }
+
+    .button-group {
+        margin: 0 15px; /* Ajusta si es necesario */
+    }
+
+    button.learn-more {
+        width: 11rem;
+       }
 }
 
 @media (max-width: 1024px) {
