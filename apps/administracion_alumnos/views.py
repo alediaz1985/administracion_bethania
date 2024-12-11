@@ -421,8 +421,6 @@ def estudiante_edit(request, pk):
         form = EstudianteForm(instance=alumno)
     return render(request, 'administracion_alumnos/estudiante_edit.html', {'form': form})
 
-
-
 def estudiante_delete(request, pk):
     """
     Vista para eliminar un alumno.
