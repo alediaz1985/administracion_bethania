@@ -74,18 +74,39 @@ def estudiante_detail(request, pk):
     estudiante = get_object_or_404(Estudiante, pk=pk)
     return render(request, 'administracion_alumnos/estudiante_detail.html', {'estudiante': estudiante})
 
+from django.shortcuts import render, get_object_or_404
+from .models import Estudiante
+from django.conf import settings
+import os
+
 def ver_datos_estudiante(request, pk):
+    # Obtener el estudiante por su clave primaria
     estudiante = get_object_or_404(Estudiante, pk=pk)
+
+    # Construir la ruta de la imagen
+    if estudiante.foto_estudiante:  # Si hay un ID de foto
+        image_url = os.path.join(
+            settings.MEDIA_URL, 'administracion_alumnos', 'descargados', estudiante.foto_estudiante
+        )
+    else:  # Si no tiene foto, usar una predeterminada
+        image_url = os.path.join(settings.STATIC_URL, 'images/default_profile.png')
+
     # Crea un diccionario dinámico con todos los campos del modelo
     campos_estudiante = {
         field.verbose_name: getattr(estudiante, field.name)
         for field in estudiante._meta.fields
     }
+
     return render(
         request,
         'administracion_alumnos/ver_datos_estudiante.html',
-        {'estudiante': estudiante, 'campos_estudiante': campos_estudiante}
+        {
+            'estudiante': estudiante,
+            'campos_estudiante': campos_estudiante,
+            'image_url': image_url,  # Agregar la URL de la imagen al contexto
+        }
     )
+
 
 # def estudiante_edit(request, pk):
 #     estudiante = get_object_or_404(Estudiante, pk=pk)
@@ -862,13 +883,16 @@ import logging
 from datetime import datetime
 from .utils import search_files_in_drive, download_file, archivo_existe
 
+
+from googleapiclient.http import MediaIoBaseDownload
+
 logger = logging.getLogger(__name__)
 
 def get_drive_service():
     """
-    Crea y devuelve un cliente de Google Drive API usando las credenciales de la aplicación.
+    Crea y devuelve un cliente de Google Drive API usando las credenciales.
     """
-    credentials_path = settings.GOOGLE_CREDENTIALS_ALUMNOS  # Configuración específica para administracion_alumnos
+    credentials_path = settings.GOOGLE_CREDENTIALS_ALUMNOS
     if not os.path.exists(credentials_path):
         raise FileNotFoundError(f"No se encontró el archivo de credenciales en: {credentials_path}")
 
@@ -877,6 +901,117 @@ def get_drive_service():
     )
     return build("drive", "v3", credentials=credentials)
 
+# FUNCIONA DESCARGA LOS ARCHIVOS POR SU NOMBRE DE LA CARPETA DRIVE.
+#Descarga todos los archivos desde la carpeta de Google Drive asociada.
+"""def descargar_todos_archivos(request):
+    try:
+        # Autenticación y servicio de Google Drive
+        service = get_drive_service()
+        folder_id = settings.DRIVE_FOLDER_ID_ALUMNOS  # ID de la carpeta específica
+
+        # Consultar archivos en la carpeta de Google Drive
+        query = f"'{folder_id}' in parents and trashed=false"
+        results = service.files().list(q=query, fields="files(id, name)").execute()
+        drive_files = results.get('files', [])
+
+        if not drive_files:
+            logger.info("No se encontraron archivos en la carpeta de Google Drive.")
+            return render(request, 'administracion_alumnos/sin_archivos.html')
+
+        # Crear carpeta local para guardar los archivos
+        ruta_descarga = settings.FOTO_PERFIL_ESTUDIANTE_DIR
+        os.makedirs(ruta_descarga, exist_ok=True)
+
+        archivos_descargados = []
+        for file in drive_files:
+            file_id = file['id']
+            file_name = file['name']
+            try:
+                # Descargar archivo
+                request_media = service.files().get_media(fileId=file_id)
+                archivo_path = os.path.join(ruta_descarga, file_name)
+
+                with open(archivo_path, 'wb') as archivo_local:
+                    downloader = MediaIoBaseDownload(archivo_local, request_media)
+                    done = False
+                    while not done:
+                        status, done = downloader.next_chunk()
+                        logger.info(f"Descarga {int(status.progress() * 100)}% completada para {file_name}.")
+
+                archivos_descargados.append(file_name)
+            except Exception as e:
+                logger.error(f"Error descargando {file_name}: {e}")
+
+        # Renderizar el resumen de descarga
+        return render(request, 'administracion_alumnos/resumen_descarga.html', {
+            'archivos_descargados': archivos_descargados,
+        })
+
+    except Exception as e:
+        logger.error(f"Error en la descarga de archivos: {e}")
+        return render(request, 'administracion_alumnos/error_descarga.html', {
+            'mensaje_error': f"Error en la descarga de archivos: {e}"
+        })"""
+
+
+def descargar_todos_archivos(request):
+    """
+    Descarga todos los archivos desde la carpeta de Google Drive asociada,
+    guardándolos con su ID como nombre.
+    """
+    try:
+        # Autenticación y servicio de Google Drive
+        service = get_drive_service()
+        folder_id = settings.DRIVE_FOLDER_ID_ALUMNOS  # ID de la carpeta específica
+
+        # Consultar archivos en la carpeta de Google Drive
+        query = f"'{folder_id}' in parents and trashed=false"
+        results = service.files().list(q=query, fields="files(id, name)").execute()
+        drive_files = results.get('files', [])
+
+        if not drive_files:
+            logger.info("No se encontraron archivos en la carpeta de Google Drive.")
+            return render(request, 'administracion_alumnos/sin_archivos.html')
+
+        # Crear carpeta local para guardar los archivos
+        ruta_descarga = settings.FOTO_PERFIL_ESTUDIANTE_DIR
+        os.makedirs(ruta_descarga, exist_ok=True)
+
+        archivos_descargados = []
+        for file in drive_files:
+            file_id = file['id']
+            file_name = file['name']
+            try:
+                # Descargar archivo
+                request_media = service.files().get_media(fileId=file_id)
+
+                # Cambiar el nombre del archivo al ID del archivo
+                extension = os.path.splitext(file_name)[1]  # Obtener la extensión original
+                nuevo_nombre = f"{file_id}{extension}"  # Nuevo nombre con ID y extensión
+                archivo_path = os.path.join(ruta_descarga, nuevo_nombre)
+
+                # Guardar el archivo localmente
+                with open(archivo_path, 'wb') as archivo_local:
+                    downloader = MediaIoBaseDownload(archivo_local, request_media)
+                    done = False
+                    while not done:
+                        status, done = downloader.next_chunk()
+                        logger.info(f"Descarga {int(status.progress() * 100)}% completada para {nuevo_nombre}.")
+
+                archivos_descargados.append(nuevo_nombre)
+            except Exception as e:
+                logger.error(f"Error descargando {file_name}: {e}")
+
+        # Renderizar el resumen de descarga
+        return render(request, 'administracion_alumnos/resumen_descarga.html', {
+            'archivos_descargados': archivos_descargados,
+        })
+
+    except Exception as e:
+        logger.error(f"Error en la descarga de archivos: {e}")
+        return render(request, 'administracion_alumnos/error_descarga.html', {
+            'mensaje_error': f"Error en la descarga de archivos: {e}"
+        })
 
 def descargar_archivos_alumnos(request):
     """
@@ -1023,80 +1158,6 @@ def descargar_archivo_por_id(request, file_id):
         })
 
 
-from django.shortcuts import render
-from django.conf import settings
-from googleapiclient.discovery import build
-from google.oauth2.service_account import Credentials
-import os
-import logging
-
-logger = logging.getLogger(__name__)
-
-def get_drive_service():
-    """
-    Crea y devuelve un cliente de Google Drive API usando las credenciales.
-    """
-    credentials_path = settings.GOOGLE_CREDENTIALS_ALUMNOS
-    if not os.path.exists(credentials_path):
-        raise FileNotFoundError(f"No se encontró el archivo de credenciales en: {credentials_path}")
-
-    credentials = Credentials.from_service_account_file(
-        credentials_path, scopes=["https://www.googleapis.com/auth/drive"]
-    )
-    return build("drive", "v3", credentials=credentials)
-
-
-def descargar_todos_archivos(request):
-    """
-    Descarga todos los archivos desde la carpeta de Google Drive asociada.
-    """
-    try:
-        service = get_drive_service()
-        folder_id = settings.DRIVE_FOLDER_ID_ALUMNOS  # ID de la carpeta específica
-
-        # Obtener archivos de la carpeta
-        query = f"'{folder_id}' in parents and trashed=false"
-        results = service.files().list(q=query, fields="files(id, name)").execute()
-        drive_files = results.get('files', [])
-
-        if not drive_files:
-            logger.info("No se encontraron archivos en la carpeta de Google Drive.")
-            return render(request, 'administracion_alumnos/sin_archivos.html')
-
-        # Crear carpeta local para guardar los archivos
-        ruta_descarga = os.path.join(settings.MEDIA_ROOT, 'administracion_alumnos', 'descargados')
-        os.makedirs(ruta_descarga, exist_ok=True)
-
-        archivos_descargados = []
-        for file in drive_files:
-            file_id = file['id']
-            file_name = file['name']
-            try:
-                # Descargar archivo
-                request = service.files().get_media(fileId=file_id)
-                archivo_path = os.path.join(ruta_descarga, file_name)
-
-                with open(archivo_path, 'wb') as archivo_local:
-                    downloader = MediaIoBaseDownload(archivo_local, request)
-                    done = False
-                    while not done:
-                        status, done = downloader.next_chunk()
-                        logger.info(f"Descarga {int(status.progress() * 100)}% completada para {file_name}.")
-
-                archivos_descargados.append(file_name)
-            except Exception as e:
-                logger.error(f"Error descargando {file_name}: {e}")
-
-        # Renderizar resumen
-        return render(request, 'administracion_alumnos/resumen_descarga.html', {
-            'archivos_descargados': archivos_descargados,
-        })
-
-    except Exception as e:
-        logger.error(f"Error en la descarga de archivos: {e}")
-        return render(request, 'administracion_alumnos/error_descarga.html', {
-            'mensaje_error': f"Error en la descarga de archivos: {e}"
-        })
 
 """def estudiante_consultar(request):
 
