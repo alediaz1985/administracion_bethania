@@ -1,5 +1,7 @@
 from django.urls import path
 from . import views
+from django.conf.urls.static import static
+from django.conf import settings
 
 urlpatterns = [
     path('list/', views.estudiante_list, name='estudiante_list'),
@@ -14,5 +16,10 @@ urlpatterns = [
     path('generar_pdf_lista_estudiantes/', views.generar_pdf_lista_estudiantes_view, name='generar_pdf_lista_alumnos'),
     path('registrar_estudiante/', views.registrar_estudiante, name='registrar_alumno'),
     path('generar-contrato/<int:estudiante_id>/', views.generar_contrato_view, name='generar_contrato'),
-    path('descargar_archivos/', views.descargar_archivos_alumnos, name='descargar_archivos_alumnos'),
+    path('descargar_archivos/', views.descargar_todos_archivos, name='descargar_archivos_alumnos'),
+    path('lista-fotos-estudiantes/', views.lista_fotos_estudiantes, name='lista_fotos_estudiantes'),
 ]
+
+# Configuración para servir archivos media en desarrollo
+if settings.DEBUG:
+    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

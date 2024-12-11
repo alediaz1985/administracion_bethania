@@ -1,6 +1,7 @@
 from django.urls import path
 from . import views
-
+from django.conf import settings
+from django.conf.urls.static import static
 
 app_name = 'cuotas' 
 
@@ -18,4 +19,5 @@ urlpatterns = [
     path('consultar_deudas/', views.consultar_deudas, name='consultar_deudas'),
     path('detalle_deuda/<int:alumno_id>/', views.detalle_deuda, name='detalle_deuda'),
     path('listar-alumnos/', views.listar_alumnos_por_ciclo_lectivo, name='listar_alumnos_por_ciclo_lectivo'),
-]
+    path('lista-fotos-estudiantes/', views.lista_fotos_estudiantes, name='lista_fotos_estudiantes'),
+] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

@@ -5,16 +5,15 @@
 </head>
 <body>
     <h1>Archivos Descargados</h1>
-    <ul>
-        {% for archivo in archivos_descargados %}
-        <li>{{ archivo }}</li>
-        {% endfor %}
-    </ul>
-    <h1>Archivos Omitidos</h1>
-    <ul>
-        {% for archivo in archivos_omitidos %}
-        <li>{{ archivo }}</li>
-        {% endfor %}
-    </ul>
+
+    {% if archivos_descargados %}
+        <ul>
+            {% for archivo in archivos_descargados %}
+                <li>{{ archivo }}</li>
+            {% endfor %}
+        </ul>
+    {% else %}
+        <p>No se descargaron archivos.</p>
+    {% endif %}
 </body>
 </html>
