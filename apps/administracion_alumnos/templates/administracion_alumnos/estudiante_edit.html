@@ -9,6 +9,7 @@
 {% endblock %}
 
 {% block content %}
+
     
     <!-- <div class="edit-student-container">
         <h1>Editar Alumno</h1>
@@ -38,29 +39,31 @@
         </div>
     </div> -->
 
-    <div class="edit-student-container">
-        <h1>Editar {{ form.instance.nombres }} {{ form.instance.apellidos }}</h1>
-        <form method="post" enctype="multipart/form-data" class="edit-student-form">
-            {% csrf_token %}
-            {% for field in form %}
-                <div class="form-group">
-                    {{ field.label_tag }}
-                    {{ field }}
-                    {% if field.help_text %}
-                        <small>{{ field.help_text }}</small>
-                    {% endif %}
-                    {% if field.errors %}
-                        <div class="error">{{ field.errors }}</div>
-                    {% endif %}
-                </div>
-            {% endfor %}
-            <div class="button">
-                <button type="submit" class="button-submit">Guardar</button>
-                <a href="{% url 'estudiante_detail' pk=form.instance.pk %}" class="button-cancel">Cancelar</a>
-            </div>
-        </form>
-    </div>
+<div class="edit-student-container">
+    <h1>Editar {{ form.instance.nombres }} {{ form.instance.apellidos }}</h1>
 
+    <input type="text" id="searchField" placeholder="Buscar campo..." onkeyup="filterFields()">
+
+    <form method="post" enctype="multipart/form-data" id="form-fields" class="edit-student-form">
+        {% csrf_token %}
+        {% for field in form %}
+            <div class="form-group">
+                {{ field.label_tag }}
+                {{ field }}
+                {% if field.help_text %}
+                    <small>{{ field.help_text }}</small>
+                {% endif %}
+                {% if field.errors %}
+                    <div class="error">{{ field.errors }}</div>
+                {% endif %}
+            </div>
+        {% endfor %}
+        <div class="button">
+            <button type="submit" class="button-submit">Guardar</button>
+            <a href="{% url 'estudiante_detail' pk=form.instance.pk %}" class="button-cancel">Cancelar</a>
+        </div>
+    </form>
+</div>
 
 <script>
 function filterFields() {

@@ -445,7 +445,6 @@ def generar_pdf_lista_estudiantes_view(request):
     response.write(pdf)
     return response
 
-
 def estudiante_edit(request, pk):
     alumno = get_object_or_404(Estudiante, pk=pk)
     if request.method == "POST":
