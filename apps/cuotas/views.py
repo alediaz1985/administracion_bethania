@@ -1023,3 +1023,40 @@ def listar_montos(request):
     
     # Renderiza el template de listar montos
     return render(request, 'cuotas/listar_montos.html', {'montos': montos})"""
+
+
+from django.shortcuts import render, redirect, get_object_or_404
+from .models import ComprobanteDrivePago
+from .forms import ComprobanteDrivePagoForm
+
+def crear_comprobante_pago(request):
+    if request.method == 'POST':
+        form = ComprobanteDrivePagoForm(request.POST)
+        if form.is_valid():
+            form.save()
+            return redirect('listar_comprobantes')
+    else:
+        form = ComprobanteDrivePagoForm()
+    return render(request, 'cuotas/crear_comprobante_pago.html', {'form': form})
+
+def listar_comprobantes(request):
+    comprobantes = ComprobanteDrivePago.objects.all()
+    return render(request, 'cuotas/listar_comprobantes.html', {'comprobantes': comprobantes})
+
+def editar_comprobante_pago(request, pk):
+    comprobante = get_object_or_404(ComprobanteDrivePago, pk=pk)
+    if request.method == 'POST':
+        form = ComprobanteDrivePagoForm(request.POST, instance=comprobante)
+        if form.is_valid():
+            form.save()
+            return redirect('listar_comprobantes')
+    else:
+        form = ComprobanteDrivePagoForm(instance=comprobante)
+    return render(request, 'cuotas/editar_comprobante_pago.html', {'form': form})
+
+def eliminar_comprobante_pago(request, pk):
+    comprobante = get_object_or_404(ComprobanteDrivePago, pk=pk)
+    if request.method == 'POST':
+        comprobante.delete()
+        return redirect('listar_comprobantes')
+    return render(request, 'cuotas/eliminar_comprobante_pago.html', {'comprobante': comprobante})

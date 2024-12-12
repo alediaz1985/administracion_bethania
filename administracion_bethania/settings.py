@@ -141,13 +141,20 @@ LOGIN_URL = 'iniciar_sesion'
 
 #GOOGLE_CREDENTIALS = os.path.join(BASE_DIR, 'credentials.json')
 
-GOOGLE_CREDENTIALS = os.path.join(BASE_DIR, 'administracion_bethania', 'credentials.json')
+#GOOGLE_CREDENTIALS = os.path.join(BASE_DIR, 'administracion_bethania', 'credentials.json')
 
 
 GOOGLE_CREDENTIALS_ALUMNOS = os.path.join(
     BASE_DIR, 'apps', 'administracion_alumnos', 'credentials.json'
 )
 
+GOOGLE_CREDENTIALS = os.path.join(BASE_DIR, 'apps', 'documentos', 'credetials.json')
+
+DRIVE_FOLDER_ID = '1BGucPl_22qKLBcEnyQpQRR_BBTjqPEc_zzmwJzcF-hkJQR7USfZPqUrTAmhTemD8OoQqhy3Z'  # Nuevo ID de carpeta
+
+
+print(f"Ruta calculada: {GOOGLE_CREDENTIALS}")
+print(f"Archivo existe: {os.path.exists(GOOGLE_CREDENTIALS)}")
 
 print(f"Ruta calculada: {GOOGLE_CREDENTIALS_ALUMNOS}")
 print(f"Archivo existe: {os.path.exists(GOOGLE_CREDENTIALS_ALUMNOS)}")
@@ -162,7 +169,7 @@ DRIVE_FOLDER_ID_ALUMNOS = '1dg5zdw8DjvxM4mprYddLsMWVz5EhatVpkiaI1LTYXIUIt5-rCNwu
 #DRIVE_FOLDER_ID = '1lyxImVDTJt9Q2P9QDm0M_wHz9jgodfGp'  # Este es el ID de la carpeta de Google Drive
 
 
-DRIVE_FOLDER_ID = 'I1dg5zdw8DjvxM4mprYddLsMWVz5EhatVpkiaI1LTYXIUIt5-rCNwuduzYr4fQbsW60PU8So2H'  # Reemplaza con el ID de tu carpeta en Google Drive# Directorio de archivos locales
+#DRIVE_FOLDER_ID = 'I1dg5zdw8DjvxM4mprYddLsMWVz5EhatVpkiaI1LTYXIUIt5-rCNwuduzYr4fQbsW60PU8So2H'  # Reemplaza con el ID de tu carpeta en Google Drive# Directorio de archivos locales
 ARCHIVOS_DIR = os.path.join(BASE_DIR, 'media', 'documentos') 
 
 FOTO_PERFIL_ESTUDIANTE_DIR = os.path.join(BASE_DIR, 'media', 'documentos', 'fotoPerfilEstudiante') #En esta Carpeta Guarda los archivos de perfil del Estudiante

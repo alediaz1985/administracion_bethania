@@ -1,5 +1,6 @@
 from django import forms
 from .models import MontosCicloLectivo
+from .models import ComprobanteDrivePago
 
 # Formulario para agregar o editar montos de inscripción y cuota mensual
 class MontosCicloLectivoForm(forms.ModelForm):
@@ -69,3 +70,17 @@ class ValidarMontosForm(forms.ModelForm):
         if monto <= 0:
             raise forms.ValidationError('El monto de la cuota mensual debe ser mayor a 0.')
         return monto
+
+
+
+class ComprobanteDrivePagoForm(forms.ModelForm):
+    class Meta:
+        model = ComprobanteDrivePago
+        fields = ['marca_temporal', 'correo_electronico', 'comprobante_pago', 'cuil_estudiante', 'cuil_responsable_pago']
+        widgets = {
+            'marca_temporal': forms.TextInput(attrs={'class': 'form-control'}),
+            'correo_electronico': forms.EmailInput(attrs={'class': 'form-control'}),
+            'comprobante_pago': forms.TextInput(attrs={'class': 'form-control'}),
+            'cuil_estudiante': forms.TextInput(attrs={'class': 'form-control'}),
+            'cuil_responsable_pago': forms.TextInput(attrs={'class': 'form-control'}),
+        }

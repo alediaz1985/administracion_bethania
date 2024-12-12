@@ -130,3 +130,20 @@ class Pago(models.Model):
         db_table = 'pago'
         verbose_name = "Pago"
         verbose_name_plural = "Pagos"
+
+
+class ComprobanteDrivePago(models.Model):
+    marca_temporal = models.CharField(max_length=150, verbose_name="Marca Temporal")
+    correo_electronico = models.CharField(max_length=150, verbose_name="Dirección de Correo Electrónico")
+    comprobante_pago = models.CharField(max_length=150, verbose_name="Adjunte el Comprobante de Pagos")
+    cuil_estudiante = models.CharField(max_length=50, verbose_name="CUIL del Estudiante")
+    cuil_responsable_pago = models.CharField(max_length=50, verbose_name="CUIL del Responsable de Pago")
+
+    def __str__(self):
+        return f"Comprobante {self.id} - {self.correo_electronico}"
+
+    class Meta:
+        db_table = 'comprobante_de_pago'
+        verbose_name = "Comprobante de Pago"
+        verbose_name_plural = "Comprobantes de Pago"
+        

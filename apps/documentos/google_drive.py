@@ -1,3 +1,170 @@
+# apps/documentos/google_drive.py
+import os
+import logging
+from google.oauth2.service_account import Credentials
+from googleapiclient.discovery import build
+from googleapiclient.errors import HttpError
+from django.conf import settings
+
+logger = logging.getLogger(__name__)
+
+SCOPES = ['https://www.googleapis.com/auth/drive']
+
+def get_drive_service():
+    """Obtiene el servicio autenticado de Google Drive usando la cuenta de servicio."""
+    try:
+        creds = Credentials.from_service_account_file(settings.GOOGLE_CREDENTIALS, scopes=SCOPES)
+        service = build('drive', 'v3', credentials=creds)
+        logger.info("Servicio de Google Drive autenticado correctamente.")
+        return service
+    except FileNotFoundError:
+        logger.error(f"No se encontró el archivo de credenciales en {settings.GOOGLE_CREDENTIALS}")
+        return None
+    except Exception as e:
+        logger.error(f"Error al autenticar con Google Drive: {e}")
+        return None
+
+def search_files_in_drive(folder_id):
+    service = get_drive_service()
+    if not service:
+        return []
+    try:
+        response = service.files().list(q=f"'{folder_id}' in parents", fields="files(id,name,createdTime)").execute()
+        return response.get('files', [])
+    except HttpError as error:
+        logger.error(f"Error buscando archivos: {error}")
+        return []
+
+def download_file(service, file_id, file_name, destination):
+    """Descarga un archivo desde Google Drive, incluyendo el ID en el nombre."""
+    import io
+    from googleapiclient.http import MediaIoBaseDownload
+
+    try:
+        # Agregar el ID al nombre del archivo
+        file_name_with_id = f"{file_id}_{file_name}"
+        file_path = os.path.join(destination, file_name_with_id)
+
+        # Descargar el archivo
+        request = service.files().get_media(fileId=file_id)
+        with open(file_path, 'wb') as fh:
+            downloader = MediaIoBaseDownload(fh, request)
+            done = False
+            while not done:
+                status, done = downloader.next_chunk()
+                logger.info(f"Descargando {file_name_with_id}: {int(status.progress() * 100)}% completado.")
+        
+        logger.info(f"Archivo {file_name_with_id} descargado correctamente en {file_path}.")
+        return file_path
+    except HttpError as error:
+        logger.error(f"Error descargando archivo {file_name_with_id}: {error}")
+        return None
+
+
+def vaciar_carpeta_drive(folder_id):
+    try:
+        service = get_drive_service()
+        if not service:
+            return "Error al autenticar con Google Drive"
+
+        # Listar todos los archivos en la carpeta
+        archivos = service.files().list(q=f"'{folder_id}' in parents").execute().get('files', [])
+
+        if not archivos:
+            logger.info("No se encontraron archivos en la carpeta de Google Drive.")
+            return "No se encontraron archivos en la carpeta."
+
+        # Eliminar todos los archivos encontrados
+        for archivo in archivos:
+            file_id = archivo['id']
+            service.files().delete(fileId=file_id).execute()
+            logger.info(f"Archivo {archivo['name']} eliminado exitosamente.")
+
+        return "Todos los archivos fueron eliminados exitosamente."
+    except Exception as e:
+        logger.error(f"Error vaciando la carpeta de Google Drive: {e}")
+        return f"Error vaciando la carpeta: {e}"
+
+"""
+import os
+import logging
+from google.oauth2.service_account import Credentials
+from googleapiclient.discovery import build
+from googleapiclient.errors import HttpError
+from googleapiclient.http import MediaIoBaseDownload
+from django.conf import settings
+
+# Configuración del logger
+logger = logging.getLogger(__name__)
+
+# Alcances requeridos
+SCOPES = ['https://www.googleapis.com/auth/drive']
+
+def get_drive_service():
+
+    try:
+        creds = Credentials.from_service_account_file(settings.GOOGLE_CREDENTIALS, scopes=SCOPES)
+        service = build('drive', 'v3', credentials=creds)
+        return service
+    except Exception as e:
+        logger.error(f"Error al autenticar con Google Drive: {e}")
+        return None
+
+def search_files_in_drive(folder_id):
+   
+    try:
+        service = get_drive_service()
+        if not service:
+            return []
+
+        query = f"'{folder_id}' in parents"
+        response = service.files().list(q=query, fields="files(id, name, createdTime)").execute()
+        return response.get('files', [])
+    except HttpError as error:
+        logger.error(f"Error buscando archivos: {error}")
+        return []
+
+def download_file(service, file_id, file_name, destination):
+    
+    try:
+        request = service.files().get_media(fileId=file_id)
+        file_path = os.path.join(destination, file_name)
+        with open(file_path, 'wb') as file:
+            downloader = MediaIoBaseDownload(file, request)
+            done = False
+            while not done:
+                status, done = downloader.next_chunk()
+                logger.info(f"Descargando {file_name}: {int(status.progress() * 100)}% completado.")
+        return file_path
+    except HttpError as error:
+        logger.error(f"Error descargando archivo {file_name}: {error}")
+        return None
+
+# Función para eliminar archivos de una carpeta de Google Drive
+def vaciar_carpeta_drive(folder_id):
+    try:
+        service = get_drive_service()
+        if not service:
+            return "Error al autenticar con Google Drive"
+
+        # Listar todos los archivos en la carpeta
+        archivos = service.files().list(q=f"'{folder_id}' in parents").execute().get('files', [])
+
+        if not archivos:
+            logger.info("No se encontraron archivos en la carpeta de Google Drive.")
+            return "No se encontraron archivos en la carpeta."
+
+        # Eliminar todos los archivos encontrados
+        for archivo in archivos:
+            file_id = archivo['id']
+            service.files().delete(fileId=file_id).execute()
+            logger.info(f"Archivo {archivo['name']} eliminado exitosamente.")
+
+        return "Todos los archivos fueron eliminados exitosamente."
+    except Exception as e:
+        logger.error(f"Error vaciando la carpeta de Google Drive: {e}")
+        return f"Error vaciando la carpeta: {e}"
+    
 import os
 import logging
 from google.oauth2.credentials import Credentials
@@ -18,7 +185,7 @@ logger = logging.getLogger(__name__)
 SCOPES = ['https://www.googleapis.com/auth/drive']
 
 def get_drive_service():
-    """Obtiene el servicio autenticado de Google Drive usando el token"""
+    #btiene el servicio autenticado de Google Drive usando el token
     creds = None
     if os.path.exists(TOKEN_PATH):
         creds = Credentials.from_authorized_user_file(TOKEN_PATH, SCOPES)
@@ -43,7 +210,7 @@ def get_drive_service():
         return None
 
 def asignar_permisos(service, file_id, email_user):
-    """Asigna permisos de escritura a la cuenta para un archivo."""
+    #Asigna permisos de escritura a la cuenta para un archivo.
     try:
         permisos = {
             'type': 'user',
@@ -85,7 +252,7 @@ def vaciar_carpeta_drive(folder_id):
         return f"Error vaciando la carpeta: {e}"
 
 def descargar_archivo(service, file_id, nombre_archivo, ruta_descarga):
-    """Descarga un archivo desde Google Drive."""
+    #Descarga un archivo desde Google Drive. 
     try:
         request = service.files().get_media(fileId=file_id)
         archivo_path = os.path.join(ruta_descarga, nombre_archivo)
@@ -100,7 +267,7 @@ def descargar_archivo(service, file_id, nombre_archivo, ruta_descarga):
         logger.error(f"Error al descargar el archivo {nombre_archivo}: {e}")
 
 def listar_archivos_en_carpeta(service, folder_id):
-    """Lista todos los archivos en una carpeta de Google Drive."""
+    #Lista todos los archivos en una carpeta de Google Drive 
     try:
         archivos = service.files().list(q=f"'{folder_id}' in parents").execute().get('files', [])
         if not archivos:
@@ -112,7 +279,7 @@ def listar_archivos_en_carpeta(service, folder_id):
         return []
 
 def search_files_in_drive(folder_id):
-    """Busca archivos en una carpeta de Google Drive."""
+    #busca archivos en una carpeta de Google Drive.
     service = get_drive_service()
     try:
         archivos = service.files().list(q=f"'{folder_id}' in parents").execute().get('files', [])
@@ -125,7 +292,7 @@ def search_files_in_drive(folder_id):
         return []
 
 def download_file(service, file_id):
-    """Descarga el contenido de un archivo en Google Drive."""
+    #Descarga el contenido de un archivo en Google Drive 
     try:
         request = service.files().get_media(fileId=file_id)
         file_data = request.execute()
@@ -135,6 +302,7 @@ def download_file(service, file_id):
         return None
 
 def extract_text_from_file(file_data, mime_type):
-    """Extrae texto del archivo según su tipo MIME."""
+    #Extrae texto del archivo según su tipo MIME 
     # Implementación para extraer texto según el tipo de archivo (PDF, imagen, DOCX, etc.)
     pass  # Aquí puedes agregar la lógica que tenías para extraer el texto
+"""
