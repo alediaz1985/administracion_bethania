@@ -9,39 +9,47 @@
 {% endblock %}
 
 {% block content %}
-    
-    <!-- <div class="edit-student-container">
-        <h1>Editar Alumno</h1>
 
-        <input type="text" id="searchField" placeholder="Buscar campo..." onkeyup="filterFields()">
+<div class="edit-student-container">
 
-        <div id="form-fields">
-            {% for field in form %}
-                <div class="form-group" id="field-{{ forloop.counter }}">
-                    {{ field.label_tag }}
-                    {{ field }}
-                    
-                    {% if field.errors %}
-                        <div class="error">
-                            {% for error in field.errors %}
-                                <p>{{ error }}</p>
-                            {% endfor %}
-                        </div>
-                    {% endif %}
-                </div>
-            {% endfor %}
-        </div>
-
-        <div class="button">
-            <a href="{% url 'estudiante_detail' pk=form.instance.pk %}" class="button-cancel">Cancelar</a>
-            <button type="submit" class="button-submit">Guardar</button>
-        </div>
+    <!-- <input type="text" id="searchField" placeholder="Buscar campo..." onkeyup="filterFields()"> -->
+    <!-- <div class="container">
+        <input type="text" id="searchField" onkeyup="filterFields()" required="required" class="inp" />
+        <span class="content">Buscar campo...</span>
     </div> -->
 
-    <div class="edit-student-container">
-        <h1>Editar {{ form.instance.nombres }} {{ form.instance.apellidos }}</h1>
-        <form method="post" enctype="multipart/form-data" class="edit-student-form">
-            {% csrf_token %}
+    <label for="myInput" class="label">
+        <span class="label-title">Buscar Datos</span>
+        <input class="input" type="text" id="searchField" placeholder="Campo" onkeyup="filterFields()">
+    </label>
+      
+
+    <!-- <form method="post" enctype="multipart/form-data" id="form-fields" class="edit-student-form">
+        {% csrf_token %}
+        {% for field in form %}
+            <div class="form-group">
+                {{ field.label_tag }}
+                {{ field }}
+                {% if field.help_text %}
+                    <small>{{ field.help_text }}</small>
+                {% endif %}
+                {% if field.errors %}
+                    <div class="error">{{ field.errors }}</div>
+                {% endif %}
+            </div>
+        {% endfor %}
+        <div class="button">
+            <button type="submit" class="button-submit">Guardar</button>
+            <a href="{% url 'estudiante_detail' pk=form.instance.pk %}" class="button-cancel">Cancelar</a>
+        </div>
+    </form> -->
+
+    <form method="post" enctype="multipart/form-data" id="form-fields" class="edit-student-form" novalidate>
+        {% csrf_token %}
+        <div class="form-header">
+            <p>Por favor, complete los campos requeridos para actualizar los detalles del estudiante.</p>
+        </div>
+        <div class="form-body">
             {% for field in form %}
                 <div class="form-group">
                     {{ field.label_tag }}
@@ -54,13 +62,14 @@
                     {% endif %}
                 </div>
             {% endfor %}
-            <div class="button">
-                <button type="submit" class="button-submit">Guardar</button>
-                <a href="{% url 'estudiante_detail' pk=form.instance.pk %}" class="button-cancel">Cancelar</a>
-            </div>
-        </form>
-    </div>
-
+        </div>
+        <div class="form-footer">
+            <button type="submit" class="button-submit">Guardar</button>
+            <a href="{% url 'consultar_alumno' %}" class="button-cancel">Cancelar</a>
+        </div>
+    </form>
+    
+</div>
 
 <script>
 function filterFields() {

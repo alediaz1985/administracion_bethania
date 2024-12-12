@@ -20,7 +20,6 @@ class Estudiante(models.Model):
     barrio_estudiante = models.CharField(max_length=100)
     codigo_postal_estudiante = models.CharField(max_length=100)
     provincia_estudiante = models.CharField(max_length=100)
-
     cuil_estudiante = models.CharField(max_length=100)
     dni_estudiante = models.CharField(max_length=100)
     email_estudiante = models.CharField(max_length=100)
@@ -31,7 +30,6 @@ class Estudiante(models.Model):
     parentesco_estudiante = models.CharField(max_length=100)
     peso_estudiante = models.CharField(max_length=100)
     talla_estudiante = models.CharField(max_length=100)
-
     obra_social_estudiante = models.CharField(max_length=100)
     cual_osocial_estudiante = models.CharField(max_length=100)
     problema_neurologico_estudiante = models.CharField(max_length=100)

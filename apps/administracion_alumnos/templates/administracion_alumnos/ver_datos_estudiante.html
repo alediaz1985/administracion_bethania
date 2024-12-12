@@ -10,7 +10,6 @@
 
 {% block content %}
 <div class="see-student-container">
-    <h1>DATOS DEL ESTUDIANTE</h1>
     <div class="contenedor">
         <form action="{% url 'generar_pdf_estudiante' estudiante_id=estudiante.pk %}" method="get">
             <!-- From Uiverse.io by vinodjangid07 -->
@@ -103,7 +102,7 @@
             <a href="{% url 'consultar_alumno' %}" class="button-submit alumnos-btn-1">
                 <i class="fas fa-check"></i> <!-- Icono de aprobar -->
             </a>
-            <a href="{% url 'consultar_alumno' %}" class="button-submit alumnos-btn-1">
+            <a href="{% url 'estudiante_edit' pk=estudiante.pk %}" class="button-submit alumnos-btn-1">
                 <i class="fas fa-edit"></i> <!-- Icono de editar -->
             </a>
             <a href="{% url 'consultar_alumno' %}" class="button-submit alumnos-btn-2">
@@ -126,19 +125,45 @@
                         <th>Foto</th>
                     </tr>
                     <td>
-                        {% if image_url %}
+                        <div class="imagen-contenedor">
+                            {% if image_url %}
                             <!-- Mostrar la imagen del estudiante si existe la URL -->
-                            <img src="{{ image_url }}" alt="Foto del estudiante" style="max-width: 200px; max-height: 200px; object-fit: cover;">
+                            <img src="{{ image_url }}" alt="Foto del estudiante">
                         {% else %}
                             <!-- Mostrar una imagen por defecto si no existe la URL -->
-                            <img src="{% static 'images/default.jpg' %}" alt="Foto no disponible" style="max-width: 200px; max-height: 200px; object-fit: cover;">
+                            <img src="{% static 'images/default.jpg' %}" alt="Foto no disponible">
                         {% endif %}
+                        </div>
                     </td>
                     <tr>
-                        <th>N de Legajo</th>
+                        <th>Cuil/s</th>
                     </tr>
                     <tr>
-                        <td>{{ estudiante.num_legajo_estudiante }}</td>
+                        <td>{{ estudiante.cuil_estudiante }}</td>
+                    </tr>
+                    <tr>
+                        <th>Apellido/s</th>
+                    </tr>
+                    <tr>
+                        <td>{{ estudiante.apellidos_estudiante }}</td>
+                    </tr>
+                    <tr>
+                        <th>Nombre</th>
+                    </tr>
+                    <tr>
+                        <td>{{ estudiante.nombres_estudiante }}</td>
+                    </tr>
+                    <tr>
+                        <th>D.N.I.</th>
+                    </tr>
+                    <tr>
+                        <td>{{ estudiante.dni_estudiante }}</td>
+                    </tr>
+                    <tr>
+                        <th>Email</th>
+                    </tr>
+                    <tr>
+                        <td>{{ estudiante.email_estudiante }}</td>
                     </tr>
                 </table>
             </div>
@@ -159,33 +184,10 @@
                         <td>{{ estudiante.nivel_estudiante }}</td>
                     </tr>
                     <tr>
-                        <th>Fecha de Recepción</th>
+                        <th>N de Legajo</th>
                     </tr>
                     <tr>
-                        <td class="fecha">{{ estudiante.fecha_recepcion }}</td>
-                    </tr>
-                </table>
-            </div>
-        </div>
-    </div>
-    <div class="academic-info-5-container">
-        <h2>Datos del Alumno y Domicilio</h2>
-    
-        <div class="academic-info-3-grid">
-            <!-- Columna 1: Datos del Alumno -->
-            <div class="academic-info-3-column">
-                <table>
-                    <tr>
-                        <th>Apellido/s</th>
-                    </tr>
-                    <tr>
-                        <td>{{ estudiante.apellidos_estudiante }}</td>
-                    </tr>
-                    <tr>
-                        <th>Nombre</th>
-                    </tr>
-                    <tr>
-                        <td>{{ estudiante.nombres_estudiante }}</td>
+                        <td>{{ estudiante.num_legajo_estudiante }}</td>
                     </tr>
                     <tr>
                         <th>Sexo</th>
@@ -210,6 +212,65 @@
                     </tr>
                     <tr>
                         <td>{{ estudiante.ciudad_estudiante }}</td>
+                    </tr>
+                    <tr>
+                        <th>Religión</th>
+                    </tr>
+                    <tr>
+                        <td>{{ estudiante.religion_estudiante }}</td>
+                    </tr>
+                    <tr>
+                        <th>Fecha de Recepción</th>
+                    </tr>
+                    <tr>
+                        <td class="fecha">{{ estudiante.fecha_recepcion }}</td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+    </div>
+    <div class="academic-info-5-container">
+        <h2>Datos del Alumno y Domicilio</h2>
+    
+        <div class="academic-info-3-grid">
+            <!-- Columna 1: Datos del Alumno -->
+            <div class="academic-info-3-column">
+                <table>
+                    <tr>
+                        <th>Telefono Fijo</th>
+                    </tr>
+                    <tr>
+                        <td>{{ estudiante.tel_fijo_estudiante }}</td>
+                    </tr>
+                    <tr>
+                        <th>Telefono Celular</th>
+                    </tr>
+                    <tr>
+                        <td>{{ estudiante.tel_cel_estudiante }}</td>
+                    </tr>
+                    <tr>
+                        <th>Telefono de Emergencia</th>
+                    </tr>
+                    <tr>
+                        <td>{{ estudiante.tel_emergencia_estudiante }}</td>
+                    </tr>
+                    <tr>
+                        <th>Parentesco</th>
+                    </tr>
+                    <tr>
+                        <td>{{ estudiante.parentesco_estudiante }}</td>
+                    </tr>
+                    <tr>
+                        <th>Peso</th>
+                    </tr>
+                    <tr>
+                        <td>{{ estudiante.peso_estudiante }}</td>
+                    </tr>
+                    <tr>
+                        <th>Talla</th>
+                    </tr>
+                    <tr>
+                        <td>{{ estudiante.talla_estudiante }}</td>
                     </tr>
                 </table>
             </div>
