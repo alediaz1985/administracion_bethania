@@ -2,23 +2,17 @@
 
 {% block title %}Consulta de Comprobantes{% endblock %}
 
-{% load static %}
-
 {% block extra_styles %}
-    <link rel="stylesheet" href="{% static 'documentos/css/consulta.css' %}">
+<link rel="stylesheet" href="{% static 'documentos/css/consulta.css' %}">
 {% endblock %}
-
 
 {% block content %}
 <div class="consulta-container">
-    <!-- Título -->
     <h2>Consulta de Comprobantes</h2>
-
-    <!-- Formulario de consulta -->
     <form method="post" class="consulta-form">
         {% csrf_token %}
         <div class="form-group">
-            <label for="id_consulta">DNI:</label>
+            <label for="id_consulta">DNI, CBU o palabra clave:</label>
             {{ form.consulta }}
         </div>
         <div class="form-group">
@@ -32,23 +26,23 @@
         <button type="submit" class="consulta-buscar-button">Buscar</button>
     </form>
 
-    <!-- Resultados de la búsqueda -->
     {% if search_done %}
         {% if resultados %}
             <div class="consulta-resultados">
                 <h3>Resultados de la búsqueda</h3>
-                <p>Cantidad de archivos encontrados: {{ cantidad_archivos }}</p>
-                <ul>
+                <p>Cantidad de documentos encontrados: {{ cantidad_archivos }}</p>
+                <ul class="consulta-lista-resultados">
                     {% for resultado in resultados %}
                     <li>
-                        <strong>Nombre:</strong> <a href="{{ resultado.url }}" target="_blank">{{ resultado.nombre }}</a><br>
+                        <strong>Nombre:</strong>
+                        <a href="{{ resultado.url }}" target="_blank">{{ resultado.nombre }}</a><br>
                         <strong>Fecha de modificación:</strong> {{ resultado.fecha }}
                     </li>
                     {% endfor %}
                 </ul>
             </div>
         {% else %}
-            <p>No se encontraron documentos.</p>
+            <p class="messages info">No se encontraron documentos.</p>
         {% endif %}
     {% endif %}
 </div>

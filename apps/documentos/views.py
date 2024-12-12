@@ -205,6 +205,24 @@ def obtener_ruta_archivo(file_name):
         return None
     
 
+from django.shortcuts import render, redirect
+from .forms import DocumentoForm
+
+def subir_comprobante(request):
+    """
+    Vista para subir comprobantes.
+    """
+    if request.method == 'POST':
+        form = DocumentoForm(request.POST, request.FILES)
+        if form.is_valid():
+            form.save()
+            return redirect('consulta_comprobantes')  # Redirige a consulta_comprobantes tras subir
+    else:
+        form = DocumentoForm()
+
+    return render(request, 'documentos/subir_comprobante.html', {'form': form})
+
+
 # Nueva función: Descargar archivos desde Google Drive
 """def descargar_archivos_nube(request):
     try:
@@ -327,13 +345,16 @@ def vaciar_carpeta_drive(request):
 
 
 
+
 def descargar_archivos_nube(request):
     try:
+        # Buscar archivos en la carpeta de Google Drive
         drive_files = search_files_in_drive(settings.DRIVE_FOLDER_ID)
         if not drive_files:
             logger.info("No se encontraron archivos en la carpeta de Google Drive.")
             return render(request, 'documentos/sin_archivos.html')
 
+        # Configurar la ruta de descarga
         ruta_descarga = os.path.join(settings.MEDIA_ROOT, 'documentos', 'descargados')
         if not os.path.exists(ruta_descarga):
             os.makedirs(ruta_descarga)
@@ -341,33 +362,180 @@ def descargar_archivos_nube(request):
         archivos_descargados = []
         archivos_omitidos = []
 
+        # Obtener el servicio autenticado de Google Drive
         service = get_drive_service()
+        if not service:
+            logger.error("No se pudo autenticar el servicio de Google Drive.")
+            return render(request, 'documentos/error_descarga.html', {
+                'mensaje_error': "No se pudo autenticar el servicio de Google Drive."
+            })
+
+        # Procesar cada archivo en la carpeta de Google Drive
         for file in drive_files:
             file_id = file['id']
-            file_name = file['name']
+            file_name = f"{file_id}"  # Usar solo el ID como nombre del archivo
 
-            # Generar el nombre del archivo con el ID
-            file_name_with_id = f"{file_id}_{file_name}"
+            archivo_path = os.path.join(ruta_descarga, file_name)
 
             # Verificar si el archivo ya existe
-            if archivo_existe(ruta_descarga, file_name_with_id):
-                logger.info(f"El archivo {file_name_with_id} ya existe. Omitiendo descarga.")
-                archivos_omitidos.append(file_name_with_id)
-            else:
-                ruta_archivo = download_file(service, file_id, file_name, ruta_descarga)
-                if ruta_archivo:
-                    archivos_descargados.append(file_name_with_id)
-                else:
-                    logger.error(f"No se pudo descargar el archivo {file_name_with_id}.")
+            if os.path.exists(archivo_path):
+                logger.info(f"El archivo {file_name} ya existe. Omitiendo descarga.")
+                archivos_omitidos.append(file_name)
+                continue
 
+            # Descargar el archivo
+            try:
+                request = service.files().get_media(fileId=file_id)
+                with open(archivo_path, 'wb') as archivo_local:
+                    downloader = MediaIoBaseDownload(archivo_local, request)
+                    done = False
+                    while not done:
+                        status, done = downloader.next_chunk()
+                        logger.info(f"Descargando {file_name}: {int(status.progress() * 100)}%.")
+                archivos_descargados.append(file_name)
+                logger.info(f"Archivo {file_name} descargado correctamente.")
+            except HttpError as error:
+                logger.error(f"Error al descargar el archivo {file_name} (ID: {file_id}): {error}")
+
+        # Renderizar el resumen de descargas
         return render(request, 'documentos/resumen_descarga.html', {
             'archivos_descargados': archivos_descargados,
             'archivos_omitidos': archivos_omitidos
         })
+
     except Exception as e:
         logger.error(f"Error en la descarga de archivos: {e}")
-        return render(request, 'documentos/error_descarga.html', {'mensaje_error': f"Error en la descarga de archivos: {e}"})
-    
-def forbidden_view(request):
-    """Muestra un mensaje de error cuando el usuario no tiene permisos suficientes."""
-    return render(request, 'forbidden.html')
+        return render(request, 'documentos/error_descarga.html', {
+            'mensaje_error': f"Error en la descarga de archivos: {e}"
+        })
+
+
+
+#NUEVO DESCARGAR ARCHIVOS  +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+from django.http import JsonResponse
+from .google_drive_service import authenticate_drive
+
+DRIVE_FOLDER_ID = '1BGucPl_22qKLBcEnyQpQRR_BBTjqPEc_zzmwJzcF-hkJQR7USfZPqUrTAmhTemD8OoQqhy3Z'
+
+def list_files(request):
+    drive_service = authenticate_drive()
+    query = f"'{DRIVE_FOLDER_ID}' in parents and trashed = false"
+    results = drive_service.files().list(q=query, fields="files(id, name)").execute()
+    files = results.get('files', [])
+    return JsonResponse({'files': files})
+
+
+
+from django.shortcuts import render, redirect
+from django.urls import reverse
+from .forms import ConsultaForm
+from .google_drive_service import authenticate_drive
+from django.shortcuts import render
+from .forms import ConsultaForm
+from .google_drive_service import authenticate_drive
+from django.shortcuts import render
+from .forms import ConsultaForm
+from .google_drive_service import authenticate_drive
+
+def consulta_comprobantes(request):
+    """
+    Vista para consultar documentos en Google Drive.
+    """
+    form = ConsultaForm()
+    resultados = []
+    cantidad_archivos = 0
+    search_done = False
+
+    if request.method == 'POST':
+        form = ConsultaForm(request.POST)
+        if form.is_valid():
+            consulta = form.cleaned_data.get('consulta')
+            fecha_inicio = form.cleaned_data.get('fecha_inicio')
+            fecha_fin = form.cleaned_data.get('fecha_fin')
+
+            # Lógica de búsqueda en Google Drive
+            drive_service = authenticate_drive()
+            query = "trashed = false"
+
+            # Filtrar por consulta si existe
+            if consulta:
+                query += f" and name contains '{consulta}'"
+
+            # Obtener archivos de Google Drive
+            results = drive_service.files().list(q=query, fields="files(id, name, modifiedTime)").execute()
+            files = results.get('files', [])
+
+            # Filtrar por fechas si están definidas
+            for file in files:
+                file_fecha = file.get('modifiedTime', '')[:10]  # Extraer solo la fecha
+                if fecha_inicio and file_fecha < str(fecha_inicio):
+                    continue
+                if fecha_fin and file_fecha > str(fecha_fin):
+                    continue
+                resultados.append({
+                    'nombre': file['name'],
+                    'url': f"https://drive.google.com/file/d/{file['id']}/view",
+                    'fecha': file_fecha,
+                })
+
+            cantidad_archivos = len(resultados)
+            search_done = True
+
+    return render(request, 'documentos/consulta_comprobantes.html', {
+        'form': form,
+        'resultados': resultados,
+        'cantidad_archivos': cantidad_archivos,
+        'search_done': search_done,
+    })
+
+
+from django.shortcuts import redirect
+from django.http import JsonResponse
+from .google_drive_service import authenticate_drive
+
+def descargar_archivos_nube(request):
+    """
+    Descarga todos los archivos disponibles en Google Drive.
+    """
+    try:
+        drive_service = authenticate_drive()
+        query = "trashed = false"
+        results = drive_service.files().list(q=query, fields="files(id, name)").execute()
+        files = results.get('files', [])
+        downloaded_files = []
+
+        # Descarga cada archivo
+        for file in files:
+            downloaded_files.append({
+                'id': file['id'],
+                'name': file['name']
+            })
+
+        # Retorna una respuesta exitosa con los archivos descargados
+        return JsonResponse({'status': 'success', 'downloaded_files': downloaded_files})
+    except Exception as e:
+        return JsonResponse({'status': 'error', 'message': str(e)})
+
+def vaciar_carpeta_drive(request):
+    """
+    Vacía la carpeta de Google Drive eliminando todos los archivos.
+    """
+    if request.method == 'POST':
+        try:
+            drive_service = authenticate_drive()
+            query = "trashed = false"
+            results = drive_service.files().list(q=query, fields="files(id)").execute()
+            files = results.get('files', [])
+            deleted_files = []
+
+            # Elimina cada archivo
+            for file in files:
+                drive_service.files().delete(fileId=file['id']).execute()
+                deleted_files.append(file['id'])
+
+            # Retorna una respuesta exitosa con los archivos eliminados
+            return JsonResponse({'status': 'success', 'deleted_files': deleted_files})
+        except Exception as e:
+            return JsonResponse({'status': 'error', 'message': str(e)})
+    return JsonResponse({'status': 'error', 'message': 'Invalid request method.'})

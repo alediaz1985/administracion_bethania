@@ -150,7 +150,8 @@ GOOGLE_CREDENTIALS_ALUMNOS = os.path.join(
 
 GOOGLE_CREDENTIALS = os.path.join(BASE_DIR, 'apps', 'documentos', 'credetials.json')
 
-DRIVE_FOLDER_ID = '1BGucPl_22qKLBcEnyQpQRR_BBTjqPEc_zzmwJzcF-hkJQR7USfZPqUrTAmhTemD8OoQqhy3Z'  # Nuevo ID de carpeta
+DRIVE_FOLDER_ID = '1BGucPl_22qKLBcEnyQpQRR_BBTjqPEc_zzmwJzcF-hkJQR7USfZPqUrTAmhTemD8OoQqhy3Z' 
+ # Nuevo ID de carpeta
 
 
 print(f"Ruta calculada: {GOOGLE_CREDENTIALS}")

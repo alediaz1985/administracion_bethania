@@ -1,28 +1,88 @@
-# apps/documentos/google_drive.py
-import os
-import logging
-from google.oauth2.service_account import Credentials
 from googleapiclient.discovery import build
 from googleapiclient.errors import HttpError
+from googleapiclient.http import MediaIoBaseDownload
+from google.oauth2.service_account import Credentials
 from django.conf import settings
+import os
+import logging
 
+# Configuración del logger
 logger = logging.getLogger(__name__)
 
+# Ruta de las credenciales
+CREDENTIALS_PATH = r'C:\proyectos\Bethania2024\administracion_bethania\apps\documentos\credentials.json'
 SCOPES = ['https://www.googleapis.com/auth/drive']
 
 def get_drive_service():
-    """Obtiene el servicio autenticado de Google Drive usando la cuenta de servicio."""
+    """Obtiene el servicio autenticado de Google Drive."""
     try:
-        creds = Credentials.from_service_account_file(settings.GOOGLE_CREDENTIALS, scopes=SCOPES)
+        creds = Credentials.from_service_account_file(CREDENTIALS_PATH, scopes=SCOPES)
         service = build('drive', 'v3', credentials=creds)
-        logger.info("Servicio de Google Drive autenticado correctamente.")
         return service
-    except FileNotFoundError:
-        logger.error(f"No se encontró el archivo de credenciales en {settings.GOOGLE_CREDENTIALS}")
-        return None
     except Exception as e:
-        logger.error(f"Error al autenticar con Google Drive: {e}")
+        logger.error(f"Error autenticando el servicio de Google Drive: {e}")
         return None
+
+def descargar_archivos_desde_carpeta(folder_id):
+    """Descarga todos los archivos desde una carpeta de Google Drive, usando el ID del archivo como nombre."""
+    try:
+        # Obtener el servicio autenticado
+        service = get_drive_service()
+        if not service:
+            return "Error al autenticar con Google Drive."
+
+        # Listar archivos en la carpeta
+        results = service.files().list(
+            q=f"'{folder_id}' in parents",
+            fields="files(id, name)"
+        ).execute()
+        files = results.get('files', [])
+
+        if not files:
+            logger.info("No se encontraron archivos en la carpeta.")
+            return "No se encontraron archivos en la carpeta."
+
+        # Ruta de descarga
+        ruta_descarga = os.path.join(settings.MEDIA_ROOT, 'documentos', 'descargados')
+        if not os.path.exists(ruta_descarga):
+            os.makedirs(ruta_descarga)
+
+        # Descargar cada archivo
+        archivos_descargados = []
+        archivos_omitidos = []
+        for file in files:
+            file_id = file['id']
+            file_name = f"{file_id}"  # Usar el ID como nombre del archivo
+            archivo_path = os.path.join(ruta_descarga, file_name)
+            
+            # Verificar si ya existe
+            if os.path.exists(archivo_path):
+                logger.info(f"El archivo {file_name} ya existe. Omitiendo descarga.")
+                archivos_omitidos.append(file_name)
+                continue
+
+            try:
+                request = service.files().get_media(fileId=file_id)
+                with open(archivo_path, 'wb') as archivo_local:
+                    downloader = MediaIoBaseDownload(archivo_local, request)
+                    done = False
+                    while not done:
+                        status, done = downloader.next_chunk()
+                        logger.info(f"Descargando {file_name}: {int(status.progress() * 100)}%.")
+
+                archivos_descargados.append(file_name)
+                logger.info(f"Archivo {file_name} descargado correctamente en {archivo_path}.")
+            except HttpError as error:
+                logger.error(f"Error al descargar el archivo {file_name} (ID: {file_id}): {error}")
+
+        return {
+            'descargados': archivos_descargados,
+            'omitidos': archivos_omitidos
+        }
+    except Exception as e:
+        logger.error(f"Error descargando archivos desde la carpeta de Google Drive: {e}")
+        return f"Error descargando archivos: {e}"
+
 
 def search_files_in_drive(folder_id):
     service = get_drive_service()
