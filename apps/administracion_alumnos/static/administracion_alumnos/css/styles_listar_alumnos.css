@@ -302,7 +302,7 @@ body {
 
 .tabs button.active {
     background-color: #b8b7b7;
-    border-color: #5a2c85;
+    border-color: #007bff;
 }
 
 /* Media queries para pantallas más pequeñas */
@@ -455,4 +455,119 @@ body {
   .Documents-btn:hover .fileFront {
     transform: rotateX(30deg);
   }
-  
+
+/* Estilo general del contenedor de filtros */
+.filters {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: 0 40px 0 0;
+    position: relative;
+}
+
+/* Estilos del select */
+#nivel-filter {
+    appearance: none;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    width: 100%;
+    max-width: 250px;
+    padding: 14px 20px;
+    font-size: 12px;
+    font-family: 'Roboto', sans-serif;
+    color: #444;
+    background: linear-gradient(135deg, #f0f4f8, #e0e8f0);
+    border: 2px solid #ddd;
+    border-radius: 50px;
+    outline: none;
+    transition: all 0.3s ease-in-out;
+    position: relative;
+    cursor: pointer;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.4);
+}
+
+/* Efectos cuando el select está en foco o el mouse pasa sobre él */
+#nivel-filter:hover,
+#nivel-filter:focus {
+    border-color: #007bff;
+    background: linear-gradient(135deg, #ffffff, #f8f9fc);
+    box-shadow: 0 4px 15px rgba(0, 123, 255, 0.3);
+    transform: translateY(-2px);
+}
+
+/* Flecha personalizada en el desplegable */
+#nivel-filter::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    right: 15px;
+    width: 0;
+    height: 0;
+    border-left: 6px solid transparent;
+    border-right: 6px solid transparent;
+    border-top: 8px solid #333;
+    transform: translateY(-50%);
+    pointer-events: none;
+    transition: all 0.3s ease;
+}
+
+/* Animación cuando el select es enfocado */
+#nivel-filter:focus::after {
+    border-top-color: #007bff;
+}
+
+/* Estilos para las opciones del select */
+#nivel-filter option {
+    background-color: #fff;
+    color: #333;
+    font-size: 12px;
+    font-weight: 400;
+    padding: 12px;
+    transition: all 0.3s ease-in-out;
+}
+
+/* Efecto de hover en las opciones */
+#nivel-filter option:hover {
+    background-color: #f1f9ff;
+    color: #007bff;
+    transform: scale(1.05);
+    box-shadow: inset 0 0 10px rgba(0, 123, 255, 0.2);
+}
+
+/* Estilo cuando el select está deshabilitado */
+#nivel-filter:disabled {
+    background-color: #f9f9f9;
+    color: #aaa;
+    cursor: not-allowed;
+}
+
+/* Resaltar etiquetas o indicaciones */
+label {
+    font-size: 12px;
+    color: #444;
+    font-weight: 600;
+    text-align: center;
+    margin-bottom: 15px;
+    letter-spacing: 0.5px;
+}
+
+/* Aplicar una animación de enfoque cuando el campo es clickeado */
+@keyframes focusEffect {
+    0% {
+        box-shadow: 0 0 0px rgba(0, 123, 255, 0.4);
+    }
+    100% {
+        box-shadow: 0 0 10px rgba(0, 123, 255, 0.7);
+    }
+}
+
+#nivel-filter:focus {
+    animation: focusEffect 0.5s ease-out;
+}
+
+/* Estilo para la caja de filtro para mantener la estética profesional */
+.filters {
+    max-width: 320px;
+    width: 100%;
+    padding: 10px;
+}

@@ -63,16 +63,29 @@ def estudiante_list(request):
 #     estudiantes = Estudiante.objects.all()
 #     return render(request, 'administracion_alumnos/estudiante_list.html',  {'estudiantes': estudiantes})
 
-def cambiar_estado(request, estudiante_id):
-    # Obtener el registro de estado_documentacion
-    estado_doc = get_object_or_404(EstadoDocumentacion, estudiante_id=estudiante_id, estado='pendiente')
+def confirmar_aprobacion(request, estudiante_id):
+    try:
+        # Buscar el registro con estado pendiente
+        estado_doc = EstadoDocumentacion.objects.get(estudiante_id=estudiante_id, estado='pendiente')
+    except EstadoDocumentacion.DoesNotExist:
+        # Manejar el caso donde no hay un estado pendiente
+        mensaje_error = "El estudiante ya está aprobado o no tiene un estado pendiente."
+        return render(request, 'administracion_alumnos/error_aprobacion.html', {'mensaje_error': mensaje_error})
 
-    # Actualizar el estado a aprobado
-    estado_doc.estado = 'aprobado'
-    estado_doc.save()
+    # Obtener los datos del estudiante
+    estudiante = estado_doc.estudiante
 
-    # Redirigir a una vista de éxito o listado, por ejemplo
-    return redirect('estado_documentacion_list')
+    if request.method == 'POST':
+        # Cambiar el estado a 'aprobado' si se confirma
+        estado_doc.estado = 'aprobado'
+        estado_doc.save()
+        return redirect('estudiante_list')  # Cambia según el flujo de tu aplicación
+
+    # Renderizar el template de confirmación
+    return render(request, 'administracion_alumnos/confirmar_aprobacion.html', {
+        'estado_doc': estado_doc,
+        'estudiante': estudiante,
+    })
 
 def estudiante_detail(request, pk):
     estudiante = get_object_or_404(Estudiante, pk=pk)
@@ -449,7 +462,7 @@ def estudiante_edit(request, pk):
         form = EstudianteForm(request.POST, instance=alumno)
         if form.is_valid():
             form.save()
-            return redirect('estudiante_detail', pk=alumno.pk)
+            return redirect('estudiante_list')
         else:
             print(form.errors)  # Esto te dará detalles de cualquier error en el formulario
     else:
