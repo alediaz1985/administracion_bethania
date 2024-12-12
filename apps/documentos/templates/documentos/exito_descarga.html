@@ -1,0 +1,24 @@
+{% extends 'base.html' %}
+
+{% block title %}Descarga Exitosa{% endblock %}
+
+{% block content %}
+<div class="descarga-exitosa-container">
+    <h2>Descarga Completa</h2>
+    <p>Archivos descargados:</p>
+    <ul>
+        {% for archivo in archivos_descargados %}
+            <li>{{ archivo }}</li>
+        {% endfor %}
+    </ul>
+
+    <p>Archivos omitidos (ya existentes):</p>
+    <ul>
+        {% for archivo in archivos_omitidos %}
+            <li>{{ archivo }}</li>
+        {% endfor %}
+    </ul>
+
+    <a href="{% url 'consulta' %}" class="boton-volver">Volver a la consulta</a>
+</div>
+{% endblock %}

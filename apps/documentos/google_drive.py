@@ -145,6 +145,26 @@ def vaciar_carpeta_drive(folder_id):
         logger.error(f"Error vaciando la carpeta de Google Drive: {e}")
         return f"Error vaciando la carpeta: {e}"
 
+from googleapiclient.http import MediaIoBaseDownload
+
+def download_file(service, file_id, file_name, destination):
+    """Descarga un archivo desde Google Drive."""
+    import io
+    from googleapiclient.http import MediaIoBaseDownload
+
+    try:
+        file_path = os.path.join(destination, file_name)  # Ruta completa con el nuevo nombre
+        request = service.files().get_media(fileId=file_id)
+        with open(file_path, 'wb') as fh:
+            downloader = MediaIoBaseDownload(fh, request)
+            done = False
+            while not done:
+                status, done = downloader.next_chunk()
+                logger.info(f"Descargando {file_name}: {int(status.progress() * 100)}% completado.")
+        return file_path
+    except Exception as e:
+        logger.error(f"Error descargando archivo {file_name}: {e}")
+        return None
 """
 import os
 import logging

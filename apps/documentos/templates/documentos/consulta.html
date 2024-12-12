@@ -8,7 +8,6 @@
     <link rel="stylesheet" href="{% static 'documentos/css/consulta.css' %}">
 {% endblock %}
 
-
 {% block content %}
 <div class="consulta-container">
     <!-- Título -->
@@ -51,5 +50,27 @@
             <p>No se encontraron documentos.</p>
         {% endif %}
     {% endif %}
+
+    <!-- Botón para descargar archivos -->
+    <div class="descargar-archivos-container">
+        <a href="{% url 'descargar_archivos_nube' %}" class="descargar-archivos-button">Descargar Archivos de Google Drive</a>
+    </div>
 </div>
+
+<script>
+    async function descargarArchivos() {
+        try {
+            const response = await fetch("{% url 'descargar_archivos_nube' %}");
+            const data = await response.json();
+            if (data.status === 'success') {
+                alert('Archivos descargados:\n' + data.descargados.join('\n') + '\n\nArchivos omitidos:\n' + data.omitidos.join('\n'));
+            } else {
+                alert('Error: ' + data.message);
+            }
+        } catch (error) {
+            console.error('Error en la descarga:', error);
+            alert('Ocurrió un error al intentar descargar los archivos.');
+        }
+    }
+</script>
 {% endblock %}

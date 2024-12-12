@@ -148,7 +148,7 @@ GOOGLE_CREDENTIALS_ALUMNOS = os.path.join(
     BASE_DIR, 'apps', 'administracion_alumnos', 'credentials.json'
 )
 
-GOOGLE_CREDENTIALS = os.path.join(BASE_DIR, 'apps', 'documentos', 'credetials.json')
+GOOGLE_CREDENTIALS = os.path.join(BASE_DIR, 'apps', 'documentos', 'credentials.json')
 
 DRIVE_FOLDER_ID = '1BGucPl_22qKLBcEnyQpQRR_BBTjqPEc_zzmwJzcF-hkJQR7USfZPqUrTAmhTemD8OoQqhy3Z' 
  # Nuevo ID de carpeta
