@@ -1,0 +1,41 @@
+/* Contenedor principal de error */
+.error-container {
+    max-width: 600px;
+    margin: 50px auto;
+    padding: 20px;
+    border: 2px solid #ff4d4d; /* Borde rojo para destacar el error */
+    background-color: #ffe6e6; /* Fondo rojo claro */
+    border-radius: 8px;
+    text-align: center;
+    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+/* Título del error */
+.error-container h2 {
+    color: #ff3333; /* Rojo más intenso para el encabezado */
+    font-size: 24px;
+    margin-bottom: 15px;
+}
+
+/* Mensaje de error */
+.error-container p {
+    color: #333;
+    font-size: 18px;
+    margin-bottom: 20px;
+}
+
+/* Botón de volver */
+.error-container .button-cancel {
+    display: inline-block;
+    text-decoration: none;
+    background-color: #ff4d4d; /* Rojo para mantener consistencia */
+    color: white;
+    padding: 10px 20px;
+    font-size: 16px;
+    border-radius: 5px;
+    transition: background-color 0.3s ease;
+}
+
+.error-container .button-cancel:hover {
+    background-color: #e60000; /* Más oscuro al pasar el mouse */
+}

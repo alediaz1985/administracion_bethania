@@ -1,0 +1,17 @@
+{% extends 'base.html' %}
+
+{% block title %}Error de Aprobación{% endblock %}
+
+{% load static %}
+
+{% block extra_styles %}
+    <link rel="stylesheet" href="{% static 'administracion_alumnos/css/error_aprobacion.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="error-container">
+    <h2>Operación no permitida</h2>
+    <p>{{ mensaje_error }}</p>
+    <a href="{% url 'estudiante_list' %}" class="button-cancel">Volver a la lista de estudiantes</a>
+</div>
+{% endblock %}

@@ -2,28 +2,20 @@
 
 {% block title %}Confirmar aprobación{% endblock %}
 
-{% load static %}
-
-{% block extra_styles %}
-    <link rel="stylesheet" href="{% static 'administracion_alumnos/css/estudiante_confirm_aprobar.css' %}">
-{% endblock %}
-
 {% block content %}
-
 <div class="confirmation-container">
-    <h2>¿Estás seguro de que deseas aprobar el estado de documentación de este estudiante?</h2>
+    <h2>¿Estás seguro de que quieres aprobar a este estudiante?</h2>
     
     <div class="student-details">
         <p><strong>CUIL:</strong> {{ estudiante.cuil_estudiante }}</p>
         <p><strong>Nombre:</strong> {{ estudiante.nombres_estudiante }} {{ estudiante.apellidos_estudiante }}</p>
-        <!-- Añadir más campos si es necesario -->
+        <p><strong>Estado actual:</strong> {{ estado_doc.estado }}</p>
     </div>
     
     <form method="post">
         {% csrf_token %}
         <button type="submit" class="button-submit">Sí, aprobar</button>
-        <a href="{% url 'estado_documentacion_list' %}" class="button-cancel">Cancelar</a>
+        <a href="{% url 'consultar_alumno' %}" class="button-cancel">Cancelar</a>
     </form>
 </div>
-
 {% endblock %}

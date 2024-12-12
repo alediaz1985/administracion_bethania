@@ -99,7 +99,7 @@
     <div class="button-container">
         
         <div class="button-group">
-            <a href="{% url 'cambiar_estado_documentacion' estudiante_id=estudiante.id %}" class="button-submit alumnos-btn-1">
+            <a href="{% url 'confirmar_aprobacion' estudiante_id=estudiante.id %}" class="button-submit alumnos-btn-1">
                 <i class="fas fa-check"></i> <!-- Icono de aprobar -->
             </a>
             <a href="{% url 'estudiante_edit' pk=estudiante.pk %}" class="button-submit alumnos-btn-1">
@@ -900,7 +900,7 @@
                     <tbody>
                         {% if estudiante.nivel_inicial3 %}
                         <tr>
-                            <th>Nivel Inicial 3</th>
+                            <th>Nivel Inicial de 3 años</th>
                         </tr>
                         <tr>
                             <td>{{ estudiante.nivel_inicial3 }}</td>
@@ -909,7 +909,7 @@
             
                         {% if estudiante.nivel_inicial4 %}
                         <tr>
-                            <th>Nivel Inicial 4</th>
+                            <th>Nivel Inicial de 4 años</th>
                         </tr>
                         <tr>
                             <td>{{ estudiante.nivel_inicial4 }}</td>
@@ -918,7 +918,7 @@
             
                         {% if estudiante.nivel_inicial5 %}
                         <tr>
-                            <th>Nivel Inicial 5</th>
+                            <th>Nivel Inicial de 5 años</th>
                         </tr>
                         <tr>
                             <td>{{ estudiante.nivel_inicial5 }}</td>
@@ -927,7 +927,7 @@
             
                         {% if estudiante.nivel_primario1 %}
                         <tr>
-                            <th>Nivel Primario 1</th>
+                            <th>Nivel Primario, 1er Grado</th>
                         </tr>
                         <tr>
                             <td>{{ estudiante.nivel_primario1 }}</td>
@@ -936,7 +936,7 @@
             
                         {% if estudiante.nivel_primario2 %}
                         <tr>
-                            <th>Nivel Primario 2</th>
+                            <th>Nivel Primario, 2do Grado</th>
                         </tr>
                         <tr>
                             <td>{{ estudiante.nivel_primario2 }}</td>
@@ -945,7 +945,7 @@
             
                         {% if estudiante.nivel_primario3 %}
                         <tr>
-                            <th>Nivel Primario 3</th>
+                            <th>Nivel Primario, 3er Grado</th>
                         </tr>
                         <tr>
                             <td>{{ estudiante.nivel_primario3 }}</td>
@@ -954,7 +954,7 @@
             
                         {% if estudiante.nivel_primario4 %}
                         <tr>
-                            <th>Nivel Primario 4</th>
+                            <th>Nivel Primario, 4to Grado</th>
                         </tr>
                         <tr>
                             <td>{{ estudiante.nivel_primario4 }}</td>
@@ -963,7 +963,7 @@
             
                         {% if estudiante.nivel_primario5 %}
                         <tr>
-                            <th>Nivel Primario 5</th>
+                            <th>Nivel Primario, 5to Grado</th>
                         </tr>
                         <tr>
                             <td>{{ estudiante.nivel_primario5 }}</td>
@@ -972,7 +972,7 @@
             
                         {% if estudiante.nivel_primario6 %}
                         <tr>
-                            <th>Nivel Primario 6</th>
+                            <th>Nivel Primario, 6to Grado</th>
                         </tr>
                         <tr>
                             <td>{{ estudiante.nivel_primario6 }}</td>
@@ -981,7 +981,7 @@
             
                         {% if estudiante.nivel_primario7 %}
                         <tr>
-                            <th>Nivel Primario 7</th>
+                            <th>Nivel Primario, 7mo Grado</th>
                         </tr>
                         <tr>
                             <td>{{ estudiante.nivel_primario7 }}</td>
@@ -990,7 +990,7 @@
             
                         {% if estudiante.nivel_secundario1 %}
                         <tr>
-                            <th>Nivel Secundario 1</th>
+                            <th>Nivel Secundario, 1er Año</th>
                         </tr>
                         <tr>
                             <td>{{ estudiante.nivel_secundario1 }}</td>
@@ -999,7 +999,7 @@
             
                         {% if estudiante.nivel_secundario2 %}
                         <tr>
-                            <th>Nivel Secundario 2</th>
+                            <th>Nivel Secundario, 2do Año</th>
                         </tr>
                         <tr>
                             <td>{{ estudiante.nivel_secundario2 }}</td>
@@ -1008,7 +1008,7 @@
             
                         {% if estudiante.nivel_secundario3 %}
                         <tr>
-                            <th>Nivel Secundario 3</th>
+                            <th>Nivel Secundario, 3er Año</th>
                         </tr>
                         <tr>
                             <td>{{ estudiante.nivel_secundario3 }}</td>
@@ -1017,7 +1017,7 @@
             
                         {% if estudiante.nivel_secundario4 %}
                         <tr>
-                            <th>Nivel Secundario 4</th>
+                            <th>Nivel Secundario, 4to Año</th>
                         </tr>
                         <tr>
                             <td>{{ estudiante.nivel_secundario4 }}</td>
@@ -1026,7 +1026,7 @@
             
                         {% if estudiante.nivel_secundario5 %}
                         <tr>
-                            <th>Nivel Secundario 5</th>
+                            <th>Nivel Secundario, 5to Año</th>
                         </tr>
                         <tr>
                             <td>{{ estudiante.nivel_secundario5 }}</td>

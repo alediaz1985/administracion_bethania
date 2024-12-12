@@ -1,5 +1,18 @@
 /* Estilos generales */
 
+body {
+    font-family: 'Roboto', sans-serif;
+    margin: 0;
+    padding: 0;
+    background-image: url('fondo1.png'); /* Cambia por la ruta de tu imagen */
+    background-size: cover;  /* Asegura que la imagen cubra todo el fondo */
+    background-position: center; /* Centra la imagen */
+    background-repeat: no-repeat; /* Evita que la imagen se repita */
+    color: #000000;
+    width: 96%;
+    float: right;
+}
+
 h1 {
     font-size: 24px;
     color: #333;
