@@ -24,8 +24,6 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 });
 
-
-
 function toggleSidebar() {
     const sidebar = document.getElementById("sidebar");
     const content = document.querySelector(".open-btn");
@@ -39,7 +37,6 @@ function toggleSidebar() {
     } else {
         content.style.marginLeft = "0px";
     }
-
 }
 
 // Función para expandir los subitems de un ítem específico
@@ -50,12 +47,13 @@ expandBtns.forEach(btn => {
         e.preventDefault();  // Prevenir la acción predeterminada del enlace
 
         const sidebar = document.getElementById("sidebar");
-        const subitems = this.nextElementSibling;  // Los subitems del ítem clickeado
 
-        // Si la barra lateral está cerrada, la expandimos
+        // No hacer nada si la barra lateral está cerrada
         if (!sidebar.classList.contains('active')) {
-            sidebar.classList.add('active');  // Expande la barra lateral
+            return;
         }
+
+        const subitems = this.nextElementSibling;  // Los subitems del ítem clickeado
 
         // Verificar si ya está abierto
         const isActive = subitems.classList.contains('active');
