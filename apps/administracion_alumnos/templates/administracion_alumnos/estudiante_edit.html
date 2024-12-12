@@ -12,43 +12,24 @@
 
 <div class="edit-student-container">
 
-    <!-- <input type="text" id="searchField" placeholder="Buscar campo..." onkeyup="filterFields()"> -->
-    <!-- <div class="container">
-        <input type="text" id="searchField" onkeyup="filterFields()" required="required" class="inp" />
-        <span class="content">Buscar campo...</span>
-    </div> -->
-
     <label for="myInput" class="label">
         <span class="label-title">Buscar Datos</span>
         <input class="input" type="text" id="searchField" placeholder="Campo" onkeyup="filterFields()">
     </label>
       
-
-    <!-- <form method="post" enctype="multipart/form-data" id="form-fields" class="edit-student-form">
-        {% csrf_token %}
-        {% for field in form %}
-            <div class="form-group">
-                {{ field.label_tag }}
-                {{ field }}
-                {% if field.help_text %}
-                    <small>{{ field.help_text }}</small>
-                {% endif %}
-                {% if field.errors %}
-                    <div class="error">{{ field.errors }}</div>
-                {% endif %}
-            </div>
-        {% endfor %}
-        <div class="button">
-            <button type="submit" class="button-submit">Guardar</button>
-            <a href="{% url 'estudiante_detail' pk=form.instance.pk %}" class="button-cancel">Cancelar</a>
-        </div>
-    </form> -->
-
     <form method="post" enctype="multipart/form-data" id="form-fields" class="edit-student-form" novalidate>
         {% csrf_token %}
+        
+        <!-- Mover los botones arriba -->
+        <div class="form-footer">
+            <button type="submit" class="button-submit">Guardar</button>
+            <a href="{% url 'consultar_alumno' %}" class="button-cancel">Cancelar</a>
+        </div>
+
         <div class="form-header">
             <p>Por favor, complete los campos requeridos para actualizar los detalles del estudiante.</p>
         </div>
+
         <div class="form-body">
             {% for field in form %}
                 <div class="form-group">
@@ -62,10 +43,6 @@
                     {% endif %}
                 </div>
             {% endfor %}
-        </div>
-        <div class="form-footer">
-            <button type="submit" class="button-submit">Guardar</button>
-            <a href="{% url 'consultar_alumno' %}" class="button-cancel">Cancelar</a>
         </div>
     </form>
     

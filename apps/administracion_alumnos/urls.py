@@ -6,7 +6,7 @@ from django.conf import settings
 urlpatterns = [
     path('list/', views.estudiante_list, name='estudiante_list'),
     path('detail/<int:pk>/', views.estudiante_detail, name='estudiante_detail'),
-    path('edit/<int:pk>/', views.estudiante_edit, name='estudiante_edit'),
+    path('edit/<int:pk>/', views.estudiante_edit,name='estudiante_edit'),
     path('delete/<int:pk>/', views.estudiante_delete, name='estudiante_delete'),
     path('consultar/', views.estudiante_consultar, name='consultar_alumno'),
     #path('ver-datos/<int:pk>/', views.ver_datos_estudiante, name='ver_datos_estudiante'),
@@ -18,6 +18,7 @@ urlpatterns = [
     path('generar-contrato/<int:estudiante_id>/', views.generar_contrato_view, name='generar_contrato'),
     path('descargar_archivos/', views.descargar_todos_archivos, name='descargar_archivos_alumnos'),
     path('lista-fotos-estudiantes/', views.lista_fotos_estudiantes, name='lista_fotos_estudiantes'),
+    path('estado_documentacion/cambiar/<int:estudiante_id>/', views.cambiar_estado, name='cambiar_estado_documentacion'),
 ]
 
 # Configuración para servir archivos media en desarrollo

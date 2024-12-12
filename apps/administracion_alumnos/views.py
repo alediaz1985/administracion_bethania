@@ -136,15 +136,13 @@ def ver_datos_estudiante(request, pk):
 #     return render(request, 'administracion_estudiantes/estudiante_edit.html', {'form': form})
 
 
-def estudiante_delete(request, pk):
-    estudiante = get_object_or_404(Estudiante, pk=pk)
-    if request.method == "POST":
-        estudiante.delete()
-        messages.success(request, 'Estudiante eliminado correctamente.')
-        return redirect('estudiante_list')
-    return render(request, 'administracion_estudiantes/estudiante_confirm_delete.html', {'estudiante': estudiante})
-
-
+# def estudiante_delete(request, pk):
+#     estudiante = get_object_or_404(Estudiante, pk=pk)
+#     if request.method == "POST":
+#         estudiante.delete()
+#         messages.success(request, 'Estudiante eliminado correctamente.')
+#         return redirect('estudiante_list')
+#     return render(request, 'administracion_alumnos/alumno_confirm_delete.html', {'estudiante': estudiante}) 
 
 def registrar_estudiante(request):
     if request.method == 'POST':
@@ -458,26 +456,26 @@ def estudiante_edit(request, pk):
         form = EstudianteForm(instance=alumno)
     return render(request, 'administracion_alumnos/estudiante_edit.html', {'form': form})
 
-def estudiante_delete(request, pk):
-    """
-    Vista para eliminar un alumno.
-    """
-    alumno = get_object_or_404(Estudiante, pk=pk)
-    if request.method == "POST":
-        alumno.delete()
-        return redirect(reverse('estudiante_list'))  # Redirige a la lista de alumnos
-    return render(request, 'administracion_alumnos/alumno_confirm_delete.html', {'alumno': alumno})
+# def estudiante_delete(request, pk):
+#     """
+#     Vista para eliminar un alumno.
+#     """
+#     alumno = get_object_or_404(Estudiante, pk=pk)
+#     if request.method == "POST":
+#         alumno.delete()
+#         return redirect(reverse('estudiante_list'))  # Redirige a la lista de alumnos
+#     return render(request, 'administracion_alumnos/alumno_confirm_delete.html', {'alumno': alumno})
 
 
 def estudiante_delete(request, pk):
-    """
-    Vista para eliminar un alumno.
-    """
-    alumno = get_object_or_404(Estudiante, pk=pk)
-    if request.method == "POST":
-        alumno.delete()
-        return redirect(reverse('estudiante_list'))  # Redirige a la lista de alumnos
-    return render(request, 'administracion_alumnos/alumno_confirm_delete.html', {'alumno': alumno})
+    # Aquí deberías usar `estudiante`, no `alumno`
+    estudiante = get_object_or_404(Estudiante, pk=pk)
+    
+    if request.method == 'POST':
+        estudiante.delete()  # Asegúrate de usar `estudiante`, no `alumno`
+        return redirect('estudiante_list')
+    
+    return render(request, 'administracion_alumnos/alumno_confirm_delete.html', {'estudiante': estudiante})
 
 def estudiante_consultar(request):
     estudiante = None

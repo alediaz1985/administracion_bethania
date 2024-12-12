@@ -82,7 +82,7 @@ body {
 .form-footer {
     display: flex;
     justify-content: space-between;
-    margin-top: 20px;
+    margin: 20px;
 }
 
 .button-submit,
@@ -144,7 +144,7 @@ body {
     font-size: .65rem;
     transition: all .3s ease-out;
     width: 250px;
-    padding: 40px;
+    padding: 10px;
   }
   
   .label > .label-title {

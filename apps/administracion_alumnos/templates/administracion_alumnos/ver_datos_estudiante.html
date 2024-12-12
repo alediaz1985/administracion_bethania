@@ -99,13 +99,13 @@
     <div class="button-container">
         
         <div class="button-group">
-            <a href="{% url 'consultar_alumno' %}" class="button-submit alumnos-btn-1">
+            <a href="{% url 'cambiar_estado_documentacion' estudiante_id=estudiante.id %}" class="button-submit alumnos-btn-1">
                 <i class="fas fa-check"></i> <!-- Icono de aprobar -->
             </a>
             <a href="{% url 'estudiante_edit' pk=estudiante.pk %}" class="button-submit alumnos-btn-1">
                 <i class="fas fa-edit"></i> <!-- Icono de editar -->
             </a>
-            <a href="{% url 'consultar_alumno' %}" class="button-submit alumnos-btn-2">
+            <a href="{% url 'estudiante_delete' estudiante.pk %}" class="button-submit alumnos-btn-2">
                 <i class="fas fa-trash-alt"></i> <!-- Icono de eliminar -->
             </a>
             <a href="{% url 'consultar_alumno' %}" class="button-submit alumnos-btn-1">
