@@ -4,8 +4,8 @@ class Estudiante(models.Model):
 
     # Definimos las opciones para el campo 'sexo_estudiante'
     SEXO_CHOICES = [
-        ('M', 'Masculino'),
-        ('F', 'Femenino'),
+        ('Masculino', 'Masculino'),
+        ('Femenino', 'Femenino'),
     ]
 
     id = models.AutoField(primary_key=True)  # Auto incremental
@@ -19,9 +19,9 @@ class Estudiante(models.Model):
     apellidos_estudiante = models.CharField(max_length=100)
     nombres_estudiante = models.CharField(max_length=100)
     sexo_estudiante = models.CharField(
-        max_length=1,
+        max_length=9,
         choices=SEXO_CHOICES,  # Lista de opciones definidas arriba
-        default='M',  # Valor por defecto, puedes cambiarlo si es necesario
+        default='Masculino',  # Valor por defecto, puedes cambiarlo si es necesario
     )
     fecha_nac_estudiante = models.CharField(max_length=100)
     nacionalidad_estudiante = models.CharField(max_length=100)
