@@ -45,10 +45,10 @@ body {
 }
 
 .styled-form input[type="text"] {
-    padding: 12px;
+    padding: 10px;
     border: 1px solid #95a5a6;
     border-radius: 5px;
-    font-size: 16px;
+    font-size: 13px;
     width: 100%;
     margin-bottom: 20px;
 }

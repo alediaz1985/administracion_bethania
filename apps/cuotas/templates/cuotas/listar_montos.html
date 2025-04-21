@@ -2,7 +2,55 @@
 
 {% block title %}Listado de Montos del Ciclo Lectivo{% endblock %}
 
+{% load static %}
+
+{% block extra_styles %}
+    <link rel="stylesheet" href="{% static 'cuotas/css/lista-montos.css' %}">
+{% endblock %}
+
 {% block content %}
+
+<a href="{% url 'cuotas:generar_pdf_montos' %}" class="montos__boton-descarga">
+    Descargar Listado de Montos
+</a>
+
+<section class="montos">
+    <h1 class="montos__titulo">Listado de Montos del Ciclo Lectivo</h1>
+
+    <table class="montos__tabla">
+        <thead class="montos__encabezado">
+            <tr class="montos__fila-encabezado">
+                <th class="montos__celda-encabezado">Ciclo Lectivo</th>
+                <th class="montos__celda-encabezado">Subnivel</th>
+                <th class="montos__celda-encabezado">Tipo de Monto</th>
+                <th class="montos__celda-encabezado">Monto</th>
+                <th class="montos__celda-encabezado">Fecha de Actualización</th>
+            </tr>
+        </thead>
+        <tbody class="montos__cuerpo">
+            {% for monto in montos %}
+                {% if forloop.first or previous_ciclo_lectivo != monto.ciclo_lectivo.año_lectivo %}
+                    <tr class="montos__fila montos__fila--agrupada">
+                        <td class="montos__celda" rowspan="2">{{ monto.ciclo_lectivo.año_lectivo }}</td>
+                        <td class="montos__celda" rowspan="2">{{ monto.subnivel_cursado.nombre }}</td>
+                        <td class="montos__celda"><strong>Inscripción</strong></td>
+                        <td class="montos__celda">${{ monto.monto_inscripcion }}</td>
+                        <td class="montos__celda">{{ monto.fecha_actualizacion }}</td>
+                    </tr>
+                {% endif %}
+                <tr class="montos__fila">
+                    <td class="montos__celda"><strong>Cuota Mensual</strong></td>
+                    <td class="montos__celda">${{ monto.monto_cuota_mensual }}</td>
+                    <td class="montos__celda">{{ monto.fecha_actualizacion }}</td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</section>
+
+{% endblock %}
+
+<!-- 
 <a href="{% url 'cuotas:generar_pdf_montos' %}" class="btn btn-primary mb-3">Descargar Listado de Montos</a>
 
 <div class="container">
@@ -34,9 +82,8 @@
                     <td>${{ monto.monto_cuota_mensual }}</td>
                     <td>{{ monto.fecha_actualizacion }}</td>
                 </tr>
-                <!-- Actualizamos previous_ciclo_lectivo en la lógica del backend -->
             {% endfor %}
         </tbody>
     </table>
 </div>
-{% endblock %}
+ -->

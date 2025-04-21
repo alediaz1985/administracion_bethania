@@ -6,15 +6,77 @@
 {% block title %}Actualizar Montos del Ciclo Lectivo{% endblock %}
 
 {% block extra_styles %}
-    <link rel="stylesheet" href="{% static 'cuotas/css/cuotas.css' %}">
+    <link rel="stylesheet" href="{% static 'cuotas/css/actualizar_montos.css' %}">
 {% endblock %}
 
 {% block content %}
 
-<div class="container">
+<section class="montos">
+    <h1 class="montos__titulo">Actualizar Montos del Ciclo Lectivo</h1>
+
+    <!-- Mensajes de éxito o error -->
+    {% if messages %}
+        <div class="montos__alerta montos__alerta--exito">
+            {% for message in messages %}
+                <p>{{ message }}</p>
+            {% endfor %}
+        </div>
+    {% endif %}
+
+    <!-- Formulario -->
+    <form method="post" novalidate class="montos__formulario">
+        {% csrf_token %}
+
+        <!-- Campo: Ciclo Lectivo -->
+        <div class="montos__campo">
+            <label for="ciclo_lectivo_id" class="montos__etiqueta">Ciclo Lectivo*</label>
+            <select name="ciclo_lectivo_id" id="ciclo_lectivo_id" class="montos__select" required>
+                <option value="">---------</option>
+                {% for ciclo in ciclos %}
+                    <option value="{{ ciclo.id }}">Ciclo {{ ciclo.año_lectivo }}</option>
+                {% endfor %}
+            </select>
+        </div>
+
+        <!-- Campo: Subnivel -->
+        <div class="montos__campo">
+            <label for="subnivel_cursado_id" class="montos__etiqueta">Subnivel*</label>
+            <select name="subnivel_cursado_id" id="subnivel_cursado_id" class="montos__select" required>
+                <option value="">---------</option>
+                {% for subnivel in subniveles %}
+                    <option value="{{ subnivel.id }}">{{ subnivel.nombre }}</option>
+                {% endfor %}
+            </select>
+        </div>
+
+        <!-- Campo: Monto Inscripción -->
+        <div class="montos__campo">
+            <label for="monto_inscripcion" class="montos__etiqueta">Monto de Inscripción*</label>
+            <input type="text" name="monto_inscripcion" id="monto_inscripcion" class="montos__input" required>
+        </div>
+
+        <!-- Campo: Monto Cuota -->
+        <div class="montos__campo">
+            <label for="monto_cuota_mensual" class="montos__etiqueta">Monto de la Cuota Mensual*</label>
+            <input type="text" name="monto_cuota_mensual" id="monto_cuota_mensual" class="montos__input" required>
+        </div>
+
+        <!-- Botón de envío -->
+        <div class="montos__acciones">
+            <button type="submit" class="boton-accion">
+                <span class="boton-accion__circulo" aria-hidden="true">
+                    <span class="boton-accion__icono boton-accion__icono--flecha"></span>
+                </span>
+                <span class="boton-accion__texto">Actualizar</span>
+            </button>
+        </div>
+
+    </form>
+</section>
+
+<!-- <div class="container">
     <h1>Actualizar Montos del Ciclo Lectivo</h1>
 
-    <!-- Mensaje de éxito o error al actualizar los montos -->
     {% if messages %}
         <div class="alert alert-success" role="alert">
             {% for message in messages %}
@@ -23,11 +85,9 @@
         </div>
     {% endif %}
 
-    <!-- Formulario de actualización -->
     <form method="post" novalidate class="form-horizontal">
         {% csrf_token %}
 
-        <!-- Campo para seleccionar Ciclo Lectivo -->
         <div class="form-group">
             <label for="ciclo_lectivo_id" class="col-sm-2 control-label">Ciclo Lectivo*</label>
             <div class="col-sm-10">
@@ -40,7 +100,6 @@
             </div>
         </div>
 
-        <!-- Campo para seleccionar Subnivel -->
         <div class="form-group">
             <label for="subnivel_cursado_id" class="col-sm-2 control-label">Subnivel*</label>
             <div class="col-sm-10">
@@ -53,7 +112,6 @@
             </div>
         </div>
 
-        <!-- Campo para Monto de Inscripción -->
         <div class="form-group">
             <label for="monto_inscripcion" class="col-sm-2 control-label">Monto de Inscripción*</label>
             <div class="col-sm-10">
@@ -61,7 +119,6 @@
             </div>
         </div>
 
-        <!-- Campo para Monto de la Cuota Mensual -->
         <div class="form-group">
             <label for="monto_cuota_mensual" class="col-sm-2 control-label">Monto de la Cuota Mensual*</label>
             <div class="col-sm-10">
@@ -69,7 +126,6 @@
             </div>
         </div>
 
-        <!-- Botón de envío -->
         <div class="form-group">
             <div class="col-sm-offset-2 col-sm-10">
                 <button type="submit" class="btn btn-primary">Actualizar Montos</button>
@@ -77,6 +133,6 @@
         </div>
 
     </form>
-</div>
+</div> -->
 
 {% endblock %}
