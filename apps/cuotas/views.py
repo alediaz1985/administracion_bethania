@@ -1060,3 +1060,4 @@ def eliminar_comprobante_pago(request, pk):
         comprobante.delete()
         return redirect('listar_comprobantes')
     return render(request, 'cuotas/eliminar_comprobante_pago.html', {'comprobante': comprobante})
+

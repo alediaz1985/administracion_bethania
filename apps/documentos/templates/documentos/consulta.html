@@ -9,51 +9,63 @@
 {% endblock %}
 
 {% block content %}
-<div class="consulta-container">
+<div class="consulta">
     <!-- Título -->
-    <h2>Consulta de Comprobantes</h2>
+    <h2 class="consulta__titulo">Consulta de Comprobantes</h2>
 
     <!-- Formulario de consulta -->
-    <form method="post" class="consulta-form">
+    <form method="post" class="consulta__formulario">
         {% csrf_token %}
-        <div class="form-group">
-            <label for="id_consulta">DNI:</label>
+        <div class="consulta__grupo-formulario">
+            <label for="id_consulta" class="consulta__etiqueta">DNI:</label>
             {{ form.consulta }}
         </div>
-        <div class="form-group">
-            <label for="id_fecha_inicio">Desde (Fecha inicio):</label>
-            {{ form.fecha_inicio }}
+        <div class="consulta__grupo-formulario">
+            <div class="consulta__grupo-fecha">
+                <label for="id_fecha_inicio" class="consulta__etiqueta">Desde (Fecha inicio):</label>
+                {{ form.fecha_inicio }}
+            </div>
+            <div class="consulta__grupo-fecha">
+                <label for="id_fecha_fin" class="consulta__etiqueta">Hasta (Fecha fin):</label>
+                {{ form.fecha_fin }}
+            </div>
         </div>
-        <div class="form-group">
-            <label for="id_fecha_fin">Hasta (Fecha fin):</label>
-            {{ form.fecha_fin }}
+        <div class="consulta__acciones">
+            <button class="consulta__boton" type="submit">
+                <span class="consulta__boton-circulo" aria-hidden="true">
+                    <span class="consulta__boton-icono consulta__boton-icono--flecha"></span>
+                </span>
+                <span class="consulta__boton-texto">Buscar</span>
+            </button>
         </div>
-        <button type="submit" class="consulta-buscar-button">Buscar</button>
     </form>
 
     <!-- Resultados de la búsqueda -->
     {% if search_done %}
         {% if resultados %}
             <div class="consulta-resultados">
-                <h3>Resultados de la búsqueda</h3>
-                <p>Cantidad de archivos encontrados: {{ cantidad_archivos }}</p>
-                <ul>
+                <h3 class="consulta__subtitulo">Resultados de la búsqueda</h3>
+                <p class="consulta__cantidad">Cantidad de archivos encontrados: {{ cantidad_archivos }}</p>
+                <ul class="consulta__lista-resultados">
                     {% for resultado in resultados %}
-                    <li>
-                        <strong>Nombre:</strong> <a href="{{ resultado.url }}" target="_blank">{{ resultado.nombre }}</a><br>
-                        <strong>Fecha de modificación:</strong> {{ resultado.fecha }}
+                    <li class="consulta__item-resultado">
+                        <strong class="consulta__dato-label">Nombre:</strong> 
+                        <a href="{{ resultado.url }}" target="_blank" class="consulta__link">{{ resultado.nombre }}</a><br>
+                        <strong class="consulta__dato-label">Fecha de modificación:</strong> {{ resultado.fecha }}
                     </li>
                     {% endfor %}
                 </ul>
             </div>
         {% else %}
-            <p>No se encontraron documentos.</p>
+            <p class="consulta__mensaje consulta__mensaje--info">No se encontraron documentos.</p>
         {% endif %}
     {% endif %}
 
     <!-- Botón para descargar archivos -->
-    <div class="descargar-archivos-container">
-        <a href="{% url 'descargar_archivos_nube' %}" class="descargar-archivos-button">Descargar Archivos de Google Drive</a>
+    <div class="descargar-archivos">
+        <div class="boton-descargar">
+            <a href="{% url 'descargar_archivos_nube' %}" class="descargar-archivos-button">Descargar Archivos de Google Drive</a>
+        </div>
     </div>
 </div>
 

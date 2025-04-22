@@ -10,17 +10,24 @@ class ConsultaForm(forms.Form):
         max_length=255,
         required=False,
         widget=forms.TextInput(attrs={
+            'class': 'consulta__input',
             'placeholder': 'Ejemplo: 12345678 o nombre del archivo'
         })
     )
     fecha_inicio = forms.DateField(
         required=False, 
-        widget=forms.TextInput(attrs={'type': 'date'}),
+        widget=forms.TextInput(attrs={
+            'type': 'date',
+            'class': 'consulta__input-fecha'
+        }),
         label='Desde'
     )
     fecha_fin = forms.DateField(
         required=False, 
-        widget=forms.TextInput(attrs={'type': 'date'}),
+        widget=forms.TextInput(attrs={
+            'type': 'date',
+            'class': 'consulta__input-fecha'
+        }),
         label='Hasta'
     )
 

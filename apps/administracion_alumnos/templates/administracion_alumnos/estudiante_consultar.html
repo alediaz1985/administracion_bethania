@@ -20,7 +20,7 @@
             </span>
             <span class="button-text">Buscar</span>
         </button>
-    </form>
+    </form> 
 
     {% if estudiante %}
         <div class="resultado-alumno">
@@ -36,7 +36,7 @@
                 <form method="get" action="{% url 'ver_datos_estudiante' pk=estudiante.pk %}">
                     <button class="learn-more">
                         <span class="circle" aria-hidden="true">
-                        <span class="icon arrow"></span>
+                            <span class="icon arrow"></span>
                         </span>
                         <span class="button-text">Ver</span>
                     </button>

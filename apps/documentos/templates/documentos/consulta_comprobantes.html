@@ -7,36 +7,36 @@
 {% endblock %}
 
 {% block content %}
-<div class="consulta-container">
-    <h2>Consulta de Comprobantes</h2>
-    <form method="post" class="consulta-form">
+<div class="consulta">
+    <h2 class="consulta__titulo">Consultaraaaaaaaaa de Comprobantes</h2>
+    <form method="post" class="consulta__formulario">
         {% csrf_token %}
-        <div class="form-group">
-            <label for="id_consulta">DNI, CBU o palabra clave:</label>
+        <div class="consulta__grupo-formulario">
+            <label for="id_consulta" class="consulta__etiqueta">DNI, CBU o palabra clave:</label>
             {{ form.consulta }}
         </div>
-        <div class="form-group">
-            <label for="id_fecha_inicio">Desde (Fecha inicio):</label>
+        <div class="consulta__grupo-formulario">
+            <label for="id_fecha_inicio" class="consulta__etiqueta">Desde (Fecha inicio):</label>
             {{ form.fecha_inicio }}
         </div>
-        <div class="form-group">
-            <label for="id_fecha_fin">Hasta (Fecha fin):</label>
+        <div class="consulta__grupo-formulario">
+            <label for="id_fecha_fin" class="consulta__etiqueta">Hasta (Fecha fin):</label>
             {{ form.fecha_fin }}
         </div>
-        <button type="submit" class="consulta-buscar-button">Buscar</button>
+        <button type="submit" class="consulta__boton-buscar">Buscar</button>
     </form>
 
     {% if search_done %}
         {% if resultados %}
             <div class="consulta-resultados">
-                <h3>Resultados de la búsqueda</h3>
-                <p>Cantidad de documentos encontrados: {{ cantidad_archivos }}</p>
-                <ul class="consulta-lista-resultados">
+                <h3 class="consulta__subtitulo">Resultados de la búsqueda</h3>
+                <p class="consulta__cantidad">Cantidad de documentos encontrados: {{ cantidad_archivos }}</p>
+                <ul class="consulta__lista-resultados">
                     {% for resultado in resultados %}
-                    <li>
-                        <strong>Nombre:</strong>
-                        <a href="{{ resultado.url }}" target="_blank">{{ resultado.nombre }}</a><br>
-                        <strong>Fecha de modificación:</strong> {{ resultado.fecha }}
+                    <li class="consulta__item-resultado">
+                        <strong class="consulta__dato-label">Nombre:</strong>
+                        <a href="{{ resultado.url }}" target="_blank" class="consulta__link">{{ resultado.nombre }}</a><br>
+                        <strong class="consulta__dato-label">Fecha de modificación:</strong> {{ resultado.fecha }}
                     </li>
                     {% endfor %}
                 </ul>

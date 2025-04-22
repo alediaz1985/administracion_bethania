@@ -9,80 +9,82 @@ body {
     font-family: 'Helvetica Neue', Arial, sans-serif;
     font-size: 16px;
     line-height: 1.5;
-    background-color: #f0f2f5;
+    background-image: url('../img/fondo1.png'); /* Cambia por la ruta de tu imagen */
+    background-size: cover;  /* Asegura que la imagen cubra todo el fondo */
+    background-position: center; /* Centra la imagen */
+    background-repeat: no-repeat; /* Evita que la imagen se repita */
     color: #333;
 }
 
-.consulta {
+.montos {
     display: flex;
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    width: 60%;
-    margin: 20px auto; /* Centrado horizontal */
+    width: 80%;
+    margin: 40px auto; /* Centrado horizontal */
     border-radius: 10px;
     background: linear-gradient(360deg,rgba(134, 134, 135, 1) 0%, rgba(167, 173, 185, 1) 35%, rgba(201, 201, 202, 1) 100%);
     box-shadow: 0 4px 10px rgba(0, 0, 0, 0.9);
 }
 
-.consulta__titulo {
+.montos__titulo {
     font-size: 14px;
     padding: 20px 0;
 }
 
-.consulta__formulario {
+.montos__formulario {
     display: flex;
     flex-direction: column;
     justify-content: center;
     align-items: center;
     gap: 1rem;
     width: 95%;
-    margin: 0 auto 0 auto; /* Centrado horizontal */
+    margin: 0 auto 40px auto; /* Centrado horizontal */
     padding: 30px;
     border-radius: 10px;
     background-color: #f7f7f7;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
 }
 
-.consulta__grupo-formulario {
+.montos__seccion {
     display: flex;
     justify-content: center;
-    align-items: center;
-    gap: 1rem;
+    align-items: flex-start;
+    gap: 2rem;
     width: 100%;
 }
 
-.consulta__etiqueta {
+.montos__campo {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    gap: 0.3rem;
+}
+
+.montos__input,
+.montos__select {
+    padding: 10px;
+    border: 1px solid #95a5a6;
+    border-radius: 5px;
+    font-size: 12px;
+}
+
+.montos__etiqueta {
     font-weight: bold;
     color: #181818;
     font-size: 12px;
 }
 
-.consulta__input {
-    width: 100%;
-    padding: 10px;
-    font-size: 12px;
-    border: 1px solid #95a5a6;
-    border-radius: 5px;
-    background-color: #f9f9f9;
-    transition: border 0.3s ease;
+.montos__select option {
+    font-size: 13px;
+    color: #2c3e50;
+    background-color: #ecf0f1;
+    padding: 0.5rem;
 }
 
-.consulta__input-fecha {
-    width: 100%;
-    padding: 10px 14px;
-    font-size: 12px;
-    border: 1px solid #ccc;
-    border-radius: 8px;
-    background-color: #f9f9f9;
-    transition: border 0.3s ease;
-}
-
-.consulta__acciones {
-    margin-top: 40px;
-}
-
-.consulta__boton {
+/* From Uiverse.io by cssbuttons-io */ 
+.boton-accion {
     position: relative;
     display: inline-block;
     cursor: pointer;
@@ -98,18 +100,18 @@ body {
     height: auto;
 }
 
-.consulta__boton-circulo {
+.boton-accion__circulo {
     transition: all 0.45s cubic-bezier(0.65, 0, 0.076, 1);
     position: relative;
     display: block;
     margin: 0;
     width: 3rem;
     height: 3rem;
-    background: rgb(66, 149, 33);
+    background: rgb(66 149 33);
     border-radius: 1.625rem;
 }
 
-.consulta__boton-icono {
+.boton-accion__icono {
     transition: all 0.45s cubic-bezier(0.65, 0, 0.076, 1);
     position: absolute;
     top: 0;
@@ -118,14 +120,14 @@ body {
     background: #fff;
 }
 
-.consulta__boton-icono--flecha {
+.boton-accion__icono--flecha {
     left: 0.625rem;
     width: 1.125rem;
     height: 0.125rem;
     background: none;
 }
 
-.consulta__boton-icono--flecha::before {
+.boton-accion__icono--flecha::before {
     position: absolute;
     content: "";
     top: -0.29rem;
@@ -137,7 +139,7 @@ body {
     transform: rotate(45deg);
 }
 
-.consulta__boton-texto {
+.boton-accion__texto {
     display: flex;
     align-items: center;
     justify-content: center;
@@ -157,43 +159,15 @@ body {
     text-transform: uppercase;
 }
 
-.consulta__boton:hover .consulta__boton-circulo {
+.boton-accion:hover .boton-accion__circulo {
     width: 100%;
 }
 
-.consulta__boton:hover .consulta__boton-icono--flecha {
+.boton-accion:hover .boton-accion__icono--flecha {
     background: #fff;
     transform: translate(1rem, 0);
 }
 
-.consulta__boton:hover .consulta__boton-texto {
-    color: #fff;
-}
-
-.descargar-archivos {
-    display: flex;
-    justify-content: flex-end;
-    align-items: center;
-    width: 100%;
-    padding: 0 30px 0 0; /* espacio hacia el borde derecho */
-}
-
-.descargar-archivos-button {
-    display: inline-block;
-    padding: 10px 20px;
-    background: rgb(66, 149, 33);
-    color: #fff;
-    font-size: 13px;
-    font-weight: bold;
-    text-align: center;
-    text-decoration: none;
-    border-radius: 8px;
-    transition: background-color 0.3s ease;
-    margin: 30px 0;
-    text-transform: uppercase;
-}
-
-.descargar-archivos-button:hover {
-    background: rgb(33, 102, 6);
+.boton-accion:hover .boton-accion__texto {
     color: #fff;
 }
