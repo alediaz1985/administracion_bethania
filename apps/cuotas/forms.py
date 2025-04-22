@@ -71,8 +71,6 @@ class ValidarMontosForm(forms.ModelForm):
             raise forms.ValidationError('El monto de la cuota mensual debe ser mayor a 0.')
         return monto
 
-
-
 class ComprobanteDrivePagoForm(forms.ModelForm):
     class Meta:
         model = ComprobanteDrivePago

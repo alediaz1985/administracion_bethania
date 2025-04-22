@@ -2,8 +2,8 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib import messages
 from django.utils import timezone
 from apps.administracion_alumnos.models import Estudiante
-from .models import CicloLectivo, Inscripcion, Cuota, Pago, MontosCicloLectivo, NivelCursado, SubNivelCursado, MedioPago
-from .forms import MontosCicloLectivoForm, ActualizarMontosForm
+from .models import CicloLectivo, Inscripcion, Cuota, Pago, MontosCicloLectivo, NivelCursado, SubNivelCursado, MedioPago, Estudiante, ComprobanteDrivePago
+from .forms import MontosCicloLectivoForm, ActualizarMontosForm, ComprobanteDrivePagoForm
 from django.contrib.auth.decorators import user_passes_test
 from django.http import HttpResponse, FileResponse
 from reportlab.pdfgen import canvas
@@ -15,39 +15,7 @@ from reportlab.lib.units import inch
 from django.conf import settings
 import os
 from datetime import datetime
-
-from django.shortcuts import render
-from .models import CicloLectivo
-from django.shortcuts import render, get_object_or_404, redirect
-from django.contrib import messages
-from .models import Estudiante, CicloLectivo, SubNivelCursado, MontosCicloLectivo, Inscripcion
-
-
-from django.shortcuts import render, get_object_or_404
-from .models import CicloLectivo, Inscripcion, Estudiante
-
-from django.shortcuts import get_object_or_404, redirect, render
-from django.contrib import messages
-from .models import CicloLectivo
-
-from django.http import HttpResponse
-from reportlab.lib.pagesizes import A4
-from reportlab.pdfgen import canvas
-from .models import MontosCicloLectivo
-
-
-from django.http import FileResponse
-from reportlab.platypus import SimpleDocTemplate, Table, TableStyle, Spacer, Paragraph
-from reportlab.lib.pagesizes import A4
-from reportlab.lib import colors
-from reportlab.lib.styles import getSampleStyleSheet
-from reportlab.lib.units import inch
-from datetime import datetime
-from .models import MontosCicloLectivo
-import os
-from django.conf import settings
-
-
+import locale
 
 # Habilitar Ciclo Lectivo
 def habilitar_ciclo_lectivo(request):
@@ -140,7 +108,6 @@ def actualizar_montos(request):
         'subniveles': subniveles,
     })
 
-
 # Inscribir Estudiante
 def inscribir_estudiante(request):
     estudiantes = Estudiante.objects.all()
@@ -196,7 +163,6 @@ def consultar_ciclo_lectivo(request):
         'ciclo_seleccionado': ciclo_seleccionado,
     })
 
-
 # Pago de Cuotas
 def pago_cuotas(request):
     cuotas = Cuota.objects.filter(pagado=False)
@@ -224,12 +190,10 @@ def pago_cuotas(request):
         'medios_pago': medios_pago,
     })
 
-
 # Consultar Deudas
 def consultar_deudas(request):
     estudiantes_deudores = Estudiante.objects.filter(inscripcion__cuota__pagado=False).distinct()
     return render(request, 'cuotas/consultar_deudas.html', {'estudiantes_deudores': estudiantes_deudores})
-
 
 # Detalle de Deuda
 def detalle_deuda(request, estudiante_id):
@@ -244,17 +208,6 @@ def listar_montos(request):
     
     # Renderiza el template de listar montos
     return render(request, 'cuotas/listar_montos.html', {'montos': montos})
-
-from django.http import FileResponse
-from reportlab.platypus import SimpleDocTemplate, Table, TableStyle, Spacer, Paragraph
-from reportlab.lib.pagesizes import A4
-from reportlab.lib import colors
-from reportlab.lib.styles import getSampleStyleSheet
-from reportlab.lib.units import inch
-from datetime import datetime
-from .models import MontosCicloLectivo
-import os
-from django.conf import settings
 
 def generar_pdf_montos_view(request):
     # Nombre y ruta del archivo PDF
@@ -310,13 +263,6 @@ def generar_pdf_montos_view(request):
     # Devolver el archivo como respuesta
     return FileResponse(open(pdf_path, 'rb'), as_attachment=True, filename='montos_ciclo_lectivo.pdf')
 
-
-from django.http import HttpResponse
-from reportlab.lib.pagesizes import A4
-from reportlab.pdfgen import canvas
-from .models import MontosCicloLectivo
-
-
 def generar_pdf_montos_reportlab(request):
     # Crear un objeto HttpResponse para el PDF
     response = HttpResponse(content_type='application/pdf')
@@ -348,15 +294,12 @@ def generar_pdf_montos_reportlab(request):
 
     return response
 
-
-
 def listar_ciclos_lectivos(request):
     """
     Vista para listar todos los ciclos lectivos disponibles.
     """
     ciclos = CicloLectivo.objects.all().order_by('-año_lectivo')  # Ordenar por año lectivo de forma descendente
     return render(request, 'cuotas/listar_ciclos_lectivos.html', {'ciclos': ciclos})
-
 
 def eliminar_ciclo_lectivo(request, año_lectivo):
     """
@@ -376,63 +319,60 @@ def eliminar_ciclo_lectivo(request, año_lectivo):
         'ciclo_lectivo': ciclo_lectivo
     })
 
+# def inscribir_alumno(request):
+#     """
+#     Vista para inscribir a un alumno en un ciclo lectivo.
+#     """
+#     estudiantes = Estudiante.objects.all()  # Todos los estudiantes
+#     ciclos_lectivos = CicloLectivo.objects.all()  # Todos los ciclos lectivos
+#     subniveles = SubNivelCursado.objects.all()  # Todos los subniveles
 
+#     if request.method == 'POST':
+#         estudiante_id = request.POST.get('estudiante')
+#         ciclo_lectivo_id = request.POST.get('ciclo_lectivo')
+#         subnivel_id = request.POST.get('subnivel_cursado')
+#         pagada = request.POST.get('pagada') == 'on'  # Si está marcada, será True
 
-def inscribir_alumno(request):
-    """
-    Vista para inscribir a un alumno en un ciclo lectivo.
-    """
-    estudiantes = Estudiante.objects.all()  # Todos los estudiantes
-    ciclos_lectivos = CicloLectivo.objects.all()  # Todos los ciclos lectivos
-    subniveles = SubNivelCursado.objects.all()  # Todos los subniveles
+#         # Validaciones
+#         if not estudiante_id or not ciclo_lectivo_id or not subnivel_id:
+#             messages.error(request, "Por favor, seleccione un estudiante, ciclo lectivo y subnivel.")
+#             return redirect('cuotas:inscribir_alumno')
 
-    if request.method == 'POST':
-        estudiante_id = request.POST.get('estudiante')
-        ciclo_lectivo_id = request.POST.get('ciclo_lectivo')
-        subnivel_id = request.POST.get('subnivel_cursado')
-        pagada = request.POST.get('pagada') == 'on'  # Si está marcada, será True
+#         estudiante = get_object_or_404(Estudiante, id=estudiante_id)
+#         ciclo_lectivo = get_object_or_404(CicloLectivo, id=ciclo_lectivo_id)
+#         subnivel = get_object_or_404(SubNivelCursado, id=subnivel_id)
 
-        # Validaciones
-        if not estudiante_id or not ciclo_lectivo_id or not subnivel_id:
-            messages.error(request, "Por favor, seleccione un estudiante, ciclo lectivo y subnivel.")
-            return redirect('cuotas:inscribir_alumno')
+#         # Verificar si ya está inscrito
+#         if Inscripcion.objects.filter(cuil_alumno=estudiante, ciclo_lectivo=ciclo_lectivo).exists():
+#             messages.error(request, f"El estudiante {estudiante} ya está inscrito en este ciclo lectivo.")
+#             return redirect('cuotas:inscribir_alumno')
 
-        estudiante = get_object_or_404(Estudiante, id=estudiante_id)
-        ciclo_lectivo = get_object_or_404(CicloLectivo, id=ciclo_lectivo_id)
-        subnivel = get_object_or_404(SubNivelCursado, id=subnivel_id)
+#         # Obtener el monto de inscripción
+#         try:
+#             montos = MontosCicloLectivo.objects.get(ciclo_lectivo=ciclo_lectivo, subnivel_cursado=subnivel)
+#             monto_inscripcion = montos.monto_inscripcion
+#         except MontosCicloLectivo.DoesNotExist:
+#             messages.error(request, "No se han configurado montos para este ciclo y subnivel.")
+#             return redirect('cuotas:inscribir_alumno')
 
-        # Verificar si ya está inscrito
-        if Inscripcion.objects.filter(cuil_alumno=estudiante, ciclo_lectivo=ciclo_lectivo).exists():
-            messages.error(request, f"El estudiante {estudiante} ya está inscrito en este ciclo lectivo.")
-            return redirect('cuotas:inscribir_alumno')
+#         # Crear inscripción
+#         Inscripcion.objects.create(
+#             cuil_alumno=estudiante,
+#             ciclo_lectivo=ciclo_lectivo,
+#             subnivel_cursado=subnivel,
+#             monto_inscripcion=monto_inscripcion,
+#             pagada=pagada,
+#             debe_inscripcion=not pagada
+#         )
 
-        # Obtener el monto de inscripción
-        try:
-            montos = MontosCicloLectivo.objects.get(ciclo_lectivo=ciclo_lectivo, subnivel_cursado=subnivel)
-            monto_inscripcion = montos.monto_inscripcion
-        except MontosCicloLectivo.DoesNotExist:
-            messages.error(request, "No se han configurado montos para este ciclo y subnivel.")
-            return redirect('cuotas:inscribir_alumno')
+#         messages.success(request, f"Estudiante {estudiante} inscrito correctamente en el ciclo {ciclo_lectivo}.")
+#         return redirect('cuotas:inscribir_alumno')
 
-        # Crear inscripción
-        Inscripcion.objects.create(
-            cuil_alumno=estudiante,
-            ciclo_lectivo=ciclo_lectivo,
-            subnivel_cursado=subnivel,
-            monto_inscripcion=monto_inscripcion,
-            pagada=pagada,
-            debe_inscripcion=not pagada
-        )
-
-        messages.success(request, f"Estudiante {estudiante} inscrito correctamente en el ciclo {ciclo_lectivo}.")
-        return redirect('cuotas:inscribir_alumno')
-
-    return render(request, 'cuotas/inscribir_alumno.html', {
-        'estudiantes': estudiantes,
-        'ciclos_lectivos': ciclos_lectivos,
-        'subniveles': subniveles
-    })
-
+#     return render(request, 'cuotas/inscribir_alumno.html', {
+#         'estudiantes': estudiantes,
+#         'ciclos_lectivos': ciclos_lectivos,
+#         'subniveles': subniveles
+#     })
 
 def listar_alumnos_por_ciclo_lectivo(request):
     """
@@ -452,15 +392,6 @@ def listar_alumnos_por_ciclo_lectivo(request):
         'alumnos': alumnos,
         'ciclo_seleccionado': ciclo_seleccionado,
     })
-
-import locale
-from datetime import datetime
-from django.shortcuts import get_object_or_404
-from django.http import FileResponse
-from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer
-from reportlab.lib.pagesizes import A4
-from reportlab.lib.styles import getSampleStyleSheet
-from .models import Estudiante
 
 def generar_contrato_view(request, estudiante_id):
     # Establecer el idioma a español
@@ -1025,10 +956,6 @@ def listar_montos(request):
     return render(request, 'cuotas/listar_montos.html', {'montos': montos})"""
 
 
-from django.shortcuts import render, redirect, get_object_or_404
-from .models import ComprobanteDrivePago
-from .forms import ComprobanteDrivePagoForm
-
 def crear_comprobante_pago(request):
     if request.method == 'POST':
         form = ComprobanteDrivePagoForm(request.POST)
@@ -1061,3 +988,185 @@ def eliminar_comprobante_pago(request, pk):
         return redirect('listar_comprobantes')
     return render(request, 'cuotas/eliminar_comprobante_pago.html', {'comprobante': comprobante})
 
+from django.shortcuts import render
+from apps.administracion_alumnos.models import EstadoDocumentacion
+
+'''
+def buscar_estudiantes_aprobados(request):
+    query = request.GET.get('q', '').strip()
+    resultados = []
+    subniveles = []  # Para almacenar los subniveles solicitados
+    mensaje_documentacion_no_aprobada = None  # Mensaje para alumnos no aprobados
+
+    if query:
+        # Primero buscamos estudiantes con documentación aprobada
+        resultados = EstadoDocumentacion.objects.filter(
+            estado='aprobado',
+            estudiante__cuil_estudiante__icontains=query
+        ).select_related('estudiante')
+
+        # Si no se encuentran resultados aprobados, verificamos si el estudiante existe
+        if not resultados:
+            # Si no hay estudiantes aprobados, buscamos cualquier estudiante con ese CUIL
+            resultados = EstadoDocumentacion.objects.filter(
+                estudiante__cuil_estudiante__icontains=query
+            ).select_related('estudiante')
+
+            # Si el estudiante no tiene documentación aprobada, pasamos un mensaje
+            mensaje_documentacion_no_aprobada = "La documentación del alumno aún no ha sido aprobada."
+
+        # Obtener el subnivel solicitado por cada estudiante
+        for estado in resultados:
+            estudiante = estado.estudiante
+            subnivel = obtener_subnivel(estudiante)
+            subniveles.append(subnivel)
+
+    return render(request, 'cuotas/inscribir_alumno.html', {
+        'resultados': zip(resultados, subniveles),  # Combinamos los resultados y subniveles
+        'query': query,
+        'mensaje_documentacion_no_aprobada': mensaje_documentacion_no_aprobada  # Pasamos el mensaje
+    })
+
+# Función para obtener el subnivel solicitado
+def obtener_subnivel(estudiante):
+    subniveles = [
+        ('Nivel Inicial de 3 años', estudiante.nivel_inicial3),
+        ('Nivel Inicial de 4 años', estudiante.nivel_inicial4),
+        ('Nivel Inicial de 5 años', estudiante.nivel_inicial5),
+        ('Primario - 1er grado', estudiante.nivel_primario1),
+        ('Primario - 2do grado', estudiante.nivel_primario2),
+        ('Primario - 3er grado', estudiante.nivel_primario3),
+        ('Primario - 4to grado', estudiante.nivel_primario4),
+        ('Primario - 5to grado', estudiante.nivel_primario5),
+        ('Primario - 6to grado', estudiante.nivel_primario6),
+        ('Primario - 7mo grado', estudiante.nivel_primario7),
+        ('Secundario - 1er año', estudiante.nivel_secundario1),
+        ('Secundario - 2do año', estudiante.nivel_secundario2),
+        ('Secundario - 3er año', estudiante.nivel_secundario3),
+        ('Secundario - 4to año', estudiante.nivel_secundario4),
+        ('Secundario - 5to año', estudiante.nivel_secundario5),
+    ]
+
+    for nombre, valor in subniveles:
+        if valor:  # Si el subnivel tiene un valor (no está vacío ni es None)
+            return nombre
+    return "No especificado"  # Si no hay ningún valor, devuelve este texto
+'''
+
+def inscribir_alumno(request):
+    """
+    Vista para inscribir a un alumno en un ciclo lectivo.
+    """
+    estudiantes = Estudiante.objects.all()  # Todos los estudiantes
+    ciclos_lectivos = CicloLectivo.objects.all()  # Todos los ciclos lectivos
+    subniveles = SubNivelCursado.objects.all()  # Todos los subniveles
+    resultados = []
+    subniveles_solicitados = []  # Para almacenar los subniveles solicitados
+    mensaje_documentacion_no_aprobada = None  # Mensaje para alumnos no aprobados
+
+    # Si la búsqueda se realiza con la consulta 'q'
+    query = request.GET.get('q', '').strip()
+
+    if query:
+        # Buscar estudiantes con documentación aprobada
+        resultados = EstadoDocumentacion.objects.filter(
+            estado='aprobado',
+            estudiante__cuil_estudiante__icontains=query
+        ).select_related('estudiante')
+
+        if not resultados:
+            # Si no hay resultados aprobados, buscamos cualquier estudiante con ese CUIL
+            resultados = EstadoDocumentacion.objects.filter(
+                estudiante__cuil_estudiante__icontains=query
+            ).select_related('estudiante')
+
+            # Si no tiene documentación aprobada, se muestra un mensaje
+            mensaje_documentacion_no_aprobada = "La documentación del alumno aún no ha sido aprobada."
+
+        # Obtener el subnivel solicitado para cada estudiante
+        for estado in resultados:
+            estudiante = estado.estudiante
+            subnivel = obtener_subnivel(estudiante)
+            subniveles_solicitados.append(subnivel)
+
+    # Si el formulario es enviado
+    if request.method == 'POST':
+        estudiante_id = request.POST.get('estudiante')
+        ciclo_lectivo_id = request.POST.get('ciclo_lectivo')
+        subnivel_id = request.POST.get('subnivel_cursado')
+        pagada = request.POST.get('pagada') == 'on'  # Si está marcada, será True
+
+        # Validaciones
+        if not estudiante_id or not ciclo_lectivo_id or not subnivel_id:
+            messages.error(request, "Por favor, seleccione un estudiante, ciclo lectivo y subnivel.")
+            return redirect('cuotas:inscribir_alumno')
+
+        estudiante = get_object_or_404(Estudiante, id=estudiante_id)
+        ciclo_lectivo = get_object_or_404(CicloLectivo, id=ciclo_lectivo_id)
+        subnivel = get_object_or_404(SubNivelCursado, id=subnivel_id)
+
+        # Verificar si ya está inscrito
+        if Inscripcion.objects.filter(cuil_alumno=estudiante, ciclo_lectivo=ciclo_lectivo).exists():
+            messages.error(request, f"El estudiante {estudiante} ya está inscrito en este ciclo lectivo.")
+            return redirect('cuotas:inscribir_alumno')
+
+        # Verificar si la documentación está aprobada
+        estado_documentacion = EstadoDocumentacion.objects.filter(estudiante=estudiante).first()
+        if not estado_documentacion or estado_documentacion.estado != 'aprobado':
+            messages.error(request, "La documentación del estudiante no está aprobada.")
+            return redirect('cuotas:inscribir_alumno')
+
+        # Obtener el monto de inscripción
+        try:
+            montos = MontosCicloLectivo.objects.get(ciclo_lectivo=ciclo_lectivo, subnivel_cursado=subnivel)
+            monto_inscripcion = montos.monto_inscripcion
+        except MontosCicloLectivo.DoesNotExist:
+            messages.error(request, "No se han configurado montos para este ciclo y subnivel.")
+            return redirect('cuotas:inscribir_alumno')
+
+        # Crear inscripción
+        Inscripcion.objects.create(
+            cuil_alumno=estudiante,
+            ciclo_lectivo=ciclo_lectivo,
+            subnivel_cursado=subnivel,
+            monto_inscripcion=monto_inscripcion,
+            pagada=pagada,
+            debe_inscripcion=not pagada
+        )
+
+        messages.success(request, f"Estudiante {estudiante} inscrito correctamente en el ciclo {ciclo_lectivo}.")
+        return redirect('cuotas:inscribir_alumno')
+
+    return render(request, 'cuotas/inscribir_alumno.html', {
+        'estudiantes': estudiantes,
+        'ciclos_lectivos': ciclos_lectivos,
+        'subniveles': subniveles,
+        'resultados': zip(resultados, subniveles_solicitados),
+        'query': query,
+        'mensaje_documentacion_no_aprobada': mensaje_documentacion_no_aprobada
+    })
+
+# Función para obtener el subnivel solicitado
+def obtener_subnivel(estudiante):
+    subniveles = [
+        ('Nivel Inicial de 3 años', estudiante.nivel_inicial3),
+        ('Nivel Inicial de 4 años', estudiante.nivel_inicial4),
+        ('Nivel Inicial de 5 años', estudiante.nivel_inicial5),
+        ('Primario - 1er grado', estudiante.nivel_primario1),
+        ('Primario - 2do grado', estudiante.nivel_primario2),
+        ('Primario - 3er grado', estudiante.nivel_primario3),
+        ('Primario - 4to grado', estudiante.nivel_primario4),
+        ('Primario - 5to grado', estudiante.nivel_primario5),
+        ('Primario - 6to grado', estudiante.nivel_primario6),
+        ('Primario - 7mo grado', estudiante.nivel_primario7),
+        ('Secundario - 1er año', estudiante.nivel_secundario1),
+        ('Secundario - 2do año', estudiante.nivel_secundario2),
+        ('Secundario - 3er año', estudiante.nivel_secundario3),
+        ('Secundario - 4to año', estudiante.nivel_secundario4),
+        ('Secundario - 5to año', estudiante.nivel_secundario5),
+    ]
+
+    for nombre, valor in subniveles:
+        if valor:  # Si el subnivel tiene un valor (no está vacío ni es None)
+            return nombre
+    return "No especificado"  # Si no hay ningún valor, devuelve este texto

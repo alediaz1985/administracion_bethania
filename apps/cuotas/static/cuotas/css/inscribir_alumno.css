@@ -5,8 +5,9 @@ body {
     background-size: cover;  /* Asegura que la imagen cubra todo el fondo */
     background-position: center;
     background-repeat: no-repeat;
-    margin: 0;
+    margin: 80px;
     padding: 0;
+    color: #000000;
 }
 
 /* Título principal */

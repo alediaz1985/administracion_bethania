@@ -14,7 +14,7 @@ urlpatterns = [
     path('consultar_ciclo_lectivo/', views.consultar_ciclo_lectivo, name='consultar_ciclo_lectivo'),
     path('listar_ciclos_lectivos/', views.listar_ciclos_lectivos, name='listar_ciclos_lectivos'),
     path('eliminar_ciclo_lectivo/<str:año_lectivo>/', views.eliminar_ciclo_lectivo, name='eliminar_ciclo_lectivo'),
-    path('inscribir_alumno/', views.inscribir_alumno, name='inscribir_alumno'),
+
     path('pago_cuotas/', views.pago_cuotas, name='pago_cuotas'),
     path('consultar_deudas/', views.consultar_deudas, name='consultar_deudas'),
     path('detalle_deuda/<int:alumno_id>/', views.detalle_deuda, name='detalle_deuda'),
@@ -24,4 +24,7 @@ urlpatterns = [
     path('listar/', views.listar_comprobantes, name='listar_comprobantes'),
     path('editar/<int:pk>/', views.editar_comprobante_pago, name='editar_comprobante_pago'),
     path('eliminar/<int:pk>/', views.eliminar_comprobante_pago, name='eliminar_comprobante_pago'),
+    # path('inscribir_alumno/', views.inscribir_alumno, name='inscribir_alumno'),
+    # path('buscar_estudiantes_aprobados/', views.buscar_estudiantes_aprobados, name='buscar_estudiantes_aprobados'),
+    path('inscribir_alumno/', views.inscribir_alumno, name='inscribir_alumno'),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
