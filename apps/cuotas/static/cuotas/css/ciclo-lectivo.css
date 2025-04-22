@@ -7,10 +7,12 @@
   
 body {
     font-family: 'Helvetica Neue', Arial, sans-serif;
-    font-size: 16px;
     line-height: 1.5;
-    background-color: #f0f2f5;
     color: #333;
+    background-image: url('../img/fondo1.png'); /* Cambia por la ruta de tu imagen */
+    background-size: cover;  /* Asegura que la imagen cubra todo el fondo */
+    background-position: center; /* Centra la imagen */
+    background-repeat: no-repeat; /* Evita que la imagen se repita */
 }
 
 .ciclo {
@@ -18,16 +20,16 @@ body {
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    width: 700px;
-    margin: 40px auto; /* Centrado horizontal */
+    width: 80%;
+    margin: 20px auto; /* Centrado horizontal */
     border-radius: 10px;
-    background-color: #c9c9ca;
+    background: linear-gradient(360deg,rgba(134, 134, 135, 1) 0%, rgba(167, 173, 185, 1) 35%, rgba(201, 201, 202, 1) 100%);
     box-shadow: 0 4px 10px rgba(0, 0, 0, 0.9);
 }
 
 .ciclo__titulo {
-    font-size: 18px;
-    padding: 30px 0;
+    font-size: 14px;
+    padding: 20px 0;
 }
 
 .ciclo__formulario {
@@ -36,12 +38,20 @@ body {
     justify-content: center;
     align-items: center;
     gap: 1rem;
-    width: 600px;
-    margin: 0 auto 80px auto; /* Centrado horizontal */
+    width: 95%;
+    margin: 0 auto 40px auto; /* Centrado horizontal */
     padding: 30px;
     border-radius: 10px;
     background-color: #f7f7f7;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.ciclo__seccion {
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    gap: 2rem;
+    width: 100%;
 }
 
 .ciclo__campo {
@@ -56,20 +66,26 @@ body {
     padding: 10px;
     border: 1px solid #95a5a6;
     border-radius: 5px;
-    font-size: 13px;
+    font-size: 12px;
 }
 
 .ciclo__etiqueta {
     font-weight: bold;
     color: #181818;
-    font-size: 13px;
+    font-size: 12px;
 }
 
 .ciclo__select option {
     font-size: 13px;
     color: #2c3e50;
     background-color: #ecf0f1;
-    padding: 0.5rem;
+    padding: 0.4rem;
+}
+
+.ciclo__botones {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
 }
 
 /* From Uiverse.io by cssbuttons-io */ 
@@ -129,6 +145,9 @@ body {
 }
 
 .boton-accion__texto {
+    display: flex;
+    align-items: center;
+    justify-content: center;
     transition: all 0.45s cubic-bezier(0.65, 0, 0.076, 1);
     position: absolute;
     top: 0;
@@ -138,6 +157,7 @@ body {
     padding: 0.75rem 0;
     margin: 0 0 0 1.85rem;
     color: #282936;
+    font-size: 13px;
     font-weight: 700;
     line-height: 1.6;
     text-align: center;

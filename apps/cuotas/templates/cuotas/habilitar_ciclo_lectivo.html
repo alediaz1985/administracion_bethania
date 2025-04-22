@@ -51,50 +51,63 @@
     <form class="ciclo__formulario" method="post">
         {% csrf_token %}
 
-        <div class="ciclo__campo">
-            <label class="ciclo__etiqueta" for="año_lectivo">Año Lectivo:</label>
-            <input class="ciclo__input" type="number" name="año_lectivo" id="año_lectivo" min="{{ current_year }}" max="{{ current_year|add:1 }}" required>
+        <div class="ciclo__seccion">
+            <div class="ciclo__campo">
+                <label class="ciclo__etiqueta" for="año_lectivo">Año Lectivo:</label>
+                <input class="ciclo__input" type="number" name="año_lectivo" id="año_lectivo" min="{{ current_year }}" max="{{ current_year|add:1 }}" required>
+            </div>
+    
+            <div class="ciclo__campo">
+                <label class="ciclo__etiqueta" for="fecha_inicio">Fecha de Inicio:</label>
+                <input class="ciclo__input" type="date" name="fecha_inicio" id="fecha_inicio" required>
+            </div>
+    
+            <div class="ciclo__campo">
+                <label class="ciclo__etiqueta" for="fecha_fin">Fecha de Fin:</label>
+                <input class="ciclo__input" type="date" name="fecha_fin" id="fecha_fin" required>
+            </div>
+        </div>
+        <div class="ciclo__seccion">
+            <div class="ciclo__campo">
+                <label class="ciclo__etiqueta" for="monto_inscripcion">Monto de Inscripción:</label>
+                <input class="ciclo__input" type="number" name="monto_inscripcion" id="monto_inscripcion" step="0.01" required>
+            </div>
+    
+            <div class="ciclo__campo">
+                <label class="ciclo__etiqueta" for="monto_cuota">Monto de la Cuota Mensual:</label>
+                <input class="ciclo__input" type="number" name="monto_cuota" id="monto_cuota" step="0.01" required>
+            </div>
+    
+            <div class="ciclo__campo">
+                <label class="ciclo__etiqueta" for="subnivel_cursado">Subniveles:</label>
+                <select class="ciclo__select" name="subnivel_cursado" id="subnivel_cursado" multiple required>
+                    {% for subnivel in subniveles %}
+                        <option value="{{ subnivel.id }}">
+                            {{ subnivel.nivel_cursado.nombre }} - {{ subnivel.nombre }}
+                        </option>
+                    {% endfor %}
+                </select>
+            </div>
         </div>
 
-        <div class="ciclo__campo">
-            <label class="ciclo__etiqueta" for="fecha_inicio">Fecha de Inicio:</label>
-            <input class="ciclo__input" type="date" name="fecha_inicio" id="fecha_inicio" required>
-        </div>
-
-        <div class="ciclo__campo">
-            <label class="ciclo__etiqueta" for="fecha_fin">Fecha de Fin:</label>
-            <input class="ciclo__input" type="date" name="fecha_fin" id="fecha_fin" required>
-        </div>
-
-        <div class="ciclo__campo">
-            <label class="ciclo__etiqueta" for="monto_inscripcion">Monto de Inscripción:</label>
-            <input class="ciclo__input" type="number" name="monto_inscripcion" id="monto_inscripcion" step="0.01" required>
-        </div>
-
-        <div class="ciclo__campo">
-            <label class="ciclo__etiqueta" for="monto_cuota">Monto de la Cuota Mensual:</label>
-            <input class="ciclo__input" type="number" name="monto_cuota" id="monto_cuota" step="0.01" required>
-        </div>
-
-        <div class="ciclo__campo">
-            <label class="ciclo__etiqueta" for="subnivel_cursado">Subniveles:</label>
-            <select class="ciclo__select" name="subnivel_cursado" id="subnivel_cursado" multiple required>
-                {% for subnivel in subniveles %}
-                    <option value="{{ subnivel.id }}">
-                        {{ subnivel.nivel_cursado.nombre }} - {{ subnivel.nombre }}
-                    </option>
-                {% endfor %}
-            </select>
-        </div>
-
-        <div class="ciclo__acciones">
-            <button class="boton-accion" type="submit">
-                <span class="boton-accion__circulo" aria-hidden="true">
-                    <span class="boton-accion__icono boton-accion__icono--flecha"></span>
-                </span>
-                <span class="boton-accion__texto">Habilitar</span>
-            </button>
-        </div>
+        <div class="ciclo__botones">
+            <div class="ciclo__acciones">
+                <button class="boton-accion" type="submit">
+                    <span class="boton-accion__circulo" aria-hidden="true">
+                        <span class="boton-accion__icono boton-accion__icono--flecha"></span>
+                    </span>
+                    <span class="boton-accion__texto">Habilitar</span>
+                </button>
+            </div>
+            <div class="ciclo__acciones">
+                <a href="{% url 'cuotas:consultar_ciclo_lectivo' %}" class="boton-accion">
+                    <span class="boton-accion__circulo" aria-hidden="true">
+                        <span class="boton-accion__icono boton-accion__icono--flecha"></span>
+                    </span>
+                    <span class="boton-accion__texto">Consultar</span>
+                </a>
+            </div>    
+        </div>    
     </form>
 </section>
 
