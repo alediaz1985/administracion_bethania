@@ -135,7 +135,17 @@
                             <tr data-nivel="{{ estudiante.nivel_estudiante }}" 
                             data-subnivel="{{ estudiante.subnivel_estudiante }}" 
                             data-turno="{{ estudiante.turno_estudiante }}">
-                                <td>{{ estudiante.cuil_estudiante }}</td>
+                                <td>
+                                    <span id="cuil_{{ estudiante.id }}">{{ estudiante.cuil_estudiante }}</span>
+                                    <button onclick="copyToClipboard('cuil_{{ estudiante.id }}')" style="border: none; background: transparent; cursor: pointer;">
+                                    <i class="fas fa-copy" style="color: #b6b6b6;"></i> <!-- Icono con color más suave (gris claro) -->
+                                    </button>
+                                </td>
+                                
+                                <!-- Toast (mensaje flotante) -->
+                                <div id="toast_{{ estudiante.id }}" style="position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); background-color: rgba(0, 128, 0, 0.8); color: white; padding: 10px 20px; border-radius: 5px; font-size: 14px; display: none; opacity: 0; pointer-events: none; z-index: 9999; transition: opacity 0.5s ease;">
+                                    ¡Copiado!
+                                </div>
                                 <td>{{ estudiante.apellidos_estudiante }}</td>
                                 <td>{{ estudiante.nombres_estudiante }}</td>
                                 <td>{{ estudiante.nivel_estudiante }}</td>
@@ -557,6 +567,29 @@ document.addEventListener('DOMContentLoaded', function() {
     // Filtrar cuando cambie el filtro de nivel
     filterTable();
 });
+
+function copyToClipboard(id) {
+    var copyText = document.getElementById(id);
+    var range = document.createRange();
+    range.selectNode(copyText);
+    window.getSelection().removeAllRanges();
+    window.getSelection().addRange(range);
+    document.execCommand('copy');
+    window.getSelection().removeAllRanges();
+
+    // Mostrar el mensaje flotante
+    var toast = document.getElementById('toast_' + id.split('_')[1]);
+    toast.style.display = 'block'; // Mostrar el toast
+    toast.style.opacity = 1; // Hacerlo visible
+
+    // Desaparecer después de 2 segundos
+    setTimeout(function() {
+      toast.style.opacity = 0; // Hacerlo desaparecer
+      setTimeout(function() {
+        toast.style.display = 'none'; // Ocultarlo completamente después de la animación
+      }, 500); // Esperar el tiempo de la animación
+    }, 2000);
+}
 
 </script>
 

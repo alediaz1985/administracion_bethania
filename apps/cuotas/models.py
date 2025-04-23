@@ -30,11 +30,10 @@ class NivelCursado(models.Model):
         verbose_name = "Nivel de Cursado"
         verbose_name_plural = "Niveles de Cursado"
 
-
-# Modelo para SubNivel (Ej. Sala 3, 4, Grados o Carreras)
 class SubNivelCursado(models.Model):
     nivel_cursado = models.ForeignKey(NivelCursado, on_delete=models.CASCADE, verbose_name="Nivel de Cursado")
     nombre = models.CharField(max_length=100, verbose_name="Nombre del Subnivel")
+    monto_mensual = models.DecimalField(max_digits=10, decimal_places=2, verbose_name="Monto Mensual", default=0)
 
     def __str__(self):
         return f'{self.nivel_cursado.nombre} - {self.nombre}'
@@ -43,7 +42,6 @@ class SubNivelCursado(models.Model):
         db_table = 'subnivel_cursado'
         verbose_name = "Subnivel de Cursado"
         verbose_name_plural = "Subniveles de Cursado"
-
 
 # Modelo para Montos de Ciclo Lectivo por Subnivel
 class MontosCicloLectivo(models.Model):
@@ -79,7 +77,6 @@ class Inscripcion(models.Model):
         db_table = 'inscripcion'
         verbose_name = "Inscripción"
         verbose_name_plural = "Inscripciones"
-
 
 # Modelo para Cuota
 class Cuota(models.Model):
@@ -146,5 +143,3 @@ class ComprobanteDrivePago(models.Model):
         verbose_name = "Comprobante de Pago"
         verbose_name_plural = "Comprobantes de Pago"
         
-
-

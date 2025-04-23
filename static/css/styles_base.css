@@ -276,12 +276,12 @@ body {
 
     /* Rectángulo superior vacío */
     .top-footer {
-        height: 170px;
+        height: 100px;
     }
 
     /* Rectángulo del medio */
     .middle-footer {
-        height: 170px;
+        height: 100px;
     }
 
     /* Rectángulo inferior */

@@ -1,0 +1,60 @@
+{% extends 'base.html' %}
+
+{% block title %}Estado de Cuotas de Alumnos{% endblock %}
+
+{% block extra_styles %}
+
+{% endblock %}
+
+{% block content %}
+<form method="post">
+    {% csrf_token %}
+    <label>CUIL del Estudiante:</label>
+    <input type="text" name="cuil_estudiante" required>
+    
+    <label for="ciclo_lectivo">Ciclo lectivo:</label>
+    <select name="ciclo_lectivo" id="ciclo_lectivo" required>
+    <option value="">Seleccionar año</option>
+    {% for ciclo in ciclos_lectivos %}
+        <option value="{{ ciclo.id }}" {% if ciclo.id == ciclo_seleccionado %}selected{% endif %}>
+        {{ ciclo.año_lectivo }}
+        </option>
+    {% endfor %}
+    </select>
+
+    <button type="submit">Buscar Cuotas</button>
+  </form>
+  
+  {% if estudiante %}
+    <h2>Estudiante: {{ estudiante.apellidos_estudiante }}, {{ estudiante.nombres_estudiante }}</h2>
+  {% endif %}
+  
+  {% if inscripcion %}
+    <p><strong>Subnivel:</strong> {{ inscripcion.subnivel_cursado.nombre }}</p>
+  
+    <h3>Cuotas del Ciclo {{ inscripcion.ciclo_lectivo.año_lectivo }}</h3>
+    <table>
+      <tr>
+        <th>Mes</th>
+        <th>Monto</th>
+        <th>Pagado</th>
+        <th>Interés</th>
+        <th>Total a Pagar</th>
+        <th>Fecha de Pago</th>
+      </tr>
+      {% for cuota in cuotas %}
+        <tr>
+          <td>{{ cuota.mes }}</td>
+          <td>${{ cuota.monto_cuota }}</td>
+          <td>{{ cuota.pagado|yesno:"Sí,No" }}</td>
+          <td>${{ cuota.interes_aplicado }}</td>
+          <td>${{ cuota.total_a_pagar }}</td>
+          <td>{{ cuota.fecha_pago|default:"-" }}</td>
+        </tr>
+      {% endfor %}
+    </table>
+  {% elif estudiante %}
+    <p style="color: red;">Este estudiante no tiene inscripción en el ciclo lectivo ingresado.</p>
+  {% endif %}
+  
+{% endblock %}

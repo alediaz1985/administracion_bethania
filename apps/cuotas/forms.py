@@ -86,9 +86,6 @@ class ComprobanteDrivePagoForm(forms.ModelForm):
 
 from .models import Inscripcion
 
-from django import forms
-from .models import Inscripcion, MontosCicloLectivo
-
 class InscripcionForm(forms.ModelForm):
     class Meta:
         model = Inscripcion
@@ -97,33 +94,34 @@ class InscripcionForm(forms.ModelForm):
             'ciclo_lectivo',
             'subnivel_cursado',
             'monto_inscripcion',
-            'pagada',
             'descuento_inscripcion',
+            'pagada',
         ]
-        labels = {
-            'cuil_alumno': 'Estudiante',
-            'ciclo_lectivo': 'Ciclo Lectivo',
-            'subnivel_cursado': 'Subnivel Cursado',
-            'monto_inscripcion': 'Monto de Inscripción',
-            'pagada': 'Pagada',
-            'descuento_inscripcion': 'Descuento por Inscripción',
-        }
         widgets = {
-            'cuil_alumno': forms.Select(attrs={'class': 'form-control'}),
-            'ciclo_lectivo': forms.Select(attrs={'class': 'form-control'}),
-            'subnivel_cursado': forms.Select(attrs={'class': 'form-control'}),
-            'monto_inscripcion': forms.NumberInput(attrs={'class': 'form-control', 'readonly': 'readonly'}),  # Solo lectura
-            'pagada': forms.CheckboxInput(attrs={'class': 'form-check-input'}),
-            'descuento_inscripcion': forms.NumberInput(attrs={'class': 'form-control'}),
+            'monto_inscripcion': forms.NumberInput(attrs={'step': '0.01', 'placeholder': 'Monto total'}),
+            'descuento_inscripcion': forms.NumberInput(attrs={'step': '0.01', 'placeholder': 'Descuento (si aplica)'}),
         }
 
-    def __init__(self, *args, **kwargs):
-        super(InscripcionForm, self).__init__(*args, **kwargs)
-        
-        # Lógica para asignar monto_inscripcion automáticamente
-        if self.instance.pk:  # Si la instancia ya está creada, mantén el monto de inscripción
-            self.fields['monto_inscripcion'].initial = self.instance.monto_inscripcion
-        else:
-            # Si el formulario es nuevo, no asignamos monto aún
-            self.fields['monto_inscripcion'].initial = 0
+    def clean_monto_inscripcion(self):
+        monto = self.cleaned_data.get('monto_inscripcion')
+        if monto:
+            # Reemplazar la coma por un punto, si es necesario
+            monto = str(monto).replace(',', '.')
+            try:
+                # Convertir el valor a decimal para validar que es un número válido
+                monto = float(monto)
+            except ValueError:
+                raise forms.ValidationError('El valor de monto de inscripción debe ser un número decimal válido.')
+        return monto
 
+    def clean_descuento_inscripcion(self):
+        descuento = self.cleaned_data.get('descuento_inscripcion')
+        if descuento:
+            # Reemplazar la coma por un punto, si es necesario
+            descuento = str(descuento).replace(',', '.')
+            try:
+                # Convertir el valor a decimal para validar que es un número válido
+                descuento = float(descuento)
+            except ValueError:
+                raise forms.ValidationError('El valor de descuento de inscripción debe ser un número decimal válido.')
+        return descuento
