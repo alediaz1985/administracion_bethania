@@ -82,3 +82,48 @@ class ComprobanteDrivePagoForm(forms.ModelForm):
             'cuil_estudiante': forms.TextInput(attrs={'class': 'form-control'}),
             'cuil_responsable_pago': forms.TextInput(attrs={'class': 'form-control'}),
         }
+
+
+from .models import Inscripcion
+
+from django import forms
+from .models import Inscripcion, MontosCicloLectivo
+
+class InscripcionForm(forms.ModelForm):
+    class Meta:
+        model = Inscripcion
+        fields = [
+            'cuil_alumno',
+            'ciclo_lectivo',
+            'subnivel_cursado',
+            'monto_inscripcion',
+            'pagada',
+            'descuento_inscripcion',
+        ]
+        labels = {
+            'cuil_alumno': 'Estudiante',
+            'ciclo_lectivo': 'Ciclo Lectivo',
+            'subnivel_cursado': 'Subnivel Cursado',
+            'monto_inscripcion': 'Monto de Inscripción',
+            'pagada': 'Pagada',
+            'descuento_inscripcion': 'Descuento por Inscripción',
+        }
+        widgets = {
+            'cuil_alumno': forms.Select(attrs={'class': 'form-control'}),
+            'ciclo_lectivo': forms.Select(attrs={'class': 'form-control'}),
+            'subnivel_cursado': forms.Select(attrs={'class': 'form-control'}),
+            'monto_inscripcion': forms.NumberInput(attrs={'class': 'form-control', 'readonly': 'readonly'}),  # Solo lectura
+            'pagada': forms.CheckboxInput(attrs={'class': 'form-check-input'}),
+            'descuento_inscripcion': forms.NumberInput(attrs={'class': 'form-control'}),
+        }
+
+    def __init__(self, *args, **kwargs):
+        super(InscripcionForm, self).__init__(*args, **kwargs)
+        
+        # Lógica para asignar monto_inscripcion automáticamente
+        if self.instance.pk:  # Si la instancia ya está creada, mantén el monto de inscripción
+            self.fields['monto_inscripcion'].initial = self.instance.monto_inscripcion
+        else:
+            # Si el formulario es nuevo, no asignamos monto aún
+            self.fields['monto_inscripcion'].initial = 0
+

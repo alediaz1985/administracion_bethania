@@ -27,4 +27,5 @@ urlpatterns = [
     # path('inscribir_alumno/', views.inscribir_alumno, name='inscribir_alumno'),
     # path('buscar_estudiantes_aprobados/', views.buscar_estudiantes_aprobados, name='buscar_estudiantes_aprobados'),
     path('inscribir_alumno/', views.inscribir_alumno, name='inscribir_alumno'),
+    path('obtener_monto_inscripcion/', views.obtener_monto_inscripcion, name='obtener_monto_inscripcion'),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

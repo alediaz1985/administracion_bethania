@@ -1053,98 +1053,95 @@ def obtener_subnivel(estudiante):
     return "No especificado"  # Si no hay ningún valor, devuelve este texto
 '''
 
-def inscribir_alumno(request):
-    """
-    Vista para inscribir a un alumno en un ciclo lectivo.
-    """
-    estudiantes = Estudiante.objects.all()  # Todos los estudiantes
-    ciclos_lectivos = CicloLectivo.objects.all()  # Todos los ciclos lectivos
-    subniveles = SubNivelCursado.objects.all()  # Todos los subniveles
-    resultados = []
-    subniveles_solicitados = []  # Para almacenar los subniveles solicitados
-    mensaje_documentacion_no_aprobada = None  # Mensaje para alumnos no aprobados
+from django.shortcuts import render, redirect
+from django.contrib import messages
 
-    # Si la búsqueda se realiza con la consulta 'q'
-    query = request.GET.get('q', '').strip()
+from .forms import InscripcionForm
+
+def inscribir_alumno(request):
+    query = request.GET.get('q')
+    resultados = []
+    mensaje_documentacion_no_aprobada = None
 
     if query:
-        # Buscar estudiantes con documentación aprobada
-        resultados = EstadoDocumentacion.objects.filter(
-            estado='aprobado',
-            estudiante__cuil_estudiante__icontains=query
-        ).select_related('estudiante')
+        estados = EstadoDocumentacion.objects.filter(estudiante__cuil_estudiante__icontains=query)
+        for estado in estados:
+            subnivel = obtener_subnivel(estado.estudiante)
 
-        if not resultados:
-            # Si no hay resultados aprobados, buscamos cualquier estudiante con ese CUIL
-            resultados = EstadoDocumentacion.objects.filter(
-                estudiante__cuil_estudiante__icontains=query
-            ).select_related('estudiante')
+            # Asegurar que subnivel sea una instancia de SubNivelCursado
+            if isinstance(subnivel, str):
+                try:
+                    subnivel_obj = SubNivelCursado.objects.get(nombre=subnivel)
+                except SubNivelCursado.DoesNotExist:
+                    subnivel_obj = None
+            else:
+                subnivel_obj = subnivel
 
-            # Si no tiene documentación aprobada, se muestra un mensaje
-            mensaje_documentacion_no_aprobada = "La documentación del alumno aún no ha sido aprobada."
+            ciclo_actual = CicloLectivo.objects.order_by('-año_lectivo').first()
 
-        # Obtener el subnivel solicitado para cada estudiante
-        for estado in resultados:
-            estudiante = estado.estudiante
-            subnivel = obtener_subnivel(estudiante)
-            subniveles_solicitados.append(subnivel)
+            try:
+                monto = MontosCicloLectivo.objects.get(
+                    ciclo_lectivo=ciclo_actual,
+                    subnivel_cursado=subnivel_obj
+                ).monto_inscripcion if subnivel_obj else 0
+            except MontosCicloLectivo.DoesNotExist:
+                monto = 0
 
-    # Si el formulario es enviado
+            resultados.append((estado, subnivel_obj, monto))
+
     if request.method == 'POST':
         estudiante_id = request.POST.get('estudiante')
-        ciclo_lectivo_id = request.POST.get('ciclo_lectivo')
+        ciclo_id = request.POST.get('ciclo_lectivo')
         subnivel_id = request.POST.get('subnivel_cursado')
-        pagada = request.POST.get('pagada') == 'on'  # Si está marcada, será True
+        descuento = request.POST.get('descuento_inscripcion', 0.00)
+        pagada = 'pagada' in request.POST
 
-        # Validaciones
-        if not estudiante_id or not ciclo_lectivo_id or not subnivel_id:
-            messages.error(request, "Por favor, seleccione un estudiante, ciclo lectivo y subnivel.")
-            return redirect('cuotas:inscribir_alumno')
-
-        estudiante = get_object_or_404(Estudiante, id=estudiante_id)
-        ciclo_lectivo = get_object_or_404(CicloLectivo, id=ciclo_lectivo_id)
-        subnivel = get_object_or_404(SubNivelCursado, id=subnivel_id)
-
-        # Verificar si ya está inscrito
-        if Inscripcion.objects.filter(cuil_alumno=estudiante, ciclo_lectivo=ciclo_lectivo).exists():
-            messages.error(request, f"El estudiante {estudiante} ya está inscrito en este ciclo lectivo.")
-            return redirect('cuotas:inscribir_alumno')
-
-        # Verificar si la documentación está aprobada
-        estado_documentacion = EstadoDocumentacion.objects.filter(estudiante=estudiante).first()
-        if not estado_documentacion or estado_documentacion.estado != 'aprobado':
-            messages.error(request, "La documentación del estudiante no está aprobada.")
-            return redirect('cuotas:inscribir_alumno')
-
-        # Obtener el monto de inscripción
         try:
-            montos = MontosCicloLectivo.objects.get(ciclo_lectivo=ciclo_lectivo, subnivel_cursado=subnivel)
-            monto_inscripcion = montos.monto_inscripcion
-        except MontosCicloLectivo.DoesNotExist:
-            messages.error(request, "No se han configurado montos para este ciclo y subnivel.")
-            return redirect('cuotas:inscribir_alumno')
+            estudiante = Estudiante.objects.get(id=estudiante_id)
+            estado_doc = EstadoDocumentacion.objects.get(estudiante=estudiante)
 
-        # Crear inscripción
-        Inscripcion.objects.create(
-            cuil_alumno=estudiante,
-            ciclo_lectivo=ciclo_lectivo,
-            subnivel_cursado=subnivel,
-            monto_inscripcion=monto_inscripcion,
-            pagada=pagada,
-            debe_inscripcion=not pagada
-        )
+            if estado_doc.estado != 'aprobado':
+                mensaje_documentacion_no_aprobada = "No se puede inscribir al estudiante porque su documentación no está aprobada."
+            else:
+                try:
+                    monto = MontosCicloLectivo.objects.get(
+                        ciclo_lectivo_id=ciclo_id,
+                        subnivel_cursado_id=subnivel_id
+                    )
+                    monto_inscripcion = monto.monto_inscripcion
+                except MontosCicloLectivo.DoesNotExist:
+                    monto_inscripcion = 0
 
-        messages.success(request, f"Estudiante {estudiante} inscrito correctamente en el ciclo {ciclo_lectivo}.")
-        return redirect('cuotas:inscribir_alumno')
+                Inscripcion.objects.create(
+                    cuil_alumno=estudiante,
+                    ciclo_lectivo=CicloLectivo.objects.get(id=ciclo_id),
+                    subnivel_cursado=SubNivelCursado.objects.get(id=subnivel_id),
+                    monto_inscripcion=monto_inscripcion,
+                    descuento_inscripcion=descuento,
+                    pagada=pagada
+                )
+
+                messages.success(request, "Estudiante inscrito correctamente.")
+                return redirect('cuotas:inscribir_alumno')
+
+        except Estudiante.DoesNotExist:
+            mensaje_documentacion_no_aprobada = "Estudiante no encontrado."
+        except EstadoDocumentacion.DoesNotExist:
+            mensaje_documentacion_no_aprobada = "Estado de documentación no encontrado."
+        except Exception as e:
+            mensaje_documentacion_no_aprobada = f"Ocurrió un error: {str(e)}"
+
+    ciclos_lectivos = CicloLectivo.objects.all()
+    subniveles = SubNivelCursado.objects.all()
 
     return render(request, 'cuotas/inscribir_alumno.html', {
-        'estudiantes': estudiantes,
+        'query': query,
+        'resultados': resultados,
+        'mensaje_documentacion_no_aprobada': mensaje_documentacion_no_aprobada,
         'ciclos_lectivos': ciclos_lectivos,
         'subniveles': subniveles,
-        'resultados': zip(resultados, subniveles_solicitados),
-        'query': query,
-        'mensaje_documentacion_no_aprobada': mensaje_documentacion_no_aprobada
     })
+
 
 # Función para obtener el subnivel solicitado
 def obtener_subnivel(estudiante):
@@ -1165,8 +1162,34 @@ def obtener_subnivel(estudiante):
         ('Secundario - 4to año', estudiante.nivel_secundario4),
         ('Secundario - 5to año', estudiante.nivel_secundario5),
     ]
-
+    
+    # Recorremos los subniveles y devolvemos el primero con un valor no vacío
     for nombre, valor in subniveles:
-        if valor:  # Si el subnivel tiene un valor (no está vacío ni es None)
-            return nombre
-    return "No especificado"  # Si no hay ningún valor, devuelve este texto
+        if valor is not None and valor != "":  # Verificamos que no sea None ni vacío
+            return nombre  # Retornamos el nombre del subnivel
+
+    return "No especificado"  # Si no hay ningún valor, devolvemos este texto
+
+
+from django.http import JsonResponse
+
+def obtener_monto_inscripcion(request):
+    # Obtenemos los parámetros que vienen de la URL
+    ciclo_lectivo_id = request.GET.get('ciclo_lectivo')
+    subnivel_cursado_id = request.GET.get('subnivel_cursado')
+
+    # Verificamos si se han pasado los parámetros correctamente
+    if ciclo_lectivo_id and subnivel_cursado_id:
+        try:
+            # Buscamos el monto de inscripción según los IDs de ciclo lectivo y subnivel cursado
+            monto = MontosCicloLectivo.objects.get(
+                ciclo_lectivo_id=ciclo_lectivo_id, subnivel_cursado_id=subnivel_cursado_id
+            ).monto_inscripcion
+            # Si lo encontramos, lo devolvemos en formato JSON
+            return JsonResponse({'monto': str(monto)})
+        except MontosCicloLectivo.DoesNotExist:
+            # Si no encontramos el monto, devolvemos 0.00
+            return JsonResponse({'monto': '0.00'})
+    else:
+        # Si no se pasan los parámetros, devolvemos 0.00
+        return JsonResponse({'monto': '0.00'})

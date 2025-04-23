@@ -5,11 +5,10 @@
 {% load static %}
 
 {% block extra_styles %}
-    <link rel="stylesheet" href="{% static 'cuotas/css/inscribir_alumno.css' %}">
+    <link rel="stylesheet" href="{% static 'cuotas/css/inscribira_alumno.css' %}">
 {% endblock %}
 
 {% block content %}
-
 <h1>Inscripción de Estudiante</h1>
 
 <!-- Formulario de Búsqueda de Estudiantes -->
@@ -33,45 +32,69 @@
         <thead>
             <tr>
                 <th>Estudiante</th>
+                <th>Estado</th>
                 <th>Subnivel</th>
                 <th>Acción</th>
             </tr>
         </thead>
         <tbody>
-            {% for estado, subnivel in resultados %}
-                <tr>
-                    <td>{{ estado.estudiante.nombres_estudiante }} {{ estado.estudiante.apellidos_estudiante }}</td>
-                    <td>{{ subnivel }}</td>
-                    <td>
-                        <form method="post" action="{% url 'cuotas:inscribir_alumno' %}">
-                            {% csrf_token %}
-                            <input type="hidden" name="estudiante" value="{{ estado.estudiante.id }}">
-                            <label for="ciclo_lectivo">Ciclo Lectivo:</label>
-                            <select name="ciclo_lectivo" id="ciclo_lectivo" required>
-                                {% for ciclo in ciclos_lectivos %}
-                                    <option value="{{ ciclo.id }}">{{ ciclo.año_lectivo }}</option>
-                                {% endfor %}
-                            </select>
-                            <label for="subnivel_cursado">Subnivel:</label>
-                            <select name="subnivel_cursado" id="subnivel_cursado" required>
-                                {% for subnivel in subniveles %}
-                                    <option value="{{ subnivel.id }}">{{ subnivel.nombre }}</option>
-                                {% endfor %}
-                            </select>
-                            <label for="pagada">¿Inscripción Pagada?</label>
-                            <input type="checkbox" name="pagada" id="pagada">
-                            <button type="submit">Inscribir</button>
-                        </form>
-                    </td>
-                </tr>
+            {% for estado, subnivel, monto in resultados %}
+            <tr>
+                <td>{{ estado.estudiante.nombres_estudiante }} {{ estado.estudiante.apellidos_estudiante }}</td>
+                <td>{{ estado.estado }}</td>
+                <td>{{ subnivel }}</td>
+                <td>
+                    <!-- Formulario para Inscribir al Estudiante -->
+                    <form method="post" action="{% url 'cuotas:inscribir_alumno' %}">
+                        {% csrf_token %}
+                        <input type="hidden" name="estudiante" value="{{ estado.estudiante.id }}">
+
+                        <!-- Ciclo Lectivo -->
+                        <label>Ciclo Lectivo:</label>
+                        <select name="ciclo_lectivo" class="ciclo-select" required>
+                            <option value="" selected disabled>Seleccione un ciclo lectivo</option>
+                            {% for ciclo in ciclos_lectivos %}
+                                <option value="{{ ciclo.id }}" {% if ciclo.id == request.GET.ciclo_lectivo %} selected {% endif %}>{{ ciclo.año_lectivo }}</option>
+                            {% endfor %}
+                        </select>
+
+                        <!-- Subnivel Cursado -->
+                        <label>Subnivel:</label>
+                        <select name="subnivel_cursado" class="subnivel-select" required>
+                            <option value="" selected disabled>Seleccione un subnivel</option>
+                            {% for sub in subniveles %}
+                                <option value="{{ sub.id }}" {% if sub.id == request.GET.subnivel_cursado %} selected {% endif %}>{{ sub.nombre }}</option>
+                            {% endfor %}
+                        </select>
+
+                        <!-- Monto de Inscripción -->
+                        <!-- <label>Monto de Inscripción:</label>
+                        <input type="text" name="monto_inscripcion" value="0.00" required class="monto-input" readonly> -->
+
+                        <!-- Descuento de Inscripción -->
+                        <label>Descuento:</label>
+                        <input type="number" name="descuento_inscripcion" value="0.00" step="0.01">
+
+                        <!-- Inscripción Pagada -->
+                        <label>¿Inscripción Pagada?</label>
+                        <input type="checkbox" name="pagada">
+
+                        <!-- Botón para enviar el formulario -->
+                        <button type="submit">Inscribir</button>
+                    </form>
+                </td>
+            </tr>
             {% endfor %}
         </tbody>
     </table>
 {% else %}
     <p>No se encontraron estudiantes con ese CUIL.</p>
 {% endif %}
-
 {% endblock %}
+
+
+
+
 
     <!-- Nuevo contenido: buscador de estudiantes aprobados por CUIL -->
     <!-- <form method="get" action="{% url 'cuotas:buscar_estudiantes_aprobados' %}">

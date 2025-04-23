@@ -69,12 +69,11 @@ class Inscripcion(models.Model):
     subnivel_cursado = models.ForeignKey(SubNivelCursado, on_delete=models.CASCADE, default=1, verbose_name="Subnivel Cursado")
     fecha_inscripcion = models.DateField(auto_now_add=True, verbose_name="Fecha de Inscripción")
     monto_inscripcion = models.DecimalField(max_digits=10, decimal_places=2, verbose_name="Monto de Inscripción")
-    pagada = models.BooleanField(default=False, verbose_name="Pagada")
+    pagada = models.BooleanField(default=False)
     descuento_inscripcion = models.DecimalField(max_digits=5, decimal_places=2, default=0, verbose_name="Descuento por Inscripción")
-    debe_inscripcion = models.BooleanField(default=True, verbose_name="Debe Inscripción")
 
     def __str__(self):
-        return f'{self.cuil_alumno.nombres} {self.cuil_alumno.apellidos} - {self.ciclo_lectivo.año_lectivo}'
+        return f'{self.cuil_alumno.nombres_estudiante} {self.cuil_alumno.apellidos_estudiante} - {self.ciclo_lectivo.año_lectivo}'
 
     class Meta:
         db_table = 'inscripcion'
@@ -147,3 +146,5 @@ class ComprobanteDrivePago(models.Model):
         verbose_name = "Comprobante de Pago"
         verbose_name_plural = "Comprobantes de Pago"
         
+
+
