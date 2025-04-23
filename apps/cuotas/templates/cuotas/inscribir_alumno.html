@@ -9,46 +9,103 @@
 {% endblock %}
 
 {% block content %}
-    <form method="post">
-        {% csrf_token %}
-        <h1>Inscripción de Alumnos</h1>
-        <!-- Mostrar mensajes de éxito o error -->
-        {% if messages %}
-        <ul class="messages">
-            {% for message in messages %}
-            <li class="{{ message.tags }}">{{ message }}</li>
+
+<h1>Buscar Estudiantes por CUIL</h1>
+
+{% if messages %}
+    <ul class="messages">
+        {% for message in messages %}
+            <li {% if message.tags %} class="{{ message.tags }}" {% endif %}>
+                {{ message }}
+            </li>
+        {% endfor %}
+    </ul>
+{% endif %}
+
+<!-- Formulario de búsqueda -->
+<form method="get">
+    <label for="q">CUIL del estudiante:</label>
+    <input type="text" name="q" id="q" value="{{ query }}">
+    <button type="submit">Buscar</button>
+</form>    
+
+{% if query %}
+    <h2>Resultados de la búsqueda</h2>
+
+    {% if resultados %}
+        <ul>
+            {% for resultado, subnivel in resultados %}
+                <li>
+                    <strong>{{ resultado.estudiante.nombres_estudiante }} {{ resultado.estudiante.apellidos_estudiante }}</strong><br>
+                    <strong>Subnivel:</strong> {{ subnivel }}<br>
+                    <strong>Estado de Documentación:</strong> {{ resultado.estado }}<br><br>
+                </li>
             {% endfor %}
         </ul>
-        {% endif %}
-        
-        <label for="alumno_id">Alumno:</label>
-        <select name="alumno_id" id="alumno_id" required>
-            <option value="">--- Selecciona un alumno ---</option>
-            {% for alumno in alumnos %}
-            <option value="{{ alumno.cuil_alumno }}" 
-                {% if alumno_seleccionado and alumno.cuil_alumno == alumno_seleccionado.cuil_alumno %}selected{% endif %}>
-                {{ alumno.apellidos_alumno }}, {{ alumno.nombres_alumno }}
-            </option>
+    {% else %}
+        <p>No se encontraron resultados para el CUIL proporcionado.</p>
+    {% endif %}
+
+    {% if mensaje_documentacion_no_aprobada %}
+        <p>{{ mensaje_documentacion_no_aprobada }}</p>
+    {% endif %}
+{% endif %}
+
+{% if resultados %}
+    <h2>Inscripción</h2>
+
+    <form method="post">
+        {% csrf_token %}
+
+        <!-- Ciclo Lectivo -->
+        <label for="ciclo">Ciclo Lectivo:</label>
+        <select name="ciclo" id="ciclo" required>
+            <option value="">-- Seleccioná un ciclo --</option>
+            {% for ciclo in ciclos_lectivos %}
+                <option value="{{ ciclo.id }}">{{ ciclo.año_lectivo }}</option>
             {% endfor %}
         </select>
 
-        <label for="ciclo_lectivo">Ciclo Lectivo:</label>
-        <select name="ciclo_lectivo" id="ciclo_lectivo" required>
-            <option value="">--- Selecciona un ciclo ---</option>
-            {% for ciclo in ciclos %}
-            <option value="{{ ciclo.id }}" 
-                {% if ciclo_seleccionado and ciclo.id == ciclo_seleccionado.id %}selected{% endif %}>
-                {{ ciclo.año_lectivo }}
-            </option>
+        <br><br>
+
+        <!-- Subnivel -->
+        <label for="subnivel">Subnivel:</label>
+        <select name="subnivel" id="subnivel" required>
+            <option value="">-- Seleccioná un subnivel --</option>
+            {% for subnivel in subniveles_disponibles %}
+                <option value="{{ subnivel.id }}">{{ subnivel }}</option>
             {% endfor %}
         </select>
 
+        <br><br>
+
+        <!-- Monto de Inscripción -->
         <label for="monto_inscripcion">Monto de Inscripción:</label>
-        <input type="number" name="monto_inscripcion" id="monto_inscripcion" value="{{ monto_inscripcion }}" readonly>
+        <select name="monto_inscripcion" id="monto_inscripcion" required>
+            <option value="">-- Seleccioná un monto --</option>
+            {% for monto in montos_disponibles %}
+                <option value="{{ monto.monto_inscripcion }}">{{ monto.subnivel_cursado.nombre }}: {{ monto.monto_inscripcion|floatformat:2 }}</option>
+            {% endfor %}
+        </select>
 
-        <label for="pagada">¿Inscripción Pagada?</label>
-        <input type="checkbox" name="pagada" id="pagada" {% if pagada %}checked{% endif %}>
+        <br><br>
 
-        <button type="submit">Inscribir Alumno</button>
+        <!-- Descuento por Inscripción -->
+        <label for="descuento_inscripcion">Descuento por Inscripción:</label>
+        <input type="number" name="descuento_inscripcion" id="descuento_inscripcion" step="0.01" value="0" required>
+
+        <br><br>
+
+        <!-- Pago -->
+        <label for="pagada">¿Está pagada?</label>
+        <input type="checkbox" name="pagada" id="pagada">
+
+        <br><br>
+
+        <button type="submit">Inscribir</button>
     </form>
+{% endif %}
+
 {% endblock %}
+
+

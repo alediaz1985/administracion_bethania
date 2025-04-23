@@ -22,8 +22,6 @@ from .utils import search_files_in_drive, download_file, archivo_existe
 
 from googleapiclient.http import MediaIoBaseDownload
 
-
-
 def estudiante_lista(request):
     estudiantes = Estudiante.objects.all()
     if not estudiantes:
