@@ -57,7 +57,8 @@
                         </li>
                     {% endfor %}
                 </ul>
-            {% else %}
+            {% endif %}
+            {% if sin_resultados %}
                 <p class="mensaje-sin-resultados">No se encontraron resultados para el CUIL proporcionado.</p>
             {% endif %}
 
@@ -119,7 +120,7 @@
                 </div>
             </div>
 
-            <div class="formulario-inscripcion__fila"></div>
+            <div class="formulario-inscripcion__fila">
                 <!-- Pago -->
                 <div class="formulario-inscripcion__grupo">
                     <label for="pagada" class="formulario-inscripcion__etiqueta">¿Está pagada?</label>
@@ -129,9 +130,15 @@
 
             <div class="formulario-inscripcion__fila">
                 <div class="formulario-inscripcion__grupo">
-                    <button type="submit" class="formulario-inscripcion__boton">Inscribir</button>
+                    <button class="boton-accion" type="submit">
+                        <span class="boton-accion__circulo" aria-hidden="true">
+                            <span class="boton-accion__icono boton-accion__icono--flecha"></span>
+                        </span>
+                        <span class="boton-accion__texto">Inscribir</span>
+                    </button>
                 </div>
             </div>
+
         </form>
 
     </section>
