@@ -1,0 +1,263 @@
+/* Estilos generales */
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+  
+body {
+    font-family: 'Helvetica Neue', Arial, sans-serif;
+    line-height: 1.5;
+    color: #333;
+    background-image: url('../img/fondo1.png'); /* Cambia por la ruta de tu imagen */
+    background-size: cover;  /* Asegura que la imagen cubra todo el fondo */
+    background-position: center; /* Centra la imagen */
+    background-repeat: no-repeat; /* Evita que la imagen se repita */
+}
+
+.estado-cuotas {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    width: 80%;
+    margin: 20px auto; /* Centrado horizontal */
+    border-radius: 10px;
+    background: linear-gradient(360deg,rgba(134, 134, 135, 1) 0%, rgba(167, 173, 185, 1) 35%, rgba(201, 201, 202, 1) 100%);
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.9);
+}
+
+.estado-cuotas__busqueda {
+    width: 100%;
+}
+
+.estado-cuotas__formulario {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 1rem;
+    width: 95%;
+    margin: 40px auto 40px auto; /* Centrado horizontal */
+    padding: 30px;
+    border-radius: 10px;
+    background-color: #f7f7f7;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.estado-cuotas__grupo {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    gap: 0.5rem;
+}
+
+.estado-cuotas__etiqueta {
+    font-weight: bold;
+    color: #181818;
+    font-size: 14px;
+}
+
+.estado-cuotas__input {
+    padding: 8px;
+    border: 1px solid #95a5a6;
+    border-radius: 5px;
+    font-size: 12px;
+    width: 400px;
+}
+
+.estado-cuotas__select {
+    font-size: 13px;
+    color: #2c3e50;
+    background-color: #ecf0f1;
+    padding: 0.3rem;
+    margin: 0.4rem 0;
+    width: 300px;
+    border-radius: 5px;
+}
+
+/* From Uiverse.io by cssbuttons-io */ 
+.boton-accion {
+    position: relative;
+    display: inline-block;
+    cursor: pointer;
+    outline: none;
+    border: 0;
+    vertical-align: middle;
+    text-decoration: none;
+    background: transparent;
+    padding: 0;
+    font-size: inherit;
+    font-family: inherit;
+    width: 9rem;
+    height: auto;
+}
+
+.boton-accion__circulo {
+    transition: all 0.45s cubic-bezier(0.65, 0, 0.076, 1);
+    position: relative;
+    display: block;
+    margin: 0;
+    width: 3rem;
+    height: 3rem;
+    background: rgb(66 149 33);
+    border-radius: 1.625rem;
+}
+
+.boton-accion__icono {
+    transition: all 0.45s cubic-bezier(0.65, 0, 0.076, 1);
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    margin: auto;
+    background: #fff;
+}
+
+.boton-accion__icono--flecha {
+    left: 0.625rem;
+    width: 1.125rem;
+    height: 0.125rem;
+    background: none;
+}
+
+.boton-accion__icono--flecha::before {
+    position: absolute;
+    content: "";
+    top: -0.29rem;
+    right: 0.0625rem;
+    width: 0.625rem;
+    height: 0.625rem;
+    border-top: 0.125rem solid #fff;
+    border-right: 0.125rem solid #fff;
+    transform: rotate(45deg);
+}
+
+.boton-accion__texto {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.45s cubic-bezier(0.65, 0, 0.076, 1);
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    padding: 0.75rem 0;
+    margin: 0 0 0 1.85rem;
+    color: #282936;
+    font-size: 12px;
+    font-weight: 700;
+    line-height: 1.6;
+    text-align: center;
+    text-transform: uppercase;
+}
+
+.boton-accion:hover .boton-accion__circulo {
+    width: 100%;
+}
+
+.boton-accion:hover .boton-accion__icono--flecha {
+    background: #fff;
+    transform: translate(1rem, 0);
+}
+
+.boton-accion:hover .boton-accion__texto {
+    color: #fff;
+}
+
+.titulo-secundario,
+.estado-cuotas__subtitulo {
+    font-size: 16px;
+    text-align: center;
+    font-weight: bold;
+    color: #181818;
+    border-bottom: 2px solid #2C3E50; 
+}
+
+.estado-cuotas__resultados {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    width: 95%;
+    margin: 0 auto 40px auto; /* Centrado horizontal */
+    padding: 30px;
+    border-radius: 10px;
+    background-color: #f7f7f7;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    gap: 1rem;
+}
+
+.estado-cuotas__titulo,
+.estado-cuotas__info {
+    font-size: 15px;
+    color: #181818;
+    text-align: left;
+    width: 50%;
+}
+
+/* Estilos generales de la tabla */
+.estado-cuotas__tabla {
+    width: 100%;
+    border-collapse: collapse; /* Quitar el espacio entre celdas */
+    margin-top: 20px;
+    background-color: #ffffff;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    overflow: hidden;
+}
+
+/* Encabezados de la tabla */
+.estado-cuotas__tabla th {
+    padding: 8px;
+    text-align: left;
+    background-color: #328beb; /* Color de fondo oscuro para los encabezados */
+    color: #ffffff; /* Texto blanco */
+    font-weight: bold;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    font-size: 12px;
+}
+
+/* Filas de la tabla */
+.estado-cuotas__tabla td {
+    padding: 12px;
+    text-align: left;
+    border-bottom: 1px solid #f1f1f1; /* Línea divisoria entre filas */
+    font-size: 12px;
+    color: #2C3E50; /* Color de texto */
+}
+
+/* Efecto hover en las filas */
+.estado-cuotas__tabla tr:hover {
+    background-color: #f1f1f1; /* Fondo gris claro al pasar el ratón */
+    cursor: pointer;
+}
+
+/* Resaltar filas al hacer hover */
+.estado-cuotas__tabla tbody tr:nth-child(odd) {
+    background-color: #f9f9f9; /* Fondo alternado en filas impares */
+}
+
+.estado-cuotas__tabla tbody tr:nth-child(even) {
+    background-color: #ffffff; /* Fondo blanco en filas pares */
+}
+
+/* Bordes de la tabla */
+.estado-cuotas__tabla th, .estado-cuotas__tabla td {
+    border-right: 1px solid #ddd;
+}
+
+/* Eliminar el borde derecho en la última columna */
+.estado-cuotas__tabla td:last-child, .estado-cuotas__tabla th:last-child {
+    border-right: none;
+}
+
+.estado-cuotas__mensaje-error {
+    background-color: #f8d7da;
+    color: #721c24;
+    border-left: 5px solid #dc3545;
+    padding: 10px;
+    margin-top: 1rem;
+    border-radius: 4px;
+}

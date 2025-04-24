@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Resumen de Descarga</title>
+</head>
+<body>
+    <h1>Archivos Descargados</h1>
+
+    {% if archivos_descargados %}
+        <ul>
+            {% for archivo in archivos_descargados %}
+                <li>{{ archivo }}</li>
+            {% endfor %}
+        </ul>
+    {% else %}
+        <p>No se descargaron archivos.</p>
+    {% endif %}
+</body>
+</html>

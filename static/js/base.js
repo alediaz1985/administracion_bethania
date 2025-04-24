@@ -24,8 +24,6 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 });
 
-
-
 function toggleSidebar() {
     const sidebar = document.getElementById("sidebar");
     const content = document.querySelector(".open-btn");
@@ -39,7 +37,6 @@ function toggleSidebar() {
     } else {
         content.style.marginLeft = "0px";
     }
-
 }
 
 // Función para expandir los subitems de un ítem específico
@@ -50,12 +47,13 @@ expandBtns.forEach(btn => {
         e.preventDefault();  // Prevenir la acción predeterminada del enlace
 
         const sidebar = document.getElementById("sidebar");
-        const subitems = this.nextElementSibling;  // Los subitems del ítem clickeado
 
-        // Si la barra lateral está cerrada, la expandimos
+        // No hacer nada si la barra lateral está cerrada
         if (!sidebar.classList.contains('active')) {
-            sidebar.classList.add('active');  // Expande la barra lateral
+            return;
         }
+
+        const subitems = this.nextElementSibling;  // Los subitems del ítem clickeado
 
         // Verificar si ya está abierto
         const isActive = subitems.classList.contains('active');
@@ -76,4 +74,17 @@ expandBtns.forEach(btn => {
             this.querySelector('.expand-btn').textContent = '-';  // Cambiar icono a '-'
         }
     });
+});
+// Cierra la sidebar si se hace clic fuera de ella
+document.addEventListener('click', function (e) {
+    const sidebar = document.getElementById("sidebar");
+    const isClickInside = sidebar.contains(e.target);
+    const isToggleButton = e.target.closest('.open-btn'); // botón que abre la sidebar
+
+    if (!isClickInside && !isToggleButton && sidebar.classList.contains("active")) {
+        sidebar.classList.remove("active");
+
+        const content = document.querySelector(".open-btn");
+        content.style.marginLeft = "0px";
+    }
 });

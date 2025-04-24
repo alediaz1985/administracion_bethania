@@ -1,149 +1,257 @@
 /* Estilos generales */
-body {
-    font-family: Arial, sans-serif;
-    background-image: url('../img/fondo1.png'); /* Cambia por la ruta de tu imagen */
-    background-size: cover;
-    background-position: center;
-    background-repeat: no-repeat;
+* {
+    box-sizing: border-box;
     margin: 0;
     padding: 0;
 }
-
-/* Contenedor principal */
-.consulta-container {
-    width: 90%;
-    margin: 20px auto;
-    padding: 20px;
-    background-color: #f7f7f7;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    border-radius: 8px;
-}
-
-/* Contenedor de botones superiores */
-.consulta-header-buttons {
-    display: flex;
-    justify-content: space-between;
-    margin-bottom: 20px;
-}
-
-/* Botones de acción */
-.consulta-action-button {
-    padding: 10px 20px;
-    border: none;
-    border-radius: 5px;
-    background-color: #428545;
-    color: white;
-    font-size: 14px;
-    cursor: pointer;
-    transition: all 0.3s ease;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-}
-
-.consulta-action-button:hover {
-    background-color: #306635;
-    transform: translateY(-3px);
-    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
-}
-
-.consulta-action-button:active {
-    background-color: #204923;
-    transform: translateY(0);
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-}
-
-/* Contenedor del formulario de búsqueda */
-.consulta-busqueda {
-    margin-bottom: 30px;
-    text-align: center;
-}
-
-.consulta-busqueda h2 {
-    font-size: 18px;
+  
+body {
+    font-family: 'Helvetica Neue', Arial, sans-serif;
+    font-size: 16px;
+    line-height: 1.5;
+    background-color: #f0f2f5;
     color: #333;
-    margin-bottom: 20px;
 }
 
-.consulta-form {
-    display: grid;
-    grid-template-columns: 1fr 1fr 1fr;
-    gap: 15px;
-    justify-items: center;
+.consulta {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    width: 60%;
+    margin: 20px auto; /* Centrado horizontal */
+    border-radius: 10px;
+    background: linear-gradient(360deg,rgba(134, 134, 135, 1) 0%, rgba(167, 173, 185, 1) 35%, rgba(201, 201, 202, 1) 100%);
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.9);
 }
 
-.form-group {
+.consulta__titulo {
+    font-size: 15px;
+    padding: 20px 0;
+}
+
+.consulta__formulario {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 1rem;
+    width: 95%;
+    margin: 0 auto 0 auto; /* Centrado horizontal */
+    padding: 30px;
+    border-radius: 10px;
+    background-color: #f7f7f7;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.consulta__grupo-formulario {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 1rem;
+    width: 100%;
+}
+
+.consulta__etiqueta {
+    font-weight: bold;
+    color: #181818;
+    font-size: 13px;
+}
+
+.consulta__input {
+    width: 100%;
+    padding: 10px;
+    font-size: 13px;
+    border: 1px solid #95a5a6;
+    border-radius: 5px;
+    background-color: #f9f9f9;
+    transition: border 0.3s ease;
+}
+
+.consulta__input-fecha {
+    width: 100%;
+    padding: 10px 14px;
+    font-size: 12px;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    background-color: #f9f9f9;
+    transition: border 0.3s ease;
+}
+
+.consulta__acciones {
+    margin-top: 40px;
+}
+
+.consulta__boton {
+    position: relative;
+    display: inline-block;
+    cursor: pointer;
+    outline: none;
+    border: 0;
+    vertical-align: middle;
+    text-decoration: none;
+    background: transparent;
+    padding: 0;
+    font-size: inherit;
+    font-family: inherit;
+    width: 12rem;
+    height: auto;
+}
+
+.consulta__boton-circulo {
+    transition: all 0.45s cubic-bezier(0.65, 0, 0.076, 1);
+    position: relative;
+    display: block;
+    margin: 0;
+    width: 3rem;
+    height: 3rem;
+    background: rgb(66, 149, 33);
+    border-radius: 1.625rem;
+}
+
+.consulta__boton-icono {
+    transition: all 0.45s cubic-bezier(0.65, 0, 0.076, 1);
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    margin: auto;
+    background: #fff;
+}
+
+.consulta__boton-icono--flecha {
+    left: 0.625rem;
+    width: 1.125rem;
+    height: 0.125rem;
+    background: none;
+}
+
+.consulta__boton-icono--flecha::before {
+    position: absolute;
+    content: "";
+    top: -0.29rem;
+    right: 0.0625rem;
+    width: 0.625rem;
+    height: 0.625rem;
+    border-top: 0.125rem solid #fff;
+    border-right: 0.125rem solid #fff;
+    transform: rotate(45deg);
+}
+
+.consulta__boton-texto {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.45s cubic-bezier(0.65, 0, 0.076, 1);
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    padding: 0.75rem 0;
+    margin: 0 0 0 1.85rem;
+    color: #282936;
+    font-size: 13px;
+    font-weight: 700;
+    line-height: 1.6;
+    text-align: center;
+    text-transform: uppercase;
+}
+
+.consulta__boton:hover .consulta__boton-circulo {
+    width: 100%;
+}
+
+.consulta__boton:hover .consulta__boton-icono--flecha {
+    background: #fff;
+    transform: translate(1rem, 0);
+}
+
+.consulta__boton:hover .consulta__boton-texto {
+    color: #fff;
+}
+
+.descargar-archivos {
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    width: 100%;
+    padding: 0 30px 0 0; /* espacio hacia el borde derecho */
+}
+
+.descargar-archivos-button {
+    display: inline-block;
+    padding: 10px 20px;
+    background: rgb(66, 149, 33);
+    color: #fff;
+    font-size: 13px;
+    text-align: center;
+    text-decoration: none;
+    border-radius: 8px;
+    transition: background-color 0.3s ease;
+    margin: 30px 0;
+    text-transform: uppercase;
+}
+
+.descargar-archivos-button:hover {
+    background: rgb(33, 102, 6);
+    color: #fff;
+}
+
+.consulta-resultados {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 0.5rem;
+    width: 95%;
+    margin: 40px auto 0 auto; /* Centrado horizontal */
+    padding: 30px;
+    border-radius: 10px;
+    background-color: #f7f7f7;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.consulta__subtitulo {
+    font-size: 15px;
+    text-align: center;
+    font-weight: bold;
+    color: #181818;
+    border-bottom: 2px solid #2C3E50; 
+    width: 100%;
+    padding: 10px;
+}
+
+.consulta__cantidad {
+    text-align: left;
+    align-self: flex-start;
+    color: #181818;
+    font-size: 13px;
+}
+
+.consulta__lista-resultados {
     display: flex;
     flex-direction: column;
     width: 100%;
 }
 
-.form-group label {
-    font-size: 14px;
-    margin-bottom: 5px;
-    color: #555;
-}
-
-.consulta-buscar-button {
-    grid-column: span 3;
-    padding: 10px 20px;
-    border: none;
-    border-radius: 5px;
-    background-color: #428545;
-    color: white;
-    font-size: 14px;
-    cursor: pointer;
-    transition: all 0.3s ease;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-}
-
-.consulta-buscar-button:hover {
-    background-color: #306635;
-    transform: translateY(-3px);
-    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
-}
-
-.consulta-buscar-button:active {
-    background-color: #204923;
-    transform: translateY(0);
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-}
-
-/* Resultados de la búsqueda */
-.consulta-resultados {
-    margin-top: 30px;
-}
-
-.consulta-resultados-titulo {
-    font-size: 18px;
-    color: #333;
-    margin-bottom: 15px;
-    text-align: center;
-}
-
-.consulta-lista-resultados {
-    list-style: none;
-    padding: 0;
-}
-
-.consulta-item-resultado {
-    margin-bottom: 15px;
+.consulta__item-resultado {
+    display: flex;
+    flex-direction: column;
+    border-bottom: 2px solid #6f8396;
     padding: 10px;
-    background-color: #f9f9f9;
-    border-radius: 5px;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-}
-
-.consulta-item-resultado a {
-    color: #428545;
-    text-decoration: none;
     font-weight: bold;
+    color: #181818;
+    font-size: 13px;
 }
 
-.consulta-item-resultado a:hover {
-    text-decoration: underline;
-}
-
-.consulta-item-resultado strong {
-    display: block;
-    margin-bottom: 5px;
-    color: #555;
+.consulta__mensaje {
+    background-color: #f8d7da;
+    color: #721c24;
+    border-left: 5px solid #dc3545;
+    padding: 10px;
+    margin-top: 1rem;
+    border-radius: 4px;
+    width: 60%;
+    font-size: 13px;
+    box-shadow: 0 0 10px rgba(220, 53, 69, 0.2);
 }

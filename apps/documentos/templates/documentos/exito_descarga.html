@@ -1,0 +1,35 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Descarga Exitosa{% endblock %}
+
+{% block extra_styles %}
+    <link rel="stylesheet" href="{% static 'documentos/css/descarga-exito.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="descarga-exitosa">
+    <h2 class="descarga-exitosa__titulo">Descarga Completa</h2>
+
+    <div class="descarga-exitosa__seccion">
+        <p class="descarga-exitosa__texto">Archivos descargados:</p>
+        <ul class="descarga-exitosa__lista">
+            {% for archivo in archivos_descargados %}
+                <li class="descarga-exitosa__item">{{ archivo }}</li>
+            {% endfor %}
+        </ul>
+    </div>
+
+    <div class="descarga-exitosa__seccion">
+        <p class="descarga-exitosa__texto">Archivos omitidos (ya existentes):</p>
+        <ul class="descarga-exitosa__lista">
+            {% for archivo in archivos_omitidos %}
+                <li class="descarga-exitosa__item">{{ archivo }}</li>
+            {% endfor %}
+        </ul>
+    </div>
+
+    <a href="{% url 'consulta' %}" class="descarga-exitosa__enlace">Volver a la consulta</a>
+</div>
+{% endblock %}
+

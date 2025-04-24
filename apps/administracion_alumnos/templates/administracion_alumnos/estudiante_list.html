@@ -12,7 +12,15 @@
 
 <div class="alumnos-container">
     <div class="alumnos">
-        <h1 class="alumnos-titulo">Lista de Estudiantes</h1>
+        <div class="filters">
+            <!-- Filtro 1: Selección de Nivel -->
+            <select id="nivel-filter" name="nivel">
+                <option value="">Seleccionar Nivel</option>
+                <option value="Inicial">Nivel Inicial</option>
+                <option value="Primario">Nivel Primario</option>
+                <option value="Secundario">Nivel Secundario</option>
+            </select>
+        </div>
 
         <form action="{% url 'generar_pdf_lista_alumnos' %}" method="get">
             <!-- From Uiverse.io by vinodjangid07 -->
@@ -98,8 +106,8 @@
             <p class="text">Generar PDF</p>
             </button>
         </form>
-
     </div>
+    
     <div class="tabs">
         <button class="tab-button active" onclick="showTab('todos')">Todos</button>
         <button class="tab-button" onclick="showTab('pendientes')">Pendientes</button>
@@ -114,7 +122,9 @@
                         <th>Apellido/s</th>
                         <th>Nombre/s</th>
                         <th>Nivel</th>
-                        <th></th>
+                        <th>Subnivel</th>
+                        <th>Turno</th>
+                        <th>Fecha Recepción</th>
                         <th></th>
                         <th></th>
                     </tr>
@@ -122,36 +132,114 @@
                 <tbody id="table-body">
                     {% if estudiantes %}
                         {% for estudiante in estudiantes %}
-                            <tr>
-                                <td>{{ estudiante.cuil_estudiante }}</td>
+                            <tr data-nivel="{{ estudiante.nivel_estudiante }}" 
+                            data-subnivel="{{ estudiante.subnivel_estudiante }}" 
+                            data-turno="{{ estudiante.turno_estudiante }}">
+                                <td>
+                                    <span id="cuil_{{ estudiante.id }}">{{ estudiante.cuil_estudiante }}</span>
+                                    <button onclick="copyToClipboard('cuil_{{ estudiante.id }}')" style="border: none; background: transparent; cursor: pointer;">
+                                    <i class="fas fa-copy" style="color: #b6b6b6;"></i> <!-- Icono con color más suave (gris claro) -->
+                                    </button>
+                                </td>
+                                <!-- Toast (mensaje flotante) -->
+                                <div id="toast_{{ estudiante.id }}" style="position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); background-color: rgba(0, 128, 0, 0.8); color: white; padding: 10px 20px; border-radius: 5px; font-size: 14px; display: none; opacity: 0; pointer-events: none; z-index: 9999; transition: opacity 0.5s ease;">
+                                    ¡Copiado!
+                                </div>
                                 <td>{{ estudiante.apellidos_estudiante }}</td>
                                 <td>{{ estudiante.nombres_estudiante }}</td>
                                 <td>{{ estudiante.nivel_estudiante }}</td>
                                 <td>
-                                    {% for estado in estudiante.estados_documentacion.all %}
-                                        {{ estado.estado }}
-                                    {% endfor %}
+                                    {% if estudiante.nivel_inicial3 %}
+                                        3 Años
+                                    {% elif estudiante.nivel_inicial4 %}
+                                        4 Años
+                                    {% elif estudiante.nivel_inicial5 %}
+                                        5 Años
+                                    {% elif estudiante.nivel_primario1 %}
+                                        1er Grado
+                                    {% elif estudiante.nivel_primario2 %}
+                                        2do Grado
+                                    {% elif estudiante.nivel_primario3 %}
+                                        3er Grado
+                                    {% elif estudiante.nivel_primario4 %}
+                                        4to Grado
+                                    {% elif estudiante.nivel_primario5 %}
+                                        5to Grado
+                                    {% elif estudiante.nivel_primario6 %}
+                                        6to Grado
+                                    {% elif estudiante.nivel_primario7 %}
+                                        7mo Grado
+                                    {% elif estudiante.nivel_secundario1 %}
+                                        1er Año
+                                    {% elif estudiante.nivel_secundario2 %}
+                                        2do Año
+                                    {% elif estudiante.nivel_secundario3 %}
+                                        3er Año
+                                    {% elif estudiante.nivel_secundario4 %}
+                                        4to Año
+                                    {% elif estudiante.nivel_secundario5 %}
+                                        5to Año
+                                    {% else %}
+                                        No definido
+                                    {% endif %}
                                 </td>
+                                <td>
+                                    {% if estudiante.nivel_inicial3 %}
+                                        {{ estudiante.nivel_inicial3 }}
+                                    {% elif estudiante.nivel_inicial4 %}
+                                        {{ estudiante.nivel_inicial4 }}
+                                    {% elif estudiante.nivel_inicial5 %}
+                                        {{ estudiante.nivel_inicial5 }}
+                                    {% elif estudiante.nivel_primario1 %}
+                                        {{ estudiante.nivel_primario1 }}
+                                    {% elif estudiante.nivel_primario2 %}
+                                        {{ estudiante.nivel_primario2 }}
+                                    {% elif estudiante.nivel_primario3 %}
+                                        {{ estudiante.nivel_primario3 }}
+                                    {% elif estudiante.nivel_primario4 %}
+                                        {{ estudiante.nivel_primario4 }}
+                                    {% elif estudiante.nivel_primario5 %}
+                                        {{ estudiante.nivel_primario5 }}
+                                    {% elif estudiante.nivel_primario6 %}
+                                        {{ estudiante.nivel_primario6 }}
+                                    {% elif estudiante.nivel_primario7 %}
+                                        {{ estudiante.nivel_primario7 }}
+                                    {% elif estudiante.nivel_secundario1 %}
+                                        {{ estudiante.nivel_secundario1 }}
+                                    {% elif estudiante.nivel_secundario2 %}
+                                        {{ estudiante.nivel_secundario2 }}
+                                    {% elif estudiante.nivel_secundario3 %}
+                                        {{ estudiante.nivel_secundario3 }}
+                                    {% elif estudiante.nivel_secundario4 %}
+                                        {{ estudiante.nivel_secundario4 }}
+                                    {% elif estudiante.nivel_secundario5 %}
+                                        {{ estudiante.nivel_secundario5 }}
+                                    {% else %}
+                                        No definido
+                                    {% endif %}
+                                </td>
+                                </td>
+                                <td>{{ estudiante.fecha_recepcion }}</td>
                                 <td>
                                     <form class="alumnos-controls" action="{% url 'ver_datos_estudiante' pk=estudiante.pk %}" method="get">
                                         <div class="tooltip-container">
                                             <span class="tooltip-text">Ver Datos</span>
-                                            <button class="alumnos-btn-1" type="submit">
+                                            <button class="alumnos-btn-ver" type="submit">
                                                 <i class="fas fa-eye"></i>
                                             </button>
                                         </div>
                                     </form>
-                                </td>   
+                                </td>
                                 <td>
                                     <form class="alumnos-controls" action="{% url 'generar_contrato' estudiante.pk %}" method="get">
                                         <div class="tooltip-container">
                                             <span class="tooltip-text">Generar Contrato</span>
-                                            <button class="alumnos-btn-1" type="submit">
+                                            <button class="alumnos-btn-pdf" type="submit">
                                                 <i class="fas fa-file-pdf"></i>
                                             </button>
                                         </div>
                                     </form>
-                                </td>                             
+                                </td>                           
                             </tr>  
                         {% endfor %}
                     {% else %}
@@ -170,7 +258,9 @@
                         <th>Apellido/s</th>
                         <th>Nombre/s</th>
                         <th>Nivel</th>
-                        <th></th>
+                        <th>Grado</th>
+                        <th>Turno</th>
+                        <th>Fecha Recepción</th>
                         <th></th>
                         <th></th>
                     </tr>
@@ -179,21 +269,100 @@
                     <!-- Filas de datos iniciales -->
                     {% if estudiantes_pendientes %}
                         {% for estudiante in estudiantes_pendientes %}
-                            <tr>
-                                <td>{{ estudiante.cuil_estudiante }}</td>
+                            <tr data-nivel="{{ estudiante.nivel_estudiante }}" 
+                            data-subnivel="{{ estudiante.subnivel_estudiante }}" 
+                            data-turno="{{ estudiante.turno_estudiante }}">
+                                <td>
+                                    <span id="datoCuil_{{ estudiante.id }}">{{ estudiante.cuil_estudiante }}</span>
+                                    <button onclick="duplicarAlPortapapeles('datoCuil_{{ estudiante.id }}')" style="border: none; background: transparent; cursor: pointer;">
+                                        <i class="fas fa-copy" style="color: #b6b6b6;"></i> <!-- Icono con un color distinto si querés -->
+                                    </button>
+                                </td>
+                                
+                                <!-- Segundo toast (mensaje flotante alternativo) -->
+                                <div id="avisoCopiado_{{ estudiante.id }}" style="position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); background-color: rgba(0, 128, 0, 0.8); color: white; padding: 10px 20px; border-radius: 5px; font-size: 14px; display: none; opacity: 0; pointer-events: none; z-index: 9999; transition: opacity 0.5s ease;">
+                                    ¡Copiado!
+                                </div>
+                            
                                 <td>{{ estudiante.apellidos_estudiante }}</td>
                                 <td>{{ estudiante.nombres_estudiante }}</td>
                                 <td>{{ estudiante.nivel_estudiante }}</td>
                                 <td>
-                                    {% for estado in estudiante.estados_documentacion.all %}
-                                        {{ estado.estado }}
-                                    {% endfor %}
+                                    {% if estudiante.nivel_inicial3 %}
+                                        3 Años
+                                    {% elif estudiante.nivel_inicial4 %}
+                                        4 Años
+                                    {% elif estudiante.nivel_inicial5 %}
+                                        5 Años
+                                    {% elif estudiante.nivel_primario1 %}
+                                        1er Grado
+                                    {% elif estudiante.nivel_primario2 %}
+                                        2do Grado
+                                    {% elif estudiante.nivel_primario3 %}
+                                        3er Grado
+                                    {% elif estudiante.nivel_primario4 %}
+                                        4to Grado
+                                    {% elif estudiante.nivel_primario5 %}
+                                        5to Grado
+                                    {% elif estudiante.nivel_primario6 %}
+                                        6to Grado
+                                    {% elif estudiante.nivel_primario7 %}
+                                        7mo Grado
+                                    {% elif estudiante.nivel_secundario1 %}
+                                        1er Año
+                                    {% elif estudiante.nivel_secundario2 %}
+                                        2do Año
+                                    {% elif estudiante.nivel_secundario3 %}
+                                        3er Año
+                                    {% elif estudiante.nivel_secundario4 %}
+                                        4to Año
+                                    {% elif estudiante.nivel_secundario5 %}
+                                        5to Año
+                                    {% else %}
+                                        No definido
+                                    {% endif %}
                                 </td>
+                                <td>
+                                    {% if estudiante.nivel_inicial3 %}
+                                        {{ estudiante.nivel_inicial3 }}
+                                    {% elif estudiante.nivel_inicial4 %}
+                                        {{ estudiante.nivel_inicial4 }}
+                                    {% elif estudiante.nivel_inicial5 %}
+                                        {{ estudiante.nivel_inicial5 }}
+                                    {% elif estudiante.nivel_primario1 %}
+                                        {{ estudiante.nivel_primario1 }}
+                                    {% elif estudiante.nivel_primario2 %}
+                                        {{ estudiante.nivel_primario2 }}
+                                    {% elif estudiante.nivel_primario3 %}
+                                        {{ estudiante.nivel_primario3 }}
+                                    {% elif estudiante.nivel_primario4 %}
+                                        {{ estudiante.nivel_primario4 }}
+                                    {% elif estudiante.nivel_primario5 %}
+                                        {{ estudiante.nivel_primario5 }}
+                                    {% elif estudiante.nivel_primario6 %}
+                                        {{ estudiante.nivel_primario6 }}
+                                    {% elif estudiante.nivel_primario7 %}
+                                        {{ estudiante.nivel_primario7 }}
+                                    {% elif estudiante.nivel_secundario1 %}
+                                        {{ estudiante.nivel_secundario1 }}
+                                    {% elif estudiante.nivel_secundario2 %}
+                                        {{ estudiante.nivel_secundario2 }}
+                                    {% elif estudiante.nivel_secundario3 %}
+                                        {{ estudiante.nivel_secundario3 }}
+                                    {% elif estudiante.nivel_secundario4 %}
+                                        {{ estudiante.nivel_secundario4 }}
+                                    {% elif estudiante.nivel_secundario5 %}
+                                        {{ estudiante.nivel_secundario5 }}
+                                    {% else %}
+                                        No definido
+                                    {% endif %}
+                                </td>
+                                <td class="fecha">{{ estudiante.fecha_recepcion }}</td>
                                 <td>
                                     <form class="alumnos-controls" action="{% url 'ver_datos_estudiante' pk=estudiante.pk %}" method="get">
                                         <div class="tooltip-container">
                                             <span class="tooltip-text">Ver Datos</span>
-                                            <button class="alumnos-btn-1" type="submit">
+                                            <button class="alumnos-btn-ver" type="submit">
                                                 <i class="fas fa-eye"></i>
                                             </button>
                                         </div>
@@ -203,12 +372,12 @@
                                     <form class="alumnos-controls" action="{% url 'autoriza_imagen' estudiante.pk %}" method="get">
                                         <div class="tooltip-container">
                                             <span class="tooltip-text">Generar Contrato</span>
-                                            <button class="alumnos-btn-1" type="submit">
+                                            <button class="alumnos-btn-pdf" type="submit">
                                                 <i class="fas fa-file-pdf"></i>
                                             </button>
                                         </div>
                                     </form>
-                                </td>
+                                </td>                                
                             </tr>
                         {% endfor %}
                     {% else %}
@@ -227,7 +396,9 @@
                         <th>Apellido/s</th>
                         <th>Nombre/s</th>
                         <th>Nivel</th>
-                        <th></th>
+                        <th>Grado</th>
+                        <th>Turno</th>
+                        <th>Fecha Recepción</th>
                         <th></th>
                         <th></th>
                     </tr>
@@ -235,21 +406,100 @@
                 <tbody id="table-body">
                     {% if estudiantes_aprobados %}
                         {% for estudiante in estudiantes_aprobados %}
-                            <tr>
-                                <td>{{ estudiante.cuil_estudiante }}</td>
+                            <tr data-nivel="{{ estudiante.nivel_estudiante }}" 
+                            data-subnivel="{{ estudiante.subnivel_estudiante }}" 
+                            data-turno="{{ estudiante.turno_estudiante }}">
+                                <td>
+                                    <span id="identificadorCuil_{{ estudiante.id }}">{{ estudiante.cuil_estudiante }}</span>
+                                    <button onclick="copiarValorCuil('identificadorCuil_{{ estudiante.id }}')" style="border: none; background: transparent; cursor: pointer;">
+                                        <i class="fas fa-copy" style="color: #b6b6b6;"></i> <!-- Color diferente -->
+                                    </button>
+                                </td>
+                                
+                                <!-- Tercer toast (mensaje personalizado) -->
+                                <div id="mensajeCuil_{{ estudiante.id }}" style="position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); background-color: rgba(0, 128, 0, 0.8); color: white; padding: 10px 20px; border-radius: 5px; font-size: 14px; display: none; opacity: 0; pointer-events: none; z-index: 9999; transition: opacity 0.5s ease;">
+                                    ¡Copiado!
+                                </div>
+                            
                                 <td>{{ estudiante.apellidos_estudiante }}</td>
                                 <td>{{ estudiante.nombres_estudiante }}</td>
                                 <td>{{ estudiante.nivel_estudiante }}</td>
                                 <td>
-                                    {% for estado in estudiante.estados_documentacion.all %}
-                                        {{ estado.estado }}
-                                    {% endfor %}
+                                    {% if estudiante.nivel_inicial3 %}
+                                        3 Años
+                                    {% elif estudiante.nivel_inicial4 %}
+                                        4 Años
+                                    {% elif estudiante.nivel_inicial5 %}
+                                        5 Años
+                                    {% elif estudiante.nivel_primario1 %}
+                                        1er Grado
+                                    {% elif estudiante.nivel_primario2 %}
+                                        2do Grado
+                                    {% elif estudiante.nivel_primario3 %}
+                                        3er Grado
+                                    {% elif estudiante.nivel_primario4 %}
+                                        4to Grado
+                                    {% elif estudiante.nivel_primario5 %}
+                                        5to Grado
+                                    {% elif estudiante.nivel_primario6 %}
+                                        6to Grado
+                                    {% elif estudiante.nivel_primario7 %}
+                                        7mo Grado
+                                    {% elif estudiante.nivel_secundario1 %}
+                                        1er Año
+                                    {% elif estudiante.nivel_secundario2 %}
+                                        2do Año
+                                    {% elif estudiante.nivel_secundario3 %}
+                                        3er Año
+                                    {% elif estudiante.nivel_secundario4 %}
+                                        4to Año
+                                    {% elif estudiante.nivel_secundario5 %}
+                                        5to Año
+                                    {% else %}
+                                        No definido
+                                    {% endif %}
                                 </td>
+                                <td>
+                                    {% if estudiante.nivel_inicial3 %}
+                                        {{ estudiante.nivel_inicial3 }}
+                                    {% elif estudiante.nivel_inicial4 %}
+                                        {{ estudiante.nivel_inicial4 }}
+                                    {% elif estudiante.nivel_inicial5 %}
+                                        {{ estudiante.nivel_inicial5 }}
+                                    {% elif estudiante.nivel_primario1 %}
+                                        {{ estudiante.nivel_primario1 }}
+                                    {% elif estudiante.nivel_primario2 %}
+                                        {{ estudiante.nivel_primario2 }}
+                                    {% elif estudiante.nivel_primario3 %}
+                                        {{ estudiante.nivel_primario3 }}
+                                    {% elif estudiante.nivel_primario4 %}
+                                        {{ estudiante.nivel_primario4 }}
+                                    {% elif estudiante.nivel_primario5 %}
+                                        {{ estudiante.nivel_primario5 }}
+                                    {% elif estudiante.nivel_primario6 %}
+                                        {{ estudiante.nivel_primario6 }}
+                                    {% elif estudiante.nivel_primario7 %}
+                                        {{ estudiante.nivel_primario7 }}
+                                    {% elif estudiante.nivel_secundario1 %}
+                                        {{ estudiante.nivel_secundario1 }}
+                                    {% elif estudiante.nivel_secundario2 %}
+                                        {{ estudiante.nivel_secundario2 }}
+                                    {% elif estudiante.nivel_secundario3 %}
+                                        {{ estudiante.nivel_secundario3 }}
+                                    {% elif estudiante.nivel_secundario4 %}
+                                        {{ estudiante.nivel_secundario4 }}
+                                    {% elif estudiante.nivel_secundario5 %}
+                                        {{ estudiante.nivel_secundario5 }}
+                                    {% else %}
+                                        No definido
+                                    {% endif %}
+                                </td>
+                                <td class="fecha">{{ estudiante.fecha_recepcion }}</td>
                                 <td>
                                     <form class="alumnos-controls" action="{% url 'ver_datos_estudiante' pk=estudiante.pk %}" method="get">
                                         <div class="tooltip-container">
                                             <span class="tooltip-text">Ver Datos</span>
-                                            <button class="alumnos-btn-1" type="submit">
+                                            <button class="alumnos-btn-ver" type="submit">
                                                 <i class="fas fa-eye"></i>
                                             </button>
                                         </div>
@@ -259,12 +509,12 @@
                                     <form class="alumnos-controls" action="{% url 'generar_contrato' estudiante.pk %}" method="get">
                                         <div class="tooltip-container">
                                             <span class="tooltip-text">Generar Contrato</span>
-                                            <button class="alumnos-btn-1" type="submit">
+                                            <button class="alumnos-btn-pdf" type="submit">
                                                 <i class="fas fa-file-pdf"></i>
                                             </button>
                                         </div>
                                     </form>
-                                </td>
+                                </td> 
                             </tr>
                         {% endfor %}
                     {% else %}
@@ -296,6 +546,117 @@ function showTab(tabName) {
     activeButton.classList.add('active');
 }
 
+document.addEventListener('DOMContentLoaded', function() {
+    let dateElements = document.querySelectorAll('.fecha');
+    dateElements.forEach(function(el) {
+        let dateValue = el.textContent.trim();
+        if (dateValue) {
+            let date = new Date(dateValue);
+            // Verificar si la fecha es válida
+            if (!isNaN(date)) {
+                el.textContent = date.toLocaleDateString('es-AR'); // dd/mm/yyyy
+            } else {
+                el.textContent = ''; // Dejar vacío si la fecha es inválida
+            }
+        } else {
+            el.textContent = ''; // Dejar vacío si no hay valor
+        }
+    });
+});
+
+document.addEventListener('DOMContentLoaded', function() {
+    // Filtro
+    const nivelFilter = document.getElementById('nivel-filter');
+    const tableRows = document.querySelectorAll('#table-body tr');
+
+    // Función para filtrar la tabla según el filtro de nivel
+    nivelFilter.addEventListener('change', filterTable);
+
+    // Función para filtrar la tabla
+    function filterTable() {
+        const nivel = nivelFilter.value.toLowerCase();
+
+        tableRows.forEach(function(row) {
+            const rowNivel = row.getAttribute('data-nivel').toLowerCase();
+
+            // Mostrar o ocultar la fila según el filtro de nivel
+            const showRow = (nivel === "" || rowNivel.includes(nivel));
+            row.style.display = showRow ? "" : "none";
+        });
+    }
+
+    // Filtrar cuando cambie el filtro de nivel
+    filterTable();
+});
+
+function copyToClipboard(id) {
+    var copyText = document.getElementById(id);
+    var range = document.createRange();
+    range.selectNode(copyText);
+    window.getSelection().removeAllRanges();
+    window.getSelection().addRange(range);
+    document.execCommand('copy');
+    window.getSelection().removeAllRanges();
+
+    // Mostrar el mensaje flotante
+    var toast = document.getElementById('toast_' + id.split('_')[1]);
+    toast.style.display = 'block'; // Mostrar el toast
+    toast.style.opacity = 1; // Hacerlo visible
+
+    // Desaparecer después de 2 segundos
+    setTimeout(function() {
+      toast.style.opacity = 0; // Hacerlo desaparecer
+      setTimeout(function() {
+        toast.style.display = 'none'; // Ocultarlo completamente después de la animación
+      }, 500); // Esperar el tiempo de la animación
+    }, 2000);
+}
+
+function duplicarAlPortapapeles(elementoId) {
+    var contenido = document.getElementById(elementoId);
+    var campoTemporal = document.createElement("textarea");
+    campoTemporal.value = contenido.textContent;
+    document.body.appendChild(campoTemporal);
+    campoTemporal.select();
+    document.execCommand("copy");
+    document.body.removeChild(campoTemporal);
+
+    // Mostrar el mensaje personalizado
+    var idEstudiante = elementoId.split('_')[1];
+    var aviso = document.getElementById("avisoCopiado_" + idEstudiante);
+    aviso.style.display = "block";
+    aviso.style.opacity = "1";
+
+    setTimeout(function() {
+        aviso.style.opacity = "0";
+        setTimeout(function() {
+            aviso.style.display = "none";
+        }, 500);
+    }, 2000);
+}
+
+function copiarValorCuil(refId) {
+    const valor = document.getElementById(refId);
+    const tempInput = document.createElement("textarea");
+    tempInput.value = valor.textContent;
+    document.body.appendChild(tempInput);
+    tempInput.select();
+    document.execCommand("copy");
+    document.body.removeChild(tempInput);
+
+    // Mostrar mensaje personalizado
+    const estudianteId = refId.split('_')[1];
+    const alerta = document.getElementById("mensajeCuil_" + estudianteId);
+    alerta.style.display = "block";
+    alerta.style.opacity = "1";
+
+    setTimeout(() => {
+        alerta.style.opacity = "0";
+        setTimeout(() => {
+            alerta.style.display = "none";
+        }, 500);
+    }, 2000);
+}
 
 </script>
 

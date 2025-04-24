@@ -1,0 +1,21 @@
+{% extends 'base.html' %}
+
+{% block title %}Confirmar aprobación{% endblock %}
+
+{% block content %}
+<div class="confirmation-container">
+    <h2>¿Estás seguro de que quieres aprobar a este estudiante?</h2>
+    
+    <div class="student-details">
+        <p><strong>CUIL:</strong> {{ estudiante.cuil_estudiante }}</p>
+        <p><strong>Nombre:</strong> {{ estudiante.nombres_estudiante }} {{ estudiante.apellidos_estudiante }}</p>
+        <p><strong>Estado actual:</strong> {{ estado_doc.estado }}</p>
+    </div>
+    
+    <form method="post">
+        {% csrf_token %}
+        <button type="submit" class="button-submit">Sí, aprobar</button>
+        <a href="{% url 'consultar_alumno' %}" class="button-cancel">Cancelar</a>
+    </form>
+</div>
+{% endblock %}

@@ -1,0 +1,179 @@
+/* Estilos generales */
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+  
+body {
+    font-family: 'Helvetica Neue', Arial, sans-serif;
+    line-height: 1.5;
+    color: #333;
+    background-image: url('../img/fondo1.png'); /* Cambia por la ruta de tu imagen */
+    background-size: cover;  /* Asegura que la imagen cubra todo el fondo */
+    background-position: center; /* Centra la imagen */
+    background-repeat: no-repeat; /* Evita que la imagen se repita */
+}
+
+.ciclo {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    width: 80%;
+    margin: 20px auto; /* Centrado horizontal */
+    border-radius: 10px;
+    background: linear-gradient(360deg,rgba(134, 134, 135, 1) 0%, rgba(167, 173, 185, 1) 35%, rgba(201, 201, 202, 1) 100%);
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.9);
+}
+
+.ciclo__titulo {
+    font-size: 14px;
+    padding: 20px 0;
+}
+
+.ciclo__formulario {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 1rem;
+    width: 95%;
+    margin: 0 auto 40px auto; /* Centrado horizontal */
+    padding: 30px;
+    border-radius: 10px;
+    background-color: #f7f7f7;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.ciclo__seccion {
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    gap: 2rem;
+    width: 100%;
+}
+
+.ciclo__campo {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    gap: 0.3rem;
+}
+
+.ciclo__input,
+.ciclo__select {
+    padding: 10px;
+    border: 1px solid #95a5a6;
+    border-radius: 5px;
+    font-size: 12px;
+}
+
+.ciclo__etiqueta {
+    font-weight: bold;
+    color: #181818;
+    font-size: 12px;
+}
+
+.ciclo__select option {
+    font-size: 13px;
+    color: #2c3e50;
+    background-color: #ecf0f1;
+    padding: 0.4rem;
+}
+
+.ciclo__botones {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 2rem;
+}
+
+/* From Uiverse.io by cssbuttons-io */ 
+.boton-accion {
+    position: relative;
+    display: inline-block;
+    cursor: pointer;
+    outline: none;
+    border: 0;
+    vertical-align: middle;
+    text-decoration: none;
+    background: transparent;
+    padding: 0;
+    font-size: inherit;
+    font-family: inherit;
+    width: 12rem;
+    height: auto;
+}
+
+.boton-accion__circulo {
+    transition: all 0.45s cubic-bezier(0.65, 0, 0.076, 1);
+    position: relative;
+    display: block;
+    margin: 0;
+    width: 3rem;
+    height: 3rem;
+    background: rgb(66 149 33);
+    border-radius: 1.625rem;
+}
+
+.boton-accion__icono {
+    transition: all 0.45s cubic-bezier(0.65, 0, 0.076, 1);
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    margin: auto;
+    background: #fff;
+}
+
+.boton-accion__icono--flecha {
+    left: 0.625rem;
+    width: 1.125rem;
+    height: 0.125rem;
+    background: none;
+}
+
+.boton-accion__icono--flecha::before {
+    position: absolute;
+    content: "";
+    top: -0.29rem;
+    right: 0.0625rem;
+    width: 0.625rem;
+    height: 0.625rem;
+    border-top: 0.125rem solid #fff;
+    border-right: 0.125rem solid #fff;
+    transform: rotate(45deg);
+}
+
+.boton-accion__texto {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.45s cubic-bezier(0.65, 0, 0.076, 1);
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    padding: 0.75rem 0;
+    margin: 0 0 0 1.85rem;
+    color: #282936;
+    font-size: 13px;
+    font-weight: 700;
+    line-height: 1.6;
+    text-align: center;
+    text-transform: uppercase;
+}
+
+.boton-accion:hover .boton-accion__circulo {
+    width: 100%;
+}
+
+.boton-accion:hover .boton-accion__icono--flecha {
+    background: #fff;
+    transform: translate(1rem, 0);
+}
+
+.boton-accion:hover .boton-accion__texto {
+    color: #fff;
+}

@@ -10,29 +10,27 @@ body {
 }
 
 /* Barra Lateral */
-
-/* Estilo general de la barra lateral */
 .sidebar {
-    width: 4%; /* Ocupa el 4% de la pantalla cuando está minimizada */
+    width: 4%; 
     height: 100vh;
     background-color: #f9f9f9;
     color: #ecf0f1;
     position: fixed;
     top: 0;
     left: 0;
-    transition: width 0.3s ease; /* Animación al cambiar el tamaño */
+    transition: width 0.3s ease; 
     z-index: 1001;
-    overflow: hidden; /* Oculta el contenido fuera del área visible */
+    overflow: hidden; 
     padding: 35px 0;
     color: #000;
 }
 
-/* Cuando la barra está activa */
+
 .sidebar.active {
-    width: 15%; /* Se expande al 20% de la pantalla */
+    width: 15%; 
 }
 
-/* Botón para cerrar la barra lateral */
+
 .close-btn {
     background-color: transparent;
     border: none;
@@ -44,16 +42,16 @@ body {
     position: absolute;
     top: 10px;
     right: 10px;
-    display: none; /* Oculto en estado minimizado */
+    display: none; 
 }
 
-/* Mostrar el botón cerrar en estado expandido */
+
 .sidebar.active .close-btn {
     display: block;
     color: #1d1d1d;
 }
 
-/* Lista de elementos de la barra lateral */
+
 .sidebar-items {
     list-style: none;
     padding: 30px 0;
@@ -64,13 +62,13 @@ body {
 .sidebar-items li {
     text-align: start;
     margin: 5px 5px;
-    position: relative; /* Necesario para los subitems */
+    position: relative; 
     color: #000
 }
 
-/* Íconos y texto */
+
 .sidebar-items li a {
-    display: flex; /* Para alinear icono y texto */
+    display: flex; 
     align-items: center;
     text-decoration: none;
     color: #1d1d1d;
@@ -85,12 +83,12 @@ body {
 }
 
 .sidebar.active .sidebar-items li a i {
-    display: none; /* Oculta todos los subitems */
+    display: none; 
 }
 
 .sidebar:not(.active) .sidebar-items li a i {
-    margin-right: 10px; /* Espaciado entre ícono y texto */
-    font-size: 1.5em; /* Ajusta el tamaño del ícono */
+    margin-right: 10px; 
+    font-size: 1.5em; 
     display: inline-block;
     margin: auto
 }
@@ -101,9 +99,9 @@ body {
     font-family: 'Poppins', sans-serif;
 }
 
-/* Solo íconos visibles en estado minimizado */
+
 .sidebar:not(.active) .sidebar-items li a span.text {
-    display: none; /* Oculta el texto */
+    display: none; 
 }
 
 .sidebar-items li a:hover {
@@ -112,23 +110,23 @@ body {
     border-radius: 5px;
 }
 
-/* Estilo para los subitems */
+
 .subitems {
-    display: none; /* Ocultos por defecto */
+    display: none; 
     list-style-type: none;
     margin: 0;
-    padding-left: 20px; /* Separación de los subitems */
+    padding-left: 20px; 
 }
 
 .subitems li {
-    margin: 5px 0; /* Espaciado vertical entre subitems */
+    margin: 5px 0; 
 }
 
 .subitems a {
     text-decoration: none;
     color: black;
-    font-size: 0.9em; /* Tamaño ligeramente menor */
-    padding: 5px 10px; /* Espaciado interno para subitems */
+    font-size: 0.9em; 
+    padding: 5px 10px; 
 }
 
 .subitems a:hover {
@@ -137,38 +135,38 @@ body {
     border-radius: 5px;
 }
 
-/* Ocultar subitems cuando la barra lateral está minimizada */
+
 .sidebar:not(.active) .subitems {
-    display: none; /* Oculta todos los subitems */
+    display: none; 
 }
 
-/* Botón para expandir/cerrar subitems */
+
 .expand-btn {
     background: none;
     border: none;
     color: black;
     cursor: pointer;
-    font-size: 1.3em; /* Ajusta el tamaño del botón */
-    margin-left: auto; /* Empuja el botón a la derecha */
-    padding: 5px; /* Espaciado interno */
-    display: none; /* Ocultamos el botón por defecto */
+    font-size: 1.3em; 
+    margin-left: auto; 
+    padding: 5px; 
+    display: none; 
 }
 
-/* Mostrar el botón cuando la barra lateral está abierta */
+
 .sidebar.active .expand-btn {
-    display: block; /* Muestra el botón solo cuando la barra está activa */
+    display: block; 
 }
 
 .expand-btn:hover {
-    color: #fa020b;
+    color: #007bff;
 }
 
-/* Subitems visibles */
+
 .subitems.active {
-    display: block; /* Subitems visibles */
+    display: block; 
 }
 
-/* Botón para abrir/cerrar la barra lateral */
+
 .open-btn {
     background-color: #f9f9f9;
     border: none;
@@ -182,7 +180,7 @@ body {
     left: 5px;
     border-radius: 5px;
     z-index: 1100;
-    transition: left 0.3s ease, background 0.3s ease; /* Transición añadida para 'left' */
+    transition: left 0.3s ease, background 0.3s ease; 
 }
 
 .open-btn:hover {
@@ -190,34 +188,34 @@ body {
     color: #ffffff;
 }
 
-/* Cuando la barra lateral está activa (expandida) */
+
 .sidebar.active ~ .open-btn {
-    left: 15%; /* Cambia este valor al ancho de tu barra lateral expandida */
+    left: 15%; 
 }
 
-/* Cuando la barra lateral está minimizada */
+
 .sidebar:not(.active) ~ .open-btn {
-    left:5px; /* Vuelve a la posición inicial */
+    left:5px; 
 }
 
-/* Contenido principal */
+
 .main-content {
-    margin-left: 5%; /* Ajusta el espacio según la barra lateral minimizada */
-    transition: margin-left 0.3s ease; /* Animación al cambiar el margen */
+    margin-left: 5%; 
+    transition: margin-left 0.3s ease; 
 }
 
 .sidebar.active ~ .main-content {
-    margin-left: 20%; /* Ajusta el espacio cuando la barra lateral está expandida */
+    margin-left: 20%; 
 }
 
-/* Solo el texto está oculto en estado minimizado */
+
 .sidebar:not(.active) .sidebar-items li a span.text {
-    display: none; /* Oculta el texto */
+    display: none; 
 }
 
-/* Solo muestra el texto cuando la barra lateral está activa */
+
 .sidebar.active .sidebar-items li a .text {
-    display: inline-block; /* Muestra el texto */
+    display: inline-block; 
 }
 
 

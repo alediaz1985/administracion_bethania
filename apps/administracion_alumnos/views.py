@@ -17,6 +17,10 @@ from django.utils import timezone
 from .models import EstadoDocumentacion
 from django.urls import reverse
 
+from .utils import search_files_in_drive, download_file, archivo_existe
+
+
+from googleapiclient.http import MediaIoBaseDownload
 
 def estudiante_lista(request):
     estudiantes = Estudiante.objects.all()
@@ -57,56 +61,99 @@ def estudiante_list(request):
 #     estudiantes = Estudiante.objects.all()
 #     return render(request, 'administracion_alumnos/estudiante_list.html',  {'estudiantes': estudiantes})
 
-def cambiar_estado(request, estudiante_id):
-    # Obtener el registro de estado_documentacion
-    estado_doc = get_object_or_404(EstadoDocumentacion, estudiante_id=estudiante_id, estado='pendiente')
+def confirmar_aprobacion(request, estudiante_id):
+    try:
+        # Buscar el registro con estado pendiente
+        estado_doc = EstadoDocumentacion.objects.get(estudiante_id=estudiante_id, estado='pendiente')
+    except EstadoDocumentacion.DoesNotExist:
+        # Manejar el caso donde no hay un estado pendiente
+        mensaje_error = "El estudiante ya está aprobado o no tiene un estado pendiente."
+        return render(request, 'administracion_alumnos/error_aprobacion.html', {'mensaje_error': mensaje_error})
 
-    # Actualizar el estado a aprobado
-    estado_doc.estado = 'aprobado'
-    estado_doc.save()
+    # Obtener los datos del estudiante
+    estudiante = estado_doc.estudiante
 
-    # Redirigir a una vista de éxito o listado, por ejemplo
-    return redirect('estado_documentacion_list')
+    if request.method == 'POST':
+        # Cambiar el estado a 'aprobado' si se confirma
+        estado_doc.estado = 'aprobado'
+        estado_doc.save()
+        return redirect('estudiante_list')  # Cambia según el flujo de tu aplicación
+
+    # Renderizar el template de confirmación
+    return render(request, 'administracion_alumnos/confirmar_aprobacion.html', {
+        'estado_doc': estado_doc,
+        'estudiante': estudiante,
+    })
 
 def estudiante_detail(request, pk):
     estudiante = get_object_or_404(Estudiante, pk=pk)
     return render(request, 'administracion_alumnos/estudiante_detail.html', {'estudiante': estudiante})
 
+import os
+from django.shortcuts import render, get_object_or_404
+from django.conf import settings
+from .models import Estudiante
+
 def ver_datos_estudiante(request, pk):
+    """
+    Muestra los datos de un estudiante, incluyendo su foto si está disponible.
+    """
+    # Ruta base donde se almacenan las fotos localmente
+    fotos_path = os.path.join(settings.MEDIA_ROOT, 'documentos', 'fotoPerfilEstudiante')
+
+    # Obtener el estudiante según su ID (pk)
     estudiante = get_object_or_404(Estudiante, pk=pk)
-    # Crea un diccionario dinámico con todos los campos del modelo
-    campos_estudiante = {
-        field.verbose_name: getattr(estudiante, field.name)
-        for field in estudiante._meta.fields
-    }
-    return render(
-        request,
-        'administracion_alumnos/ver_datos_estudiante.html',
-        {'estudiante': estudiante, 'campos_estudiante': campos_estudiante}
-    )
 
-def estudiante_edit(request, pk):
-    estudiante = get_object_or_404(Estudiante, pk=pk)
-    if request.method == "POST":
-        form = EstudianteForm(request.POST, request.FILES, instance=estudiante)
-        if form.is_valid():
-            form.save()
-            messages.success(request, 'Los cambios han sido guardados correctamente.')
-            return redirect('estudiante_detail', pk=estudiante.pk)
-    else:
-        form = EstudianteForm(instance=estudiante)
-    return render(request, 'administracion_estudiantes/estudiante_edit.html', {'form': form})
+    # Buscar la foto del estudiante basada en el CUIL o ID de Google Drive
+    foto_id = None
+    if estudiante.foto_estudiante:
+        # Extrae el ID del enlace de Google Drive si está en el campo
+        if "id=" in estudiante.foto_estudiante:
+            foto_id = estudiante.foto_estudiante.split("id=")[-1]
 
+    # Inicializar la URL de la foto
+    foto_url = None
+    if foto_id:
+        # Verifica si existe algún archivo con el ID en su nombre en la carpeta local
+        for archivo in os.listdir(fotos_path):
+            if archivo.startswith(foto_id):  # Busca archivos que comiencen con el ID
+                # Genera la URL para acceder a la foto desde el navegador
+                foto_url = os.path.join(
+                    settings.MEDIA_URL, 'documentos', 'fotoPerfilEstudiante', archivo
+                )
+                break
 
-def estudiante_delete(request, pk):
-    estudiante = get_object_or_404(Estudiante, pk=pk)
-    if request.method == "POST":
-        estudiante.delete()
-        messages.success(request, 'Estudiante eliminado correctamente.')
-        return redirect('estudiante_list')
-    return render(request, 'administracion_estudiantes/estudiante_confirm_delete.html', {'estudiante': estudiante})
+    # Si no se encuentra la foto, usar una imagen por defecto
+    if not foto_url:
+        foto_url = os.path.join(settings.STATIC_URL, 'images/default.jpg')
+
+    # Renderizar la vista con los datos del estudiante y su foto
+    return render(request, 'administracion_alumnos/ver_datos_estudiante.html', {
+        'estudiante': estudiante,
+        'image_url': foto_url  # URL de la foto del estudiante
+    })
 
 
+# def estudiante_edit(request, pk):
+#     estudiante = get_object_or_404(Estudiante, pk=pk)
+#     if request.method == "POST":
+#         form = EstudianteForm(request.POST, request.FILES, instance=estudiante)
+#         if form.is_valid():
+#             form.save()
+#             messages.success(request, 'Los cambios han sido guardados correctamente.')
+#             return redirect('estudiante_detail', pk=estudiante.pk)
+#     else:
+#         form = EstudianteForm(instance=estudiante)
+#     return render(request, 'administracion_estudiantes/estudiante_edit.html', {'form': form})
+
+
+# def estudiante_delete(request, pk):
+#     estudiante = get_object_or_404(Estudiante, pk=pk)
+#     if request.method == "POST":
+#         estudiante.delete()
+#         messages.success(request, 'Estudiante eliminado correctamente.')
+#         return redirect('estudiante_list')
+#     return render(request, 'administracion_alumnos/alumno_confirm_delete.html', {'estudiante': estudiante}) 
 
 def registrar_estudiante(request):
     if request.method == 'POST':
@@ -407,41 +454,39 @@ def generar_pdf_lista_estudiantes_view(request):
     response.write(pdf)
     return response
 
-
 def estudiante_edit(request, pk):
-    """
-    Vista para editar la información de un alumno.
-    """
     alumno = get_object_or_404(Estudiante, pk=pk)
     if request.method == "POST":
         form = EstudianteForm(request.POST, instance=alumno)
         if form.is_valid():
             form.save()
-            return redirect('estudiante_detail', pk=alumno.pk)  # Redirige al detalle del alumno
+            return redirect('estudiante_list')
+        else:
+            print(form.errors)  # Esto te dará detalles de cualquier error en el formulario
     else:
         form = EstudianteForm(instance=alumno)
     return render(request, 'administracion_alumnos/estudiante_edit.html', {'form': form})
 
-def estudiante_delete(request, pk):
-    """
-    Vista para eliminar un alumno.
-    """
-    alumno = get_object_or_404(Estudiante, pk=pk)
-    if request.method == "POST":
-        alumno.delete()
-        return redirect(reverse('estudiante_list'))  # Redirige a la lista de alumnos
-    return render(request, 'administracion_alumnos/alumno_confirm_delete.html', {'alumno': alumno})
+# def estudiante_delete(request, pk):
+#     """
+#     Vista para eliminar un alumno.
+#     """
+#     alumno = get_object_or_404(Estudiante, pk=pk)
+#     if request.method == "POST":
+#         alumno.delete()
+#         return redirect(reverse('estudiante_list'))  # Redirige a la lista de alumnos
+#     return render(request, 'administracion_alumnos/alumno_confirm_delete.html', {'alumno': alumno})
 
 
 def estudiante_delete(request, pk):
-    """
-    Vista para eliminar un alumno.
-    """
-    alumno = get_object_or_404(Estudiante, pk=pk)
-    if request.method == "POST":
-        alumno.delete()
-        return redirect(reverse('estudiante_list'))  # Redirige a la lista de alumnos
-    return render(request, 'administracion_alumnos/alumno_confirm_delete.html', {'alumno': alumno})
+    # Aquí deberías usar `estudiante`, no `alumno`
+    estudiante = get_object_or_404(Estudiante, pk=pk)
+    
+    if request.method == 'POST':
+        estudiante.delete()  # Asegúrate de usar `estudiante`, no `alumno`
+        return redirect('estudiante_list')
+    
+    return render(request, 'administracion_alumnos/alumno_confirm_delete.html', {'estudiante': estudiante})
 
 def estudiante_consultar(request):
     estudiante = None
@@ -851,6 +896,229 @@ def generar_contrato_view(request, estudiante_id):
 
     # Devolver el PDF como respuesta
     return FileResponse(open(pdf_path, 'rb'), as_attachment=True, filename=f"Contrato_{estudiante.cuil_estudiante}.pdf")
+
+
+from django.shortcuts import render
+from django.conf import settings
+from googleapiclient.discovery import build
+from google.oauth2.service_account import Credentials
+import os
+import logging
+from datetime import datetime
+from .utils import search_files_in_drive, download_file, archivo_existe
+
+logger = logging.getLogger(__name__)
+
+def get_drive_service():
+    """
+    Crea y devuelve un cliente de Google Drive API usando las credenciales de la aplicación.
+    """
+    credentials_path = settings.GOOGLE_CREDENTIALS_ALUMNOS  # Configuración específica para administracion_alumnos
+    if not os.path.exists(credentials_path):
+        raise FileNotFoundError(f"No se encontró el archivo de credenciales en: {credentials_path}")
+
+    credentials = Credentials.from_service_account_file(
+        credentials_path, scopes=["https://www.googleapis.com/auth/drive"]
+    )
+    return build("drive", "v3", credentials=credentials)
+
+
+def descargar_archivos_alumnos(request):
+    """
+    Descarga archivos desde la carpeta de Google Drive asociada a la aplicación administracion_alumnos.
+    """
+    try:
+        drive_folder_id = settings.DRIVE_FOLDER_ID_ALUMNOS  # ID de la carpeta específica
+        service = get_drive_service()
+
+        # Buscar archivos en la carpeta de Google Drive
+        drive_files = search_files_in_drive(drive_folder_id, service)
+
+        if not drive_files:
+            logger.info("No se encontraron archivos en la carpeta de Google Drive.")
+            return render(request, 'administracion_alumnos/sin_archivos.html')
+
+        # Ruta para guardar los archivos descargados
+        ruta_descarga = os.path.join(settings.MEDIA_ROOT, 'administracion_alumnos', 'descargados')
+        if not os.path.exists(ruta_descarga):
+            os.makedirs(ruta_descarga)
+
+        archivos_descargados = []
+        archivos_omitidos = []
+
+        # Procesar cada archivo en la carpeta de Google Drive
+        for file in drive_files:
+            try:
+                file_id = file['id']
+                file_name = file['name']
+                file_data = download_file(service, file_id)
+
+                if file_data:
+                    created_time = file.get('createdTime', '')
+
+                    # Formatear fecha de creación
+                    if created_time:
+                        try:
+                            fecha_formateada = datetime.strptime(
+                                created_time, "%Y-%m-%dT%H:%M:%S.%fZ"
+                            ).strftime("%Y%m%d_%H%M%S")
+                        except ValueError:
+                            logger.error(f"Error al formatear la fecha {created_time}. Usando 'Fecha_desconocida'.")
+                            fecha_formateada = "Fecha_desconocida"
+                    else:
+                        logger.warning(f"El archivo {file_name} no tiene 'createdTime'. Usando 'Fecha_desconocida'.")
+                        fecha_formateada = "Fecha_desconocida"
+
+                    # Generar un nuevo nombre único para el archivo
+                    extension = os.path.splitext(file_name)[1]
+                    id_corto = file_id[:8]
+                    nuevo_nombre = f"alumno-{fecha_formateada}-{id_corto}{extension}"
+
+                    # Verificar si el archivo ya existe
+                    if archivo_existe(ruta_descarga, nuevo_nombre):
+                        logger.info(f"El archivo {nuevo_nombre} ya existe. Omitiendo descarga.")
+                        archivos_omitidos.append(nuevo_nombre)
+                    else:
+                        archivo_path = os.path.join(ruta_descarga, nuevo_nombre)
+                        with open(archivo_path, 'wb') as archivo_local:
+                            archivo_local.write(file_data)
+                        logger.info(f"Archivo {file_name} descargado exitosamente como {nuevo_nombre}.")
+                        archivos_descargados.append(nuevo_nombre)
+
+                else:
+                    logger.error(f"No se pudo obtener el contenido del archivo {file_name}.")
+            except Exception as e:
+                logger.error(f"Error descargando archivo {file_name}: {e}")
+                return render(request, 'administracion_alumnos/error_descarga.html', {
+                    'mensaje_error': f"Error descargando archivo {file_name}: {e}"
+                })
+
+        # Renderizar el resumen de la descarga
+        return render(request, 'administracion_alumnos/resumen_descarga.html', {
+            'archivos_descargados': archivos_descargados,
+            'archivos_omitidos': archivos_omitidos
+        })
+
+    except Exception as e:
+        logger.error(f"Error en la descarga de archivos: {e}")
+        return render(request, 'administracion_alumnos/error_descarga.html', {
+            'mensaje_error': f"Error en la descarga de archivos: {e}"
+        })
+
+
+
+def descargar_todos_archivos(request):
+    """
+    Descarga todos los archivos desde la carpeta de Google Drive asociada,
+    guardándolos con su ID como nombre.
+    """
+    try:
+        # Autenticación y servicio de Google Drive
+        service = get_drive_service()
+        folder_id = settings.DRIVE_FOLDER_ID_ALUMNOS  # ID de la carpeta específica
+
+        # Consultar archivos en la carpeta de Google Drive
+        query = f"'{folder_id}' in parents and trashed=false"
+        results = service.files().list(q=query, fields="files(id, name)").execute()
+        drive_files = results.get('files', [])
+
+        if not drive_files:
+            logger.info("No se encontraron archivos en la carpeta de Google Drive.")
+            return render(request, 'administracion_alumnos/sin_archivos.html')
+
+        # Crear carpeta local para guardar los archivos
+        ruta_descarga = settings.FOTO_PERFIL_ESTUDIANTE_DIR
+        os.makedirs(ruta_descarga, exist_ok=True)
+
+        archivos_descargados = []
+        for file in drive_files:
+            file_id = file['id']
+            file_name = file['name']
+            try:
+                # Descargar archivo
+                request_media = service.files().get_media(fileId=file_id)
+
+                # Cambiar el nombre del archivo al ID del archivo
+                extension = os.path.splitext(file_name)[1]  # Obtener la extensión original
+                nuevo_nombre = f"{file_id}{extension}"  # Nuevo nombre con ID y extensión
+                archivo_path = os.path.join(ruta_descarga, nuevo_nombre)
+
+                # Guardar el archivo localmente
+                with open(archivo_path, 'wb') as archivo_local:
+                    downloader = MediaIoBaseDownload(archivo_local, request_media)
+                    done = False
+                    while not done:
+                        status, done = downloader.next_chunk()
+                        logger.info(f"Descarga {int(status.progress() * 100)}% completada para {nuevo_nombre}.")
+
+                archivos_descargados.append(nuevo_nombre)
+            except Exception as e:
+                logger.error(f"Error descargando {file_name}: {e}")
+
+        # Renderizar el resumen de descarga
+        return render(request, 'administracion_alumnos/resumen_descarga.html', {
+            'archivos_descargados': archivos_descargados,
+        })
+
+    except Exception as e:
+        logger.error(f"Error en la descarga de archivos: {e}")
+        return render(request, 'administracion_alumnos/error_descarga.html', {
+            'mensaje_error': f"Error en la descarga de archivos: {e}"
+        })
+
+from django.shortcuts import render
+from .models import Estudiante
+import os
+from django.conf import settings
+
+from django.shortcuts import render
+from .models import Estudiante
+import os
+from django.conf import settings
+
+def lista_fotos_estudiantes(request):
+    """
+    Genera una lista de estudiantes con sus fotos correspondientes.
+    """
+    # Ruta base donde se almacenan las fotos localmente
+    fotos_path = settings.FOTO_PERFIL_ESTUDIANTE_DIR  # Cambiar para usar la ruta correcta
+
+    # Lista para almacenar los datos que enviaremos al template
+    fotos_estudiantes = []
+
+    # Obtén todos los estudiantes de la base de datos
+    estudiantes = Estudiante.objects.all()
+
+    for estudiante in estudiantes:
+        # Extraer el ID de la foto desde el enlace almacenado en foto_estudiante
+        foto_id = None
+        if estudiante.foto_estudiante:
+            # Extrae el ID del enlace de Google Drive
+            if "id=" in estudiante.foto_estudiante:
+                foto_id = estudiante.foto_estudiante.split("id=")[-1]
+
+        # Buscar el archivo con el ID, sin importar la extensión
+        foto_url = None
+        if foto_id:
+            # Verifica si existe algún archivo con el ID en su nombre en la carpeta local
+            for archivo in os.listdir(fotos_path):
+                if archivo.startswith(foto_id):  # Busca archivos que comiencen con el ID
+                    # Genera la URL para acceder a la foto desde el navegador
+                    foto_url = os.path.join(
+                        settings.MEDIA_URL, 'documentos', 'fotoPerfilEstudiante', archivo
+                    )
+                    break  # Deja de buscar después de encontrar el archivo
+
+        # Agregar los datos del estudiante y su foto al listado
+        fotos_estudiantes.append({
+            "cuil": estudiante.cuil_estudiante,  # Asegúrate de que este sea el campo correcto
+            "foto_url": foto_url,  # Foto del estudiante (si existe)
+        })
+
+    return render(request, 'administracion_alumnos/lista_fotos_estudiantes.html', {
+        'fotos_estudiantes': fotos_estudiantes
+    })
+
 """def estudiante_consultar(request):
 
     Vista para consultar alumnos.

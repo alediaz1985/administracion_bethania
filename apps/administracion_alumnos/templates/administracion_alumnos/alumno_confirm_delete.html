@@ -1,0 +1,29 @@
+{% extends 'base.html' %}
+
+{% block title %}Confirmar eliminación{% endblock %}
+
+{% load static %}
+
+{% block extra_styles %}
+    <link rel="stylesheet" href="{% static 'administracion_alumnos/css/alumno_confirm_delete.css' %}">
+{% endblock %}
+
+{% block content %}
+
+<div class="confirmation-container">
+    <h2>¿Estás seguro de que quieres eliminar a este alumno?</h2>
+    
+    <div class="student-details">
+        <p><strong>CUIL:</strong> {{ estudiante.cuil_estudiante }}</p>
+        <p><strong>Nombre:</strong> {{ estudiante.nombres_estudiante }} {{ estudiante.apellidos_estudiante }}</p>
+        <!-- Añadir más campos si es necesario -->
+    </div>
+    
+    <form method="post">
+        {% csrf_token %}
+        <button type="submit" class="button-submit">Sí, eliminar</button>
+        <a href="{% url 'estudiante_list' %}" class="button-cancel">Cancelar</a>
+    </form>
+</div>
+
+{% endblock %}

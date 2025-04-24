@@ -2,8 +2,76 @@
 
 {% block title %}Editar Alumno{% endblock %}
 
+{% load static %}
+
+{% block extra_styles %}
+    <link rel="stylesheet" href="{% static 'administracion_alumnos/css/editar_alumno.css' %}">
+{% endblock %}
+
 {% block content %}
-    <div class="edit-student-container">
+
+<div class="edit-student-container">
+
+    <label for="myInput" class="label">
+        <span class="label-title">Buscar Datos</span>
+        <input class="input" type="text" id="searchField" placeholder="Campo" onkeyup="filterFields()">
+    </label>
+      
+    <form method="post" enctype="multipart/form-data" id="form-fields" class="edit-student-form" novalidate>
+        {% csrf_token %}
+        
+        <!-- Mover los botones arriba -->
+        <div class="form-footer">
+            <button type="submit" class="button-submit">Guardar</button>
+            <a href="{% url 'consultar_alumno' %}" class="button-cancel">Cancelar</a>
+        </div>
+
+        <div class="form-header">
+            <p>Por favor, complete los campos requeridos para actualizar los detalles del estudiante.</p>
+        </div>
+
+        <div class="form-body">
+            {% for field in form %}
+                <div class="form-group">
+                    {{ field.label_tag }}
+                    {{ field }}
+                    {% if field.help_text %}
+                        <small>{{ field.help_text }}</small>
+                    {% endif %}
+                    {% if field.errors %}
+                        <div class="error">{{ field.errors }}</div>
+                    {% endif %}
+                </div>
+            {% endfor %}
+        </div>
+    </form>
+    
+</div>
+
+<script>
+function filterFields() {
+    var input = document.getElementById("searchField");
+    var filter = input.value.toUpperCase();
+    var formFields = document.getElementById("form-fields").getElementsByClassName("form-group");
+
+    for (var i = 0; i < formFields.length; i++) {
+        var label = formFields[i].getElementsByTagName("label")[0];
+        if (label) {
+            var text = label.textContent || label.innerText;
+            if (text.toUpperCase().indexOf(filter) > -1) {
+                formFields[i].style.display = "";
+            } else {
+                formFields[i].style.display = "none";
+            }
+        }
+    }
+}
+</script>
+
+{% endblock %}
+
+
+<!-- <div class="edit-student-container">
         <h1>Editar {{ form.instance.nombres }} {{ form.instance.apellidos }}</h1>
         <form method="post" enctype="multipart/form-data" class="edit-student-form">
             {% csrf_token %}
@@ -24,5 +92,4 @@
                 <a href="{% url 'estudiante_detail' pk=form.instance.pk %}" class="button-cancel">Cancelar</a>
             </div>
         </form>
-    </div>
-{% endblock %}
+    </div> -->

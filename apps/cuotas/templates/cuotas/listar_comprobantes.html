@@ -1,0 +1,29 @@
+<h1>Listado de Comprobantes</h1>
+<table>
+    <thead>
+        <tr>
+            <th>ID</th>
+            <th>Marca Temporal</th>
+            <th>Correo Electrónico</th>
+            <th>CUIL del Alumno</th>
+            <th>CUIL del Responsable</th>
+            <th>Acciones</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for comprobante in comprobantes %}
+        <tr>
+            <td>{{ comprobante.id }}</td>
+            <td>{{ comprobante.marca_temporal }}</td>
+            <td>{{ comprobante.correo_electronico }}</td>
+            <td>{{ comprobante.cuil_alumno }}</td>
+            <td>{{ comprobante.cuil_responsable_pago }}</td>
+            <td>
+                <a href="{% url 'editar_comprobante_pago' comprobante.id %}">Editar</a>
+                <a href="{% url 'eliminar_comprobante_pago' comprobante.id %}">Eliminar</a>
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+<a href="{% url 'crear_comprobante_pago' %}">Crear Nuevo Comprobante</a>

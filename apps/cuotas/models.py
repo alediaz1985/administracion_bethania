@@ -30,11 +30,10 @@ class NivelCursado(models.Model):
         verbose_name = "Nivel de Cursado"
         verbose_name_plural = "Niveles de Cursado"
 
-
-# Modelo para SubNivel (Ej. Sala 3, 4, Grados o Carreras)
 class SubNivelCursado(models.Model):
     nivel_cursado = models.ForeignKey(NivelCursado, on_delete=models.CASCADE, verbose_name="Nivel de Cursado")
     nombre = models.CharField(max_length=100, verbose_name="Nombre del Subnivel")
+    monto_mensual = models.DecimalField(max_digits=10, decimal_places=2, verbose_name="Monto Mensual", default=0)
 
     def __str__(self):
         return f'{self.nivel_cursado.nombre} - {self.nombre}'
@@ -43,7 +42,6 @@ class SubNivelCursado(models.Model):
         db_table = 'subnivel_cursado'
         verbose_name = "Subnivel de Cursado"
         verbose_name_plural = "Subniveles de Cursado"
-
 
 # Modelo para Montos de Ciclo Lectivo por Subnivel
 class MontosCicloLectivo(models.Model):
@@ -69,18 +67,16 @@ class Inscripcion(models.Model):
     subnivel_cursado = models.ForeignKey(SubNivelCursado, on_delete=models.CASCADE, default=1, verbose_name="Subnivel Cursado")
     fecha_inscripcion = models.DateField(auto_now_add=True, verbose_name="Fecha de Inscripción")
     monto_inscripcion = models.DecimalField(max_digits=10, decimal_places=2, verbose_name="Monto de Inscripción")
-    pagada = models.BooleanField(default=False, verbose_name="Pagada")
+    pagada = models.BooleanField(default=False)
     descuento_inscripcion = models.DecimalField(max_digits=5, decimal_places=2, default=0, verbose_name="Descuento por Inscripción")
-    debe_inscripcion = models.BooleanField(default=True, verbose_name="Debe Inscripción")
 
     def __str__(self):
-        return f'{self.cuil_alumno.nombres} {self.cuil_alumno.apellidos} - {self.ciclo_lectivo.año_lectivo}'
+        return f'{self.cuil_alumno.nombres_estudiante} {self.cuil_alumno.apellidos_estudiante} - {self.ciclo_lectivo.año_lectivo}'
 
     class Meta:
         db_table = 'inscripcion'
         verbose_name = "Inscripción"
         verbose_name_plural = "Inscripciones"
-
 
 # Modelo para Cuota
 class Cuota(models.Model):
@@ -130,3 +126,20 @@ class Pago(models.Model):
         db_table = 'pago'
         verbose_name = "Pago"
         verbose_name_plural = "Pagos"
+
+
+class ComprobanteDrivePago(models.Model):
+    marca_temporal = models.CharField(max_length=150, verbose_name="Marca Temporal")
+    correo_electronico = models.CharField(max_length=150, verbose_name="Dirección de Correo Electrónico")
+    comprobante_pago = models.CharField(max_length=150, verbose_name="Adjunte el Comprobante de Pagos")
+    cuil_estudiante = models.CharField(max_length=50, verbose_name="CUIL del Estudiante")
+    cuil_responsable_pago = models.CharField(max_length=50, verbose_name="CUIL del Responsable de Pago")
+
+    def __str__(self):
+        return f"Comprobante {self.id} - {self.correo_electronico}"
+
+    class Meta:
+        db_table = 'comprobante_de_pago'
+        verbose_name = "Comprobante de Pago"
+        verbose_name_plural = "Comprobantes de Pago"
+        

@@ -1,0 +1,21 @@
+{% load static %}
+
+<div class="lista-fotos-estudiantes">
+    <h1>Lista de Fotos de Estudiantes</h1>
+    <div class="grid-container">
+        {% for estudiante in fotos_estudiantes %}
+        <div class="foto-estudiante-card">
+            <div>
+                {% if estudiante.foto_url %}
+                <!-- Mostramos la foto si existe la URL -->
+                <img src="{{ estudiante.foto_url }}" alt="Foto de {{ estudiante.cuil }}" style="width: 200px; height: 200px; object-fit: cover;">
+                {% else %}
+                <!-- Mostramos una imagen por defecto si no hay foto -->
+                <img src="{% static 'images/default.jpg' %}" alt="Sin Foto" style="width: 200px; height: 200px; object-fit: cover;">
+                {% endif %}
+            </div>
+            <p><strong>CUIL:</strong> {{ estudiante.cuil }}</p>
+        </div>
+        {% endfor %}
+    </div>
+</div>
