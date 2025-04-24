@@ -141,7 +141,6 @@
                                     <i class="fas fa-copy" style="color: #b6b6b6;"></i> <!-- Icono con color más suave (gris claro) -->
                                     </button>
                                 </td>
-                                
                                 <!-- Toast (mensaje flotante) -->
                                 <div id="toast_{{ estudiante.id }}" style="position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); background-color: rgba(0, 128, 0, 0.8); color: white; padding: 10px 20px; border-radius: 5px; font-size: 14px; display: none; opacity: 0; pointer-events: none; z-index: 9999; transition: opacity 0.5s ease;">
                                     ¡Copiado!
@@ -273,7 +272,18 @@
                             <tr data-nivel="{{ estudiante.nivel_estudiante }}" 
                             data-subnivel="{{ estudiante.subnivel_estudiante }}" 
                             data-turno="{{ estudiante.turno_estudiante }}">
-                                <td>{{ estudiante.cuil_estudiante }}</td>
+                                <td>
+                                    <span id="datoCuil_{{ estudiante.id }}">{{ estudiante.cuil_estudiante }}</span>
+                                    <button onclick="duplicarAlPortapapeles('datoCuil_{{ estudiante.id }}')" style="border: none; background: transparent; cursor: pointer;">
+                                        <i class="fas fa-copy" style="color: #b6b6b6;"></i> <!-- Icono con un color distinto si querés -->
+                                    </button>
+                                </td>
+                                
+                                <!-- Segundo toast (mensaje flotante alternativo) -->
+                                <div id="avisoCopiado_{{ estudiante.id }}" style="position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); background-color: rgba(0, 128, 0, 0.8); color: white; padding: 10px 20px; border-radius: 5px; font-size: 14px; display: none; opacity: 0; pointer-events: none; z-index: 9999; transition: opacity 0.5s ease;">
+                                    ¡Copiado!
+                                </div>
+                            
                                 <td>{{ estudiante.apellidos_estudiante }}</td>
                                 <td>{{ estudiante.nombres_estudiante }}</td>
                                 <td>{{ estudiante.nivel_estudiante }}</td>
@@ -399,7 +409,18 @@
                             <tr data-nivel="{{ estudiante.nivel_estudiante }}" 
                             data-subnivel="{{ estudiante.subnivel_estudiante }}" 
                             data-turno="{{ estudiante.turno_estudiante }}">
-                                <td>{{ estudiante.cuil_estudiante }}</td>
+                                <td>
+                                    <span id="identificadorCuil_{{ estudiante.id }}">{{ estudiante.cuil_estudiante }}</span>
+                                    <button onclick="copiarValorCuil('identificadorCuil_{{ estudiante.id }}')" style="border: none; background: transparent; cursor: pointer;">
+                                        <i class="fas fa-copy" style="color: #b6b6b6;"></i> <!-- Color diferente -->
+                                    </button>
+                                </td>
+                                
+                                <!-- Tercer toast (mensaje personalizado) -->
+                                <div id="mensajeCuil_{{ estudiante.id }}" style="position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); background-color: rgba(0, 128, 0, 0.8); color: white; padding: 10px 20px; border-radius: 5px; font-size: 14px; display: none; opacity: 0; pointer-events: none; z-index: 9999; transition: opacity 0.5s ease;">
+                                    ¡Copiado!
+                                </div>
+                            
                                 <td>{{ estudiante.apellidos_estudiante }}</td>
                                 <td>{{ estudiante.nombres_estudiante }}</td>
                                 <td>{{ estudiante.nivel_estudiante }}</td>
@@ -588,6 +609,52 @@ function copyToClipboard(id) {
       setTimeout(function() {
         toast.style.display = 'none'; // Ocultarlo completamente después de la animación
       }, 500); // Esperar el tiempo de la animación
+    }, 2000);
+}
+
+function duplicarAlPortapapeles(elementoId) {
+    var contenido = document.getElementById(elementoId);
+    var campoTemporal = document.createElement("textarea");
+    campoTemporal.value = contenido.textContent;
+    document.body.appendChild(campoTemporal);
+    campoTemporal.select();
+    document.execCommand("copy");
+    document.body.removeChild(campoTemporal);
+
+    // Mostrar el mensaje personalizado
+    var idEstudiante = elementoId.split('_')[1];
+    var aviso = document.getElementById("avisoCopiado_" + idEstudiante);
+    aviso.style.display = "block";
+    aviso.style.opacity = "1";
+
+    setTimeout(function() {
+        aviso.style.opacity = "0";
+        setTimeout(function() {
+            aviso.style.display = "none";
+        }, 500);
+    }, 2000);
+}
+
+function copiarValorCuil(refId) {
+    const valor = document.getElementById(refId);
+    const tempInput = document.createElement("textarea");
+    tempInput.value = valor.textContent;
+    document.body.appendChild(tempInput);
+    tempInput.select();
+    document.execCommand("copy");
+    document.body.removeChild(tempInput);
+
+    // Mostrar mensaje personalizado
+    const estudianteId = refId.split('_')[1];
+    const alerta = document.getElementById("mensajeCuil_" + estudianteId);
+    alerta.style.display = "block";
+    alerta.style.opacity = "1";
+
+    setTimeout(() => {
+        alerta.style.opacity = "0";
+        setTimeout(() => {
+            alerta.style.display = "none";
+        }, 500);
     }, 2000);
 }
 

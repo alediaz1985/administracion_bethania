@@ -15,8 +15,7 @@ body {
     background-repeat: no-repeat; /* Evita que la imagen se repita */
 }
 
-/* Buscador */
-.inscripcion {
+.estado-cuotas {
     display: flex;
     flex-direction: column;
     justify-content: center;
@@ -28,45 +27,54 @@ body {
     box-shadow: 0 4px 10px rgba(0, 0, 0, 0.9);
 }
 
-.titulo-secundario {
-    font-size: 15px;
-    text-align: center;
+.estado-cuotas__busqueda {
+    width: 100%;
 }
 
-.inscripcion__busqueda {
+.estado-cuotas__formulario {
     display: flex;
     flex-direction: column;
     justify-content: center;
     align-items: center;
+    gap: 1rem;
     width: 95%;
     margin: 40px auto 40px auto; /* Centrado horizontal */
     padding: 30px;
     border-radius: 10px;
     background-color: #f7f7f7;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-    gap: 1rem;
 }
 
-.formulario-busqueda {
+.estado-cuotas__grupo {
     display: flex;
     justify-content: center;
     align-items: center;
     width: 100%;
-    gap: 1rem;
+    gap: 0.5rem;
 }
 
-.formulario-busqueda__etiqueta {
+.estado-cuotas__etiqueta {
     font-weight: bold;
     color: #181818;
     font-size: 14px;
 }
 
-.formulario-busqueda__input {
+.estado-cuotas__input {
     padding: 8px;
     border: 1px solid #95a5a6;
     border-radius: 5px;
     font-size: 12px;
     width: 400px;
+}
+
+.estado-cuotas__select {
+    font-size: 13px;
+    color: #2c3e50;
+    background-color: #ecf0f1;
+    padding: 0.3rem;
+    margin: 0.4rem 0;
+    width: 300px;
+    border-radius: 5px;
 }
 
 /* From Uiverse.io by cssbuttons-io */ 
@@ -158,54 +166,19 @@ body {
     color: #fff;
 }
 
-.titulo-terciario {
-    font-size: 15px;
+.titulo-secundario,
+.estado-cuotas__subtitulo {
+    font-size: 16px;
     text-align: center;
-}
-
-.lista-resultados {
-    display: flex;
-    flex-direction: column;
-    gap: 1rem;
-    width: 50%;
-}
-
-.lista-resultados__item {
-    display: flex;
-    flex-direction: column;
-    justify-content: start;
-    align-items: start;
-    width: 100%;
-    border-bottom: 1px solid #7f8b8b;
-    gap: 0.5rem;
-    padding-bottom: 10px;
-}
-
-.resultado__nombre,
-.resultado__subnivel,
-.resultado__estado {
+    font-weight: bold;
     color: #181818;
-    font-size: 14px;
-    margin-left: 10px;
+    border-bottom: 2px solid #2C3E50; 
 }
 
-.mensaje-sin-resultados,
-.mensaje-documentacion {
-    background-color: #f8d7da;
-    color: #721c24;
-    border-left: 5px solid #dc3545;
-    padding: 10px;
-    margin-top: 1rem;
-    border-radius: 4px;
-}
-
-/* Formulario de Inscripcion */
-.inscripcion__formulario {
+.estado-cuotas__resultados {
     width: 100%;
     display: flex;
     flex-direction: column;
-    justify-content: center;
-    align-items: center;
     width: 95%;
     margin: 0 auto 40px auto; /* Centrado horizontal */
     padding: 30px;
@@ -215,62 +188,72 @@ body {
     gap: 1rem;
 }
 
-.formulario-inscripcion {
+.estado-cuotas__titulo,
+.estado-cuotas__info {
+    font-size: 15px;
+    color: #181818;
+    text-align: left;
+    width: 50%;
+}
+
+/* Estilos generales de la tabla */
+.estado-cuotas__tabla {
     width: 100%;
+    border-collapse: collapse; /* Quitar el espacio entre celdas */
+    margin-top: 20px;
+    background-color: #ffffff;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    overflow: hidden;
 }
 
-.formulario-inscripcion__fila {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    width: 100%;
-}
-
-.formulario-inscripcion__grupo {
-    width: 100%;
-    display: flex;
-    flex-direction: column;
-    padding: 10px;
-}
-
-.formulario-inscripcion__etiqueta {
-    text-align: start;
-}
-
-.formulario-inscripcion__select {
-    font-size: 13px;
-    color: #2c3e50;
-    background-color: #ecf0f1;
-    padding: 0.3rem;
-    margin: 0.4rem 0;
-    border-radius: 5px;
-}
-
-.formulario-inscripcion__input {
-    padding: 0.3rem;
-    border: 1px solid #2c3e50;
-    border-radius: 5px;
+/* Encabezados de la tabla */
+.estado-cuotas__tabla th {
+    padding: 8px;
+    text-align: left;
+    background-color: #328beb; /* Color de fondo oscuro para los encabezados */
+    color: #ffffff; /* Texto blanco */
+    font-weight: bold;
+    text-transform: uppercase;
+    letter-spacing: 1px;
     font-size: 12px;
-    margin: 0.4rem 0;
 }
 
-.formulario-inscripcion__checkbox {
-    width: 20px;
-    height: 20px;
-    align-items: center;
-    margin: 0.4rem 0;
+/* Filas de la tabla */
+.estado-cuotas__tabla td {
+    padding: 12px;
+    text-align: left;
+    border-bottom: 1px solid #f1f1f1; /* Línea divisoria entre filas */
+    font-size: 12px;
+    color: #2C3E50; /* Color de texto */
 }
 
-.success {
-    background-color: #d4edda;
-    color: #155724;
-    border-left: 5px solid #28a745;
-    padding: 10px;
-    margin-top: 1rem;
-    border-radius: 4px;
+/* Efecto hover en las filas */
+.estado-cuotas__tabla tr:hover {
+    background-color: #f1f1f1; /* Fondo gris claro al pasar el ratón */
+    cursor: pointer;
 }
 
-.error {
+/* Resaltar filas al hacer hover */
+.estado-cuotas__tabla tbody tr:nth-child(odd) {
+    background-color: #f9f9f9; /* Fondo alternado en filas impares */
+}
+
+.estado-cuotas__tabla tbody tr:nth-child(even) {
+    background-color: #ffffff; /* Fondo blanco en filas pares */
+}
+
+/* Bordes de la tabla */
+.estado-cuotas__tabla th, .estado-cuotas__tabla td {
+    border-right: 1px solid #ddd;
+}
+
+/* Eliminar el borde derecho en la última columna */
+.estado-cuotas__tabla td:last-child, .estado-cuotas__tabla th:last-child {
+    border-right: none;
+}
+
+.estado-cuotas__mensaje-error {
     background-color: #f8d7da;
     color: #721c24;
     border-left: 5px solid #dc3545;
