@@ -26,7 +26,7 @@ body {
 }
 
 .consulta__titulo {
-    font-size: 14px;
+    font-size: 15px;
     padding: 20px 0;
 }
 
@@ -55,13 +55,13 @@ body {
 .consulta__etiqueta {
     font-weight: bold;
     color: #181818;
-    font-size: 12px;
+    font-size: 13px;
 }
 
 .consulta__input {
     width: 100%;
     padding: 10px;
-    font-size: 12px;
+    font-size: 13px;
     border: 1px solid #95a5a6;
     border-radius: 5px;
     background-color: #f9f9f9;
@@ -184,7 +184,6 @@ body {
     background: rgb(66, 149, 33);
     color: #fff;
     font-size: 13px;
-    font-weight: bold;
     text-align: center;
     text-decoration: none;
     border-radius: 8px;
@@ -196,4 +195,63 @@ body {
 .descargar-archivos-button:hover {
     background: rgb(33, 102, 6);
     color: #fff;
+}
+
+.consulta-resultados {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 0.5rem;
+    width: 95%;
+    margin: 40px auto 0 auto; /* Centrado horizontal */
+    padding: 30px;
+    border-radius: 10px;
+    background-color: #f7f7f7;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.consulta__subtitulo {
+    font-size: 15px;
+    text-align: center;
+    font-weight: bold;
+    color: #181818;
+    border-bottom: 2px solid #2C3E50; 
+    width: 100%;
+    padding: 10px;
+}
+
+.consulta__cantidad {
+    text-align: left;
+    align-self: flex-start;
+    color: #181818;
+    font-size: 13px;
+}
+
+.consulta__lista-resultados {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+}
+
+.consulta__item-resultado {
+    display: flex;
+    flex-direction: column;
+    border-bottom: 2px solid #6f8396;
+    padding: 10px;
+    font-weight: bold;
+    color: #181818;
+    font-size: 13px;
+}
+
+.consulta__mensaje {
+    background-color: #f8d7da;
+    color: #721c24;
+    border-left: 5px solid #dc3545;
+    padding: 10px;
+    margin-top: 1rem;
+    border-radius: 4px;
+    width: 60%;
+    font-size: 13px;
+    box-shadow: 0 0 10px rgba(220, 53, 69, 0.2);
 }

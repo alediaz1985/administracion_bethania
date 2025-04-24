@@ -30,7 +30,9 @@
         {% if resultados %}
             <div class="consulta-resultados">
                 <h3 class="consulta__subtitulo">Resultados de la búsqueda</h3>
-                <p class="consulta__cantidad">Cantidad de documentos encontrados: {{ cantidad_archivos }}</p>
+                <p class="consulta__cantidad">
+                    <strong>Cantidad de documentos encontrados:</strong> {{ cantidad_archivos }}
+                </p>
                 <ul class="consulta__lista-resultados">
                     {% for resultado in resultados %}
                     <li class="consulta__item-resultado">
@@ -42,7 +44,9 @@
                 </ul>
             </div>
         {% else %}
-            <p class="messages info">No se encontraron documentos.</p>
+            <p class="mensaje-info">
+                No se encontraron documentos.
+            </p>
         {% endif %}
     {% endif %}
 </div>
