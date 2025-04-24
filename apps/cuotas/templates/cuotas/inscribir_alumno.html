@@ -10,101 +10,134 @@
 
 {% block content %}
 
-<h1>Buscar Estudiantes por CUIL</h1>
+<article class="inscripcion">
 
-{% if messages %}
-    <ul class="messages">
-        {% for message in messages %}
-            <li {% if message.tags %} class="{{ message.tags }}" {% endif %}>
-                {{ message }}
-            </li>
-        {% endfor %}
-    </ul>
-{% endif %}
+    <section class="inscripcion__busqueda">
 
-<!-- Formulario de búsqueda -->
-<form method="get">
-    <label for="q">CUIL del estudiante:</label>
-    <input type="text" name="q" id="q" value="{{ query }}">
-    <button type="submit">Buscar</button>
-</form>    
+        <h1 class="titulo-secundario">Buscar Estudiantes por CUIL</h1>
 
-{% if query %}
-    <h2>Resultados de la búsqueda</h2>
+        {% if messages %}
+            <ul class="mensajes">
+                {% for message in messages %}
+                    <li {% if message.tags %} class="{{ message.tags }}" {% endif %}>
+                        {{ message }}
+                    </li>
+                {% endfor %}
+            </ul>
+        {% endif %}
+
+        <!-- Formulario de búsqueda -->
+        <form method="get" class="formulario-busqueda">
+            <label for="q" class="formulario-busqueda__etiqueta">CUIL del estudiante:</label>
+            <input type="text" name="q" id="q" value="{{ query }}" class="formulario-busqueda__input">
+            <button class="boton-accion" type="submit">
+                <span class="boton-accion__circulo" aria-hidden="true">
+                    <span class="boton-accion__icono boton-accion__icono--flecha"></span>
+                </span>
+                <span class="boton-accion__texto">Buscar</span>
+            </button>
+        </form>    
+
+        {% if query %}
+            <h2 class="titulo-terciario">Resultados de la búsqueda</h2>
+
+            {% if resultados %}
+                <ul class="lista-resultados">
+                    {% for resultado, subnivel in resultados %}
+                        <li class="lista-resultados__item">
+                            <div class="resultado__nombre">
+                                <strong>Estudiante: </strong> {{ resultado.estudiante.nombres_estudiante }} {{ resultado.estudiante.apellidos_estudiante }}
+                            </div>
+                            <div class="resultado__subnivel">
+                                <strong>Subnivel: </strong> {{ subnivel }}
+                            </div>
+                            <div class="resultado__estado">
+                                <strong>Estado de Documentación: </strong> {{ resultado.estado }}
+                            </div>
+                        </li>
+                    {% endfor %}
+                </ul>
+            {% else %}
+                <p class="mensaje-sin-resultados">No se encontraron resultados para el CUIL proporcionado.</p>
+            {% endif %}
+
+            {% if mensaje_documentacion_no_aprobada %}
+                <p class="mensaje-documentacion">{{ mensaje_documentacion_no_aprobada }}</p>
+            {% endif %}
+        {% endif %}
+
+    </section>
 
     {% if resultados %}
-        <ul>
-            {% for resultado, subnivel in resultados %}
-                <li>
-                    <strong>{{ resultado.estudiante.nombres_estudiante }} {{ resultado.estudiante.apellidos_estudiante }}</strong><br>
-                    <strong>Subnivel:</strong> {{ subnivel }}<br>
-                    <strong>Estado de Documentación:</strong> {{ resultado.estado }}<br><br>
-                </li>
-            {% endfor %}
-        </ul>
-    {% else %}
-        <p>No se encontraron resultados para el CUIL proporcionado.</p>
+    <section class="inscripcion__formulario">
+
+        <h2 class="titulo-secundario">Inscripción</h2>
+
+        <form method="post" class="formulario-inscripcion">
+            {% csrf_token %}
+
+            <div class="formulario-inscripcion__fila">
+                <!-- Ciclo Lectivo -->
+                <div class="formulario-inscripcion__grupo">
+                    <label for="ciclo" class="formulario-inscripcion__etiqueta">Ciclo Lectivo:</label>
+                    <select name="ciclo" id="ciclo" required class="formulario-inscripcion__select">
+                        <option value="">-- Seleccioná un ciclo --</option>
+                        {% for ciclo in ciclos_lectivos %}
+                            <option value="{{ ciclo.id }}">{{ ciclo.año_lectivo }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+
+                <!-- Subnivel -->
+                <div class="formulario-inscripcion__grupo">
+                    <label for="subnivel" class="formulario-inscripcion__etiqueta">Subnivel:</label>
+                    <select name="subnivel" id="subnivel" required class="formulario-inscripcion__select">
+                        <option value="">-- Seleccioná un subnivel --</option>
+                        {% for subnivel in subniveles_disponibles %}
+                            <option value="{{ subnivel.id }}">{{ subnivel }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+            </div>
+
+            <div class="formulario-inscripcion__fila">
+                <!-- Monto de Inscripción -->
+                <div class="formulario-inscripcion__grupo">
+                    <label for="monto_inscripcion" class="formulario-inscripcion__etiqueta">Monto de Inscripción:</label>
+                    <select name="monto_inscripcion" id="monto_inscripcion" required class="formulario-inscripcion__select">
+                        <option value="">-- Seleccioná un monto --</option>
+                        {% for monto in montos_disponibles %}
+                            <option value="{{ monto.monto_inscripcion }}">{{ monto.subnivel_cursado.nombre }}: {{ monto.monto_inscripcion|floatformat:2 }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+
+                <!-- Descuento por Inscripción -->
+                <div class="formulario-inscripcion__grupo">
+                    <label for="descuento_inscripcion" class="formulario-inscripcion__etiqueta">Descuento por Inscripción:</label>
+                    <input type="number" name="descuento_inscripcion" id="descuento_inscripcion" step="0.01" value="0" required class="formulario-inscripcion__input">
+                </div>
+            </div>
+
+            <div class="formulario-inscripcion__fila"></div>
+                <!-- Pago -->
+                <div class="formulario-inscripcion__grupo">
+                    <label for="pagada" class="formulario-inscripcion__etiqueta">¿Está pagada?</label>
+                    <input type="checkbox" name="pagada" id="pagada" class="formulario-inscripcion__checkbox">
+                </div>
+            </div>
+
+            <div class="formulario-inscripcion__fila">
+                <div class="formulario-inscripcion__grupo">
+                    <button type="submit" class="formulario-inscripcion__boton">Inscribir</button>
+                </div>
+            </div>
+        </form>
+
+    </section>
     {% endif %}
 
-    {% if mensaje_documentacion_no_aprobada %}
-        <p>{{ mensaje_documentacion_no_aprobada }}</p>
-    {% endif %}
-{% endif %}
-
-{% if resultados %}
-    <h2>Inscripción</h2>
-
-    <form method="post">
-        {% csrf_token %}
-
-        <!-- Ciclo Lectivo -->
-        <label for="ciclo">Ciclo Lectivo:</label>
-        <select name="ciclo" id="ciclo" required>
-            <option value="">-- Seleccioná un ciclo --</option>
-            {% for ciclo in ciclos_lectivos %}
-                <option value="{{ ciclo.id }}">{{ ciclo.año_lectivo }}</option>
-            {% endfor %}
-        </select>
-
-        <br><br>
-
-        <!-- Subnivel -->
-        <label for="subnivel">Subnivel:</label>
-        <select name="subnivel" id="subnivel" required>
-            <option value="">-- Seleccioná un subnivel --</option>
-            {% for subnivel in subniveles_disponibles %}
-                <option value="{{ subnivel.id }}">{{ subnivel }}</option>
-            {% endfor %}
-        </select>
-
-        <br><br>
-
-        <!-- Monto de Inscripción -->
-        <label for="monto_inscripcion">Monto de Inscripción:</label>
-        <select name="monto_inscripcion" id="monto_inscripcion" required>
-            <option value="">-- Seleccioná un monto --</option>
-            {% for monto in montos_disponibles %}
-                <option value="{{ monto.monto_inscripcion }}">{{ monto.subnivel_cursado.nombre }}: {{ monto.monto_inscripcion|floatformat:2 }}</option>
-            {% endfor %}
-        </select>
-
-        <br><br>
-
-        <!-- Descuento por Inscripción -->
-        <label for="descuento_inscripcion">Descuento por Inscripción:</label>
-        <input type="number" name="descuento_inscripcion" id="descuento_inscripcion" step="0.01" value="0" required>
-
-        <br><br>
-
-        <!-- Pago -->
-        <label for="pagada">¿Está pagada?</label>
-        <input type="checkbox" name="pagada" id="pagada">
-
-        <br><br>
-
-        <button type="submit">Inscribir</button>
-    </form>
-{% endif %}
+</article>
 
 {% endblock %}
 
