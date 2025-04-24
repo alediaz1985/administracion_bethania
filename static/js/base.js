@@ -75,3 +75,16 @@ expandBtns.forEach(btn => {
         }
     });
 });
+// Cierra la sidebar si se hace clic fuera de ella
+document.addEventListener('click', function (e) {
+    const sidebar = document.getElementById("sidebar");
+    const isClickInside = sidebar.contains(e.target);
+    const isToggleButton = e.target.closest('.open-btn'); // botón que abre la sidebar
+
+    if (!isClickInside && !isToggleButton && sidebar.classList.contains("active")) {
+        sidebar.classList.remove("active");
+
+        const content = document.querySelector(".open-btn");
+        content.style.marginLeft = "0px";
+    }
+});
