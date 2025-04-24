@@ -17,7 +17,7 @@ import os
 from datetime import datetime, date
 import locale
 from dateutil.relativedelta import relativedelta
-from decimal import Decimal
+from decimal import Decimal, ROUND_HALF_UP
 
 # Habilitar Ciclo Lectivo
 def habilitar_ciclo_lectivo(request):
@@ -619,6 +619,26 @@ def buscar_cuotas_estudiante(request):
             inscripcion = Inscripcion.objects.filter(cuil_alumno=estudiante, ciclo_lectivo_id=ciclo_id).first()
             if inscripcion:
                 cuotas = Cuota.objects.filter(inscripcion=inscripcion).order_by('mes')
+                hoy = date.today()
+
+                for cuota in cuotas:
+                    if not cuota.pagado:
+                        fecha_vencimiento = inscripcion.ciclo_lectivo.fecha_inicio + relativedelta(months=cuota.mes - 1)
+
+                        if fecha_vencimiento < hoy or (
+                            fecha_vencimiento.month == hoy.month and
+                            fecha_vencimiento.year == hoy.year and
+                            hoy.day > 15
+                        ):
+                            interes = cuota.monto_cuota * Decimal('0.10')
+                            
+                            # Redondear a 2 decimales
+                            interes = interes.quantize(Decimal('0.01'), rounding=ROUND_HALF_UP)
+                            
+                            cuota.total_a_pagar = (cuota.monto_cuota + interes).quantize(Decimal('0.01'), rounding=ROUND_HALF_UP)
+                            cuota.fuera_de_termino = True
+                            cuota.interes_aplicado = interes
+                            cuota.save()  # Guardamos los cambios
 
     return render(request, 'cuotas/buscar_cuotas_estudiante.html', {
         'estudiante': estudiante,
