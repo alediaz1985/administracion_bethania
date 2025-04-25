@@ -9,9 +9,20 @@ import logging
 # Configuración del logger
 logger = logging.getLogger(__name__)
 
-# Ruta de las credenciales
-CREDENTIALS_PATH = r'C:\proyectos\Bethania2024\administracion_bethania\apps\documentos\credentials.json'
+from pathlib import Path
+
+# BASE_DIR apunta a la raíz del proyecto
+BASE_DIR = Path(__file__).resolve().parent.parent  # Ajusta según dónde esté este archivo
+
+# Ruta relativa al archivo de credenciales
+CREDENTIALS_PATH = BASE_DIR / 'documentos' / 'credentials.json'
+
+# Scopes de Google Drive
 SCOPES = ['https://www.googleapis.com/auth/drive']
+
+# Si necesitas pasar la ruta como string (algunas librerías lo requieren)
+CREDENTIALS_PATH = str(CREDENTIALS_PATH)
+
 
 def get_drive_service():
     """Obtiene el servicio autenticado de Google Drive."""
