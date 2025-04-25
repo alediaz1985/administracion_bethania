@@ -110,45 +110,18 @@
         </nav>
     
         <!-- Contenido del sitio -->
-        {% block content %}
-        {% endblock %}
+        <main class="main-wrapper">
+            {% block content %}
+            <!-- tu contenido dinámico -->
+            {% endblock %}
+        </main>
 
         <!-- Pie de página -->
         <footer class="footer">
-            <div class="top-footer"></div> <!-- Rectángulo superior vacío -->
-
-            <div class="floating-box">
-                <div class="box-content">
-                    <div class="developers">
-                        <p>Desarrollado por:</p>
-                        <ul>
-                            <li>- Alejandro Diaz</li>
-                            <li>- Sandoval Alexis</li>
-                            <li>- Ramiro Meza</li>
-                            <li>- Agustin Sandoval</li>
-                            <li>- Fabian Ojeda</li>
-                        </ul>
-                    </div>
-                    <div class="logo1">
-                        <img src="{% static 'img/logo1.png' %}" alt="Logo" class="logo-image">
-                    </div>
-                </div>
-            </div>
-
-            <div class="middle-footer">
-                <!-- <ul class="footer-nav">
-                    <li><a href="{% url 'home' %}">Inicio</a></li>
-                    <li><a href="{% url 'consultar_alumno' %}">Alumnos</a></li>
-                    <li><a href="{% url 'consulta' %}">Administración</a></li>
-                </ul> -->
-            </div>
-
             <div class="bottom-footer">
-                <div>
-                    <p class="copyright" id="copyright-text"></p>
-                </div>
+                <p class="copyright" id="copyright-text"></p>
             </div>
-            </footer>
+        </footer>
             
             <script>
               const startYear = 2024;

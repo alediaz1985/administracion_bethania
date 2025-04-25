@@ -25,11 +25,9 @@ body {
     color: #000;
 }
 
-
 .sidebar.active {
     width: 15%; 
 }
-
 
 .close-btn {
     background-color: transparent;
@@ -110,7 +108,6 @@ body {
     border-radius: 5px;
 }
 
-
 .subitems {
     display: none; 
     list-style-type: none;
@@ -166,7 +163,6 @@ body {
     display: block; 
 }
 
-
 .open-btn {
     background-color: #f9f9f9;
     border: none;
@@ -216,6 +212,15 @@ body {
 
 .sidebar.active .sidebar-items li a .text {
     display: inline-block; 
+}
+
+.sidebar-items li a i {
+    color: inherit;
+    transition: color 0.3s ease;
+}
+
+.sidebar-items li a:hover i:not(.fa-home) {
+    color: #000 !important; /* o el color que uses normalmente, así no se pone blanco */
 }
 
 
@@ -311,134 +316,30 @@ body {
     content: "Adios!";  /* Cambia el texto */
 }
 
+.main-wrapper {
+    height: calc(100vh - 257px);
+}
+
 
 .footer {
-    background-color: #f2f2f2; /* Fondo blanco claro */
+    background-color: #f9f9f9; /* Fondo blanco claro */
     color: #333;
     width: 100%;
     display: flex;
     flex-direction: column;
     position: relative;
     box-shadow: 0 -4px 10px rgba(0, 0, 0, 0.1);
+    margin-top: auto;
 }
 
-/* Rectángulo superior vacío */
-.top-footer {
-    background-color: #f9f9f9;
-    height: 200px;
-}
-
-/* Rectángulo del medio */
-.middle-footer {
-    background-color: #eaeaea;
-    display: flex;
-    justify-content: center;
-    align-items: flex-end;
-    height: 200px;
-}
-
-.footer-nav {
-    display: flex;
-    gap: 20px;
-    list-style: none;
-    padding: 0;
-    margin-bottom: 10px;
-}
-
-.footer-nav li a {
-    text-decoration: none;
-    color: #333;
-    transition: color 0.3s ease;
-}
-
-.footer-nav li a:hover {
-    color: #000;
-}
-
-/* Rectángulo inferior */
 .bottom-footer {
-    background-color: #dcdcdc;
+    background-color: #f9f9f9;
     text-align: center;
     padding: 20px 0;
 }
 
-.social-icons {
-    display: flex;
-    justify-content: center;
-    gap: 20px;
-}
-
-.social-icons a {
-    color: #555;
-    font-size: 18px;
-    transition: color 0.3s ease;
-}
-
-.social-icons a:hover {
-    color: #000;
-}
-
 .copyright {
     margin: 3px;
-}
-
-/* Rectángulo flotante */
-.floating-box {
-    position: absolute;
-    top: 60px; /* Subir el rectángulo para no tapar el medio */
-    left: 50%;
-    transform: translateX(-50%);
-    background-color: #e0e0e0;
-    padding: 5px 20px;
-    width: 60%;
-    border-radius: 8px;
-    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.5);
-}
-
-/* Contenido del rectángulo flotante */
-.box-content {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-}
-
-/* Estilo del logo */
-.logo1 {
-    text-align: right;
-    flex: 1;
-    display: flex;
-    justify-content: center; /* Centrar el logo horizontalmente */
-}
-
-.logo-image {
-    width: 250px; /* Logo más grande */
-}
-
-/* Desarrollado por: centrado a la izquierda */
-.developers {
-    text-align: left;
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-    align-items: center; /* Centrar horizontalmente los nombres */
-}
-
-.developers p {
-    margin: 10px;
-    font-size: 16px;
-    font-weight: bold;
-}
-
-.developers ul {
-    list-style: none;
-    padding: 0;
-    margin: 0;
-}
-
-.developers li {
-    margin-bottom: 2px;
-    color: #333;
-    font-size: 14px;
 }
 
 /* Media query para pantallas de 1366px de ancho */

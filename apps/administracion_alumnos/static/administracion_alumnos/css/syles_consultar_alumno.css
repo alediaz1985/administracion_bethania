@@ -1,10 +1,17 @@
+html, body {
+    height: 100%;
+    margin: 0;
+    padding: 0;
+}
+
 body {
-    background-image: url('../img/fondo1.png'); /* Cambia por la ruta de tu imagen */
-    background-size: cover;  /* Asegura que la imagen cubra todo el fondo */
-    background-position: center; /* Centra la imagen */
-    background-repeat: no-repeat; /* Evita que la imagen se repita */
-    width: 96%;
-    float: right;
+    background-image: url('../img/fondo1.png');
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
 }
 
 /* Contenedor general con un fondo más fuerte */
@@ -13,7 +20,7 @@ body {
     background-color: #c9c9ca;
     color: #1b1b1b;
     padding: 50px;
-    margin: 30px auto;
+    margin: 30px auto 0 auto;
     max-width: 700px;
     border-radius: 15px;
     box-shadow: 0 4px 10px rgba(0, 0, 0, 0.9);

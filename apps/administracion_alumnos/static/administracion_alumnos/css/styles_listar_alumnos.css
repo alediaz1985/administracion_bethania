@@ -11,18 +11,8 @@ body {
 
 .alumnos-container {
     width: 96%;
-    padding: 25px 40px;
+    padding: 5px 15px;
     float: right;
-}
-
-.alumnos-titulo {
-    font-size: 18px;
-    color: #000000;
-    text-align: center;
-    font-family: 'Poppins', sans-serif;
-    font-weight: 400;
-    /* font-weight: bold; */
-    margin-bottom: 25px;
 }
 
 .alumnos-controls {
@@ -30,7 +20,7 @@ body {
 }
 
 .alumnos-scroll-container {
-    max-height: 600px; /* Altura máxima del contenedor con scroll */
+    height: calc(100vh - 257px);
     overflow-y: auto;  /* Activar scroll vertical */
     border: 1px solid #ccc;
     padding: 10px;
@@ -53,6 +43,7 @@ body {
     padding: 12px;
     text-align: left;
     border-bottom: 1px solid #ddd;
+    font-size: 13px;
 }
 
 .alumnos-table th {
@@ -298,92 +289,12 @@ body {
     border: none;
     border-bottom: 2px solid transparent;
     transition: background-color 0.3s;
+    font-size: 13px;
 }
 
 .tabs button.active {
     background-color: #b8b7b7;
     border-color: #007bff;
-}
-
-/* Media queries para pantallas más pequeñas */
-@media (max-width: 1366px) {
-    .alumnos-titulo {
-        font-size: 18px; /* Reduce el tamaño del título */
-    }
-
-    .alumnos-table th, .alumnos-table td {
-        padding: 8px; /* Reduce el padding para las celdas de la tabla */
-        font-size: 12px;
-    }
-
-    .alumnos-btn {
-        padding: 6px 6px; /* Reduce el tamaño de los botones */
-        font-size: 11px; /* Reduce el tamaño del texto de los botones */
-    }
-
-}
-
-@media (max-width: 1024px) {
-    .alumnos-titulo {
-        font-size: 18px; /* Se mantiene más pequeño que en 1366px */
-    }
-
-    .alumnos-btn {
-        padding: 5px 5px; /* Un poco más pequeño que en 1366px */
-        font-size: 10px; /* Reduce el texto de los botones */
-    }
-
-    .alumnos-table th, .alumnos-table td {
-        padding: 6px; /* Reduce padding para que encaje mejor en pantallas de 1024px */
-        font-size: 11px; /* Tamaño de letra más pequeño para las celdas */
-    }
-
-    .alumnos-details-table td {
-        padding: 5px; /* Detalles más compactos */
-        font-size: 10px;
-    }
-}
-
-@media (max-width: 768px) {
-    .alumnos-titulo {
-        font-size: 16px; /* Más pequeño para pantallas de 768px */
-    }
-
-    .alumnos-btn {
-        padding: 4px 6px; /* Reduce padding y ajusta el botón */
-        font-size: 9px; /* Texto más pequeño en botones */
-    }
-
-    .alumnos-table th, .alumnos-table td {
-        padding: 5px; /* Más ajustado para pantallas pequeñas */
-        font-size: 10px; /* Reduce el texto de las celdas */
-    }
-
-    .alumnos-details-table td {
-        padding: 4px; /* Detalles ajustados */
-        font-size: 9px; /* Letra pequeña */
-    }
-}
-
-@media (max-width: 480px) {
-    .alumnos-titulo {
-        font-size: 14px; /* Muy pequeño para pantallas extra pequeñas */
-    }
-
-    .alumnos-btn {
-        padding: 3px 4px; /* Botones compactos */
-        font-size: 8px; /* Texto mínimo en botones */
-    }
-
-    .alumnos-table th, .alumnos-table td {
-        padding: 4px; /* Padding pequeño para caber en pantallas pequeñas */
-        font-size: 8px; /* Texto pequeño en celdas */
-    }
-
-    .alumnos-details-table td {
-        padding: 3px; /* Ajuste compacto en detalles */
-        font-size: 8px; /* Texto muy pequeño para pantallas pequeñas */
-    }
 }
 
 /* From Uiverse.io by vinodjangid07 */ 
@@ -473,7 +384,7 @@ body {
     width: 100%;
     max-width: 250px;
     padding: 14px 20px;
-    font-size: 12px;
+    font-size: 11px;
     font-family: 'Roboto', sans-serif;
     color: #444;
     background: linear-gradient(135deg, #f0f4f8, #e0e8f0);
@@ -520,7 +431,7 @@ body {
 #nivel-filter option {
     background-color: #fff;
     color: #333;
-    font-size: 12px;
+    font-size: 11px;
     font-weight: 400;
     padding: 12px;
     transition: all 0.3s ease-in-out;
@@ -570,4 +481,106 @@ label {
     max-width: 320px;
     width: 100%;
     padding: 10px;
+}
+
+/* Media queries para pantallas más pequeñas */
+@media (max-width: 1366px) {
+
+    .alumnos-scroll-container {
+        height: calc(100vh - 224px);
+    }
+
+    .alumnos-table th, .alumnos-table td {
+        font-size: 12px;
+    }
+
+    #nivel-filter {
+        font-size: 10px;
+    }
+
+    #nivel-filter option {
+        font-size: 10px;
+    }
+
+    .alumnos-titulo {
+        font-size: 18px; /* Reduce el tamaño del título */
+    }
+
+    .alumnos-table th, .alumnos-table td {
+        padding: 8px; /* Reduce el padding para las celdas de la tabla */
+        font-size: 12px;
+    }
+
+    .alumnos-btn {
+        padding: 6px 6px; /* Reduce el tamaño de los botones */
+        font-size: 11px; /* Reduce el tamaño del texto de los botones */
+    }
+
+    .tabs button {
+        font-size: 12px;
+    }
+
+}
+
+@media (max-width: 1024px) {
+    .alumnos-titulo {
+        font-size: 18px; /* Se mantiene más pequeño que en 1366px */
+    }
+
+    .alumnos-btn {
+        padding: 5px 5px; /* Un poco más pequeño que en 1366px */
+        font-size: 10px; /* Reduce el texto de los botones */
+    }
+
+    .alumnos-table th, .alumnos-table td {
+        padding: 6px; /* Reduce padding para que encaje mejor en pantallas de 1024px */
+        font-size: 11px; /* Tamaño de letra más pequeño para las celdas */
+    }
+
+    .alumnos-details-table td {
+        padding: 5px; /* Detalles más compactos */
+        font-size: 10px;
+    }
+}
+
+@media (max-width: 768px) {
+    .alumnos-titulo {
+        font-size: 16px; /* Más pequeño para pantallas de 768px */
+    }
+
+    .alumnos-btn {
+        padding: 4px 6px; /* Reduce padding y ajusta el botón */
+        font-size: 9px; /* Texto más pequeño en botones */
+    }
+
+    .alumnos-table th, .alumnos-table td {
+        padding: 5px; /* Más ajustado para pantallas pequeñas */
+        font-size: 10px; /* Reduce el texto de las celdas */
+    }
+
+    .alumnos-details-table td {
+        padding: 4px; /* Detalles ajustados */
+        font-size: 9px; /* Letra pequeña */
+    }
+}
+
+@media (max-width: 480px) {
+    .alumnos-titulo {
+        font-size: 14px; /* Muy pequeño para pantallas extra pequeñas */
+    }
+
+    .alumnos-btn {
+        padding: 3px 4px; /* Botones compactos */
+        font-size: 8px; /* Texto mínimo en botones */
+    }
+
+    .alumnos-table th, .alumnos-table td {
+        padding: 4px; /* Padding pequeño para caber en pantallas pequeñas */
+        font-size: 8px; /* Texto pequeño en celdas */
+    }
+
+    .alumnos-details-table td {
+        padding: 3px; /* Ajuste compacto en detalles */
+        font-size: 8px; /* Texto muy pequeño para pantallas pequeñas */
+    }
 }
