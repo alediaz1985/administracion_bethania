@@ -145,10 +145,21 @@
 
             <div class="bottom-footer">
                 <div>
-                    <p class="copyright">&copy; 2024-2025 Hogar de Bethania. Todos los derechos reservados.</p>
+                    <p class="copyright" id="copyright-text"></p>
                 </div>
             </div>
-        </footer>
+            </footer>
+            
+            <script>
+              const startYear = 2024;
+              const currentYear = new Date().getFullYear();
+              const text = startYear === currentYear
+                ? `© ${currentYear} Hogar de Bethania. Todos los derechos reservados.`
+                : `© ${startYear}-${currentYear} Hogar de Bethania. Todos los derechos reservados.`;
+            
+              document.getElementById("copyright-text").textContent = text;
+            </script>
+            
 
     {% else %}
         <!-- Mensaje para usuarios no autenticados -->
