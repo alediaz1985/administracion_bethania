@@ -245,6 +245,7 @@ body {
     align-items: center;
     list-style: none;
     flex-grow: 1;
+    height: 60px;
 }
 
 .nav-items li {
@@ -274,7 +275,7 @@ body {
 
 /* Logo centrado */
 .logo img {
-    width: 90px;
+    width: 30px;
 }
 
 /* Estilo del botón de Sign In */
@@ -316,18 +317,14 @@ body {
     content: "Adios!";  /* Cambia el texto */
 }
 
-.main-wrapper {
-    height: calc(100vh - 257px);
-}
-
-
 .footer {
     background-color: #f9f9f9; /* Fondo blanco claro */
     color: #333;
     width: 100%;
+    height: 40px;
     display: flex;
-    flex-direction: column;
-    position: relative;
+    justify-content: center;
+    align-items: center;
     box-shadow: 0 -4px 10px rgba(0, 0, 0, 0.1);
     margin-top: auto;
 }
@@ -335,11 +332,6 @@ body {
 .bottom-footer {
     background-color: #f9f9f9;
     text-align: center;
-    padding: 20px 0;
-}
-
-.copyright {
-    margin: 3px;
 }
 
 /* Media query para pantallas de 1366px de ancho */
@@ -418,7 +410,7 @@ body {
 
     .navbar {
         padding: 10px 0; /* Reduce el padding del navbar */
-        height: 60px; /* Ajusta la altura del navbar */
+        height: 50px; /* Ajusta la altura del navbar */
     }
 
     .nav-items li a {
@@ -426,44 +418,12 @@ body {
     }
 
     .logo img {
-        width: 70px; /* Ajusta el tamaño del logo */
+        width: 30px; /* Ajusta el tamaño del logo */
     }
 
     .signin-btn a {
         font-size: 0.7em;
         padding: 8px 12px;
-    }
-
-    /* Rectángulo superior vacío */
-    .top-footer {
-        height: 170px;
-    }
-
-    /* Rectángulo del medio */
-    .middle-footer {
-        height: 170px;
-    }
-
-    /* Rectángulo inferior */
-    .bottom-footer {
-        padding: 10px 0;
-    }
-
-    .floating-box {
-        top: 40px; /* Subir el rectángulo para no tapar el medio */
-        padding: 0;
-    }
-
-    .footer-nav li a {
-        font-size: 14px;
-    }
-
-    .developers p {
-        font-size: 0.8em;
-    }
-
-    .developers li {
-        font-size: 0.7em;
     }
 
     .copyright {

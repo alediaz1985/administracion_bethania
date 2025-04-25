@@ -8,59 +8,58 @@
 
 {% block content %}
 
-<div class="consulta-alumno-container">
-    <h1>Consultar Alumno</h1>
-    <form method="post" class="form-inline styled-form">
-        {% csrf_token %}
-        <label for="cuil">CUIL del Alumno:</label>
-        <input type="text" id="cuil" name="cuil" required>
-        <button class="learn-more">
-            <span class="circle" aria-hidden="true">
-            <span class="icon arrow"></span>
-            </span>
-            <span class="button-text">Buscar</span>
-        </button>
-    </form> 
-
-    {% if estudiante %}
-        <div class="resultado-alumno">
-            <h2>Alumno encontrado</h2>
-            <div class="alumno-datos">
-                <h2>Datos del Alumno</h2>
-                    <p><strong>CUIL:</strong> {{ estudiante.cuil_estudiante }}</p>
-                    <p><strong>Nombre:</strong> {{ estudiante.apellidos_estudiante }}, {{ estudiante.nombres_estudiante }}</p>
-                    <p><strong>Tel-Cel:</strong> {{ estudiante.tel_cel_estudiante }}</p>
-                    <p><strong>Última Actualización:</strong> {{ estudiante.marca_temporal }}</p>
+<div class="consulta-alumno">
+    <div class="consulta-alumno__contenedor">
+        <form method="post" class="consulta-alumno__formulario">
+            {% csrf_token %}
+            <label for="cuil" class="consulta-alumno__etiqueta">CUIL del Alumno:</label>
+            <input type="text" id="cuil" name="cuil" class="consulta-alumno__input" required>
+            <button class="consulta-alumno__boton">
+                <span class="consulta-alumno__circulo" aria-hidden="true">
+                    <span class="consulta-alumno__icono consulta-alumno__icono--flecha"></span>
+                </span>
+                <span class="consulta-alumno__texto-boton">Buscar</span>
+            </button>
+        </form> 
+    
+        {% if estudiante %}
+            <div class="consulta-alumno__resultado">
+                <h2 class="consulta-alumno__titulo">Alumno encontrado</h2>
+                <div class="consulta-alumno__datos">
+                    <h2 class="consulta-alumno__subtitulo">Datos del Alumno</h2>
+                    <p class="consulta-alumno__parrafo"><strong>CUIL:</strong> {{ estudiante.cuil_estudiante }}</p>
+                    <p class="consulta-alumno__parrafo"><strong>Nombre:</strong> {{ estudiante.apellidos_estudiante }}, {{ estudiante.nombres_estudiante }}</p>
+                    <p class="consulta-alumno__parrafo"><strong>Tel-Cel:</strong> {{ estudiante.tel_cel_estudiante }}</p>
+                    <p class="consulta-alumno__parrafo"><strong>Última Actualización:</strong> {{ estudiante.marca_temporal }}</p>
                 </div>
-            <div class="button-group">
-                <form method="get" action="{% url 'ver_datos_estudiante' pk=estudiante.pk %}">
-                    <button class="learn-more">
-                        <span class="circle" aria-hidden="true">
-                            <span class="icon arrow"></span>
-                        </span>
-                        <span class="button-text">Ver</span>
-                    </button>
-                </form>
-                <!-- <form method="post" action="{% url 'estudiante_delete' pk=estudiante.pk %}" id="delete-form">
-                    {% csrf_token %}
-                    <button type="button" class="button-submit gradient-button" id="delete-button">Eliminar</button>
-                </form> -->
-                <form method="get" action="{% url 'estudiante_edit' pk=estudiante.pk %}">
-                    <button class="learn-more">
-                        <span class="circle" aria-hidden="true">
-                        <span class="icon arrow"></span>
-                        </span>
-                        <span class="button-text">Editar</span>
-                    </button>
-                </form>
+                <div class="consulta-alumno__grupo-botones">
+                    <form method="get" action="{% url 'ver_datos_estudiante' pk=estudiante.pk %}" class="consulta-alumno__formulario-boton">
+                        <button class="consulta-alumno__boton">
+                            <span class="consulta-alumno__circulo" aria-hidden="true">
+                                <span class="consulta-alumno__icono consulta-alumno__icono--flecha"></span>
+                            </span>
+                            <span class="consulta-alumno__texto-boton">Ver</span>
+                        </button>
+                    </form>
+                    <form method="get" action="{% url 'estudiante_edit' pk=estudiante.pk %}" class="consulta-alumno__formulario-boton">
+                        <button class="consulta-alumno__boton">
+                            <span class="consulta-alumno__circulo" aria-hidden="true">
+                                <span class="consulta-alumno__icono consulta-alumno__icono--flecha"></span>
+                            </span>
+                            <span class="consulta-alumno__texto-boton">Editar</span>
+                        </button>
+                    </form>
+                </div>
             </div>
-        </div>
+    </div>
+    
     {% elif error %}
-        <p style="color: red;">{{ error }}</p>
+        <p class="consulta-alumno__error">{{ error }}</p>
     {% endif %}
 </div>
 
 {% endblock %}
+
 
 {% block extra_scripts %}
     <script>

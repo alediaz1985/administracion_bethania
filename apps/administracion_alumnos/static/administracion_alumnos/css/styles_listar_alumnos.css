@@ -20,7 +20,7 @@ body {
 }
 
 .alumnos-scroll-container {
-    height: calc(100vh - 257px);
+    height: calc(100vh - 100px);
     overflow-y: auto;  /* Activar scroll vertical */
     border: 1px solid #ccc;
     padding: 10px;
@@ -487,7 +487,7 @@ label {
 @media (max-width: 1366px) {
 
     .alumnos-scroll-container {
-        height: calc(100vh - 224px);
+        height: calc(100vh - 203px);
     }
 
     .alumnos-table th, .alumnos-table td {
@@ -508,7 +508,7 @@ label {
 
     .alumnos-table th, .alumnos-table td {
         padding: 8px; /* Reduce el padding para las celdas de la tabla */
-        font-size: 12px;
+        font-size: 0.6875rem;
     }
 
     .alumnos-btn {
@@ -517,7 +517,16 @@ label {
     }
 
     .tabs button {
-        font-size: 12px;
+        font-size: 0.6875rem;
+    }
+
+    .alumnos-btn-ver,
+    .alumnos-btn-pdf {
+        font-size: 1rem;
+    }
+
+    .alumnos-btn-ver {
+        padding: 3px 10px;
     }
 
 }
