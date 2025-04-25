@@ -74,8 +74,6 @@ expandBtns.forEach(btn => {
             this.querySelector('.expand-btn').textContent = '-';  // Cambiar icono a '-'
         }
     });
-
-
 });
 // Cierra la sidebar si se hace clic fuera de ella
 document.addEventListener('click', function (e) {
@@ -90,4 +88,3 @@ document.addEventListener('click', function (e) {
         content.style.marginLeft = "0px";
     }
 });
-
