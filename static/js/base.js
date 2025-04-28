@@ -90,3 +90,6 @@ document.addEventListener('click', function (e) {
         content.style.marginLeft = "0px";
     }
 });
+
+const yearSpan = document.getElementById("anio-actual");
+yearSpan.textContent = new Date().getFullYear();

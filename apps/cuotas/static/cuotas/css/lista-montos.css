@@ -7,24 +7,33 @@
   
 body {
     font-family: 'Helvetica Neue', Arial, sans-serif;
-    font-size: 16px;
     line-height: 1.5;
-    background-color: #f0f2f5;
     color: #333;
+    background-image: url('../img/fondo1.png'); /* Cambia por la ruta de tu imagen */
+    background-size: 100%;
+    background-position: center; /* Centra la imagen */
+    background-repeat: repeat-y; /* Repetir sólo de forma vertical */
 }
 
 .montos {
+    width: 96%;
+    min-height: calc(100vh - 90px);
+    justify-content: center;
+    float: right;
+    display: flex; /* Usamos flexbox para centrar */
+}
+
+.montos__contenedor {
     display: flex;
     flex-direction: column;
-    justify-content: center;
     align-items: center;
-    width: 1000px;
+    width: 80%;
     margin: 40px auto; /* Centrado horizontal */
 }
 
 .montos__titulo {
-    font-size: 18px;
-    padding: 10px 0;
+    font-size: 1rem;
+    padding: 0 10px 0 0;
 }
 
 .montos__tabla {
@@ -34,7 +43,7 @@ body {
 }
 
 .montos__celda-encabezado, .montos__celda {
-    padding: 12px;
+    padding: 8px;
     text-align: center;
 }
 
@@ -42,12 +51,13 @@ body {
     background-color: #cad2db;
     color: #333;
     font-weight: bold;
-    font-size: 14px;
+    font-size: 0.875rem;
     border-bottom: 1px solid #a7a1a1;
 }
 
 .montos__celda {
-    font-size: 13px;
+    font-size: 0.8125rem;
+    background-color: #f3f4f5;
 }
 
 .montos__fila {
@@ -80,7 +90,7 @@ body {
     min-width: 250px;       /* Establece un valor mínimo de ancho */
     max-width: 400px;       /* Puedes ajustarlo a un valor mayor si lo necesitas */
     padding: 10px 25px;     /* Aumenta el relleno para darle más tamaño */
-    font-size: 12px;        /* Aumenta el tamaño de la fuente para que se vea más grande */
+    font-size: 0.75rem;        /* Aumenta el tamaño de la fuente para que se vea más grande */
     font-family: 'Roboto', sans-serif;
     color: #444;
     background: linear-gradient(135deg, #f0f4f8, #e0e8f0);
@@ -166,4 +176,40 @@ label {
     max-width: 320px;
     width: 100%;
     padding: 10px;
+}
+
+/* Monitores grandes */
+@media (min-width: 1600px) {
+    .montos__titulo {
+        font-size: 1.125rem;
+    }
+
+    .montos__fila-encabezado {
+        font-size: 1rem;
+    }
+    
+    .montos__celda {
+        font-size: 0.875rem;
+    }
+    
+    /* Estilos del select */
+    #filtro-ciclo, #filtro-subnivel {
+        font-size: 0.875rem;
+    }
+
+}
+
+/* Laptop y notebook */
+@media (max-width: 1599px) {
+
+}
+
+/* Tablets */
+@media (max-width: 1024px) {
+
+}
+
+/* Celulares grandes */
+@media (max-width: 600px) {
+
 }
