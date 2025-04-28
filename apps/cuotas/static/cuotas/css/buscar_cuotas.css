@@ -10,17 +10,26 @@ body {
     line-height: 1.5;
     color: #333;
     background-image: url('../img/fondo1.png'); /* Cambia por la ruta de tu imagen */
-    background-size: cover;  /* Asegura que la imagen cubra todo el fondo */
+    background-size: 100%;
     background-position: center; /* Centra la imagen */
-    background-repeat: no-repeat; /* Evita que la imagen se repita */
+    background-repeat: repeat-y; /* Repetir sólo de forma vertical */
 }
 
 .estado-cuotas {
+    width: 96%;
+    min-height: calc(100vh - 90px);
+    float: right;
+    display: flex; /* Usamos flexbox para centrar */
+    justify-content: center; /* Centrado horizontal */
+    align-items: center; /* Centrado vertical */
+}
+
+.estado-cuotas__contenedor {
     display: flex;
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    width: 80%;
+    width: 95%;
     margin: 20px auto; /* Centrado horizontal */
     border-radius: 10px;
     background: linear-gradient(360deg,rgba(134, 134, 135, 1) 0%, rgba(167, 173, 185, 1) 35%, rgba(201, 201, 202, 1) 100%);
@@ -45,35 +54,48 @@ body {
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
 }
 
+.estado-cuotas__buscador {
+    width: 100%;
+    display: flex;
+    justify-self: center;
+}
+
 .estado-cuotas__grupo {
     display: flex;
     justify-content: center;
     align-items: center;
-    width: 100%;
     gap: 0.5rem;
+}
+
+.grupo-1 {
+    width: 50%;
+}
+
+.grupo-2 {
+    width: 50%;
 }
 
 .estado-cuotas__etiqueta {
     font-weight: bold;
     color: #181818;
-    font-size: 14px;
+    font-size: 0.75rem;
 }
 
 .estado-cuotas__input {
     padding: 8px;
     border: 1px solid #95a5a6;
     border-radius: 5px;
-    font-size: 12px;
-    width: 400px;
+    font-size: 0.75rem;
+    width: 60%;
 }
 
 .estado-cuotas__select {
-    font-size: 13px;
+    font-size: 0.75rem;
     color: #2c3e50;
     background-color: #ecf0f1;
     padding: 0.3rem;
     margin: 0.4rem 0;
-    width: 300px;
+    width: 70%;
     border-radius: 5px;
 }
 
@@ -90,7 +112,7 @@ body {
     padding: 0;
     font-size: inherit;
     font-family: inherit;
-    width: 9rem;
+    width: 10rem;
     height: auto;
 }
 
@@ -99,10 +121,10 @@ body {
     position: relative;
     display: block;
     margin: 0;
-    width: 3rem;
-    height: 3rem;
+    width: 2.5rem; /* Reducir tamaño del círculo */
+    height: 2.5rem; /* Reducir tamaño del círculo */
     background: rgb(66 149 33);
-    border-radius: 1.625rem;
+    border-radius: 1.25rem; /* Ajustar el radio para mantener la forma circular */
 }
 
 .boton-accion__icono {
@@ -112,11 +134,13 @@ body {
     bottom: 0;
     margin: auto;
     background: #fff;
+    width: 0.875rem; /* Ajustar el tamaño del icono */
+    height: 0.875rem;
 }
 
 .boton-accion__icono--flecha {
     left: 0.625rem;
-    width: 1.125rem;
+    width: 0.925rem;
     height: 0.125rem;
     background: none;
 }
@@ -125,9 +149,9 @@ body {
     position: absolute;
     content: "";
     top: -0.29rem;
-    right: 0.0625rem;
-    width: 0.625rem;
-    height: 0.625rem;
+    right: 0.125rem;
+    width: 0.5rem; /* Reducir el tamaño de la flecha */
+    height: 0.5rem;
     border-top: 0.125rem solid #fff;
     border-right: 0.125rem solid #fff;
     transform: rotate(45deg);
@@ -143,10 +167,10 @@ body {
     left: 0;
     right: 0;
     bottom: 0;
-    padding: 0.75rem 0;
-    margin: 0 0 0 1.85rem;
-    color: #282936;
-    font-size: 12px;
+    padding: 0.8rem 0; /* Reducir el padding */
+    margin: 0 0 0 1rem; /* Ajustar el margen izquierdo */
+    color: #181818;
+    font-size: 0.75rem;
     font-weight: 700;
     line-height: 1.6;
     text-align: center;
@@ -166,13 +190,13 @@ body {
     color: #fff;
 }
 
-.titulo-secundario,
 .estado-cuotas__subtitulo {
-    font-size: 16px;
+    font-size: 0.875rem;
     text-align: center;
     font-weight: bold;
     color: #181818;
     border-bottom: 2px solid #2C3E50; 
+    padding-bottom: 10px;
 }
 
 .estado-cuotas__resultados {
@@ -185,12 +209,23 @@ body {
     border-radius: 10px;
     background-color: #f7f7f7;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-    gap: 1rem;
+}
+
+.titulo-secundario {
+    font-size: 0.875rem;
+    font-weight: bold;
+    color: #181818;
+    padding-bottom: 10px;
+}
+
+.estado-cuotas__subtitulo {
+    width: 100%;
+    text-align: center;
 }
 
 .estado-cuotas__titulo,
 .estado-cuotas__info {
-    font-size: 15px;
+    font-size: 0.875rem;
     color: #181818;
     text-align: left;
     width: 50%;
@@ -209,14 +244,14 @@ body {
 
 /* Encabezados de la tabla */
 .estado-cuotas__tabla th {
-    padding: 8px;
+    padding: 6px 8px;
     text-align: left;
     background-color: #328beb; /* Color de fondo oscuro para los encabezados */
     color: #ffffff; /* Texto blanco */
     font-weight: bold;
     text-transform: uppercase;
     letter-spacing: 1px;
-    font-size: 12px;
+    font-size: 0.75rem;
 }
 
 /* Filas de la tabla */
@@ -224,8 +259,8 @@ body {
     padding: 12px;
     text-align: left;
     border-bottom: 1px solid #f1f1f1; /* Línea divisoria entre filas */
-    font-size: 12px;
-    color: #2C3E50; /* Color de texto */
+    font-size: 0.75rem;
+    color: #1f2b36; /* Color de texto */
 }
 
 /* Efecto hover en las filas */
@@ -260,4 +295,190 @@ body {
     padding: 10px;
     margin-top: 1rem;
     border-radius: 4px;
+    font-size: 0.875rem;
+}
+
+.consulta-alumno__mensaje-info {
+    background-color: #e8f0fe;
+    color: #1a73e8;
+    border: 1px solid #bcd4fc;
+    padding: 1rem 1.5rem;
+    border-radius: 8px;
+    font-size: 0.875rem;
+    text-align: center;
+    margin-top: 1rem;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+}
+
+/* Monitores grandes */
+@media (min-width: 1600px) {
+
+    .estado-cuotas {
+        min-height: calc(100vh - 130px);
+    }
+
+    .estado-cuotas__formulario {
+        gap: 2rem;
+    }
+
+    .estado-cuotas__etiqueta {
+        font-size: 1rem;
+    }
+
+    .estado-cuotas__input {
+        padding: 8px;
+        font-size: 1rem;
+        width: 60%;
+    }
+    
+    .estado-cuotas__select {
+        font-size: 1rem;
+        padding: 0.5rem;
+        margin: 0.8rem 0;
+    }
+
+    /* From Uiverse.io by cssbuttons-io */ 
+    .boton-accion {
+        position: relative;
+        display: inline-block;
+        cursor: pointer;
+        outline: none;
+        border: 0;
+        vertical-align: middle;
+        text-decoration: none;
+        background: transparent;
+        padding: 0;
+        font-size: inherit;
+        font-family: inherit;
+        width: 12rem;
+        height: auto;
+    }
+
+    .boton-accion__circulo {
+        transition: all 0.45s cubic-bezier(0.65, 0, 0.076, 1);
+        position: relative;
+        display: block;
+        margin: 0;
+        width: 3rem;
+        height: 3rem;
+        background: rgb(66 149 33);
+        border-radius: 1.625rem;
+    }
+
+    .boton-accion__icono {
+        transition: all 0.45s cubic-bezier(0.65, 0, 0.076, 1);
+        position: absolute;
+        top: 0;
+        bottom: 0;
+        margin: auto;
+        background: #fff;
+    }
+
+    .boton-accion__icono--flecha {
+        left: 0.625rem;
+        width: 1.125rem;
+        height: 0.125rem;
+        background: none;
+    }
+
+    .boton-accion__icono--flecha::before {
+        position: absolute;
+        content: "";
+        top: -0.29rem;
+        right: 0.0625rem;
+        width: 0.625rem;
+        height: 0.625rem;
+        border-top: 0.125rem solid #fff;
+        border-right: 0.125rem solid #fff;
+        transform: rotate(45deg);
+    }
+
+    .boton-accion__texto {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: all 0.45s cubic-bezier(0.65, 0, 0.076, 1);
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        padding: 0.75rem 0;
+        margin: 0 0 0 1.85rem;
+        color: #282936;
+        font-size: 1rem;
+        font-weight: 700;
+        line-height: 1.6;
+        text-align: center;
+        text-transform: uppercase;
+    }
+
+    .boton-accion:hover .boton-accion__circulo {
+        width: 100%;
+    }
+
+    .boton-accion:hover .boton-accion__icono--flecha {
+        background: #fff;
+        transform: translate(1rem, 0);
+    }
+
+    .boton-accion:hover .boton-accion__texto {
+        color: #fff;
+    }
+
+    .titulo-secundario {
+        font-size: 1.125rem;
+        padding-bottom: 20px;
+    }
+
+    .estado-cuotas__subtitulo {
+        font-size: 1.125rem;
+    }
+    
+
+    .estado-cuotas__titulo,
+    .estado-cuotas__info {
+        font-size: 1.125rem;
+        width: 50%;
+    }
+
+    .estado-cuotas__mensaje-error {
+        font-size: 1.125rem;
+    }
+    
+    .consulta-alumno__mensaje-info {
+        font-size: 1.125rem;
+    }
+
+    /* Estilos generales de la tabla */
+    .estado-cuotas__tabla {
+        width: 100%;
+        border-collapse: collapse; /* Quitar el espacio entre celdas */
+        margin-top: 20px;
+        background-color: #ffffff;
+        border-radius: 8px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        overflow: hidden;
+    }
+
+    /* Encabezados de la tabla */
+    .estado-cuotas__tabla th,
+    .estado-cuotas__tabla td {
+        font-size: 1rem;
+    }
+}
+
+/* Laptop y notebook */
+@media (max-width: 1599px) {
+
+}
+
+/* Tablets */
+@media (max-width: 1024px) {
+
+}
+
+/* Celulares grandes */
+@media (max-width: 600px) {
+
 }

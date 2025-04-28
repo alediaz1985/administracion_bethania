@@ -119,20 +119,9 @@
         <!-- Pie de página -->
         <footer class="footer">
             <div class="bottom-footer">
-                <p class="copyright" id="copyright-text"></p>
+                <p>© <span id="anio-actual"></span> - Sistema de Gestión de Alumnos | UEGP N°82 "Hogar de Bethania" | Versión 1.0</p>
             </div>
         </footer>
-            
-            <script>
-              const startYear = 2024;
-              const currentYear = new Date().getFullYear();
-              const text = startYear === currentYear
-                ? `© ${currentYear} Hogar de Bethania. Todos los derechos reservados.`
-                : `© ${startYear}-${currentYear} Hogar de Bethania. Todos los derechos reservados.`;
-            
-              document.getElementById("copyright-text").textContent = text;
-            </script>
-            
 
     {% else %}
         <!-- Mensaje para usuarios no autenticados -->

@@ -20,7 +20,7 @@ body {
 }
 
 .alumnos-scroll-container {
-    height: calc(100vh - 100px);
+    height: calc(100vh - 248px);
     overflow-y: auto;  /* Activar scroll vertical */
     border: 1px solid #ccc;
     padding: 10px;
