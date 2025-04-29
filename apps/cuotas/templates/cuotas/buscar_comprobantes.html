@@ -1,0 +1,72 @@
+{% extends 'base.html' %}
+
+{% block title %}Consulta de Comprobantes de Pago{% endblock %}
+
+{% load static %}
+
+{% block extra_styles %}
+    <link rel="stylesheet" href="{% static 'documentos/css/consulta_comprobate_nuevo.css' %}">
+{% endblock %}
+
+{% block content %}
+    <h2>Buscar Comprobantes de Pago</h2>
+
+    <form method="GET" action="{% url 'cuotas:buscar_comprobantes' %}">
+        {% csrf_token %}
+        
+        <div>
+            <label for="cuil_alumno">CUIL Alumno:</label>
+            <input type="text" name="cuil_alumno" id="cuil_alumno" placeholder="Ingresar CUIL del alumno" value="{{ request.GET.cuil_alumno }}">
+        </div>
+
+        <div>
+            <label for="fecha_desde">Fecha Desde:</label>
+            <input type="date" name="fecha_desde" id="fecha_desde" value="{{ request.GET.fecha_desde }}">
+        </div>
+
+        <div>
+            <label for="fecha_hasta">Fecha Hasta:</label>
+            <input type="date" name="fecha_hasta" id="fecha_hasta" value="{{ request.GET.fecha_hasta }}">
+        </div>
+
+        <button type="submit">Buscar</button>
+    </form>
+
+    {% if comprobantes %}
+        <h3>Resultados de la búsqueda</h3>
+        <table>
+            <thead>
+                <tr>
+                    <th>CUIL Alumno</th>
+                    <th>CUIL Responsable</th>
+                    <th>Email</th>
+                    <th>Fecha de Envío</th>
+                    <th>Comprobante</th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for comprobante in comprobantes %}
+                    <tr>
+                        <td>{{ comprobante.cuil_alumno }}</td>
+                        <td>{{ comprobante.cuil_responsable }}</td>
+                        <td>{{ comprobante.email }}</td>
+                        <td>{{ comprobante.marca_temporal }}</td>
+                        <td>
+                            <a href="{{ comprobante.url_comprobante }}" target="_blank">
+                                <button type="button">Ver Comprobante</button>
+                            </a>
+                        </td>
+                        <td>
+                            <a href="{% url 'cuotas:buscar_cuotas_estudiante' %}">
+                                <button type="button">Registro del Pago</button>
+                            </a>
+                        </td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    {% elif request.GET %}
+        <p>No se encontraron resultados.</p>
+    {% endif %}
+{% endblock %}

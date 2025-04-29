@@ -50,7 +50,20 @@
                         <li class="consulta__item-resultado">
                             <strong class="consulta__dato-label">Nombre:</strong> 
                             <a href="{{ resultado.url }}" target="_blank" class="consulta__link">{{ resultado.nombre }}</a><br>
+                            
                             <strong class="consulta__dato-label">Fecha de modificación:</strong> {{ resultado.fecha }}
+
+                            {% if resultado.fecha_pago %}
+                            <strong class="consulta__dato-label">Fecha de pago:</strong> {{ resultado.fecha_pago }}<br>
+                            {% endif %}
+                            
+                            {% if resultado.monto_pagado %}
+                            <strong class="consulta__dato-label">Monto pagado:</strong> ${{ resultado.monto_pagado }}<br>
+                            {% endif %}
+                            
+                            {% if resultado.medio_pago %}
+                            <strong class="consulta__dato-label">Medio de pago:</strong> {{ resultado.medio_pago }}<br>
+                            {% endif %}
                         </li>
                         {% endfor %}
                     </ul>

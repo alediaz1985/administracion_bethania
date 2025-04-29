@@ -26,4 +26,6 @@ urlpatterns = [
     path('eliminar/<int:pk>/', views.eliminar_comprobante_pago, name='eliminar_comprobante_pago'),
     path('inscribir_alumno/', views.buscar_estudiantes_aprobados, name='inscribir_alumno'),
     path('buscar_cuotas_estudiante/', views.buscar_cuotas_estudiante, name='buscar_cuotas_estudiante'),
+
+    path('buscar_comprobantes/', views.buscar_comprobantes, name='buscar_comprobantes'),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

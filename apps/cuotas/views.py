@@ -648,3 +648,40 @@ def buscar_cuotas_estudiante(request):
         'ciclo_seleccionado': ciclo_seleccionado,
     })
 
+''' BUSCAR COMPROBANTES '''
+
+from django.shortcuts import render
+from .models import ComprobantePago
+from django.db.models import Q
+
+def buscar_comprobantes(request):
+    """
+    Vista que busca comprobantes de pago según cuil_alumno, fecha_desde, y fecha_hasta.
+    """
+    comprobantes = None
+    cuil_alumno = request.GET.get('cuil_alumno', '')
+    fecha_desde = request.GET.get('fecha_desde', '')
+    fecha_hasta = request.GET.get('fecha_hasta', '')
+    
+    # Realizar la búsqueda según los filtros
+    if cuil_alumno or fecha_desde or fecha_hasta:
+        # Filtrar por cuil_alumno, fecha_desde y fecha_hasta
+        filtros = Q()
+        
+        if cuil_alumno:
+            filtros &= Q(cuil_alumno=cuil_alumno)
+        
+        if fecha_desde and fecha_hasta:
+            filtros &= Q(marca_temporal__range=[fecha_desde, fecha_hasta])
+        elif fecha_desde:
+            filtros &= Q(marca_temporal__gte=fecha_desde)
+        elif fecha_hasta:
+            filtros &= Q(marca_temporal__lte=fecha_hasta)
+        
+        comprobantes = ComprobantePago.objects.filter(filtros)
+    
+    return render(request, 'cuotas/buscar_comprobantes.html', {
+        'comprobantes': comprobantes
+    })
+
+

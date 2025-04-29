@@ -139,7 +139,21 @@ class ComprobanteDrivePago(models.Model):
         return f"Comprobante {self.id} - {self.correo_electronico}"
 
     class Meta:
-        db_table = 'comprobante_de_pago'
-        verbose_name = "Comprobante de Pago"
+        db_table = 'comprobantes_pago'
+        verbose_name = "Comprobantes de Pago"
         verbose_name_plural = "Comprobantes de Pago"
+
+from django.db import models
+
+class ComprobantePago(models.Model):
+    marca_temporal = models.DateTimeField()
+    email = models.EmailField(max_length=255)
+    url_comprobante = models.URLField(max_length=500)
+    cuil_alumno = models.CharField(max_length=20)
+    cuil_responsable = models.CharField(max_length=20)
+
+    class Meta:
+        db_table = 'comprobantes_pago'  # <-- Usamos tu tabla exacta
+        managed = False  # <-- IMPORTANTE: así Django NO la crea ni la modifica
+
         
