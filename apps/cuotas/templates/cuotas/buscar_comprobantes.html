@@ -5,68 +5,96 @@
 {% load static %}
 
 {% block extra_styles %}
-    <link rel="stylesheet" href="{% static 'documentos/css/consulta_comprobate_nuevo.css' %}">
+    <link rel="stylesheet" href="{% static 'cuotas/css/consulta_comprobante_nuevo.css' %}">
 {% endblock %}
 
 {% block content %}
-    <h2>Buscar Comprobantes de Pago</h2>
+<article class="consulta">
+    <div class="consulta__contenedor">
+        <!-- Sección: Buscador -->
+        <section class="consulta__buscador">
+            <h2 class="consulta__titulo">Buscar Comprobantes de Pago</h2>
 
-    <form method="GET" action="{% url 'cuotas:buscar_comprobantes' %}">
-        {% csrf_token %}
-        
-        <div>
-            <label for="cuil_alumno">CUIL Alumno:</label>
-            <input type="text" name="cuil_alumno" id="cuil_alumno" placeholder="Ingresar CUIL del alumno" value="{{ request.GET.cuil_alumno }}">
-        </div>
+            <form class="buscador__formulario" method="GET" action="{% url 'cuotas:buscar_comprobantes' %}">
+                {% csrf_token %}
 
-        <div>
-            <label for="fecha_desde">Fecha Desde:</label>
-            <input type="date" name="fecha_desde" id="fecha_desde" value="{{ request.GET.fecha_desde }}">
-        </div>
+                <div class="formulario__grupo">
+                    <label class="formulario__etiqueta" for="cuil_alumno">CUIL Alumno:</label>
+                    <input class="formulario__input" type="text" name="cuil_alumno" id="cuil_alumno"
+                        placeholder="Ingresar CUIL del alumno" value="{{ request.GET.cuil_alumno }}">
+                </div>
 
-        <div>
-            <label for="fecha_hasta">Fecha Hasta:</label>
-            <input type="date" name="fecha_hasta" id="fecha_hasta" value="{{ request.GET.fecha_hasta }}">
-        </div>
+                <div class="formulario__grupo">
+                    <label class="formulario__etiqueta" for="fecha_desde">Fecha Desde:</label>
+                    <input class="formulario__campo" type="date" name="fecha_desde" id="fecha_desde"
+                        value="{{ request.GET.fecha_desde }}">
 
-        <button type="submit">Buscar</button>
-    </form>
+                    <label class="formulario__etiqueta" for="fecha_hasta">Fecha Hasta:</label>
+                    <input class="formulario__campo" type="date" name="fecha_hasta" id="fecha_hasta"
+                        value="{{ request.GET.fecha_hasta }}">
+                </div>
 
-    {% if comprobantes %}
-        <h3>Resultados de la búsqueda</h3>
-        <table>
-            <thead>
-                <tr>
-                    <th>CUIL Alumno</th>
-                    <th>CUIL Responsable</th>
-                    <th>Email</th>
-                    <th>Fecha de Envío</th>
-                    <th>Comprobante</th>
-                    <th></th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for comprobante in comprobantes %}
-                    <tr>
-                        <td>{{ comprobante.cuil_alumno }}</td>
-                        <td>{{ comprobante.cuil_responsable }}</td>
-                        <td>{{ comprobante.email }}</td>
-                        <td>{{ comprobante.marca_temporal }}</td>
-                        <td>
-                            <a href="{{ comprobante.url_comprobante }}" target="_blank">
-                                <button type="button">Ver Comprobante</button>
-                            </a>
-                        </td>
-                        <td>
-                            <a href="{% url 'cuotas:buscar_cuotas_estudiante' %}">
-                                <button type="button">Registro del Pago</button>
-                            </a>
-                        </td>
+                <button class="boton-accion" type="submit">
+                    <span class="boton-accion__circulo" aria-hidden="true">
+                        <span class="boton-accion__icono boton-accion__icono--flecha"></span>
+                    </span>
+                    <span class="boton-accion__texto">Buscar</span>
+                </button>
+            </form>
+        </section>
+
+        <!-- Sección: Resultados -->
+        <section class="consulta__resultados">
+            <h3 class="consulta__subtitulo">Resultados de la búsqueda</h3>
+            <!-- Botón siempre visible -->
+            <form method="POST" action="{% url 'cuotas:buscar_comprobantes' %}">
+                {% csrf_token %}
+                <button type="submit" name="descargar_todos" value="1">Descargar Todos los Comprobantes</button>
+            </form>
+
+            {% if request.GET.cuil_alumno or request.GET.fecha_desde or request.GET.fecha_hasta %}
+            {% if comprobantes %}
+            <table class="tabla">
+                <thead class="tabla__encabezado">
+                    <tr class="tabla__fila">
+                        <th class="tabla__columna">CUIL Alumno</th>
+                        <th class="tabla__columna">CUIL Responsable</th>
+                        <th class="tabla__columna">Email</th>
+                        <th class="tabla__columna">Fecha de Envío</th>
+                        <th class="tabla__columna"></th>
+                        <th class="tabla__columna"></th>
                     </tr>
-                {% endfor %}
-            </tbody>
-        </table>
-    {% elif request.GET %}
-        <p>No se encontraron resultados.</p>
-    {% endif %}
+                </thead>
+                <tbody class="tabla__cuerpo">
+                    {% for comprobante in comprobantes %}
+                        <tr class="tabla__fila">
+                            <td class="tabla__celda">{{ comprobante.cuil_alumno }}</td>
+                            <td class="tabla__celda">{{ comprobante.cuil_responsable }}</td>
+                            <td class="tabla__celda">{{ comprobante.email }}</td>
+                            <td class="tabla__celda">{{ comprobante.marca_temporal }}</td>
+                            <td class="tabla__celda">
+                                {% if comprobante.ruta_local %}
+                                    <a href="{{ MEDIA_URL }}{{ comprobante.ruta_local }}" target="_blank">
+                                        <button class="boton boton--ver" type="button">Ver Comprobante</button>
+                                    </a>
+                                {% else %}
+                                    <button class="boton boton--ver" type="button" disabled>Comprobante no disponible</button>
+                                {% endif %}
+                            </td>
+                            <td class="tabla__celda">
+                                <a href="{% url 'cuotas:buscar_cuotas_estudiante' %}">
+                                    <button class="boton boton--registro" type="button">Registro del Pago</button>
+                                </a>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+            {% else %}
+                <p class="consulta__mensaje">No se encontraron resultados.</p>
+            {% endif %}
+            {% endif %}
+        </section>
+    </div>
+</article>
 {% endblock %}

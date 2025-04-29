@@ -1,0 +1,270 @@
+/* Estilos generales */
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+  
+body {
+    font-family: 'Helvetica Neue', Arial, sans-serif;
+    line-height: 1.5;
+    color: #333;
+    background-image: url('../img/fondo1.png'); /* Cambia por la ruta de tu imagen */
+    background-size: 100%;
+    background-position: center; /* Centra la imagen */
+    background-repeat: repeat-y; /* Repetir sólo de forma vertical */
+}
+
+.consulta {
+    width: 96%;
+    min-height: calc(100vh - 90px);
+    float: right;
+    display: flex; /* Usamos flexbox para centrar */
+    justify-content: center; /* Centrado horizontal */
+    align-items: center; /* Centrado vertical */
+}
+
+.consulta__contenedor {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    width: 95%;
+    margin: 20px auto; /* Centrado horizontal */
+    border-radius: 10px;
+    background: linear-gradient(360deg,rgba(134, 134, 135, 1) 0%, rgba(167, 173, 185, 1) 35%, rgba(201, 201, 202, 1) 100%);
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.9);
+}
+
+.consulta__buscador {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 1rem;
+    width: 95%;
+    margin: 40px auto 40px auto; /* Centrado horizontal */
+    padding: 30px;
+    border-radius: 10px;
+    background-color: #f7f7f7;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.consulta__titulo {
+    font-size: 0.875rem;
+    font-weight: bold;
+    color: #181818;
+    padding-bottom: 10px;
+}
+
+.buscador__formulario {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 1rem;
+    width: 100%;
+}
+
+.formulario__grupo {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.formulario__etiqueta {
+    font-weight: bold;
+    color: #181818;
+    font-size: 0.75rem;
+}
+
+.formulario__input {
+    width: 35%;
+    padding: 6px;
+    font-size: 0.75rem;
+    border: 1px solid #95a5a6;
+    border-radius: 5px;
+    background-color: #f9f9f9;
+    transition: border 0.3s ease;
+}
+
+.formulario__campo {
+    width: 20%;
+    padding: 10px 14px;
+    font-size: 0.75rem;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    background-color: #f9f9f9;
+    transition: border 0.3s ease;
+}
+
+/* From Uiverse.io by cssbuttons-io */ 
+.boton-accion {
+    position: relative;
+    display: inline-block;
+    cursor: pointer;
+    outline: none;
+    border: 0;
+    vertical-align: middle;
+    text-decoration: none;
+    background: transparent;
+    padding: 0;
+    font-size: inherit;
+    font-family: inherit;
+    width: 10rem;
+    height: auto;
+}
+
+.boton-accion__circulo {
+    transition: all 0.45s cubic-bezier(0.65, 0, 0.076, 1);
+    position: relative;
+    display: block;
+    margin: 0;
+    width: 2.5rem; /* Reducir tamaño del círculo */
+    height: 2.5rem; /* Reducir tamaño del círculo */
+    background: rgb(66 149 33);
+    border-radius: 1.25rem; /* Ajustar el radio para mantener la forma circular */
+}
+
+.boton-accion__icono {
+    transition: all 0.45s cubic-bezier(0.65, 0, 0.076, 1);
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    margin: auto;
+    background: #fff;
+    width: 0.875rem; /* Ajustar el tamaño del icono */
+    height: 0.875rem;
+}
+
+.boton-accion__icono--flecha {
+    left: 0.625rem;
+    width: 0.925rem;
+    height: 0.125rem;
+    background: none;
+}
+
+.boton-accion__icono--flecha::before {
+    position: absolute;
+    content: "";
+    top: -0.29rem;
+    right: 0.125rem;
+    width: 0.5rem; /* Reducir el tamaño de la flecha */
+    height: 0.5rem;
+    border-top: 0.125rem solid #fff;
+    border-right: 0.125rem solid #fff;
+    transform: rotate(45deg);
+}
+
+.boton-accion__texto {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.45s cubic-bezier(0.65, 0, 0.076, 1);
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    padding: 0.8rem 0; /* Reducir el padding */
+    margin: 0 0 0 1rem; /* Ajustar el margen izquierdo */
+    color: #181818;
+    font-size: 0.75rem;
+    font-weight: 700;
+    line-height: 1.6;
+    text-align: center;
+    text-transform: uppercase;
+}
+
+.boton-accion:hover .boton-accion__circulo {
+    width: 100%;
+}
+
+.boton-accion:hover .boton-accion__icono--flecha {
+    background: #fff;
+    transform: translate(1rem, 0);
+}
+
+.boton-accion:hover .boton-accion__texto {
+    color: #fff;
+}
+
+.consulta__resultados {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    width: 95%;
+    margin: 0 auto 40px auto; /* Centrado horizontal */
+    padding: 30px;
+    border-radius: 10px;
+    background-color: #f7f7f7;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.consulta__subtitulo {
+    font-size: 15px;
+    text-align: center;
+    font-weight: bold;
+    color: #181818;
+    border-bottom: 2px solid #2C3E50; 
+    width: 100%;
+    padding: 10px;
+}
+
+.tabla {
+    width: 100%;
+    border-collapse: collapse; /* Quitar el espacio entre celdas */
+    margin-top: 20px;
+    background-color: #ffffff;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    overflow: hidden;
+}
+
+/* Encabezados de la tabla */
+.tabla__columna {
+    padding: 6px 8px;
+    text-align: left;
+    background-color: #328beb; /* Color de fondo oscuro para los encabezados */
+    color: #ffffff; /* Texto blanco */
+    font-weight: bold;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    font-size: 0.75rem;
+}
+
+/* Filas de la tabla */
+.tabla__celda {
+    padding: 12px;
+    text-align: left;
+    border-bottom: 1px solid #f1f1f1; /* Línea divisoria entre filas */
+    font-size: 0.75rem;
+    color: #1f2b36; /* Color de texto */
+}
+
+/* Efecto hover en las filas */
+.tabla tr:hover {
+    background-color: #f1f1f1; /* Fondo gris claro al pasar el ratón */
+    cursor: pointer;
+}
+
+/* Resaltar filas al hacer hover */
+.tabla tbody tr:nth-child(odd) {
+    background-color: #f9f9f9; /* Fondo alternado en filas impares */
+}
+
+.tabla tbody tr:nth-child(even) {
+    background-color: #ffffff; /* Fondo blanco en filas pares */
+}
+
+/* Bordes de la tabla */
+.tabla th, .tabla td {
+    border-right: 1px solid #ddd;
+}
+
+/* Eliminar el borde derecho en la última columna */
+.tabla td:last-child, .tabla th:last-child {
+    border-right: none;
+}

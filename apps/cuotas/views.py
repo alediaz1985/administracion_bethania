@@ -571,35 +571,6 @@ def buscar_estudiantes_aprobados(request):
         'sin_resultados': sin_resultados,  # 🔧 Y esta línea en el contexto
     })
 
-# def buscar_cuotas_estudiante(request):
-#     query = request.GET.get('cuil', '').strip()
-#     estudiante = None
-#     subnivel = None
-#     cuotas = []
-
-#     if query:
-#         try:
-#             estudiante = Estudiante.objects.get(cuil_estudiante=query)
-
-#             inscripcion = Inscripcion.objects.get(cuil_alumno=estudiante)
-#             subnivel = inscripcion.subnivel_cursado 
-
-#             cuotas = Cuota.objects.filter(inscripcion=inscripcion).order_by('mes')
-
-#         except Estudiante.DoesNotExist:
-#             messages.error(request, "No se encontró un estudiante con ese CUIL.")
-#         except Inscripcion.DoesNotExist:
-#             messages.error(request, "El estudiante no tiene una inscripción registrada.")
-#         except Cuota.DoesNotExist:
-#             messages.error(request, "El estudiante no tiene cuotas registradas.")
-
-#     return render(request, 'cuotas/buscar_cuotas_estudiante.html', {
-#         'estudiante': estudiante,
-#         'subnivel': subnivel,
-#         'cuotas': cuotas,
-#         'query': query,
-#     })
-
 def buscar_cuotas_estudiante(request):
     estudiante = None
     inscripcion = None
@@ -653,35 +624,58 @@ def buscar_cuotas_estudiante(request):
 from django.shortcuts import render
 from .models import ComprobantePago
 from django.db.models import Q
+from .utils import descargar_comprobante_drive
+import os
+from django.db.models import Q
+from googleapiclient.errors import HttpError
 
 def buscar_comprobantes(request):
-    """
-    Vista que busca comprobantes de pago según cuil_alumno, fecha_desde, y fecha_hasta.
-    """
     comprobantes = None
+    mensaje_error = None
+    mensaje_exito = None
+
+    # Valores del formulario de búsqueda
     cuil_alumno = request.GET.get('cuil_alumno', '')
     fecha_desde = request.GET.get('fecha_desde', '')
     fecha_hasta = request.GET.get('fecha_hasta', '')
-    
-    # Realizar la búsqueda según los filtros
-    if cuil_alumno or fecha_desde or fecha_hasta:
-        # Filtrar por cuil_alumno, fecha_desde y fecha_hasta
+
+    # Filtros para GET (búsqueda)
+    if request.method == 'GET' and (cuil_alumno or fecha_desde or fecha_hasta):
         filtros = Q()
-        
         if cuil_alumno:
             filtros &= Q(cuil_alumno=cuil_alumno)
-        
         if fecha_desde and fecha_hasta:
             filtros &= Q(marca_temporal__range=[fecha_desde, fecha_hasta])
         elif fecha_desde:
             filtros &= Q(marca_temporal__gte=fecha_desde)
         elif fecha_hasta:
             filtros &= Q(marca_temporal__lte=fecha_hasta)
-        
+
         comprobantes = ComprobantePago.objects.filter(filtros)
-    
+
+    # POST para descargar
+    if request.method == 'POST' and 'descargar_todos' in request.POST:
+        # En POST usamos todos los comprobantes
+        comprobantes = ComprobantePago.objects.all()
+        for comp in comprobantes:
+            if comp.url_comprobante:
+                try:
+                    ruta_comprobante = descargar_comprobante_drive(comp.url_comprobante)
+                    comp.ruta_local = ruta_comprobante  # Guardamos la ruta local en el modelo
+                    comp.save()  # Si deseas almacenar la ruta local en el modelo de la base de datos
+                except Exception as e:
+                    print(f"Error al descargar {comp.url_comprobante}: {e}")
+                    continue
+        mensaje_exito = "¡Todos los comprobantes válidos fueron descargados!"
+
     return render(request, 'cuotas/buscar_comprobantes.html', {
-        'comprobantes': comprobantes
+        'comprobantes': comprobantes,
+        'mensaje_exito': mensaje_exito,
+        'mensaje_error': mensaje_error,
+        'cuil_alumno': cuil_alumno,
+        'fecha_desde': fecha_desde,
+        'fecha_hasta': fecha_hasta,
     })
+
 
 
