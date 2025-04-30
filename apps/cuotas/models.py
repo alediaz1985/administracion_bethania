@@ -84,7 +84,7 @@ class Cuota(models.Model):
     mes = models.IntegerField(verbose_name="Mes de la Cuota")
     monto_cuota = models.DecimalField(max_digits=10, decimal_places=2, verbose_name="Monto de la Cuota")
     pagado = models.BooleanField(default=False, verbose_name="Pagado")
-    fecha_pago = models.DateField(null=True, blank=True, verbose_name="Fecha de Pago")
+    fecha_pago = models.DateTimeField(null=True, blank=True, verbose_name="Fecha de Pago")  # Cambiar a DateTimeField
     fuera_de_termino = models.BooleanField(default=False, verbose_name="Fuera de Término")
     interes_aplicado = models.DecimalField(max_digits=10, decimal_places=2, default=0, verbose_name="Interés Aplicado")
     total_a_pagar = models.DecimalField(max_digits=10, decimal_places=2, verbose_name="Total a Pagar")
@@ -139,7 +139,23 @@ class ComprobanteDrivePago(models.Model):
         return f"Comprobante {self.id} - {self.correo_electronico}"
 
     class Meta:
-        db_table = 'comprobante_de_pago'
-        verbose_name = "Comprobante de Pago"
+        db_table = 'comprobantes_pago'
+        verbose_name = "Comprobantes de Pago"
         verbose_name_plural = "Comprobantes de Pago"
+
+from django.db import models
+
+class ComprobantePago(models.Model):
+    marca_temporal = models.DateTimeField()
+    email = models.EmailField(max_length=255)
+    url_comprobante = models.URLField(max_length=500)
+    cuil_alumno = models.CharField(max_length=20)
+    cuil_responsable = models.CharField(max_length=20)
+    ruta_local = models.CharField(max_length=500, blank=True, null=True)
+
+
+    class Meta:
+        db_table = 'comprobantes_pago'  # <-- Usamos tu tabla exacta
+        managed = False  # <-- IMPORTANTE: así Django NO la crea ni la modifica
+
         

@@ -7,13 +7,23 @@
   
 body {
     font-family: 'Helvetica Neue', Arial, sans-serif;
-    font-size: 16px;
     line-height: 1.5;
-    background-color: #f0f2f5;
     color: #333;
+    background-image: url('../img/fondo1.png'); /* Cambia por la ruta de tu imagen */
+    background-size: 100%;
+    background-position: center; /* Centra la imagen */
+    background-repeat: repeat-y; /* Repetir sólo de forma vertical */
 }
 
 .consulta {
+    width: 96%;
+    min-height: calc(100vh - 90px);
+    justify-content: center;
+    float: right;
+    display: flex; /* Usamos flexbox para centrar */
+}
+
+.consulta__contenedor {
     display: flex;
     flex-direction: column;
     justify-content: center;
@@ -26,7 +36,7 @@ body {
 }
 
 .consulta__titulo {
-    font-size: 15px;
+    font-size: 1rem;
     padding: 20px 0;
 }
 
@@ -55,13 +65,13 @@ body {
 .consulta__etiqueta {
     font-weight: bold;
     color: #181818;
-    font-size: 13px;
+    font-size: 0.75rem;
 }
 
 .consulta__input {
     width: 100%;
     padding: 10px;
-    font-size: 13px;
+    font-size: 0.75rem;
     border: 1px solid #95a5a6;
     border-radius: 5px;
     background-color: #f9f9f9;
@@ -71,18 +81,15 @@ body {
 .consulta__input-fecha {
     width: 100%;
     padding: 10px 14px;
-    font-size: 12px;
+    font-size: 0.75rem;
     border: 1px solid #ccc;
     border-radius: 8px;
     background-color: #f9f9f9;
     transition: border 0.3s ease;
 }
 
-.consulta__acciones {
-    margin-top: 40px;
-}
-
-.consulta__boton {
+/* From Uiverse.io by cssbuttons-io */ 
+.boton-accion {
     position: relative;
     display: inline-block;
     cursor: pointer;
@@ -94,50 +101,52 @@ body {
     padding: 0;
     font-size: inherit;
     font-family: inherit;
-    width: 12rem;
+    width: 10rem;
     height: auto;
 }
 
-.consulta__boton-circulo {
+.boton-accion__circulo {
     transition: all 0.45s cubic-bezier(0.65, 0, 0.076, 1);
     position: relative;
     display: block;
     margin: 0;
-    width: 3rem;
-    height: 3rem;
-    background: rgb(66, 149, 33);
-    border-radius: 1.625rem;
+    width: 2.5rem; /* Reducir tamaño del círculo */
+    height: 2.5rem; /* Reducir tamaño del círculo */
+    background: rgb(66 149 33);
+    border-radius: 1.25rem; /* Ajustar el radio para mantener la forma circular */
 }
 
-.consulta__boton-icono {
+.boton-accion__icono {
     transition: all 0.45s cubic-bezier(0.65, 0, 0.076, 1);
     position: absolute;
     top: 0;
     bottom: 0;
     margin: auto;
     background: #fff;
+    width: 0.875rem; /* Ajustar el tamaño del icono */
+    height: 0.875rem;
 }
 
-.consulta__boton-icono--flecha {
+.boton-accion__icono--flecha {
     left: 0.625rem;
-    width: 1.125rem;
+    width: 0.925rem;
     height: 0.125rem;
     background: none;
 }
 
-.consulta__boton-icono--flecha::before {
+.boton-accion__icono--flecha::before {
     position: absolute;
     content: "";
     top: -0.29rem;
-    right: 0.0625rem;
-    width: 0.625rem;
-    height: 0.625rem;
+    right: 0.125rem;
+    width: 0.5rem; /* Reducir el tamaño de la flecha */
+    height: 0.5rem;
     border-top: 0.125rem solid #fff;
     border-right: 0.125rem solid #fff;
     transform: rotate(45deg);
 }
 
-.consulta__boton-texto {
+.boton-accion__texto {
     display: flex;
     align-items: center;
     justify-content: center;
@@ -147,26 +156,26 @@ body {
     left: 0;
     right: 0;
     bottom: 0;
-    padding: 0.75rem 0;
-    margin: 0 0 0 1.85rem;
-    color: #282936;
-    font-size: 13px;
+    padding: 0.8rem 0; /* Reducir el padding */
+    margin: 0 0 0 1rem; /* Ajustar el margen izquierdo */
+    color: #181818;
+    font-size: 0.75rem;
     font-weight: 700;
     line-height: 1.6;
     text-align: center;
     text-transform: uppercase;
 }
 
-.consulta__boton:hover .consulta__boton-circulo {
+.boton-accion:hover .boton-accion__circulo {
     width: 100%;
 }
 
-.consulta__boton:hover .consulta__boton-icono--flecha {
+.boton-accion:hover .boton-accion__icono--flecha {
     background: #fff;
     transform: translate(1rem, 0);
 }
 
-.consulta__boton:hover .consulta__boton-texto {
+.boton-accion:hover .boton-accion__texto {
     color: #fff;
 }
 
@@ -254,4 +263,23 @@ body {
     width: 60%;
     font-size: 13px;
     box-shadow: 0 0 10px rgba(220, 53, 69, 0.2);
+}
+
+@media (min-width: 1600px) {
+    
+}
+
+/* Laptop y notebook */
+@media (max-width: 1599px) {
+
+}
+
+/* Tablets */
+@media (max-width: 1024px) {
+
+}
+
+/* Celulares grandes */
+@media (max-width: 600px) {
+
 }

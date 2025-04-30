@@ -58,3 +58,13 @@ admin.site.register(MontosCicloLectivo, MontosCicloLectivoAdmin)
 
 admin.site.register(NivelCursado)
 admin.site.register(SubNivelCursado)
+
+# admin.py
+from django.contrib import admin
+from .models import ComprobantePago
+
+@admin.register(ComprobantePago)
+class ComprobantePagoAdmin(admin.ModelAdmin):
+    list_display = ('marca_temporal', 'email', 'url_comprobante', 'cuil_alumno', 'cuil_responsable')
+    search_fields = ('email', 'cuil_alumno', 'cuil_responsable')
+

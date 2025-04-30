@@ -94,8 +94,12 @@ body {
     margin: 0;
     width: 2.5rem; /* Reducir tamaño del círculo */
     height: 2.5rem; /* Reducir tamaño del círculo */
-    background: rgb(66 149 33);
+    background: #116cd4;
     border-radius: 1.25rem; /* Ajustar el radio para mantener la forma circular */
+}
+
+.otro-boton {
+    background: #d48a11;
 }
 
 .boton-accion__icono {
@@ -126,6 +130,10 @@ body {
     border-top: 0.125rem solid #fff;
     border-right: 0.125rem solid #fff;
     transform: rotate(45deg);
+}
+
+.otra-flecha::before {
+    top: -0.25rem;
 }
 
 .boton-accion__texto {
