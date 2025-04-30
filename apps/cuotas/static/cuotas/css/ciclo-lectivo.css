@@ -16,34 +16,45 @@ body {
 }
 
 .ciclo {
+    width: 96%;
+    height: calc(100vh - 90px);
+    float: right;
+    display: flex; /* Usamos flexbox para centrar */
+    justify-content: center; /* Centrado horizontal */
+    align-items: center; /* Centrado vertical */
+}
+
+.ciclo__contenedor {
     display: flex;
     flex-direction: column;
     justify-content: center;
     align-items: center;
     width: 80%;
+    height: 90%;
     margin: 20px auto; /* Centrado horizontal */
     border-radius: 10px;
     background: linear-gradient(360deg,rgba(134, 134, 135, 1) 0%, rgba(167, 173, 185, 1) 35%, rgba(201, 201, 202, 1) 100%);
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.9);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.5), 0 -4px 8px rgba(0, 0, 0, 0.5);
 }
 
 .ciclo__titulo {
-    font-size: 14px;
+    font-size: 0.875rem;
     padding: 20px 0;
 }
 
 .ciclo__formulario {
     display: flex;
     flex-direction: column;
-    justify-content: center;
+    justify-content: flex-start;
     align-items: center;
     gap: 1rem;
     width: 95%;
+    height: 80%;
     margin: 0 auto 40px auto; /* Centrado horizontal */
     padding: 30px;
     border-radius: 10px;
     background-color: #f7f7f7;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3), 0 -4px 8px rgba(0, 0, 0, 0.3);
 }
 
 .ciclo__seccion {
@@ -66,17 +77,17 @@ body {
     padding: 10px;
     border: 1px solid #95a5a6;
     border-radius: 5px;
-    font-size: 12px;
+    font-size: 0.75rem;
 }
 
 .ciclo__etiqueta {
     font-weight: bold;
     color: #181818;
-    font-size: 12px;
+    font-size: 0.75rem;
 }
 
 .ciclo__select option {
-    font-size: 13px;
+    font-size: 0.8125rem;
     color: #2c3e50;
     background-color: #ecf0f1;
     padding: 0.4rem;
@@ -87,6 +98,7 @@ body {
     justify-content: space-between;
     align-items: center;
     gap: 2rem;
+    width: 30%;
 }
 
 /* From Uiverse.io by cssbuttons-io */ 
@@ -102,7 +114,7 @@ body {
     padding: 0;
     font-size: inherit;
     font-family: inherit;
-    width: 12rem;
+    width: 10rem;
     height: auto;
 }
 
@@ -111,10 +123,10 @@ body {
     position: relative;
     display: block;
     margin: 0;
-    width: 3rem;
-    height: 3rem;
-    background: rgb(66 149 33);
-    border-radius: 1.625rem;
+    width: 2.5rem; /* Reducir tamaño del círculo */
+    height: 2.5rem; /* Reducir tamaño del círculo */
+    background: #116cd4;
+    border-radius: 1.25rem; /* Ajustar el radio para mantener la forma circular */
 }
 
 .boton-accion__icono {
@@ -124,11 +136,13 @@ body {
     bottom: 0;
     margin: auto;
     background: #fff;
+    width: 0.875rem; /* Ajustar el tamaño del icono */
+    height: 0.875rem;
 }
 
 .boton-accion__icono--flecha {
     left: 0.625rem;
-    width: 1.125rem;
+    width: 0.925rem;
     height: 0.125rem;
     background: none;
 }
@@ -136,10 +150,10 @@ body {
 .boton-accion__icono--flecha::before {
     position: absolute;
     content: "";
-    top: -0.29rem;
-    right: 0.0625rem;
-    width: 0.625rem;
-    height: 0.625rem;
+    top: -0.25rem;
+    right: 0.125rem;
+    width: 0.5rem; /* Reducir el tamaño de la flecha */
+    height: 0.5rem;
     border-top: 0.125rem solid #fff;
     border-right: 0.125rem solid #fff;
     transform: rotate(45deg);
@@ -155,10 +169,10 @@ body {
     left: 0;
     right: 0;
     bottom: 0;
-    padding: 0.75rem 0;
-    margin: 0 0 0 1.85rem;
-    color: #282936;
-    font-size: 13px;
+    padding: 0.8rem 0; /* Reducir el padding */
+    margin: 0 0 0 1rem; /* Ajustar el margen izquierdo */
+    color: #181818;
+    font-size: 0.75rem;
     font-weight: 700;
     line-height: 1.6;
     text-align: center;
@@ -176,4 +190,152 @@ body {
 
 .boton-accion:hover .boton-accion__texto {
     color: #fff;
+}
+
+/* Monitores grandes */
+@media (min-width: 1600px) {
+    .ciclo {
+        height: calc(100vh - 130px);
+    }
+
+    .ciclo__contenedor {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        width: 80%;
+        height: calc(100vh - 120);
+        margin: 20px auto; /* Centrado horizontal */
+    }
+
+    .ciclo__formulario {
+        gap: 5rem;
+    }
+
+    .ciclo__titulo {
+        font-size: 1.125rem;
+    }
+
+    .ciclo__etiqueta {
+        font-weight: bold;
+        color: #181818;
+        font-size: 1rem;
+    }
+
+    .ciclo__input,
+    .ciclo__select {
+        font-size: 1rem;
+    }
+
+    .ciclo__select option {
+        font-size: 1rem;
+        color: #2c3e50;
+        background-color: #ecf0f1;
+        padding: 0.4rem;
+    }
+
+    /* From Uiverse.io by cssbuttons-io */ 
+    .boton-accion {
+        position: relative;
+        display: inline-block;
+        cursor: pointer;
+        outline: none;
+        border: 0;
+        vertical-align: middle;
+        text-decoration: none;
+        background: transparent;
+        padding: 0;
+        font-size: inherit;
+        font-family: inherit;
+        width: 12rem;
+        height: auto;
+    }
+
+    .boton-accion__circulo {
+        transition: all 0.45s cubic-bezier(0.65, 0, 0.076, 1);
+        position: relative;
+        display: block;
+        margin: 0;
+        width: 3rem;
+        height: 3rem;
+        background: rgb(66 149 33);
+        border-radius: 1.625rem;
+    }
+
+    .boton-accion__icono {
+        transition: all 0.45s cubic-bezier(0.65, 0, 0.076, 1);
+        position: absolute;
+        top: 0;
+        bottom: 0;
+        margin: auto;
+        background: #fff;
+    }
+
+    .boton-accion__icono--flecha {
+        left: 0.625rem;
+        width: 1.125rem;
+        height: 0.125rem;
+        background: none;
+    }
+
+    .boton-accion__icono--flecha::before {
+        position: absolute;
+        content: "";
+        top: -0.29rem;
+        right: 0.0625rem;
+        width: 0.625rem;
+        height: 0.625rem;
+        border-top: 0.125rem solid #fff;
+        border-right: 0.125rem solid #fff;
+        transform: rotate(45deg);
+    }
+
+    .boton-accion__texto {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: all 0.45s cubic-bezier(0.65, 0, 0.076, 1);
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        padding: 0.75rem 0;
+        margin: 0 0 0 1.85rem;
+        color: #282936;
+        font-size: 1rem;
+        font-weight: 700;
+        line-height: 1.6;
+        text-align: center;
+        text-transform: uppercase;
+    }
+
+    .boton-accion:hover .boton-accion__circulo {
+        width: 100%;
+    }
+
+    .boton-accion:hover .boton-accion__icono--flecha {
+        background: #fff;
+        transform: translate(1rem, 0);
+    }
+
+    .boton-accion:hover .boton-accion__texto {
+        color: #fff;
+    }
+
+}
+
+/* Laptop y notebook */
+@media (max-width: 1599px) {
+
+}
+
+/* Tablets */
+@media (max-width: 1024px) {
+
+}
+
+/* Celulares grandes */
+@media (max-width: 600px) {
+
 }

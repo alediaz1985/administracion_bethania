@@ -530,7 +530,7 @@ tbody td {
     margin-left: 13px; /* Asegura que no haya margen extra a la izquierda */
     margin-bottom: 20px;
     padding-right: 10px;
-  }
+}
 
 .folderContainer {
     width: 30px;
@@ -540,20 +540,23 @@ tbody td {
     align-items: center;
     justify-content: flex-end;
     position: relative;
-  }
-  .fileBack {
+}
+
+.fileBack {
     z-index: 1;
     width: 80%;
     height: auto;
-  }
-  .filePage {
+}
+
+.filePage {
     width: 60%;
     height: auto;
     position: absolute;
     z-index: 2;
     transition: all 0.3s ease-out;
-  }
-  .fileFront {
+}
+
+.fileFront {
     width: 90%;
     height: auto;
     position: absolute;
@@ -561,36 +564,48 @@ tbody td {
     opacity: 0.95;
     transform-origin: bottom;
     transition: all 0.3s ease-out;
-  }
-  .text {
+}
+
+.text {
     color: white;
     font-size: 10px;
     font-weight: 400;
     letter-spacing: 0.5px;
-  }
-  .Documents-btn:hover .filePage {
+}
+
+.Documents-btn:hover .filePage {
     transform: translateY(-5px);
-  }
-  .Documents-btn:hover {
+}
+
+.Documents-btn:hover {
     background-color:rgb(68, 123, 46);
     transform: translateY(-3px); /* Efecto de "levantamiento" al pasar el mouse */
     box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1); /* Sombra más marcada */
-  }
-  .Documents-btn:active {
-    transform: scale(0.95);
-  }
-  .Documents-btn:hover .fileFront {
-    transform: rotateX(30deg);
-  }
-  
-  @media (min-width: 1920px) {
-    .contenedor  {
-        top: 85px;
-        left: 100px;
-    }
+}
 
-    .button-container  {
-        top: 85px;
-        right: 5px;
-    }
+.Documents-btn:active {
+    transform: scale(0.95);
+}
+
+.Documents-btn:hover .fileFront {
+    transform: rotateX(30deg);
+}
+  
+@media (min-width: 1600px) {
+    
+}
+
+/* Laptop y notebook */
+@media (max-width: 1599px) {
+
+}
+
+/* Tablets */
+@media (max-width: 1024px) {
+
+}
+
+/* Celulares grandes */
+@media (max-width: 600px) {
+
 }

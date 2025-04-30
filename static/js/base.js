@@ -34,8 +34,10 @@ function toggleSidebar() {
     // Ajusta el margen del contenido principal
     if (sidebar.classList.contains("active")) {
         content.style.marginLeft = "0.5%";
+        sidebar.classList.remove("no-icons");  // 🔓 Mostrar íconos
     } else {
         content.style.marginLeft = "0px";
+        sidebar.classList.add("no-icons");  // ❌ Ocultar íconos
     }
 }
 
@@ -88,3 +90,6 @@ document.addEventListener('click', function (e) {
         content.style.marginLeft = "0px";
     }
 });
+
+const yearSpan = document.getElementById("anio-actual");
+yearSpan.textContent = new Date().getFullYear();

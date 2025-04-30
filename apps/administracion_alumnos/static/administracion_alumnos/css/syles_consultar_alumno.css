@@ -1,155 +1,77 @@
+/* Estilos generales */
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+  
 body {
+    font-family: 'Helvetica Neue', Arial, sans-serif;
+    line-height: 1.5;
+    color: #333;
     background-image: url('../img/fondo1.png'); /* Cambia por la ruta de tu imagen */
     background-size: cover;  /* Asegura que la imagen cubra todo el fondo */
     background-position: center; /* Centra la imagen */
     background-repeat: no-repeat; /* Evita que la imagen se repita */
+}
+
+.consulta-alumno {
     width: 96%;
+    height: calc(100vh - 90px);
     float: right;
+    display: flex; /* Usamos flexbox para centrar */
+    justify-content: center; /* Centrado horizontal */
+    align-items: center; /* Centrado vertical */
 }
 
-/* Contenedor general con un fondo más fuerte */
-.consulta-alumno-container {
-    font-family: 'Helvetica Neue', Arial, sans-serif;
-    background-color: #c9c9ca;
-    color: #1b1b1b;
-    padding: 50px;
-    margin: 30px auto;
-    max-width: 700px;
-    border-radius: 15px;
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.9);
-}
-
-/* Estilo del título */
-.consulta-alumno-container h1 {
-    font-size: 16px;
-    color: #282929;
-    text-align: center;
-    margin-bottom: 30px;
-}
-
-/* Estilo del formulario */
-.styled-form {
-    background-color: #f7f7f7;
+.consulta-alumno__contenedor {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 1rem;
+    width: 95%;
+    height: 90%;
     padding: 30px;
     border-radius: 10px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-    margin-bottom: 40px;
+    background-color: #E8EEF2;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3), 0 -4px 8px rgba(0, 0, 0, 0.3);
 }
 
-.styled-form label {
+.consulta-alumno__formulario {
+    width: 100%;
+    height: 30%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 2rem;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3), 0 -4px 8px rgba(0, 0, 0, 0.3);
+    border-radius: 10px;
+    background-color: #f2f2f2;
+}
+
+.consulta-alumno__buscador {
+    display: flex;
+    align-items: center;
+    gap: 0.7rem;
+}
+
+.consulta-alumno__etiqueta {
     font-weight: bold;
-    margin-right: 10px;
     color: #181818;
-    display: block;
-    margin-bottom: 10px;
-    font-size: 14px;
+    font-size: 0.875rem;
 }
 
-.styled-form input[type="text"] {
-    padding: 10px;
+.consulta-alumno__input {
+    padding: 6px;
     border: 1px solid #95a5a6;
     border-radius: 5px;
-    font-size: 13px;
-    width: 100%;
-    margin-bottom: 20px;
+    font-size: 0.875rem;
+    width: 25rem;
 }
-
-/* Botón sin efectos de tamaño */
-.button-submit {
-    padding: 12px 25px;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-    color: white;
-    font-size: 16px;
-    margin-top: 20px;
-    transition: background 0.3s ease;
-}
-
-/* Botón con gradiente */
-.gradient-button {
-    background-color: rgb(66 149 33);
-    color: white;
-    border: none;
-    padding: 10px 20px;
-    font-size: 20px;
-    border-radius: 6px;
-    cursor: pointer;
-    transition: all 0.3s ease; /* Transición suave para todos los efectos */
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Sombra sutil inicial */
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; /* Fuente profesional */
-}
-
-.gradient-button:hover {
-    background-color: rgb(68, 123, 46);
-    transform: translateY(-3px); /* Efecto de "levantamiento" al pasar el mouse */
-    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2); /* Sombra más marcada */
-}
-
-.gradient-button:active {
-    background-color:  rgb(39, 70, 27);
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Sombra más ligera al presionar */
-    transform: translateY(0); /* Efecto de "presión" */
-  }
-
-/* Grupo de botones con más espacio */
-.button-group {
-    display: flex;
-    justify-content: space-between;
-}
-
-#delete-button {
-    background-color: #e74c3c;
-}
-
-#delete-button:hover {
-    background-color: #c0392b;
-}
-
-/* Estilo para los resultados del alumno */
-.resultado-alumno {
-    background-color: #f7f7f7;
-    padding: 30px;
-    border-radius: 10px;
-    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3);
-    margin-bottom: 40px;
-}
-
-.resultado-alumno h2 {
-    color: #050505;
-    font-size: 16px;
-    margin-bottom: 20px;
-}
-
-.alumno-datos {
-    background-color: #c9c9ca;
-    padding: 20px;
-    border-radius: 8px;
-    color: #202020;
-    font-size: 14px;
-    margin-bottom: 40px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-}
-
-.alumno-datos p {
-    margin: 10px 0;
-}
-
-.alumno-datos strong {
-    color: #202020;
-}
-
-.button-group {
-    display: flex;
-    justify-content: flex-start;
-    align-items: center;
-    gap: 10px; /* Espacio entre los botones */
-    margin: 0 70px; /* Ajusta si es necesario */
-}
-
 
 /* From Uiverse.io by cssbuttons-io */ 
-button {
+.boton-accion {
     position: relative;
     display: inline-block;
     cursor: pointer;
@@ -161,245 +83,305 @@ button {
     padding: 0;
     font-size: inherit;
     font-family: inherit;
-   }
-   
-   button.learn-more {
-    width: 12rem;
+    width: 9rem;
     height: auto;
-   }
-   
-   button.learn-more .circle {
+}
+
+.boton-accion__circulo {
     transition: all 0.45s cubic-bezier(0.65, 0, 0.076, 1);
     position: relative;
     display: block;
     margin: 0;
-    width: 3rem;
-    height: 3rem;
-    background: rgb(66 149 33);
-    border-radius: 1.625rem;
-   }
-   
-   button.learn-more .circle .icon {
+    width: 2.5rem; /* Reducir tamaño del círculo */
+    height: 2.5rem; /* Reducir tamaño del círculo */
+    background: #116cd4;
+    border-radius: 1.25rem; /* Ajustar el radio para mantener la forma circular */
+}
+
+.otro-boton {
+    background: #d48a11;
+}
+
+.boton-accion__icono {
     transition: all 0.45s cubic-bezier(0.65, 0, 0.076, 1);
     position: absolute;
     top: 0;
     bottom: 0;
     margin: auto;
     background: #fff;
-   }
-   
-   button.learn-more .circle .icon.arrow {
-    transition: all 0.45s cubic-bezier(0.65, 0, 0.076, 1);
+    width: 0.875rem; /* Ajustar el tamaño del icono */
+    height: 0.875rem;
+}
+
+.boton-accion__icono--flecha {
     left: 0.625rem;
-    width: 1.125rem;
+    width: 0.925rem;
     height: 0.125rem;
     background: none;
-   }
-   
-   button.learn-more .circle .icon.arrow::before {
+}
+
+.boton-accion__icono--flecha::before {
     position: absolute;
     content: "";
     top: -0.29rem;
     right: 0.0625rem;
-    width: 0.625rem;
-    height: 0.625rem;
+    width: 0.5rem; /* Reducir el tamaño de la flecha */
+    height: 0.5rem;
     border-top: 0.125rem solid #fff;
     border-right: 0.125rem solid #fff;
     transform: rotate(45deg);
-   }
-   
-   button.learn-more .button-text {
+}
+
+.otra-flecha::before {
+    top: -0.25rem;
+}
+
+.boton-accion__texto {
+    display: flex;
+    align-items: center;
+    justify-content: center;
     transition: all 0.45s cubic-bezier(0.65, 0, 0.076, 1);
     position: absolute;
     top: 0;
     left: 0;
     right: 0;
     bottom: 0;
-    padding: 0.75rem 0;
-    margin: 0 0 0 1.85rem;
-    color: #282936;
+    padding: 0.6rem 0; /* Reducir el padding */
+    margin: 0 0 0 1rem; /* Ajustar el margen izquierdo */
+    color: #181818;
+    font-size: 0.75rem;
     font-weight: 700;
     line-height: 1.6;
     text-align: center;
     text-transform: uppercase;
-   }
-   
-   button:hover .circle {
+}
+
+.boton-accion:hover .boton-accion__circulo {
     width: 100%;
-   }
-   
-   button:hover .circle .icon.arrow {
+}
+
+.boton-accion:hover .boton-accion__icono--flecha {
     background: #fff;
     transform: translate(1rem, 0);
-   }
-   
-   button:hover .button-text {
+}
+
+.boton-accion:hover .boton-accion__texto {
     color: #fff;
-   }
+}
 
-/* Media queries para pantallas más pequeñas */
-@media (max-width: 1366px) {
-    .consulta-alumno-container {
-        padding: 30px;
-        margin: 20px auto;
-        max-width: 500px;
+.consulta-alumno__resultado {
+    width: 100%;
+    height: 70%;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    background-color: #E8EEF2;
+}
+
+.consulta-alumno__titulo {
+    text-align: center;
+    font-weight: bold;
+    color: #181818;
+    font-size: 1rem;
+    border-bottom: 2px solid #5a5757;
+    padding-bottom: 10px;
+    width: 90%;
+}
+
+.consulta-alumno__resultados-estudiante {
+    display: flex;
+    align-items: center;
+    width: 90%;
+    height: 80%;
+}
+
+.consulta-alumno__datos {
+    width: 80%;
+    display: flex;
+    flex-direction: column;
+    gap: 0.8rem;
+}
+
+.consulta-alumno__subtitulo {
+    text-align: left;
+    font-weight: bold;
+    color: #181818;
+    font-size: 1rem;
+}
+
+.consulta-alumno__parrafo {
+    font-size: 0.875rem;
+}
+
+.consulta-alumno__grupo-botones {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 2rem;
+}
+
+.consulta-alumno__mensaje-error {
+    background-color: #f8d7da;
+    color: #721c24;
+    border-left: 5px solid #dc3545;
+    padding: 10px;
+    margin-top: 1rem;
+    border-radius: 4px;
+    font-size: 0.875rem;
+    width: 25rem;
+}
+
+.consulta-alumno__mensaje-info {
+    background-color: #e8f0fe;
+    color: #1a73e8;
+    border: 1px solid #bcd4fc;
+    padding: 1rem 1.5rem;
+    border-radius: 8px;
+    font-size: 0.875rem;
+    text-align: center;
+    margin-top: 1rem;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+}
+  
+/* Monitores grandes */
+@media (min-width: 1600px) {
+    .consulta-alumno {
+        height: calc(100vh - 130px);
     }
 
-    .consulta-alumno-container h1 {
-        font-size: 14px; /* Reduce tamaño del título */
+    .consulta-alumno__etiqueta {
+        font-size: 1.125rem;
     }
 
-    .styled-form {
-        padding: 25px;
-    }
-
-    .styled-form label {
-        font-size: 13px;
-    }
-
-    .styled-form input[type="text"] {
+    .consulta-alumno__input {
         padding: 8px;
-        font-size: 13px;
+        font-size: 1.125rem;
     }
 
-    .button-submit {
-        padding: 8px 15px;
-        font-size: 12px; /* Reduce tamaño de los botones */
-    }
-
-    .resultado-alumno h2 {
-        font-size: 16px;
-    }
-
-    .alumno-datos {
-        padding: 14px;
-        font-size: 14px;
-    }
-
-    .button-group {
-        gap: 10px; /* Espacio entre los botones */
-        margin: 0 25px; /* Ajusta si es necesario */
-    }
-
-    button.learn-more {
-        width: 10rem;
+    /* From Uiverse.io by cssbuttons-io */ 
+    .boton-accion {
+        position: relative;
+        display: inline-block;
+        cursor: pointer;
+        outline: none;
+        border: 0;
+        vertical-align: middle;
+        text-decoration: none;
+        background: transparent;
+        padding: 0;
+        font-size: inherit;
+        font-family: inherit;
+        width: 12rem;
         height: auto;
-       }
+    }
+
+    .boton-accion__circulo {
+        transition: all 0.45s cubic-bezier(0.65, 0, 0.076, 1);
+        position: relative;
+        display: block;
+        margin: 0;
+        width: 3rem;
+        height: 3rem;
+        background: rgb(66 149 33);
+        border-radius: 1.625rem;
+    }
+
+    .boton-accion__icono {
+        transition: all 0.45s cubic-bezier(0.65, 0, 0.076, 1);
+        position: absolute;
+        top: 0;
+        bottom: 0;
+        margin: auto;
+        background: #fff;
+    }
+
+    .boton-accion__icono--flecha {
+        left: 0.625rem;
+        width: 1.125rem;
+        height: 0.125rem;
+        background: none;
+    }
+
+    .boton-accion__icono--flecha::before {
+        position: absolute;
+        content: "";
+        top: -0.29rem;
+        right: 0.0625rem;
+        width: 0.625rem;
+        height: 0.625rem;
+        border-top: 0.125rem solid #fff;
+        border-right: 0.125rem solid #fff;
+        transform: rotate(45deg);
+    }
+
+    .boton-accion__texto {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: all 0.45s cubic-bezier(0.65, 0, 0.076, 1);
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        padding: 0.75rem 0;
+        margin: 0 0 0 1.85rem;
+        color: #282936;
+        font-size: 1rem;
+        font-weight: 700;
+        line-height: 1.6;
+        text-align: center;
+        text-transform: uppercase;
+    }
+
+    .boton-accion:hover .boton-accion__circulo {
+        width: 100%;
+    }
+
+    .boton-accion:hover .boton-accion__icono--flecha {
+        background: #fff;
+        transform: translate(1rem, 0);
+    }
+
+    .boton-accion:hover .boton-accion__texto {
+        color: #fff;
+    }
+
+    .consulta-alumno__titulo {
+        font-size: 1.25rem;
+    }
+
+    .consulta-alumno__subtitulo {
+        font-size: 1.25rem;
+    }
+    
+    .consulta-alumno__parrafo {
+        font-size: 1.125rem;
+    }
+
+    .consulta-alumno__mensaje-error {
+        padding: 0.75rem;
+        font-size: 1rem;
+    }
+    
+    .consulta-alumno__mensaje-info {
+        font-size: 1rem;
+    }
+
 }
 
+/* Laptop y notebook */
+@media (max-width: 1599px) {
+
+}
+
+/* Tablets */
 @media (max-width: 1024px) {
-    .consulta-alumno-container {
-        padding: 30px;
-        margin: 15px auto;
-        max-width: 550px;
-    }
 
-    .consulta-alumno-container h1 {
-        font-size: 16px; /* Más pequeño en 1024px */
-    }
-
-    .styled-form {
-        padding: 20px;
-    }
-
-    .styled-form label {
-        font-size: 13px;
-    }
-
-    .styled-form input[type="text"] {
-        padding: 9px;
-        font-size: 13px;
-    }
-
-    .button-submit {
-        padding: 9px 18px;
-        font-size: 13px;
-    }
-
-    .resultado-alumno h2 {
-        font-size: 18px;
-    }
-
-    .alumno-datos {
-        padding: 12px;
-        font-size: 15px;
-    }
 }
 
-@media (max-width: 768px) {
-    .consulta-alumno-container {
-        padding: 25px;
-        margin: 10px auto;
-        max-width: 500px;
-    }
+/* Celulares grandes */
+@media (max-width: 600px) {
 
-    .consulta-alumno-container h1 {
-        font-size: 16px;
-    }
-
-    .styled-form {
-        padding: 18px;
-    }
-
-    .styled-form label {
-        font-size: 12px;
-    }
-
-    .styled-form input[type="text"] {
-        padding: 8px;
-        font-size: 12px;
-    }
-
-    .button-submit {
-        padding: 8px 16px;
-        font-size: 12px;
-    }
-
-    .resultado-alumno h2 {
-        font-size: 16px;
-    }
-
-    .alumno-datos {
-        padding: 10px;
-        font-size: 14px;
-    }
-}
-
-@media (max-width: 480px) {
-    .consulta-alumno-container {
-        padding: 20px;
-        margin: 5px auto;
-        max-width: 400px;
-    }
-
-    .consulta-alumno-container h1 {
-        font-size: 16px;
-    }
-
-    .styled-form {
-        padding: 15px;
-    }
-
-    .styled-form label {
-        font-size: 11px;
-    }
-
-    .styled-form input[type="text"] {
-        padding: 7px;
-        font-size: 11px;
-    }
-
-    .button-submit {
-        padding: 7px 14px;
-        font-size: 11px;
-    }
-
-    .resultado-alumno h2 {
-        font-size: 14px;
-    }
-
-    .alumno-datos {
-        padding: 8px;
-        font-size: 12px;
-    }
 }

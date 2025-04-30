@@ -125,31 +125,31 @@ def consultar_ciclo_lectivo(request):
     })
 
 # Pago de Cuotas
-def pago_cuotas(request):
-    cuotas = Cuota.objects.filter(pagado=False)
-    medios_pago = MedioPago.objects.all()
+# def pago_cuotas(request):
+#     cuotas = Cuota.objects.filter(pagado=False)
+#     medios_pago = MedioPago.objects.all()
 
-    if request.method == 'POST':
-        cuota_id = request.POST.get('cuota_id')
-        monto_pagado = request.POST.get('monto_pagado')
-        medio_pago_id = request.POST.get('medio_pago')
+#     if request.method == 'POST':
+#         cuota_id = request.POST.get('cuota_id')
+#         monto_pagado = request.POST.get('monto_pagado')
+#         medio_pago_id = request.POST.get('medio_pago')
 
-        cuota = get_object_or_404(Cuota, id=cuota_id)
-        medio_pago = get_object_or_404(MedioPago, id=medio_pago_id)
+#         cuota = get_object_or_404(Cuota, id=cuota_id)
+#         medio_pago = get_object_or_404(MedioPago, id=medio_pago_id)
 
-        Pago.objects.create(
-            cuota=cuota,
-            monto_pagado=monto_pagado,
-            medio_pago=medio_pago
-        )
-        cuota.pagado = True
-        cuota.save()
-        messages.success(request, f"Pago registrado correctamente para la cuota del mes {cuota.mes}.")
+#         Pago.objects.create(
+#             cuota=cuota,
+#             monto_pagado=monto_pagado,
+#             medio_pago=medio_pago
+#         )
+#         cuota.pagado = True
+#         cuota.save()
+#         messages.success(request, f"Pago registrado correctamente para la cuota del mes {cuota.mes}.")
 
-    return render(request, 'cuotas/pago_cuotas.html', {
-        'cuotas': cuotas,
-        'medios_pago': medios_pago,
-    })
+#     return render(request, 'cuotas/pago_cuotas.html', {
+#         'cuotas': cuotas,
+#         'medios_pago': medios_pago,
+#     })
 
 # Consultar Deudas
 def consultar_deudas(request):
@@ -571,35 +571,6 @@ def buscar_estudiantes_aprobados(request):
         'sin_resultados': sin_resultados,  # 🔧 Y esta línea en el contexto
     })
 
-# def buscar_cuotas_estudiante(request):
-#     query = request.GET.get('cuil', '').strip()
-#     estudiante = None
-#     subnivel = None
-#     cuotas = []
-
-#     if query:
-#         try:
-#             estudiante = Estudiante.objects.get(cuil_estudiante=query)
-
-#             inscripcion = Inscripcion.objects.get(cuil_alumno=estudiante)
-#             subnivel = inscripcion.subnivel_cursado 
-
-#             cuotas = Cuota.objects.filter(inscripcion=inscripcion).order_by('mes')
-
-#         except Estudiante.DoesNotExist:
-#             messages.error(request, "No se encontró un estudiante con ese CUIL.")
-#         except Inscripcion.DoesNotExist:
-#             messages.error(request, "El estudiante no tiene una inscripción registrada.")
-#         except Cuota.DoesNotExist:
-#             messages.error(request, "El estudiante no tiene cuotas registradas.")
-
-#     return render(request, 'cuotas/buscar_cuotas_estudiante.html', {
-#         'estudiante': estudiante,
-#         'subnivel': subnivel,
-#         'cuotas': cuotas,
-#         'query': query,
-#     })
-
 def buscar_cuotas_estudiante(request):
     estudiante = None
     inscripcion = None
@@ -648,3 +619,124 @@ def buscar_cuotas_estudiante(request):
         'ciclo_seleccionado': ciclo_seleccionado,
     })
 
+''' BUSCAR COMPROBANTES '''
+
+from django.shortcuts import render
+from .models import ComprobantePago
+from django.db.models import Q
+from .utils import descargar_comprobante_drive
+import os
+from django.db.models import Q
+from googleapiclient.errors import HttpError
+
+def buscar_comprobantes(request):
+    comprobantes = None
+    mensaje_error = None
+    mensaje_exito = None
+
+    # Valores del formulario de búsqueda
+    cuil_alumno = request.GET.get('cuil_alumno', '')
+    fecha_desde = request.GET.get('fecha_desde', '')
+    fecha_hasta = request.GET.get('fecha_hasta', '')
+
+    # Filtros para GET (búsqueda)
+    if request.method == 'GET' and (cuil_alumno or fecha_desde or fecha_hasta):
+        filtros = Q()
+        if cuil_alumno:
+            filtros &= Q(cuil_alumno=cuil_alumno)
+        if fecha_desde and fecha_hasta:
+            filtros &= Q(marca_temporal__range=[fecha_desde, fecha_hasta])
+        elif fecha_desde:
+            filtros &= Q(marca_temporal__gte=fecha_desde)
+        elif fecha_hasta:
+            filtros &= Q(marca_temporal__lte=fecha_hasta)
+
+        comprobantes = ComprobantePago.objects.filter(filtros)
+
+    # POST para descargar
+    if request.method == 'POST' and 'descargar_todos' in request.POST:
+        # En POST usamos todos los comprobantes
+        comprobantes = ComprobantePago.objects.all()
+        for comp in comprobantes:
+            if comp.url_comprobante:
+                try:
+                    ruta_comprobante = descargar_comprobante_drive(comp.url_comprobante)
+                    comp.ruta_local = ruta_comprobante  # Guardamos la ruta local en el modelo
+                    comp.save()  # Si deseas almacenar la ruta local en el modelo de la base de datos
+                except Exception as e:
+                    print(f"Error al descargar {comp.url_comprobante}: {e}")
+                    continue
+        mensaje_exito = "¡Todos los comprobantes válidos fueron descargados!"
+
+    return render(request, 'cuotas/buscar_comprobantes.html', {
+        'comprobantes': comprobantes,
+        'mensaje_exito': mensaje_exito,
+        'mensaje_error': mensaje_error,
+        'cuil_alumno': cuil_alumno,
+        'fecha_desde': fecha_desde,
+        'fecha_hasta': fecha_hasta,
+    })
+
+
+from django.shortcuts import render, get_object_or_404, redirect
+from .models import Cuota, MedioPago, Pago
+from django.contrib import messages
+from django.urls import reverse
+from django.http import HttpResponseRedirect
+
+from django.utils import timezone
+
+def realizar_pago(request, cuota_id):
+    cuota = get_object_or_404(Cuota, id=cuota_id)
+    medios_pago = MedioPago.objects.all()
+
+    if request.method == 'POST':
+        medio_pago_id = request.POST.get('medio_pago')
+        comentario = request.POST.get('comentario', '')
+        medio_pago = get_object_or_404(MedioPago, id=medio_pago_id)
+
+        pago = Pago.objects.create(
+            cuota=cuota,
+            monto_pagado=cuota.total_a_pagar,
+            medio_pago=medio_pago,
+            comentario=comentario
+        )
+
+        cuota.pagado = True
+        cuota.fecha_pago = timezone.now()  # Asignar la fecha y hora actual
+        cuota.save()
+
+        messages.success(request, 'Pago registrado correctamente.')
+
+        # Obtener el CUIL y ciclo lectivo desde la inscripción del estudiante
+        estudiante = cuota.inscripcion.cuil_alumno
+        ciclo_id = cuota.inscripcion.ciclo_lectivo.id
+
+        url = reverse('cuotas:buscar_cuotas_estudiante')
+        return HttpResponseRedirect(f'{url}?cuil={estudiante.cuil_estudiante}&ciclo_lectivo={ciclo_id}')
+
+    return render(request, 'cuotas/realizar_pago.html', {
+        'cuota': cuota,
+        'medios_pago': medios_pago
+    })
+
+
+def deshacer_pago(request, cuota_id):
+    cuota = get_object_or_404(Cuota, id=cuota_id)
+    pago = Pago.objects.filter(cuota=cuota).first()
+
+    if pago:
+        pago.delete()
+        cuota.pagado = False
+        cuota.fecha_pago = None
+        cuota.save()
+        messages.success(request, 'El pago ha sido deshecho correctamente.')
+    else:
+        messages.warning(request, 'No se encontró un pago para esta cuota.')
+
+    # Obtener el CUIL y ciclo lectivo desde la inscripción del estudiante
+    estudiante = cuota.inscripcion.cuil_alumno
+    ciclo_id = cuota.inscripcion.ciclo_lectivo.id
+
+    url = reverse('cuotas:buscar_cuotas_estudiante')
+    return HttpResponseRedirect(f'{url}?cuil={estudiante.cuil_estudiante}&ciclo_lectivo={ciclo_id}')

@@ -155,11 +155,18 @@ def consulta_view(request):
                         if buscar_termino(texto, consulta):
                             ruta_archivo = obtener_ruta_archivo(file_name)
                             if ruta_archivo:
+                                # 🔥 EXTRAER datos de pago del texto
+                                fecha_pago, monto_pagado, medio_pago = extraer_datos_pago(texto)
+
                                 resultados.append({
                                     'nombre': file_name,
                                     'url': ruta_archivo,
-                                    'fecha': fecha_modificacion.strftime('%d/%m/%Y')
+                                    'fecha': fecha_modificacion.strftime('%d/%m/%Y'),
+                                    'fecha_pago': fecha_pago.strftime('%d/%m/%Y') if fecha_pago else '',
+                                    'monto_pagado': f"{monto_pagado:.2f}" if monto_pagado else '',
+                                    'medio_pago': medio_pago if medio_pago else ''
                                 })
+
                     except Exception as e:
                         logger.error(f"Error procesando archivo {file_name}: {e}")
 
@@ -387,8 +394,6 @@ def list_files(request):
     files = results.get('files', [])
     return JsonResponse({'files': files})
 
-
-
 from django.shortcuts import render, redirect
 from django.urls import reverse
 from .forms import ConsultaForm
@@ -471,3 +476,42 @@ def vaciar_carpeta_drive(request):
         except Exception as e:
             return JsonResponse({'status': 'error', 'message': str(e)})
     return JsonResponse({'status': 'error', 'message': 'Invalid request method.'})
+
+import re
+from datetime import datetime
+
+def extraer_datos_pago(texto):
+    fecha_pago = None
+    monto_pagado = None
+    medio_pago = None
+
+    # Buscar fecha (formato: 12/04/2024 o 2024-04-12)
+    fecha_match = re.search(r'(\d{2}/\d{2}/\d{4}|\d{4}-\d{2}-\d{2})', texto)
+    if fecha_match:
+        fecha_texto = fecha_match.group(0)
+        try:
+            # Intentar convertir la fecha al formato correcto
+            if '/' in fecha_texto:
+                fecha_pago = datetime.strptime(fecha_texto, '%d/%m/%Y').date()
+            else:
+                fecha_pago = datetime.strptime(fecha_texto, '%Y-%m-%d').date()
+        except:
+            pass
+
+    # Buscar monto (formato: 1234.56 o 1.234,56)
+    monto_match = re.search(r'(\d{1,3}(?:[\.,]\d{3})*[\.,]\d{2})', texto)
+    if monto_match:
+        monto_texto = monto_match.group(0).replace('.', '').replace(',', '.')
+        try:
+            monto_pagado = float(monto_texto)
+        except:
+            pass
+
+    # Buscar medio de pago (ejemplos comunes)
+    medios_posibles = ['efectivo', 'tarjeta', 'transferencia', 'cheque', 'mercado pago']
+    for medio in medios_posibles:
+        if medio.lower() in texto.lower():
+            medio_pago = medio.capitalize()
+            break
+
+    return fecha_pago, monto_pagado, medio_pago

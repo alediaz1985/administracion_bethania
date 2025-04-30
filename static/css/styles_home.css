@@ -1,12 +1,18 @@
-/* Home */
+html, body {
+    height: 100%;  /* Asegura que la altura del body ocupe el 100% de la pantalla */
+    margin: 0;
+    padding: 0;
+}
+
 .block-content-hero {
     width: 96%;
+    height: calc(100vh - 130px);  /* Restando los 140px del nav y footer */
     float: right;
 }
 
 .block-content-hero .hero-container {
     position: relative;
-    height: 100vh;
+    height: 100%;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -32,7 +38,7 @@
     display: flex;
     justify-content: space-between;
     width: 90%;
-    height: 80%;
+    height: 90%;
     position: relative;
     z-index: 2;
     box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
@@ -131,34 +137,21 @@
 }
 
 /* Estilos para pantallas desde 1366px y menores */
-@media (max-width: 1366px) {
-    .block-content-hero .content-wrapper {
-        width: 85%;
-        height: 75vh; /* Reducir la altura para evitar desbordamientos */
+@media (max-width: 1599px) {
+    /* Para notebooks comunes, FullHD, 1366px */
+    .block-content-hero {
+        height: calc(100vh - 90px);
     }
 
     .block-content-hero .text-content h1 {
-        font-size: 2.0vw; /* Ajustar el tamaño de la cabecera */
+        font-size: 1.8rem;
     }
 
     .block-content-hero .text-content p {
-        font-size: 1.1vw; /* Ajustar el tamaño del texto */
-    }
-
-    .block-content-hero .text-content button {
-        padding: 0.6vw 1.2vw; /* Reducir ligeramente el tamaño del botón */
-        font-size: 0.9vw; /* Ajustar el tamaño del texto del botón */
-    }
-
-    .block-content-hero .image-box {
-        flex-basis: 75%; /* Ajustar el tamaño de la caja de la imagen */
-    }
-
-    .block-content-hero .carousel-controls {
-        bottom: 15px;
-        right: 15px;
+        font-size: 0.9rem;
     }
 }
+  
 
 /* Estilos para pantallas desde 1024px y menores */
 @media (max-width: 1024px) {

@@ -12,128 +12,68 @@
 {% block content %}
 
 <section class="montos">
-    <h1 class="montos__titulo">Actualizar Montos del Ciclo Lectivo</h1>
+    <div class="montos__contenedor">
+        <h1 class="montos__titulo">Actualizar Montos del Ciclo Lectivo</h1>
 
-    <!-- Mensajes de éxito o error -->
-    {% if messages %}
-        <div class="montos__alerta montos__alerta--exito">
-            {% for message in messages %}
-                <p>{{ message }}</p>
-            {% endfor %}
-        </div>
-    {% endif %}
-
-    <!-- Formulario -->
-    <form method="post" novalidate class="montos__formulario">
-        {% csrf_token %}
-
-        <div class="montos__seccion">
-            <!-- Campo: Ciclo Lectivo -->
-            <div class="montos__campo">
-                <label for="ciclo_lectivo_id" class="montos__etiqueta">Ciclo Lectivo</label>
-                <select name="ciclo_lectivo_id" id="ciclo_lectivo_id" class="montos__select" required>
-                    <option value="">---------</option>
-                    {% for ciclo in ciclos %}
-                        <option value="{{ ciclo.id }}">Ciclo {{ ciclo.año_lectivo }}</option>
-                    {% endfor %}
-                </select>
+        <!-- Mensajes de éxito o error -->
+        {% if messages %}
+            <div class="montos__alerta montos__alerta--exito">
+                {% for message in messages %}
+                    <p>{{ message }}</p>
+                {% endfor %}
             </div>
-
-            <!-- Campo: Subnivel -->
-            <div class="montos__campo">
-                <label for="subnivel_cursado_id" class="montos__etiqueta">Subnivel</label>
-                <select name="subnivel_cursado_id" id="subnivel_cursado_id" class="montos__select" required>
-                    <option value="">---------</option>
-                    {% for subnivel in subniveles %}
-                        <option value="{{ subnivel.id }}">{{ subnivel.nombre }}</option>
-                    {% endfor %}
-                </select>
+        {% endif %}
+    
+        <!-- Formulario -->
+        <form method="post" novalidate class="montos__formulario">
+            {% csrf_token %}
+    
+            <div class="montos__seccion">
+                <!-- Campo: Ciclo Lectivo -->
+                <div class="montos__campo">
+                    <label for="ciclo_lectivo_id" class="montos__etiqueta">Ciclo Lectivo</label>
+                    <select name="ciclo_lectivo_id" id="ciclo_lectivo_id" class="montos__select" required>
+                        <option value="">---------</option>
+                        {% for ciclo in ciclos %}
+                            <option value="{{ ciclo.id }}">Ciclo {{ ciclo.año_lectivo }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+    
+                <!-- Campo: Subnivel -->
+                <div class="montos__campo">
+                    <label for="subnivel_cursado_id" class="montos__etiqueta">Subnivel</label>
+                    <select name="subnivel_cursado_id" id="subnivel_cursado_id" class="montos__select" required>
+                        <option value="">---------</option>
+                        {% for subnivel in subniveles %}
+                            <option value="{{ subnivel.id }}">{{ subnivel.nombre }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
             </div>
-        </div>
-        <div class="montos__seccion">
-            <!-- Campo: Monto Inscripción -->
-            <div class="montos__campo">
-                <label for="monto_inscripcion" class="montos__etiqueta">Monto de Inscripción</label>
-                <input type="text" name="monto_inscripcion" id="monto_inscripcion" class="montos__input" required>
+            <div class="montos__seccion">
+                <!-- Campo: Monto Inscripción -->
+                <div class="montos__campo">
+                    <label for="monto_inscripcion" class="montos__etiqueta">Monto de Inscripción</label>
+                    <input type="text" name="monto_inscripcion" id="monto_inscripcion" class="montos__input" required>
+                </div>
+    
+                <!-- Campo: Monto Cuota -->
+                <div class="montos__campo">
+                    <label for="monto_cuota_mensual" class="montos__etiqueta">Monto de la Cuota Mensual</label>
+                    <input type="text" name="monto_cuota_mensual" id="monto_cuota_mensual" class="montos__input" required>
+                </div>
             </div>
-
-            <!-- Campo: Monto Cuota -->
-            <div class="montos__campo">
-                <label for="monto_cuota_mensual" class="montos__etiqueta">Monto de la Cuota Mensual</label>
-                <input type="text" name="monto_cuota_mensual" id="monto_cuota_mensual" class="montos__input" required>
+            <!-- Botón de envío -->
+            <div class="montos__acciones">
+                <button type="submit" class="boton-accion">
+                    <span class="boton-accion__circulo" aria-hidden="true">
+                        <span class="boton-accion__icono boton-accion__icono--flecha"></span>
+                    </span>
+                    <span class="boton-accion__texto">Actualizar</span>
+                </button>
             </div>
-        </div>
-        <!-- Botón de envío -->
-        <div class="montos__acciones">
-            <button type="submit" class="boton-accion">
-                <span class="boton-accion__circulo" aria-hidden="true">
-                    <span class="boton-accion__icono boton-accion__icono--flecha"></span>
-                </span>
-                <span class="boton-accion__texto">Actualizar</span>
-            </button>
-        </div>
-    </form>
+        </form>
+    </div>
 </section>
-
-<!-- <div class="container">
-    <h1>Actualizar Montos del Ciclo Lectivo</h1>
-
-    {% if messages %}
-        <div class="alert alert-success" role="alert">
-            {% for message in messages %}
-                <p>{{ message }}</p>
-            {% endfor %}
-        </div>
-    {% endif %}
-
-    <form method="post" novalidate class="form-horizontal">
-        {% csrf_token %}
-
-        <div class="form-group">
-            <label for="ciclo_lectivo_id" class="col-sm-2 control-label">Ciclo Lectivo*</label>
-            <div class="col-sm-10">
-                <select name="ciclo_lectivo_id" id="ciclo_lectivo_id" class="form-control" required>
-                    <option value="">---------</option>
-                    {% for ciclo in ciclos %}
-                    <option value="{{ ciclo.id }}">Ciclo {{ ciclo.año_lectivo }}</option>
-                    {% endfor %}
-                </select>
-            </div>
-        </div>
-
-        <div class="form-group">
-            <label for="subnivel_cursado_id" class="col-sm-2 control-label">Subnivel*</label>
-            <div class="col-sm-10">
-                <select name="subnivel_cursado_id" id="subnivel_cursado_id" class="form-control" required>
-                    <option value="">---------</option>
-                    {% for subnivel in subniveles %}
-                    <option value="{{ subnivel.id }}">{{ subnivel.nombre }}</option>
-                    {% endfor %}
-                </select>
-            </div>
-        </div>
-
-        <div class="form-group">
-            <label for="monto_inscripcion" class="col-sm-2 control-label">Monto de Inscripción*</label>
-            <div class="col-sm-10">
-                <input type="text" name="monto_inscripcion" id="monto_inscripcion" class="form-control" required>
-            </div>
-        </div>
-
-        <div class="form-group">
-            <label for="monto_cuota_mensual" class="col-sm-2 control-label">Monto de la Cuota Mensual*</label>
-            <div class="col-sm-10">
-                <input type="text" name="monto_cuota_mensual" id="monto_cuota_mensual" class="form-control" required>
-            </div>
-        </div>
-
-        <div class="form-group">
-            <div class="col-sm-offset-2 col-sm-10">
-                <button type="submit" class="btn btn-primary">Actualizar Montos</button>
-            </div>
-        </div>
-
-    </form>
-</div> -->
-
 {% endblock %}

@@ -11,18 +11,8 @@ body {
 
 .alumnos-container {
     width: 96%;
-    padding: 25px 40px;
+    padding: 5px 15px;
     float: right;
-}
-
-.alumnos-titulo {
-    font-size: 18px;
-    color: #000000;
-    text-align: center;
-    font-family: 'Poppins', sans-serif;
-    font-weight: 400;
-    /* font-weight: bold; */
-    margin-bottom: 25px;
 }
 
 .alumnos-controls {
@@ -30,7 +20,7 @@ body {
 }
 
 .alumnos-scroll-container {
-    max-height: 600px; /* Altura máxima del contenedor con scroll */
+    height: calc(100vh - 248px);
     overflow-y: auto;  /* Activar scroll vertical */
     border: 1px solid #ccc;
     padding: 10px;
@@ -53,6 +43,7 @@ body {
     padding: 12px;
     text-align: left;
     border-bottom: 1px solid #ddd;
+    font-size: 13px;
 }
 
 .alumnos-table th {
@@ -86,7 +77,7 @@ body {
 /* Botón Ver Datos */
 .alumnos-btn-ver {
     padding: 3px 13px;
-    background-color: rgb(66, 149, 33);
+    background-color: #116cd4;
     color: white;
     border: none;
     cursor: pointer;
@@ -158,7 +149,7 @@ body {
 /* Botón Generar Contrato */
 .alumnos-btn-pdf {
     padding: 3px 13px;
-    background-color: rgb(149, 33, 33);
+    background-color: #381789;
     color: white;
     border: none;
     cursor: pointer;
@@ -298,6 +289,7 @@ body {
     border: none;
     border-bottom: 2px solid transparent;
     transition: background-color 0.3s;
+    font-size: 13px;
 }
 
 .tabs button.active {
@@ -305,20 +297,244 @@ body {
     border-color: #007bff;
 }
 
+/* From Uiverse.io by vinodjangid07 */ 
+.Documents-btn {
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    width: fit-content;
+    height: 35px;
+    border: none;
+    padding: 0px 5px;
+    border-radius: 5px;
+    background-color: #381789;
+    gap: 10px;
+    cursor: pointer;
+    transition: all 0.3s;
+    box-shadow: 0 1px 16px rgba(0, 0, 0, 0.4); /* Sombra más marcada */
+    float: right;
+    padding-right: 10px;
+}
+
+.folderContainer {
+    width: 30px;
+    height: fit-content;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-end;
+    position: relative;
+}
+
+.fileBack {
+    z-index: 1;
+    width: 80%;
+    height: auto;
+}
+
+.filePage {
+    width: 60%;
+    height: auto;
+    position: absolute;
+    z-index: 2;
+    transition: all 0.3s ease-out;
+}
+
+.fileFront {
+    width: 90%;
+    height: auto;
+    position: absolute;
+    z-index: 3;
+    opacity: 0.95;
+    transform-origin: bottom;
+    transition: all 0.3s ease-out;
+}
+
+.text {
+    color: white;
+    font-size: 10px;
+    font-weight: 400;
+    letter-spacing: 0.5px;
+}
+
+.Documents-btn:hover .filePage {
+    transform: translateY(-5px);
+}
+
+.Documents-btn:hover {
+    background-color:rgb(68, 123, 46);
+    transform: translateY(-3px); /* Efecto de "levantamiento" al pasar el mouse */
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1); /* Sombra más marcada */
+}
+
+.Documents-btn:active {
+    transform: scale(0.95);
+}
+
+.Documents-btn:hover .fileFront {
+    transform: rotateX(30deg);
+}
+
+/* Estilo general del contenedor de filtros */
+.filters {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: 0 40px 0 0;
+    position: relative;
+}
+
+/* Estilos del select */
+#nivel-filter {
+    appearance: none;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    width: 100%;
+    max-width: 250px;
+    padding: 14px 20px;
+    font-size: 11px;
+    font-family: 'Roboto', sans-serif;
+    color: #444;
+    background: linear-gradient(135deg, #f0f4f8, #e0e8f0);
+    border: 2px solid #ddd;
+    border-radius: 50px;
+    outline: none;
+    transition: all 0.3s ease-in-out;
+    position: relative;
+    cursor: pointer;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.4);
+}
+
+/* Efectos cuando el select está en foco o el mouse pasa sobre él */
+#nivel-filter:hover,
+#nivel-filter:focus {
+    border-color: #007bff;
+    background: linear-gradient(135deg, #ffffff, #f8f9fc);
+    box-shadow: 0 4px 15px rgba(0, 123, 255, 0.3);
+    transform: translateY(-2px);
+}
+
+/* Flecha personalizada en el desplegable */
+#nivel-filter::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    right: 15px;
+    width: 0;
+    height: 0;
+    border-left: 6px solid transparent;
+    border-right: 6px solid transparent;
+    border-top: 8px solid #333;
+    transform: translateY(-50%);
+    pointer-events: none;
+    transition: all 0.3s ease;
+}
+
+/* Animación cuando el select es enfocado */
+#nivel-filter:focus::after {
+    border-top-color: #007bff;
+}
+
+/* Estilos para las opciones del select */
+#nivel-filter option {
+    background-color: #fff;
+    color: #333;
+    font-size: 11px;
+    font-weight: 400;
+    padding: 12px;
+    transition: all 0.3s ease-in-out;
+}
+
+/* Efecto de hover en las opciones */
+#nivel-filter option:hover {
+    background-color: #f1f9ff;
+    color: #007bff;
+    transform: scale(1.05);
+    box-shadow: inset 0 0 10px rgba(0, 123, 255, 0.2);
+}
+
+/* Estilo cuando el select está deshabilitado */
+#nivel-filter:disabled {
+    background-color: #f9f9f9;
+    color: #aaa;
+    cursor: not-allowed;
+}
+
+/* Resaltar etiquetas o indicaciones */
+label {
+    font-size: 12px;
+    color: #444;
+    font-weight: 600;
+    text-align: center;
+    margin-bottom: 15px;
+    letter-spacing: 0.5px;
+}
+
+/* Aplicar una animación de enfoque cuando el campo es clickeado */
+@keyframes focusEffect {
+    0% {
+        box-shadow: 0 0 0px rgba(0, 123, 255, 0.4);
+    }
+    100% {
+        box-shadow: 0 0 10px rgba(0, 123, 255, 0.7);
+    }
+}
+
+#nivel-filter:focus {
+    animation: focusEffect 0.5s ease-out;
+}
+
+/* Estilo para la caja de filtro para mantener la estética profesional */
+.filters {
+    max-width: 320px;
+    width: 100%;
+    padding: 10px;
+}
+
 /* Media queries para pantallas más pequeñas */
 @media (max-width: 1366px) {
+
+    .alumnos-scroll-container {
+        height: calc(100vh - 203px);
+    }
+
+    .alumnos-table th, .alumnos-table td {
+        font-size: 12px;
+    }
+
+    #nivel-filter {
+        font-size: 10px;
+    }
+
+    #nivel-filter option {
+        font-size: 10px;
+    }
+
     .alumnos-titulo {
         font-size: 18px; /* Reduce el tamaño del título */
     }
 
     .alumnos-table th, .alumnos-table td {
         padding: 8px; /* Reduce el padding para las celdas de la tabla */
-        font-size: 12px;
+        font-size: 0.6875rem;
     }
 
     .alumnos-btn {
         padding: 6px 6px; /* Reduce el tamaño de los botones */
         font-size: 11px; /* Reduce el tamaño del texto de los botones */
+    }
+
+    .tabs button {
+        font-size: 0.6875rem;
+    }
+
+    .alumnos-btn-ver,
+    .alumnos-btn-pdf {
+        font-size: 1rem;
+    }
+
+    .alumnos-btn-ver {
+        padding: 3px 10px;
     }
 
 }
@@ -384,190 +600,4 @@ body {
         padding: 3px; /* Ajuste compacto en detalles */
         font-size: 8px; /* Texto muy pequeño para pantallas pequeñas */
     }
-}
-
-/* From Uiverse.io by vinodjangid07 */ 
-.Documents-btn {
-    display: flex;
-    align-items: center;
-    justify-content: flex-start;
-    width: fit-content;
-    height: 35px;
-    border: none;
-    padding: 0px 5px;
-    border-radius: 5px;
-    background-color: rgb(66 149 33);
-    gap: 10px;
-    cursor: pointer;
-    transition: all 0.3s;
-    box-shadow: 0 1px 16px rgba(0, 0, 0, 0.4); /* Sombra más marcada */
-    float: right;
-    padding-right: 10px;
-  }
-
-.folderContainer {
-    width: 30px;
-    height: fit-content;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: flex-end;
-    position: relative;
-  }
-  .fileBack {
-    z-index: 1;
-    width: 80%;
-    height: auto;
-  }
-  .filePage {
-    width: 60%;
-    height: auto;
-    position: absolute;
-    z-index: 2;
-    transition: all 0.3s ease-out;
-  }
-  .fileFront {
-    width: 90%;
-    height: auto;
-    position: absolute;
-    z-index: 3;
-    opacity: 0.95;
-    transform-origin: bottom;
-    transition: all 0.3s ease-out;
-  }
-  .text {
-    color: white;
-    font-size: 10px;
-    font-weight: 400;
-    letter-spacing: 0.5px;
-  }
-  .Documents-btn:hover .filePage {
-    transform: translateY(-5px);
-  }
-  .Documents-btn:hover {
-    background-color:rgb(68, 123, 46);
-    transform: translateY(-3px); /* Efecto de "levantamiento" al pasar el mouse */
-    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1); /* Sombra más marcada */
-  }
-  .Documents-btn:active {
-    transform: scale(0.95);
-  }
-  .Documents-btn:hover .fileFront {
-    transform: rotateX(30deg);
-  }
-
-/* Estilo general del contenedor de filtros */
-.filters {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    margin: 0 40px 0 0;
-    position: relative;
-}
-
-/* Estilos del select */
-#nivel-filter {
-    appearance: none;
-    -webkit-appearance: none;
-    -moz-appearance: none;
-    width: 100%;
-    max-width: 250px;
-    padding: 14px 20px;
-    font-size: 12px;
-    font-family: 'Roboto', sans-serif;
-    color: #444;
-    background: linear-gradient(135deg, #f0f4f8, #e0e8f0);
-    border: 2px solid #ddd;
-    border-radius: 50px;
-    outline: none;
-    transition: all 0.3s ease-in-out;
-    position: relative;
-    cursor: pointer;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.4);
-}
-
-/* Efectos cuando el select está en foco o el mouse pasa sobre él */
-#nivel-filter:hover,
-#nivel-filter:focus {
-    border-color: #007bff;
-    background: linear-gradient(135deg, #ffffff, #f8f9fc);
-    box-shadow: 0 4px 15px rgba(0, 123, 255, 0.3);
-    transform: translateY(-2px);
-}
-
-/* Flecha personalizada en el desplegable */
-#nivel-filter::after {
-    content: '';
-    position: absolute;
-    top: 50%;
-    right: 15px;
-    width: 0;
-    height: 0;
-    border-left: 6px solid transparent;
-    border-right: 6px solid transparent;
-    border-top: 8px solid #333;
-    transform: translateY(-50%);
-    pointer-events: none;
-    transition: all 0.3s ease;
-}
-
-/* Animación cuando el select es enfocado */
-#nivel-filter:focus::after {
-    border-top-color: #007bff;
-}
-
-/* Estilos para las opciones del select */
-#nivel-filter option {
-    background-color: #fff;
-    color: #333;
-    font-size: 12px;
-    font-weight: 400;
-    padding: 12px;
-    transition: all 0.3s ease-in-out;
-}
-
-/* Efecto de hover en las opciones */
-#nivel-filter option:hover {
-    background-color: #f1f9ff;
-    color: #007bff;
-    transform: scale(1.05);
-    box-shadow: inset 0 0 10px rgba(0, 123, 255, 0.2);
-}
-
-/* Estilo cuando el select está deshabilitado */
-#nivel-filter:disabled {
-    background-color: #f9f9f9;
-    color: #aaa;
-    cursor: not-allowed;
-}
-
-/* Resaltar etiquetas o indicaciones */
-label {
-    font-size: 12px;
-    color: #444;
-    font-weight: 600;
-    text-align: center;
-    margin-bottom: 15px;
-    letter-spacing: 0.5px;
-}
-
-/* Aplicar una animación de enfoque cuando el campo es clickeado */
-@keyframes focusEffect {
-    0% {
-        box-shadow: 0 0 0px rgba(0, 123, 255, 0.4);
-    }
-    100% {
-        box-shadow: 0 0 10px rgba(0, 123, 255, 0.7);
-    }
-}
-
-#nivel-filter:focus {
-    animation: focusEffect 0.5s ease-out;
-}
-
-/* Estilo para la caja de filtro para mantener la estética profesional */
-.filters {
-    max-width: 320px;
-    width: 100%;
-    padding: 10px;
 }

@@ -1,6 +1,0 @@
-<h2>Alumnos con Deuda</h2>
-<ul>
-    {% for alumno in alumnos_deudores %}
-        <li><a href="{% url 'detalle_deuda' alumno.cuil_alumno %}">{{ alumno.nombres_alumno }} {{ alumno.apellidos_alumno }}</a></li>
-    {% endfor %}
-</ul>

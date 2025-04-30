@@ -1,0 +1,31 @@
+{% extends 'base.html' %}
+{% block content %}
+<h2>Realizar Pago de Cuota</h2>
+
+<p><strong>Estudiante:</strong> {{ cuota.inscripcion.cuil_alumno }}</p>
+<p><strong>Ciclo Lectivo:</strong> {{ cuota.inscripcion.ciclo_lectivo }}</p>
+<p><strong>Mes:</strong> {{ cuota.mes }}</p>
+<p><strong>Total a Pagar:</strong> ${{ cuota.total_a_pagar }}</p>
+
+<form method="post">
+    {% csrf_token %}
+    <div>
+        <label for="medio_pago">Medio de Pago:</label>
+        <select name="medio_pago" id="medio_pago" required>
+            <option value="">Seleccione un medio de pago</option>
+            {% for medio in medios_pago %}
+                <option value="{{ medio.id }}">{{ medio.nombre_medio_pago }}</option>
+            {% endfor %}
+        </select>
+    </div>
+
+    <div>
+        <label for="comentario">Comentario (opcional):</label><br>
+        <textarea name="comentario" id="comentario" rows="3"></textarea>
+    </div>
+
+    <button type="submit">Confirmar Pago</button>
+    <a href="{% url 'cuotas:buscar_cuotas_estudiante' %}" class="btn btn-secondary">Cancelar</a>
+</form>
+<a href="{% url 'cuotas:buscar_cuotas_estudiante' %}">← Volver</a>
+{% endblock %}
