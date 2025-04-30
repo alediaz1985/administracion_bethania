@@ -20,6 +20,8 @@ def extraer_id_drive(url):
     return coincidencia.group(1) or coincidencia.group(2) if coincidencia else None
 
 
+from mimetypes import guess_extension
+
 def descargar_comprobante_drive(url):
     file_id = extraer_id_drive(url)
     print(f"[DEBUG] URL: {url}")
@@ -29,26 +31,41 @@ def descargar_comprobante_drive(url):
         print("[ERROR] No se pudo extraer el ID.")
         return None
 
-    # Crea la carpeta de destino si no existe
+    # Crear carpeta si no existe
     os.makedirs(CARPETA_DESTINO, exist_ok=True)
-
-    # Ruta absoluta para guardar el archivo físicamente
-    ruta_absoluta = os.path.join(CARPETA_DESTINO, f"{file_id}.pdf")
-
-    # Ruta relativa para guardar en la base de datos
-    ruta_relativa = os.path.join('documentos', 'comprobantes', f"{file_id}.pdf")
-
-    if os.path.exists(ruta_absoluta):
-        print(f"[INFO] Ya existe: {ruta_absoluta}")
-        return ruta_relativa  # ← Devolvemos la ruta RELATIVA
-
-    print("[INFO] Descargando...")
 
     creds = service_account.Credentials.from_service_account_file(
         CREDENTIALS_FILE,
         scopes=["https://www.googleapis.com/auth/drive"]
     )
     service = build("drive", "v3", credentials=creds)
+
+    # Obtener metadatos para conocer el MIME type
+    file_metadata = service.files().get(fileId=file_id, fields="mimeType, name").execute()
+    mime_type = file_metadata.get("mimeType")
+    original_name = file_metadata.get("name")
+
+    print(f"[DEBUG] MIME type: {mime_type}")
+    print(f"[DEBUG] Nombre original: {original_name}")
+
+    # Determinar la extensión
+    extension = guess_extension(mime_type) or '.bin'
+
+    # Si guess_extension no devuelve algo útil, usar el nombre original
+    if not extension or extension == '.ksh':  # Algunos casos fallan
+        extension = os.path.splitext(original_name)[-1]
+
+    # Crear nombre final con extensión correcta
+    filename = f"{file_id}{extension}"
+    ruta_absoluta = os.path.join(CARPETA_DESTINO, filename)
+    ruta_relativa = os.path.join('documentos', 'comprobantes', filename)
+
+    if os.path.exists(ruta_absoluta):
+        print(f"[INFO] Ya existe: {ruta_absoluta}")
+        return ruta_relativa
+
+    # Descargar archivo
+    print("[INFO] Descargando...")
 
     request = service.files().get_media(fileId=file_id)
     fh = io.FileIO(ruta_absoluta, 'wb')
@@ -60,4 +77,5 @@ def descargar_comprobante_drive(url):
         print(f"[INFO] Progreso: {int(status.progress() * 100)}%")
 
     print(f"[SUCCESS] Descargado en: {ruta_absoluta}")
-    return ruta_relativa  # ← Devolvemos la ruta RELATIVA
+    return ruta_relativa
+

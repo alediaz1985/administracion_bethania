@@ -84,7 +84,7 @@ class Cuota(models.Model):
     mes = models.IntegerField(verbose_name="Mes de la Cuota")
     monto_cuota = models.DecimalField(max_digits=10, decimal_places=2, verbose_name="Monto de la Cuota")
     pagado = models.BooleanField(default=False, verbose_name="Pagado")
-    fecha_pago = models.DateField(null=True, blank=True, verbose_name="Fecha de Pago")
+    fecha_pago = models.DateTimeField(null=True, blank=True, verbose_name="Fecha de Pago")  # Cambiar a DateTimeField
     fuera_de_termino = models.BooleanField(default=False, verbose_name="Fuera de Término")
     interes_aplicado = models.DecimalField(max_digits=10, decimal_places=2, default=0, verbose_name="Interés Aplicado")
     total_a_pagar = models.DecimalField(max_digits=10, decimal_places=2, verbose_name="Total a Pagar")

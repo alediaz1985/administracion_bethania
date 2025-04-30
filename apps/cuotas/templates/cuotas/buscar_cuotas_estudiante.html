@@ -18,8 +18,10 @@
         <div class="estado-cuotas__buscador">
           <div class="estado-cuotas__grupo grupo-1">
             <label for="cuil" class="estado-cuotas__etiqueta">CUIL del Estudiante:</label>
-            <input type="text" id="cuil" name="cuil_estudiante" required class="estado-cuotas__input">
-          </div>
+            <!-- Si el CUIL está presente en la URL, lo ponemos en el campo -->
+            <input type="text" id="cuil" name="cuil_estudiante" required class="estado-cuotas__input" 
+            value="{% if request.GET.cuil %}{{ request.GET.cuil }}{% endif %}">        
+          </div>        
           <div class="estado-cuotas__grupo grupo-2">
             <label for="ciclo_lectivo" class="estado-cuotas__etiqueta">Ciclo lectivo:</label>
             <select name="ciclo_lectivo" id="ciclo_lectivo" required class="estado-cuotas__select">
@@ -73,6 +75,7 @@
               <th>Fuera de Término</th>
               <th>Interés</th>
               <th>Total a Pagar</th>
+              <th></th>
             </tr>
           </thead>
           <tbody>
@@ -85,6 +88,19 @@
               <td>{{ cuota.fuera_de_termino|yesno:"Sí,No" }}</td>
               <td>${{ cuota.interes_aplicado }}</td>
               <td>${{ cuota.total_a_pagar }}</td>
+              <td>
+                {% if cuota.pagado %}
+                  <span class="text-success">Pagada</span>
+                  <form action="{% url 'cuotas:deshacer_pago' cuota.id %}" method="post" style="display:inline;">
+                      {% csrf_token %}
+                      <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm('¿Seguro que deseas deshacer este pago?');">
+                          Deshacer pago
+                      </button>
+                  </form>
+                {% else %}
+                    <a href="{% url 'cuotas:realizar_pago' cuota.id %}" class="btn btn-primary btn-sm">Pagar</a>
+                {% endif %}
+            </td>
             </tr>
             {% endfor %}
           </tbody>
@@ -98,4 +114,33 @@
     </section>
   </div>
 </article>
+
+{% if messages %}
+  <div class="toast-mensaje" id="toastMensaje">
+    {% for message in messages %}
+      <div class="toast-mensaje__alerta {{ message.tags }}">{{ message }}</div>
+    {% endfor %}
+  </div>
+{% endif %}
+
+<script>
+  // Obtener el parámetro 'cuil' de la URL
+  const urlParams = new URLSearchParams(window.location.search);
+  const cuil = urlParams.get('cuil');
+
+  // Si existe el CUIL en la URL, ponerlo automáticamente en el campo de búsqueda
+  if (cuil) {
+      document.getElementById('cuil').value = cuil;
+  }
+
+  window.addEventListener("load", () => {
+    const toast = document.getElementById("toastMensaje");
+    if (toast) {
+      setTimeout(() => {
+        toast.remove();
+      }, 5000); // 5 segundos
+    }
+  });
+</script>
+
 {% endblock %}

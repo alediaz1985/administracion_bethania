@@ -125,31 +125,31 @@ def consultar_ciclo_lectivo(request):
     })
 
 # Pago de Cuotas
-def pago_cuotas(request):
-    cuotas = Cuota.objects.filter(pagado=False)
-    medios_pago = MedioPago.objects.all()
+# def pago_cuotas(request):
+#     cuotas = Cuota.objects.filter(pagado=False)
+#     medios_pago = MedioPago.objects.all()
 
-    if request.method == 'POST':
-        cuota_id = request.POST.get('cuota_id')
-        monto_pagado = request.POST.get('monto_pagado')
-        medio_pago_id = request.POST.get('medio_pago')
+#     if request.method == 'POST':
+#         cuota_id = request.POST.get('cuota_id')
+#         monto_pagado = request.POST.get('monto_pagado')
+#         medio_pago_id = request.POST.get('medio_pago')
 
-        cuota = get_object_or_404(Cuota, id=cuota_id)
-        medio_pago = get_object_or_404(MedioPago, id=medio_pago_id)
+#         cuota = get_object_or_404(Cuota, id=cuota_id)
+#         medio_pago = get_object_or_404(MedioPago, id=medio_pago_id)
 
-        Pago.objects.create(
-            cuota=cuota,
-            monto_pagado=monto_pagado,
-            medio_pago=medio_pago
-        )
-        cuota.pagado = True
-        cuota.save()
-        messages.success(request, f"Pago registrado correctamente para la cuota del mes {cuota.mes}.")
+#         Pago.objects.create(
+#             cuota=cuota,
+#             monto_pagado=monto_pagado,
+#             medio_pago=medio_pago
+#         )
+#         cuota.pagado = True
+#         cuota.save()
+#         messages.success(request, f"Pago registrado correctamente para la cuota del mes {cuota.mes}.")
 
-    return render(request, 'cuotas/pago_cuotas.html', {
-        'cuotas': cuotas,
-        'medios_pago': medios_pago,
-    })
+#     return render(request, 'cuotas/pago_cuotas.html', {
+#         'cuotas': cuotas,
+#         'medios_pago': medios_pago,
+#     })
 
 # Consultar Deudas
 def consultar_deudas(request):
@@ -678,4 +678,65 @@ def buscar_comprobantes(request):
     })
 
 
+from django.shortcuts import render, get_object_or_404, redirect
+from .models import Cuota, MedioPago, Pago
+from django.contrib import messages
+from django.urls import reverse
+from django.http import HttpResponseRedirect
 
+from django.utils import timezone
+
+def realizar_pago(request, cuota_id):
+    cuota = get_object_or_404(Cuota, id=cuota_id)
+    medios_pago = MedioPago.objects.all()
+
+    if request.method == 'POST':
+        medio_pago_id = request.POST.get('medio_pago')
+        comentario = request.POST.get('comentario', '')
+        medio_pago = get_object_or_404(MedioPago, id=medio_pago_id)
+
+        pago = Pago.objects.create(
+            cuota=cuota,
+            monto_pagado=cuota.total_a_pagar,
+            medio_pago=medio_pago,
+            comentario=comentario
+        )
+
+        cuota.pagado = True
+        cuota.fecha_pago = timezone.now()  # Asignar la fecha y hora actual
+        cuota.save()
+
+        messages.success(request, 'Pago registrado correctamente.')
+
+        # Obtener el CUIL y ciclo lectivo desde la inscripción del estudiante
+        estudiante = cuota.inscripcion.cuil_alumno
+        ciclo_id = cuota.inscripcion.ciclo_lectivo.id
+
+        url = reverse('cuotas:buscar_cuotas_estudiante')
+        return HttpResponseRedirect(f'{url}?cuil={estudiante.cuil_estudiante}&ciclo_lectivo={ciclo_id}')
+
+    return render(request, 'cuotas/realizar_pago.html', {
+        'cuota': cuota,
+        'medios_pago': medios_pago
+    })
+
+
+def deshacer_pago(request, cuota_id):
+    cuota = get_object_or_404(Cuota, id=cuota_id)
+    pago = Pago.objects.filter(cuota=cuota).first()
+
+    if pago:
+        pago.delete()
+        cuota.pagado = False
+        cuota.fecha_pago = None
+        cuota.save()
+        messages.success(request, 'El pago ha sido deshecho correctamente.')
+    else:
+        messages.warning(request, 'No se encontró un pago para esta cuota.')
+
+    # Obtener el CUIL y ciclo lectivo desde la inscripción del estudiante
+    estudiante = cuota.inscripcion.cuil_alumno
+    ciclo_id = cuota.inscripcion.ciclo_lectivo.id
+
+    url = reverse('cuotas:buscar_cuotas_estudiante')
+    return HttpResponseRedirect(f'{url}?cuil={estudiante.cuil_estudiante}&ciclo_lectivo={ciclo_id}')

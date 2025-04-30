@@ -4,6 +4,8 @@
 
 {% load static %}
 
+{% get_media_prefix as MEDIA_URL %}
+
 {% block extra_styles %}
     <link rel="stylesheet" href="{% static 'cuotas/css/consulta_comprobante_nuevo.css' %}">
 {% endblock %}
@@ -47,9 +49,9 @@
         <section class="consulta__resultados">
             <h3 class="consulta__subtitulo">Resultados de la búsqueda</h3>
             <!-- Botón siempre visible -->
-            <form method="POST" action="{% url 'cuotas:buscar_comprobantes' %}">
+            <form id="form-actualizar" method="POST" action="{% url 'cuotas:buscar_comprobantes' %}">
                 {% csrf_token %}
-                <button type="submit" name="descargar_todos" value="1">Descargar Todos los Comprobantes</button>
+                <button type="submit" name="descargar_todos" value="1">Actualizar Datos</button>
             </form>
 
             {% if request.GET.cuil_alumno or request.GET.fecha_desde or request.GET.fecha_hasta %}
@@ -74,15 +76,23 @@
                             <td class="tabla__celda">{{ comprobante.marca_temporal }}</td>
                             <td class="tabla__celda">
                                 {% if comprobante.ruta_local %}
-                                    <a href="{{ MEDIA_URL }}{{ comprobante.ruta_local }}" target="_blank">
-                                        <button class="boton boton--ver" type="button">Ver Comprobante</button>
-                                    </a>
-                                {% else %}
-                                    <button class="boton boton--ver" type="button" disabled>Comprobante no disponible</button>
+                                    {% with comprobante.ruta_local|lower as ruta %}
+                                        {% if ruta|slice:"-4:" == ".pdf" %}
+                                            <a href="/media/{{ comprobante.ruta_local }}" target="_blank">
+                                                <button class="boton boton--ver" type="button">Ver Comprobante</button>
+                                            </a>
+                                        {% elif ruta|slice:"-4:" == ".jpg" or ruta|slice:"-5:" == ".jpeg" or ruta|slice:"-4:" == ".png" or ruta|slice:"-4:" == ".gif" %}
+                                            <a href="/media/{{ comprobante.ruta_local }}" target="_blank">
+                                                <button class="boton boton--ver" type="button">Ver Imagen</button>
+                                            </a>
+                                        {% else %}
+                                            <span>Archivo no compatible</span>
+                                        {% endif %}
+                                    {% endwith %}
                                 {% endif %}
-                            </td>
+                            </td>                                      
                             <td class="tabla__celda">
-                                <a href="{% url 'cuotas:buscar_cuotas_estudiante' %}">
+                                <a href="{% url 'cuotas:buscar_cuotas_estudiante' %}?cuil={{ comprobante.cuil_alumno }}">
                                     <button class="boton boton--registro" type="button">Registro del Pago</button>
                                 </a>
                             </td>
@@ -97,4 +107,24 @@
         </section>
     </div>
 </article>
+
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+    const formActualizar = document.getElementById("form-actualizar");
+
+    if (formActualizar) {
+        formActualizar.addEventListener("submit", function () {
+            const overlay = document.createElement("div");
+            overlay.classList.add("pantalla-cargando");
+            overlay.innerHTML = `
+                <div class="pantalla-cargando__contenido">
+                    🔄 Actualizando datos, por favor espere...
+                    <span class="reloj-areana"><i class="fas fa-hourglass"></i></span>
+                </div>
+            `;
+            document.body.appendChild(overlay);
+        });
+    }
+});
+</script>
 {% endblock %}

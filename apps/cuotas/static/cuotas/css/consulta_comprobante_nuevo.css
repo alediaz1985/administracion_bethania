@@ -268,3 +268,40 @@ body {
 .tabla td:last-child, .tabla th:last-child {
     border-right: none;
 }
+
+.pantalla-cargando {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background-color: rgba(0, 0, 0, 0.7);
+    color: white;
+    z-index: 99999;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1rem;
+    font-weight: bold;
+    text-align: center;
+    animation: aparecer 0.3s ease-in-out;
+}
+
+.pantalla-cargando__contenido {
+    background-color: #1e1e1e;
+    padding: 30px 40px;
+    border-radius: 12px;
+    box-shadow: 0 0 20px rgba(255, 255, 255, 0.3);
+}
+
+.reloj-areana {
+    display: inline-block;
+    font-size: 1rem;
+    margin-left: 10px;
+    animation: girar 6s linear infinite;
+}
+
+@keyframes girar {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
