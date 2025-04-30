@@ -124,7 +124,7 @@ body {
     margin: 0;
     width: 2.5rem; /* Reducir tamaño del círculo */
     height: 2.5rem; /* Reducir tamaño del círculo */
-    background: rgb(66 149 33);
+    background: #116cd4;
     border-radius: 1.25rem; /* Ajustar el radio para mantener la forma circular */
 }
 
@@ -149,7 +149,7 @@ body {
 .boton-accion__icono--flecha::before {
     position: absolute;
     content: "";
-    top: -0.29rem;
+    top: -0.27rem;
     right: 0.125rem;
     width: 0.5rem; /* Reducir el tamaño de la flecha */
     height: 0.5rem;
@@ -227,7 +227,7 @@ body {
 .tabla__columna {
     padding: 6px 8px;
     text-align: left;
-    background-color: #328beb; /* Color de fondo oscuro para los encabezados */
+    background-color: #116cd4; /* Color de fondo oscuro para los encabezados */
     color: #ffffff; /* Texto blanco */
     font-weight: bold;
     text-transform: uppercase;
@@ -304,4 +304,172 @@ body {
 @keyframes girar {
     0% { transform: rotate(0deg); }
     100% { transform: rotate(360deg); }
+}
+
+.btn-elevado {
+    background-color: #116cd4;
+    color: #ffffff;
+    font-family: "Segoe UI", "Roboto", sans-serif;
+    font-size: 1rem;
+    font-weight: 600;
+    padding: 10px 14px;
+    border: none;
+    border-radius: 14px;
+    cursor: pointer;
+    position: relative;
+    overflow: hidden;
+    transition: all 0.3s ease;
+    box-shadow: 0 10px 20px rgba(37, 99, 235, 0.4);
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin: 10px;
+}
+  
+.btn-elevado:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 12px 25px rgba(37, 99, 235, 0.5);
+}
+  
+.btn-elevado:active {
+    transform: scale(0.96);
+    box-shadow: 0 4px 12px rgba(30, 64, 175, 0.3);
+}
+  
+.btn-elevado .icono {
+    stroke: white;
+    transition: transform 0.3s ease;
+}
+  
+.btn-elevado:hover .icono {
+    transform: rotate(45deg);
+}
+  
+/* Tooltip */
+.tooltip-contenedor {
+    position: relative;
+    display: inline-block;
+}
+  
+.tooltip-text {
+    position: absolute;
+    top: -20px;
+    left: 50%;
+    transform: translateX(-30%);
+    background: #116cd4;
+    color: #fff;
+    padding: 6px 12px;
+    border-radius: 8px;
+    font-size: 0.625rem;
+    font-weight: 500;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.3s ease, transform 0.3s ease;
+    white-space: nowrap;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+    z-index: 10;
+}
+  
+.tooltip-contenedor:hover .tooltip-text {
+    opacity: 1;
+    transform: translateX(-50%) translateY(-6px);
+}
+
+.btn-ver,
+.btn-registro {
+    color: #ffffff;
+    font-family: "Segoe UI", "Roboto", sans-serif;
+    font-size: 0.75rem;
+    font-weight: 600;
+    padding: 8px 8px;
+    border: none;
+    border-radius: 10px;
+    cursor: pointer;
+    position: relative;
+    overflow: hidden;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.15);
+}
+
+/* Botón VER (Azul oscuro con ícono ojo) */
+.btn-ver {
+    background-color: #116cd4;
+}
+
+.btn-ver:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 12px 25px rgba(44, 62, 80, 0.4);
+}
+
+/* Botón REGISTRO (Verde) */
+.btn-registro {
+    background-color: #28B463;
+}
+
+.btn-registro:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 12px 25px rgba(40, 180, 99, 0.4);
+}
+
+/* Íconos sin rotación */
+.icono {
+    stroke: white;
+    transition: transform 0.3s ease;
+}
+
+.btn-ver:hover .icono,
+.btn-registro:hover .icono {
+    transform: scale(1.1); /* pequeño agrandamiento al hacer hover */
+}
+
+/* Tooltip */
+.tooltip-contenedor {
+    position: relative;
+    display: inline-block;
+}
+
+.tooltip-text {
+    position: absolute;
+    top: -20px;
+    left: 50%;
+    transform: translateX(-30%);
+    background: rgba(0, 0, 0, 0.8);
+    color: #fff;
+    padding: 6px 12px;
+    border-radius: 8px;
+    font-size: 0.625rem;
+    font-weight: 500;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.3s ease, transform 0.3s ease;
+    white-space: nowrap;
+    z-index: 10;
+}
+
+.tooltip-contenedor:hover .tooltip-text {
+    opacity: 1;
+    transform: translateX(-50%) translateY(-6px);
+}
+
+.icono-incompatible {
+    color: #e74c3c;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 24px;
+    height: 24px;
+    cursor: default;
+}
+
+.icono-alerta {
+    width: 20px;
+    height: 20px;
+}
+
+.size-6 {
+    width: 24px;
+    height: 24px;
 }

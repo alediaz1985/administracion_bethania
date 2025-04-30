@@ -100,7 +100,7 @@
                 {% else %}
                     <a href="{% url 'cuotas:realizar_pago' cuota.id %}" class="btn btn-primary btn-sm">Pagar</a>
                 {% endif %}
-            </td>
+              </td>
             </tr>
             {% endfor %}
           </tbody>
@@ -116,9 +116,9 @@
 </article>
 
 {% if messages %}
-  <div class="toast-mensaje" id="toastMensaje">
+  <div class="toast-container">
     {% for message in messages %}
-      <div class="toast-mensaje__alerta {{ message.tags }}">{{ message }}</div>
+      <div class="toast {{ message.tags }}">{{ message }}</div>
     {% endfor %}
   </div>
 {% endif %}

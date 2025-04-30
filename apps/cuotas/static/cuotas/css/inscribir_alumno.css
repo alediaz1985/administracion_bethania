@@ -113,7 +113,7 @@ body {
     margin: 0;
     width: 2.5rem; /* Reducir tamaño del círculo */
     height: 2.5rem; /* Reducir tamaño del círculo */
-    background: rgb(66 149 33);
+    background: #116cd4;
     border-radius: 1.25rem; /* Ajustar el radio para mantener la forma circular */
 }
 
@@ -145,6 +145,10 @@ body {
     border-top: 0.125rem solid #fff;
     border-right: 0.125rem solid #fff;
     transform: rotate(45deg);
+}
+
+.otro-boton::before {
+    top: -0.25rem;
 }
 
 .boton-accion__texto {

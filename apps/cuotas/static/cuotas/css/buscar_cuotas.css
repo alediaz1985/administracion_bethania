@@ -123,7 +123,7 @@ body {
     margin: 0;
     width: 2.5rem; /* Reducir tamaño del círculo */
     height: 2.5rem; /* Reducir tamaño del círculo */
-    background: rgb(66 149 33);
+    background: #116cd4;
     border-radius: 1.25rem; /* Ajustar el radio para mantener la forma circular */
 }
 
@@ -310,70 +310,122 @@ body {
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
 }
 
-.toast-mensaje {
+.toast-container {
     position: fixed;
     top: 20px;
     right: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
     z-index: 9999;
-    animation: slideIn 0.7s ease-out, fadeOut 5s forwards;
 }
   
-.toast-mensaje__alerta {
+/* Base */
+.toast {
     display: flex;
     align-items: center;
-    gap: 10px;
-    background-color: #323232;
+    padding: 14px 20px;
+    min-width: 280px;
+    max-width: 360px;
+    font-family: "Segoe UI", "Roboto", sans-serif;
+    font-size: 0.9rem;
+    font-weight: 500;
     color: #fff;
-    padding: 15px 22px;
-    border-radius: 10px;
-    margin-top: 10px;
-    font-size: 0.75rem;
-    font-weight: bold;
-    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
+    border-radius: 12px;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+    border-left: 5px solid;
+    animation: slideIn 0.5s ease-out, fadeOut 6s ease forwards;
     opacity: 0.95;
-    transition: all 0.5s ease;
-    border-left: 6px solid white;
 }
   
-/* Animación de entrada */
+/* Animaciones */
 @keyframes slideIn {
-    0% { opacity: 0; transform: translateX(100%); }
-    100% { opacity: 1; transform: translateX(0); }
+    from { transform: translateX(100%); opacity: 0; }
+    to { transform: translateX(0); opacity: 1; }
 }
   
-/* Animación de salida */
 @keyframes fadeOut {
-    0%, 85% { opacity: 1; }
-    100% { opacity: 0; transform: translateY(-20px); }
+    0%, 85% { opacity: 1; transform: translateY(0); }
+    100% { opacity: 0; transform: translateY(-10px); }
 }
   
-/* Estilos por tipo de mensaje */
-.toast-mensaje__alerta.success {
-    background-color: #28a745;
-    border-left-color: #145c2a;
+  /* Colores intensos */
+.toast.success {
+    background-color: #2e7d32;
+    border-left-color: #1b5e20;
+}
+  
+.toast.error {
+    background-color: #c62828;
+    border-left-color: #8e0000;
+}
+  
+.toast.warning {
+    background-color: #f9a825;
+    border-left-color: #c17900;
+    color: #1f1f1f;
+}
+  
+.toast.info {
+    background-color: #1565c0;
+    border-left-color: #003c8f;
 }
 
-.toast-mensaje__alerta.warning {
-    background-color: #ffc107;
-    color: #212529;
-    border-left-color: #a47c00;
+.btn-ver,
+.btn-registro {
+      color: #ffffff;
+      font-family: "Segoe UI", "Roboto", sans-serif;
+      font-size: 0.75rem;
+      font-weight: 600;
+      padding: 8px 8px;
+      border: none;
+      border-radius: 10px;
+      cursor: pointer;
+      position: relative;
+      overflow: hidden;
+      transition: all 0.3s ease;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 10px 20px rgba(0, 0, 0, 0.15);
+}
+  
+/* Botón VER (Azul oscuro con ícono ojo) */
+.btn-ver {
+      background-color: #116cd4;
+}
+  
+.btn-ver:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 12px 25px rgba(44, 62, 80, 0.4);
+}
+  
+/* Botón REGISTRO (Verde) */
+.btn-registro {
+      background-color: #28B463;
+}
+  
+.btn-registro:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 12px 25px rgba(40, 180, 99, 0.4);
+}
+  
+/* Íconos sin rotación */
+.icono {
+      stroke: white;
+      transition: transform 0.3s ease;
+}
+  
+.btn-ver:hover .icono,
+.btn-registro:hover .icono {
+      transform: scale(1.1); /* pequeño agrandamiento al hacer hover */
 }
 
-.toast-mensaje__alerta.error {
-    background-color: #dc3545;
-    border-left-color: #721c24;
+.size-6 {
+    width: 24px;
+    height: 24px;
 }
 
-.toast-mensaje__alerta.info {
-    background-color: #17a2b8;
-    border-left-color: #0a5f6a;
-}
-
-@keyframes fadeOut {
-    0% { opacity: 1; transform: translateY(0); }
-    90% { opacity: 1; }
-    100% { opacity: 0; transform: translateY(-20px); }
-}  
 
 /* Monitores grandes */
 @media (min-width: 1600px) {
