@@ -87,8 +87,8 @@ body {
 
 .button-submit,
 .button-cancel {
-    padding: 12px 20px;
-    font-size: 16px;
+    padding: 8px 20px;
+    font-size: 0.75rem;
     border-radius: 8px;
     cursor: pointer;
     text-align: center;

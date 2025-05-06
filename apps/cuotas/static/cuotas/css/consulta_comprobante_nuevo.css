@@ -433,7 +433,7 @@ body {
 
 .tooltip-text {
     position: absolute;
-    top: -20px;
+    top: -30px;
     left: 50%;
     transform: translateX(-30%);
     background: rgba(0, 0, 0, 0.8);
@@ -470,6 +470,6 @@ body {
 }
 
 .size-6 {
-    width: 24px;
-    height: 24px;
+    width: 1.125rem;
+    height: 1.125rem;
 }
