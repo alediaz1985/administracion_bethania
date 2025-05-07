@@ -571,13 +571,29 @@ def buscar_estudiantes_aprobados(request):
         'sin_resultados': sin_resultados,  # 🔧 Y esta línea en el contexto
     })
 
+from datetime import date
+from decimal import Decimal, ROUND_HALF_UP
+
+# Mapeo de cuota.mes (1 a 10) al mes real (marzo a diciembre)
+CUOTA_A_MES = {
+    1: 3,
+    2: 4,
+    3: 5,
+    4: 6,
+    5: 7,
+    6: 8,
+    7: 9,
+    8: 10,
+    9: 11,
+    10: 12,
+}
+
 def buscar_cuotas_estudiante(request):
     estudiante = None
     inscripcion = None
     cuotas = []
     ciclo_seleccionado = None
 
-    # Obtener todos los ciclos lectivos ordenados por año (del más reciente al más antiguo)
     ciclos_lectivos = CicloLectivo.objects.order_by('-año_lectivo')
 
     if request.method == 'POST':
@@ -591,25 +607,27 @@ def buscar_cuotas_estudiante(request):
             if inscripcion:
                 cuotas = Cuota.objects.filter(inscripcion=inscripcion).order_by('mes')
                 hoy = date.today()
+                año = inscripcion.ciclo_lectivo.fecha_inicio.year
 
                 for cuota in cuotas:
                     if not cuota.pagado:
-                        fecha_vencimiento = inscripcion.ciclo_lectivo.fecha_inicio + relativedelta(months=cuota.mes - 1)
+                        mes_real = CUOTA_A_MES.get(cuota.mes)
+                        fecha_vencimiento = date(año, mes_real, 15)
 
-                        if fecha_vencimiento < hoy or (
-                            fecha_vencimiento.month == hoy.month and
-                            fecha_vencimiento.year == hoy.year and
-                            hoy.day > 15
-                        ):
+                        # Aplicar interés solo si no se aplicó antes
+                        if hoy > fecha_vencimiento and not cuota.fuera_de_termino:
                             interes = cuota.monto_cuota * Decimal('0.10')
-                            
-                            # Redondear a 2 decimales
                             interes = interes.quantize(Decimal('0.01'), rounding=ROUND_HALF_UP)
-                            
+
+                            cuota.interes_aplicado = interes
                             cuota.total_a_pagar = (cuota.monto_cuota + interes).quantize(Decimal('0.01'), rounding=ROUND_HALF_UP)
                             cuota.fuera_de_termino = True
-                            cuota.interes_aplicado = interes
-                            cuota.save()  # Guardamos los cambios
+                            cuota.save()
+                        
+                        # Si no está fuera de término y no tiene total_a_pagar, igual seteamos el monto original
+                        elif not cuota.fuera_de_termino and not cuota.total_a_pagar:
+                            cuota.total_a_pagar = cuota.monto_cuota
+                            cuota.save()
 
     return render(request, 'cuotas/buscar_cuotas_estudiante.html', {
         'estudiante': estudiante,
@@ -618,6 +636,7 @@ def buscar_cuotas_estudiante(request):
         'ciclos_lectivos': ciclos_lectivos,
         'ciclo_seleccionado': ciclo_seleccionado,
     })
+
 
 ''' BUSCAR COMPROBANTES '''
 

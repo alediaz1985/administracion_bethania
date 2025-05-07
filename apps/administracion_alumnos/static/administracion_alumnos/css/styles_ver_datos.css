@@ -19,7 +19,8 @@ h1 {
     padding: 65px 0;
     display: flex;
     flex-direction: column;
-    align-items: stretch; /* Permite que los hijos se expandan a todo el ancho */
+    /* align-items: stretch;  */
+    /* Permite que los hijos se expandan a todo el ancho */
 }
 
 .see-student-container h1 {
@@ -510,7 +511,7 @@ tbody td {
 .contenedor {
     position: absolute;
     z-index: 20; /* Asegura que los botones no cubran el contenido */
-    top: 75px;
+    top: 70px;
 }
 
 .Documents-btn {
@@ -528,7 +529,7 @@ tbody td {
     box-shadow: 0 8px 16px rgba(0, 0, 0, 0.4); /* Sombra más marcada */
     float: left; /* Lleva el botón al borde izquierdo */
     margin-left: 13px; /* Asegura que no haya margen extra a la izquierda */
-    margin-bottom: 20px;
+    margin-bottom: 30px;
     padding-right: 10px;
 }
 
@@ -589,6 +590,14 @@ tbody td {
 
 .Documents-btn:hover .fileFront {
     transform: rotateX(30deg);
+}
+
+.boton-para-descargar {
+    width: 50%;
+}
+
+.boton-descargar {
+    
 }
   
 @media (min-width: 1600px) {

@@ -246,7 +246,7 @@ body {
 .estado-cuotas__tabla th {
     padding: 6px 8px;
     text-align: left;
-    background-color: #328beb; /* Color de fondo oscuro para los encabezados */
+    background-color: #116cd4; /* Color de fondo oscuro para los encabezados */
     color: #ffffff; /* Texto blanco */
     font-weight: bold;
     text-transform: uppercase;
@@ -480,7 +480,7 @@ body {
 @media (min-width: 1600px) {
 
     .estado-cuotas {
-        min-height: calc(100vh - 130px);
+        min-height: calc(100vh - 100px);
     }
 
     .estado-cuotas__formulario {
@@ -527,7 +527,7 @@ body {
         margin: 0;
         width: 3rem;
         height: 3rem;
-        background: rgb(66 149 33);
+        background: #116cd4;
         border-radius: 1.625rem;
     }
 
@@ -616,21 +616,20 @@ body {
         font-size: 1.125rem;
     }
 
-    /* Estilos generales de la tabla */
-    .estado-cuotas__tabla {
-        width: 100%;
-        border-collapse: collapse; /* Quitar el espacio entre celdas */
-        margin-top: 20px;
-        background-color: #ffffff;
-        border-radius: 8px;
-        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-        overflow: hidden;
-    }
-
     /* Encabezados de la tabla */
     .estado-cuotas__tabla th,
     .estado-cuotas__tabla td {
+        padding: 12px 14px;
         font-size: 1rem;
+    }
+
+    .size-6 {
+        width: 1.5rem;
+        height: 1.5rem;
+    }
+
+    .text-success {
+        font-size: 0.875rem;
     }
 }
 

@@ -20,7 +20,7 @@ body {
 }
 
 .alumnos-scroll-container {
-    height: calc(100vh - 248px);
+    height: calc(100vh - 216px);
     overflow-y: auto;  /* Activar scroll vertical */
     border: 1px solid #ccc;
     padding: 10px;
@@ -495,7 +495,7 @@ label {
 @media (max-width: 1366px) {
 
     .alumnos-scroll-container {
-        height: calc(100vh - 203px);
+        height: calc(100vh - 202px);
     }
 
     .alumnos-table th, .alumnos-table td {
