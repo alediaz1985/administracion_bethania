@@ -247,7 +247,7 @@ body {
 /* Monitores grandes */
 @media (min-width: 1600px) {
     .consulta-alumno {
-        height: calc(100vh - 130px);
+        height: calc(100vh - 100px);
     }
 
     .consulta-alumno__etiqueta {

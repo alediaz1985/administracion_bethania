@@ -28,18 +28,37 @@ function toggleSidebar() {
     const sidebar = document.getElementById("sidebar");
     const content = document.querySelector(".open-btn");
 
-    // Alterna la clase 'active' en la barra lateral
+    // Alterna la clase 'active'
     sidebar.classList.toggle("active");
 
-    // Ajusta el margen del contenido principal
+    // Ocultar o mostrar iconos
     if (sidebar.classList.contains("active")) {
         content.style.marginLeft = "0.5%";
-        sidebar.classList.remove("no-icons");  // 🔓 Mostrar íconos
+        sidebar.classList.remove("no-icons");
     } else {
         content.style.marginLeft = "0px";
-        sidebar.classList.add("no-icons");  // ❌ Ocultar íconos
+        sidebar.classList.add("no-icons");
     }
+
+    // ✅ Mover el botón al 20% o 4% según el estado
+    content.style.left = sidebar.classList.contains("active") ? "15%" : "4%";
 }
+
+document.addEventListener('click', function (e) {
+    const sidebar = document.getElementById("sidebar");
+    const content = document.querySelector(".open-btn"); // El botón de abrir la barra
+    const isClickInside = sidebar.contains(e.target);
+    const isToggleButton = e.target.closest('.open-btn'); // Comprobamos si el clic fue en el botón
+
+    // Si el clic fue fuera de la barra y el botón
+    if (!isClickInside && !isToggleButton && sidebar.classList.contains("active")) {
+        sidebar.classList.remove("active");
+
+        // Restablecemos la posición del botón al cerrarse la barra
+        content.style.marginLeft = "0px";
+        content.style.left = "4%"; // Volvemos al estado inicial (barra cerrada)
+    }
+});
 
 // Función para expandir los subitems de un ítem específico
 const expandBtns = document.querySelectorAll('.sidebar-items > li > a');

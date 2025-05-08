@@ -265,6 +265,10 @@ label {
 
 /* Monitores grandes */
 @media (min-width: 1600px) {
+    .montos {
+        min-height: calc(100vh - 100px);
+    }
+
     .montos__titulo {
         font-size: 1.125rem;
     }

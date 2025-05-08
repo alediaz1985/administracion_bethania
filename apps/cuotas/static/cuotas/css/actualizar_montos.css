@@ -190,7 +190,7 @@ body {
 /* Monitores grandes */
 @media (min-width: 1600px) {
     .montos {
-        height: calc(100vh - 130px);
+        height: calc(100vh - 100px);
     }
 
     .montos__contenedor {

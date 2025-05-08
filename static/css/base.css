@@ -10,6 +10,13 @@ body {
 }
 
 /* Barra Lateral */
+
+.barra-lateral {
+    display: flex;
+    flex-direction: column;
+    width: 4%;
+}
+
 .sidebar {
     width: 4%; 
     height: 100vh;
@@ -26,35 +33,20 @@ body {
 }
 
 .sidebar.active {
-    width: 15%; 
+    width: 15%;
 }
-
-.close-btn {
-    background-color: transparent;
-    border: none;
-    color: #ecf0f1;
-    font-size: 1.5em;
-    font-weight: bold;
-    cursor: pointer;
-    padding: 5px 5px;
-    position: absolute;
-    top: 10px;
-    right: 10px;
-    display: none; 
-}
-
 
 .sidebar.active .close-btn {
     display: block;
     color: #1d1d1d;
 }
 
-
 .sidebar-items {
     list-style: none;
     padding: 30px 0;
     margin: 0;
     color: #000;
+    font-size: 2rem;
 }
 
 .sidebar-items li {
@@ -72,7 +64,7 @@ body {
     color: #1d1d1d;
     font-size: 1rem;
     transition: color 0.3s, background 0.3s;
-    padding: 5px 0;
+    padding: 5px 5px;
     color: #000
 }
 
@@ -103,8 +95,8 @@ body {
     display: none;
 }
 
-.sidebar-items li a:hover {
-    background-color: rgba(0, 0, 0, 0.5);
+.sidebar-items li a:active {
+    background-color: rgba(0, 0, 0, 0.9);
     color: white;
     border-radius: 5px;
 }
@@ -129,7 +121,7 @@ body {
 
 .subitems a:hover {
     color: #ffffff;
-    background-color: #1abc9c;
+    background-color: #707070;
     border-radius: 5px;
 }
 
@@ -149,18 +141,20 @@ body {
     display: none;
 }
 
-
 .sidebar.active .expand-btn {
     display: block; 
 }
 
 .expand-btn:hover {
-    color: #007bff;
+    color: #707070;
 }
-
 
 .subitems.active {
     display: block; 
+}
+
+.boton-open {
+    display: flex;
 }
 
 .open-btn {
@@ -172,28 +166,16 @@ body {
     padding: 6px 15px;
     margin: 6px 0;
     position: fixed;
-    top: 5px;
-    left: 5%;
     border-radius: 5px;
     z-index: 1100;
     transition: left 0.3s ease, background 0.3s ease; 
+    left: 4%; /* Ajuste de posición inicial */
 }
 
 .open-btn:hover {
     background-color: rgba(0, 0, 0, 0.5);
     color: #ffffff;
 }
-
-
-.sidebar.active ~ .open-btn {
-    left: 15%; 
-}
-
-
-.sidebar:not(.active) ~ .open-btn {
-    left:5px; 
-}
-
 
 .main-content {
     margin-left: 5%; 
@@ -204,11 +186,9 @@ body {
     margin-left: 20%; 
 }
 
-
 .sidebar:not(.active) .sidebar-items li a span.text {
     display: none; 
 }
-
 
 .sidebar.active .sidebar-items li a .text {
     display: inline-block; 
@@ -355,6 +335,7 @@ body {
 
     .sidebar-items li a {
         font-size: 0.875rem; /* Ajusta el tamaño del texto */
+        padding: 10px 15px;
     }
 
     .sidebar-items li a span {
@@ -372,6 +353,14 @@ body {
 
     .close-btn {
         font-size: 0.875rem;
+    }
+
+    .footer {
+        height: 50px;
+    }
+
+    .bottom-footer p {
+        font-size: 1rem;
     }
 
 }

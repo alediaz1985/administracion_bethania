@@ -21,6 +21,8 @@ body {
     justify-content: center;
     float: right;
     display: flex; /* Usamos flexbox para centrar */
+    justify-content: center; /* Centrado horizontal */
+    align-items: center; /* Centrado vertical */
 }
 
 .consulta__contenedor {
@@ -28,7 +30,7 @@ body {
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    width: 60%;
+    width: 90%;
     margin: 20px auto; /* Centrado horizontal */
     border-radius: 10px;
     background: linear-gradient(360deg,rgba(134, 134, 135, 1) 0%, rgba(167, 173, 185, 1) 35%, rgba(201, 201, 202, 1) 100%);
@@ -69,7 +71,7 @@ body {
 }
 
 .consulta__input {
-    width: 100%;
+    width: 50%;
     padding: 10px;
     font-size: 0.75rem;
     border: 1px solid #95a5a6;
@@ -112,7 +114,7 @@ body {
     margin: 0;
     width: 2.5rem; /* Reducir tamaño del círculo */
     height: 2.5rem; /* Reducir tamaño del círculo */
-    background: rgb(66 149 33);
+    background: #116cd4;
     border-radius: 1.25rem; /* Ajustar el radio para mantener la forma circular */
 }
 
@@ -184,7 +186,6 @@ body {
     justify-content: flex-end;
     align-items: center;
     width: 100%;
-    padding: 0 30px 0 0; /* espacio hacia el borde derecho */
 }
 
 .descargar-archivos-button {
@@ -192,12 +193,12 @@ body {
     padding: 10px 20px;
     background: rgb(66, 149, 33);
     color: #fff;
-    font-size: 13px;
+    font-size: 0.75rem;
     text-align: center;
     text-decoration: none;
     border-radius: 8px;
     transition: background-color 0.3s ease;
-    margin: 30px 0;
+    margin: 20px 20px 20px 0;
     text-transform: uppercase;
 }
 
@@ -266,7 +267,127 @@ body {
 }
 
 @media (min-width: 1600px) {
+    .consulta {
+        min-height: calc(100vh - 100px);
+    }
+
+    .consulta__titulo {
+        font-size: 1.125rem;
+        padding: 30px 0;
+    }
+
+    .consulta__formulario {
+        gap: 2.5rem;
+        padding: 50px;
+    }
+
+    .consulta__etiqueta {
+        font-size: 1rem;
+    }
     
+    .consulta__input {
+        font-size: 1rem;
+    }
+    
+    .consulta__input-fecha {
+        font-size: 1rem;
+    }
+
+    /* From Uiverse.io by cssbuttons-io */ 
+    .boton-accion {
+        position: relative;
+        display: inline-block;
+        cursor: pointer;
+        outline: none;
+        border: 0;
+        vertical-align: middle;
+        text-decoration: none;
+        background: transparent;
+        padding: 0;
+        font-size: inherit;
+        font-family: inherit;
+        width: 12rem;
+        height: auto;
+    }
+
+    .boton-accion__circulo {
+        transition: all 0.45s cubic-bezier(0.65, 0, 0.076, 1);
+        position: relative;
+        display: block;
+        margin: 0;
+        width: 3rem;
+        height: 3rem;
+        background: #116cd4;
+        border-radius: 1.625rem;
+    }
+
+    .boton-accion__icono {
+        transition: all 0.45s cubic-bezier(0.65, 0, 0.076, 1);
+        position: absolute;
+        top: 0;
+        bottom: 0;
+        margin: auto;
+        background: #fff;
+    }
+
+    .boton-accion__icono--flecha {
+        left: 0.625rem;
+        width: 1.125rem;
+        height: 0.125rem;
+        background: none;
+    }
+
+    .boton-accion__icono--flecha::before {
+        position: absolute;
+        content: "";
+        top: -0.29rem;
+        right: 0.0625rem;
+        width: 0.625rem;
+        height: 0.625rem;
+        border-top: 0.125rem solid #fff;
+        border-right: 0.125rem solid #fff;
+        transform: rotate(45deg);
+    }
+
+    .boton-accion__texto {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: all 0.45s cubic-bezier(0.65, 0, 0.076, 1);
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        padding: 0.75rem 0;
+        margin: 0 0 0 1.85rem;
+        color: #282936;
+        font-size: 1rem;
+        font-weight: 700;
+        line-height: 1.6;
+        text-align: center;
+        text-transform: uppercase;
+    }
+
+    .boton-accion:hover .boton-accion__circulo {
+        width: 100%;
+    }
+
+    .boton-accion:hover .boton-accion__icono--flecha {
+        background: #fff;
+        transform: translate(1rem, 0);
+    }
+
+    .boton-accion:hover .boton-accion__texto {
+        color: #fff;
+    }
+
+    .descargar-archivos-button {
+        background: #116cd4;
+        color: #fff;
+        font-size: 1rem;
+        margin: 40px 40px 40px 0;
+    }
 }
 
 /* Laptop y notebook */
