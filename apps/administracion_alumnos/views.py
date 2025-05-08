@@ -168,7 +168,7 @@ def registrar_estudiante(request):
             messages.error(request, 'Por favor, corrija los errores a continuación.')
     else:
         form = EstudianteForm()
-    return render(request, 'administracion_estudiantes/registrar_estudiante.html', {'form': form})
+    return render(request, 'administracion_alumnos/registrar_estudiante.html', {'form': form})
 
 
 # Función para generar un PDF con todos los campos del estudiante
@@ -221,15 +221,97 @@ def generar_pdf_estudiante(estudiante, datos_institucion, logo_path):
         elements.append(Paragraph("Logo no disponible", styles['Normal']))
 
 
+    from reportlab.lib.units import cm
+    from PIL import Image as PilImage
 
+    # Crear estilos
+    styles = getSampleStyleSheet()
+
+    # Definir tamaño objetivo en píxeles (4x4 cm ≈ 113x113 px a 72 dpi)
+    target_cm = 4
+    target_px = int(target_cm * cm / 0.352777778)  # 1 cm ≈ 28.35 pt; 1 pt = 0.352777778 mm
+
+    foto_est = None
+    foto_id = None
+    extensiones_validas = ['.jpg', '.jpeg', '.png']
+
+    if estudiante.foto_estudiante and "id=" in estudiante.foto_estudiante:
+        foto_id = estudiante.foto_estudiante.split("id=")[-1]
+
+    if foto_id:
+        carpeta_fotos = os.path.join(settings.MEDIA_ROOT, 'documentos', 'fotoPerfilEstudiante')
+        for archivo in os.listdir(carpeta_fotos):
+            nombre, extension = os.path.splitext(archivo)
+            if archivo.startswith(foto_id) and extension.lower() in extensiones_validas:
+                ruta_foto = os.path.join(carpeta_fotos, archivo)
+                if os.path.exists(ruta_foto):
+                    try:
+                        # Abrir imagen original
+                        with PilImage.open(ruta_foto) as im:
+                            width, height = im.size
+                            aspect = width / height
+                            target_aspect = 1  # 4x4 cm => cuadrado
+
+                            # Recortar proporcionalmente al centro
+                            if aspect > target_aspect:
+                                # Imagen más ancha que alta: recortar bordes laterales
+                                new_width = int(height * target_aspect)
+                                left = (width - new_width) // 2
+                                right = left + new_width
+                                top = 0
+                                bottom = height
+                            else:
+                                # Imagen más alta que ancha: recortar partes superior/inferior
+                                new_height = int(width / target_aspect)
+                                top = (height - new_height) // 2
+                                bottom = top + new_height
+                                left = 0
+                                right = width
+
+                            im_cropped = im.crop((left, top, right, bottom))
+                            im_cropped = im_cropped.resize((int(4*cm), int(4*cm)))
+
+                            # Guardar imagen temporal
+                            temp_path = os.path.join(settings.MEDIA_ROOT, f"temp_foto_{estudiante.pk}.png")
+                            im_cropped.save(temp_path)
+
+                            # Usar en ReportLab
+                            foto_est = Image(temp_path, width=4*cm, height=4*cm)
+
+                    except Exception as e:
+                        print("Error procesando imagen:", e)
+                        foto_est = Paragraph("Foto no disponible", styles["Normal"])
+                break
+
+    if not foto_est:
+        foto_est = Paragraph("Foto no disponible", styles["Normal"])
+
+    # Tabla de encabezado con foto y datos de institución
+    info_institucion = [
+        Paragraph(datos_institucion["Nombre"], styles['Heading3']),
+        Paragraph(datos_institucion["Dirección"], styles['Normal']),
+        Paragraph(f"Teléfono: {datos_institucion['Teléfono']}", styles['Normal']),
+        Paragraph(f"Email: {datos_institucion['Email']}", styles['Normal'])
+    ]
+
+    encabezado_tabla = Table([[info_institucion, foto_est]], colWidths=[12 * cm, 4 * cm])
+    encabezado_tabla.setStyle(TableStyle([
+        ('VALIGN', (0, 0), (-1, -1), 'TOP'),
+        ('ALIGN', (1, 0), (1, 0), 'CENTER')
+    ]))
+
+    elements.append(encabezado_tabla)
+    elements.append(Spacer(1, 0.25 * inch))
+
+
+    # Otra forma de titulo institucion 
     # Información de la institución
-    elements.append(Paragraph(datos_institucion["Nombre"], styles['Title']))
-    elements.append(Paragraph(datos_institucion["Dirección"], styles['Normal']))
-    elements.append(Paragraph(f"Teléfono: {datos_institucion['Teléfono']}", styles['Normal']))
-    elements.append(Paragraph(f"Email: {datos_institucion['Email']}", styles['Normal']))
+    #elements.append(Paragraph(datos_institucion["Nombre"], styles['Title']))
+    #elements.append(Paragraph(datos_institucion["Dirección"], styles['Normal']))
+    #elements.append(Paragraph(f"Teléfono: {datos_institucion['Teléfono']}", styles['Normal']))
+    #elements.append(Paragraph(f"Email: {datos_institucion['Email']}", styles['Normal']))
 
     # Datos del estudiante
-    elements.append(Spacer(1, 0.25*inch))
     elements.append(Paragraph("Ficha del Estudiante", styles['Heading2']))
 
     # Crear una lista con todos los campos del estudiante
@@ -379,7 +461,7 @@ def generar_pdf_estudiante(estudiante, datos_institucion, logo_path):
     datos_estudiante = [[label, value] for label, value in datos_estudiante if value]
 
     # Crear una tabla con los datos filtrados
-    tabla = Table(datos_estudiante, colWidths=[3*inch, 3.5*inch])
+    tabla = Table(datos_estudiante, colWidths=[4.1*inch, 3.5*inch])
     tabla.setStyle(TableStyle([
         ('BACKGROUND', (0, 0), (-1, 0), colors.grey),
         ('TEXTCOLOR', (0, 0), (-1, 0), colors.whitesmoke),
