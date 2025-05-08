@@ -341,7 +341,7 @@ body {
 /* Monitores grandes */
 @media (min-width: 1600px) {
     .inscripcion {
-        height: calc(100vh - 130px);
+        height: calc(100vh - 100px);
     }
 
     .inscripcion__contenedor {

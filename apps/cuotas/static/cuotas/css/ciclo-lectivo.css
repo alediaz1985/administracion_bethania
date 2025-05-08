@@ -30,7 +30,7 @@ body {
     justify-content: center;
     align-items: center;
     width: 80%;
-    height: 90%;
+    height: auto;
     margin: 20px auto; /* Centrado horizontal */
     border-radius: 10px;
     background: linear-gradient(360deg,rgba(134, 134, 135, 1) 0%, rgba(167, 173, 185, 1) 35%, rgba(201, 201, 202, 1) 100%);
@@ -195,7 +195,8 @@ body {
 /* Monitores grandes */
 @media (min-width: 1600px) {
     .ciclo {
-        height: calc(100vh - 130px);
+        height: calc(100vh - 100px);
+        max-height: auto;
     }
 
     .ciclo__contenedor {
@@ -204,7 +205,6 @@ body {
         justify-content: center;
         align-items: center;
         width: 80%;
-        height: calc(100vh - 120);
         margin: 20px auto; /* Centrado horizontal */
     }
 
@@ -258,7 +258,7 @@ body {
         margin: 0;
         width: 3rem;
         height: 3rem;
-        background: rgb(66 149 33);
+        background: #116cd4;
         border-radius: 1.625rem;
     }
 

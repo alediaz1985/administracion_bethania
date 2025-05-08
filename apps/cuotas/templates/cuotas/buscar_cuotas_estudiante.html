@@ -68,7 +68,7 @@
         <table class="estado-cuotas__tabla">
           <thead>
             <tr>
-              <th>Mes</th>
+              <th>Cuota</th>
               <th>Monto</th>
               <th>Pagado</th>
               <th>Fecha de Pago</th>
@@ -88,24 +88,39 @@
               <td>{{ cuota.fuera_de_termino|yesno:"Sí,No" }}</td>
               <td>${{ cuota.interes_aplicado }}</td>
               <td>${{ cuota.total_a_pagar }}</td>
-              <td>
+              <td class="tabla__celda">
                 {% if cuota.pagado %}
+                <div class="estado-pago">
                   <span class="text-success">Pagada</span>
-                  <form action="{% url 'cuotas:deshacer_pago' cuota.id %}" method="post" style="display:inline;">
+                  <div class="tooltip-contenedor">
+                    <form action="{% url 'cuotas:deshacer_pago' cuota.id %}" method="post" style="display:inline;">
                       {% csrf_token %}
-                      <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm('¿Seguro que deseas deshacer este pago?');">
-                          Deshacer pago
+                      <button type="submit" class="btn-deshacer" onclick="return confirm('¿Seguro que deseas deshacer este pago?');">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
+                          <path stroke-linecap="round" stroke-linejoin="round" d="m9.75 9.75 4.5 4.5m0-4.5-4.5 4.5M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
+                        </svg>                        
                       </button>
-                  </form>
+                    </form>
+                    <span class="tooltip-text">Deshacer Pago</span>
+                  </div>
+                </div>
                 {% else %}
-                    <a href="{% url 'cuotas:realizar_pago' cuota.id %}" class="btn btn-primary btn-sm">Pagar</a>
+                  <div class="tooltip-contenedor">
+                    <a href="{% url 'cuotas:realizar_pago' cuota.id %}">
+                      <button type="button" class="btn-pagar">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6 icono">
+                          <path stroke-linecap="round" stroke-linejoin="round" d="M15 10.5a3 3 0 1 1-6 0 3 3 0 0 1 6 0Zm3 0h.008v.008H18V10.5Zm-12 0h.008v.008H6V10.5ZM2.25 6v9m0-9V5.625C2.25 5.004 2.754 4.5 3.375 4.5h17.25c.621 0 1.125.504 1.125 1.125V15c0 .621-.504 1.125-1.125 1.125H3.375A1.125 1.125 0 0 1 2.25 15V6Zm0 9v1.875c0 .754.726 1.294 1.453 1.096A60.07 60.07 0 0 1 19.5 18.75v-1.875" />
+                        </svg>
+                      </button>
+                    </a>
+                    <span class="tooltip-text">Realizar Pago</span>
+                  </div>
                 {% endif %}
-              </td>
+              </td>              
             </tr>
             {% endfor %}
           </tbody>
         </table>
-
       {% elif not inscripcion and request.POST.cuil_estudiante %}
         <p class="estado-cuotas__mensaje-error">
           Este estudiante no tiene inscripción en el ciclo lectivo ingresado.

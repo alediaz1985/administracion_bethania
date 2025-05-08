@@ -20,7 +20,7 @@ body {
 }
 
 .alumnos-scroll-container {
-    height: calc(100vh - 248px);
+    height: calc(100vh - 216px);
     overflow-y: auto;  /* Activar scroll vertical */
     border: 1px solid #ccc;
     padding: 10px;
@@ -362,7 +362,7 @@ body {
 }
 
 .Documents-btn:hover {
-    background-color:rgb(68, 123, 46);
+    background-color:#1a054f;
     transform: translateY(-3px); /* Efecto de "levantamiento" al pasar el mouse */
     box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1); /* Sombra más marcada */
 }
@@ -495,7 +495,7 @@ label {
 @media (max-width: 1366px) {
 
     .alumnos-scroll-container {
-        height: calc(100vh - 203px);
+        height: calc(100vh - 202px);
     }
 
     .alumnos-table th, .alumnos-table td {

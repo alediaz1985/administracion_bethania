@@ -1,0 +1,228 @@
+/* Estilos generales */
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+  
+body {
+    font-family: 'Helvetica Neue', Arial, sans-serif;
+    line-height: 1.5;
+    color: #333;
+    background-image: url('../img/fondo1.png'); /* Cambia por la ruta de tu imagen */
+    background-size: 100%;
+    background-position: center; /* Centra la imagen */
+    background-repeat: repeat-y; /* Repetir sólo de forma vertical */
+}
+
+.pago {
+    width: 96%;
+    min-height: calc(100vh - 90px);
+    float: right;
+    display: flex; /* Usamos flexbox para centrar */
+    flex-direction: column;
+    justify-content: center; /* Centrado horizontal */
+    align-items: center; /* Centrado vertical */
+}
+
+.pago__contenedor {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 1rem;
+    width: 75%;
+    margin: 40px auto 40px auto; /* Centrado horizontal */
+    padding: 30px;
+    border-radius: 10px;
+    background-color: #f7f7f7;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.9);
+}
+
+.pago__titulo {
+    font-size: 0.875rem;
+}
+
+.pago__detalle {
+    width: 60%;
+    display: flex;
+    flex-direction: column;
+}
+
+.pago__detalle p {
+    font-size: 0.875rem;
+    color: #181818;
+}
+
+.pago__formulario {
+    display: flex;
+    flex-direction: column;
+    width: 60%;
+    gap: 1rem;
+}
+
+.pago__campo {
+    display: flex;
+    flex-direction: column;
+    gap: 0.3rem;
+}
+
+.pago__etiqueta {
+    font-weight: bold;
+    color: #181818;
+    font-size: 0.75rem;
+}
+
+.pago__entrada {
+    font-size: 0.8125rem;
+    color: #2c3e50;
+    background-color: #ecf0f1;
+    padding: 0.3rem;
+}
+
+.pago__entrada:focus {
+    border-color: #007bff;
+    box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.2);
+    outline: none;
+}
+
+.pago__comentario {
+    width: 100%;
+    min-height: 80px;
+    padding: 0.6rem;
+    font-size: 0.8125rem;
+    border: 1px solid #62707c;
+    border-radius: 6px;
+    resize: vertical;
+    background-color: #fdfdfd;
+    transition: border-color 0.3s, box-shadow 0.3s;
+}
+  
+.pago__comentario:focus {
+    border-color: #007bff;
+    box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.2);
+    outline: none;
+}
+
+.pago__botones {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 2rem;
+    width: 100%;
+}
+
+/* From Uiverse.io by cssbuttons-io */ 
+.boton-accion {
+    position: relative;
+    display: inline-block;
+    cursor: pointer;
+    outline: none;
+    border: 0;
+    vertical-align: middle;
+    text-decoration: none;
+    background: transparent;
+    padding: 0;
+    font-size: inherit;
+    font-family: inherit;
+    width: 10rem;
+    height: auto;
+}
+
+.boton-accion__circulo {
+    transition: all 0.45s cubic-bezier(0.65, 0, 0.076, 1);
+    position: relative;
+    display: block;
+    margin: 0;
+    width: 2.5rem; /* Reducir tamaño del círculo */
+    height: 2.5rem; /* Reducir tamaño del círculo */
+    background: #116cd4;
+    border-radius: 1.25rem; /* Ajustar el radio para mantener la forma circular */
+}
+
+.cancelar {
+    background: #dc3545;
+}
+
+.boton-accion__icono {
+    transition: all 0.45s cubic-bezier(0.65, 0, 0.076, 1);
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    margin: auto;
+    background: #fff;
+    width: 0.875rem; /* Ajustar el tamaño del icono */
+    height: 0.875rem;
+}
+
+.boton-accion__icono--flecha {
+    left: 0.625rem;
+    width: 0.925rem;
+    height: 0.125rem;
+    background: none;
+}
+
+.boton-accion__icono--flecha::before {
+    position: absolute;
+    content: "";
+    top: -0.25rem;
+    right: 0.125rem;
+    width: 0.5rem; /* Reducir el tamaño de la flecha */
+    height: 0.5rem;
+    border-top: 0.125rem solid #fff;
+    border-right: 0.125rem solid #fff;
+    transform: rotate(45deg);
+}
+
+.boton-accion__texto {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.45s cubic-bezier(0.65, 0, 0.076, 1);
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    padding: 0.8rem 0; /* Reducir el padding */
+    margin: 0 0 0 1rem; /* Ajustar el margen izquierdo */
+    color: #181818;
+    font-size: 0.75rem;
+    font-weight: 700;
+    line-height: 1.6;
+    text-align: center;
+    text-transform: uppercase;
+}
+
+.boton-accion:hover .boton-accion__circulo {
+    width: 100%;
+}
+
+.boton-accion:hover .boton-accion__icono--flecha {
+    background: #fff;
+    transform: translate(1rem, 0);
+}
+
+.boton-accion:hover .boton-accion__texto {
+    color: #fff;
+}
+
+/* Monitores grandes */
+@media (min-width: 1600px) {
+
+}
+
+/* Laptop y notebook */
+@media (max-width: 1599px) {
+
+}
+
+/* Tablets */
+@media (max-width: 1024px) {
+
+}
+
+/* Celulares grandes */
+@media (max-width: 600px) {
+
+}
