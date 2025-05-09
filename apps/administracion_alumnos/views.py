@@ -155,7 +155,7 @@ def ver_datos_estudiante(request, pk):
 #         return redirect('estudiante_list')
 #     return render(request, 'administracion_alumnos/alumno_confirm_delete.html', {'estudiante': estudiante}) 
 
-def registrar_estudiante(request):
+"""def registrar_estudiante(request):
     if request.method == 'POST':
         form = EstudianteForm(request.POST)
         if form.is_valid():
@@ -170,6 +170,25 @@ def registrar_estudiante(request):
         form = EstudianteForm()
     return render(request, 'administracion_alumnos/registrar_estudiante.html', {'form': form})
 
+"""
+
+
+from django.shortcuts import render, redirect
+from django.contrib import messages
+from .forms import EstudianteForm
+
+def registrar_estudiante(request):
+    if request.method == 'POST':
+        form = EstudianteForm(request.POST, request.FILES)
+        if form.is_valid():
+            form.save()
+            messages.success(request, "Estudiante registrado correctamente.")
+            return redirect('registrar_alumno')  # O a donde quieras redirigir
+        else:
+            messages.error(request, "Por favor corregí los errores del formulario.")
+    else:
+        form = EstudianteForm()
+    return render(request, 'administracion_alumnos/registrar_estudiante.html', {'form': form})
 
 # Función para generar un PDF con todos los campos del estudiante
 def generar_pdf_estudiante_view(request, estudiante_id):
