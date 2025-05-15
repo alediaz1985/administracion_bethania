@@ -532,13 +532,10 @@ def buscar_estudiantes_aprobados(request):
             # Si el mes y año coinciden con el actual y ya pasó el día 15
             hoy = date.today()
 
-            # Si la fecha de vencimiento ya pasó o si estamos en el mes actual y ya pasó el día 15
-            if fecha_vencimiento < hoy or (
-                fecha_vencimiento.month == hoy.month and
-                fecha_vencimiento.year == hoy.year and
-                hoy.day > 15
-            ):
+            # Aplicar interés solo si ya pasó el día 15 del mes de vencimiento
+            if hoy > date(fecha_vencimiento.year, fecha_vencimiento.month, 15):
                 interes = monto * Decimal('0.10')
+                interes = interes.quantize(Decimal('0.01'), rounding=ROUND_HALF_UP)
                 total += interes
                 fuera_de_termino = True
 
