@@ -246,7 +246,7 @@ body {
 .estado-cuotas__tabla th {
     padding: 6px 8px;
     text-align: left;
-    background-color: #328beb; /* Color de fondo oscuro para los encabezados */
+    background-color: #116cd4; /* Color de fondo oscuro para los encabezados */
     color: #ffffff; /* Texto blanco */
     font-weight: bold;
     text-transform: uppercase;
@@ -371,67 +371,116 @@ body {
     border-left-color: #003c8f;
 }
 
-.btn-ver,
-.btn-registro {
-      color: #ffffff;
-      font-family: "Segoe UI", "Roboto", sans-serif;
-      font-size: 0.75rem;
-      font-weight: 600;
-      padding: 8px 8px;
-      border: none;
-      border-radius: 10px;
-      cursor: pointer;
-      position: relative;
-      overflow: hidden;
-      transition: all 0.3s ease;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      box-shadow: 0 10px 20px rgba(0, 0, 0, 0.15);
+.estado-pago {
+    display: flex;
+    align-items: center;
+    justify-content: center; /* Centra horizontalmente */
+    gap: 10px; /* Espacio entre "Pagada" y el botón */
+}
+
+/* Botón PAGAR (Azul) */
+.btn-pagar {
+    background-color: #116cd4;
+    color: #ffffff;
+    font-family: "Segoe UI", "Roboto", sans-serif;
+    font-size: 0.75rem;
+    font-weight: 600;
+    padding: 8px 8px;
+    border: none;
+    border-radius: 10px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s ease;
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.15);
 }
   
-/* Botón VER (Azul oscuro con ícono ojo) */
-.btn-ver {
-      background-color: #116cd4;
+.btn-pagar:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 12px 25px rgba(17, 108, 212, 0.4);
 }
   
-.btn-ver:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 12px 25px rgba(44, 62, 80, 0.4);
+/* Botón DESHACER (Rojo) */
+.btn-deshacer {
+    background-color: #e74c3c;
+    color: #ffffff;
+    font-family: "Segoe UI", "Roboto", sans-serif;
+    font-size: 0.75rem;
+    font-weight: 600;
+    padding: 8px 8px;
+    border: none;
+    border-radius: 10px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s ease;
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.15);
 }
   
-/* Botón REGISTRO (Verde) */
-.btn-registro {
-      background-color: #28B463;
+.btn-deshacer:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 12px 25px rgba(231, 76, 60, 0.4);
 }
   
-.btn-registro:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 12px 25px rgba(40, 180, 99, 0.4);
-}
-  
-/* Íconos sin rotación */
 .icono {
-      stroke: white;
-      transition: transform 0.3s ease;
+    stroke: white;
+    transition: transform 0.3s ease;
 }
   
-.btn-ver:hover .icono,
-.btn-registro:hover .icono {
-      transform: scale(1.1); /* pequeño agrandamiento al hacer hover */
+.btn-deshacer:hover .icono,
+.btn-pagar:hover .icono {
+    transform: scale(1.1);
+}
+
+.tooltip-contenedor {
+    display: flex;
+    align-items: center;
+    justify-content: center; /* Centra horizontalmente */
+    position: relative;
+}
+
+.tooltip-text {
+    position: absolute;
+    top: -35px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: rgba(0, 0, 0, 0.8);
+    color: #fff;
+    padding: 6px 12px;
+    border-radius: 8px;
+    font-size: 0.625rem;
+    font-weight: 500;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.3s ease, transform 0.3s ease;
+    white-space: nowrap;
+    z-index: 10;
+}
+
+.tooltip-contenedor:hover .tooltip-text {
+    opacity: 1;
+    transform: translateX(-50%) translateY(-6px);
 }
 
 .size-6 {
-    width: 24px;
-    height: 24px;
+    width: 1.125rem;
+    height: 1.125rem;
 }
 
+.text-success {
+    color: #28a745; /* verde Bootstrap */
+    font-weight: 600;
+    font-size: 0.75rem;
+    font-family: "Segoe UI", "Roboto", sans-serif;
+}
 
 /* Monitores grandes */
 @media (min-width: 1600px) {
 
     .estado-cuotas {
-        min-height: calc(100vh - 130px);
+        min-height: calc(100vh - 100px);
     }
 
     .estado-cuotas__formulario {
@@ -478,7 +527,7 @@ body {
         margin: 0;
         width: 3rem;
         height: 3rem;
-        background: rgb(66 149 33);
+        background: #116cd4;
         border-radius: 1.625rem;
     }
 
@@ -567,21 +616,20 @@ body {
         font-size: 1.125rem;
     }
 
-    /* Estilos generales de la tabla */
-    .estado-cuotas__tabla {
-        width: 100%;
-        border-collapse: collapse; /* Quitar el espacio entre celdas */
-        margin-top: 20px;
-        background-color: #ffffff;
-        border-radius: 8px;
-        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-        overflow: hidden;
-    }
-
     /* Encabezados de la tabla */
     .estado-cuotas__tabla th,
     .estado-cuotas__tabla td {
+        padding: 12px 14px;
         font-size: 1rem;
+    }
+
+    .size-6 {
+        width: 1.5rem;
+        height: 1.5rem;
+    }
+
+    .text-success {
+        font-size: 0.875rem;
     }
 }
 

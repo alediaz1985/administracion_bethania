@@ -42,8 +42,8 @@ body {
     justify-content: center;
     align-items: center;
     gap: 1rem;
-    width: 95%;
-    margin: 40px auto 40px auto; /* Centrado horizontal */
+    width: 97%;
+    margin: 20px auto 20px auto; /* Centrado horizontal */
     padding: 30px;
     border-radius: 10px;
     background-color: #f7f7f7;
@@ -71,7 +71,7 @@ body {
     display: flex;
     justify-content: center;
     align-items: center;
-    gap: 0.5rem;
+    gap: 1rem;
 }
 
 .formulario__etiqueta {
@@ -195,22 +195,22 @@ body {
     width: 100%;
     display: flex;
     flex-direction: column;
-    width: 95%;
-    margin: 0 auto 40px auto; /* Centrado horizontal */
-    padding: 30px;
+    width: 97%;
+    margin: 0 auto 20px auto; /* Centrado horizontal */
+    padding: 20px;
     border-radius: 10px;
     background-color: #f7f7f7;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
 }
 
 .consulta__subtitulo {
-    font-size: 15px;
+    font-size: 0.875rem;;
     text-align: center;
     font-weight: bold;
     color: #181818;
     border-bottom: 2px solid #2C3E50; 
     width: 100%;
-    padding: 10px;
+    padding-bottom: 10px;
 }
 
 .tabla {
@@ -433,7 +433,7 @@ body {
 
 .tooltip-text {
     position: absolute;
-    top: -20px;
+    top: -30px;
     left: 50%;
     transform: translateX(-30%);
     background: rgba(0, 0, 0, 0.8);
@@ -470,6 +470,184 @@ body {
 }
 
 .size-6 {
-    width: 24px;
-    height: 24px;
+    width: 1.125rem;
+    height: 1.125rem;
+}
+
+/* Monitores grandes */
+@media (min-width: 1600px) {
+    .consulta {
+        min-height: calc(100vh - 100px);
+    }
+
+    .consulta__buscador {
+        width: 96%;
+        margin: 40px auto 40px auto; /* Centrado horizontal */
+        padding: 40px;
+    }
+
+    .consulta__titulo {
+        font-size: 1.125rem;
+    }
+
+    .buscador__formulario {
+        gap: 2rem;
+    }
+
+    .formulario__etiqueta {
+        font-size: 1rem;
+    }
+    
+    .formulario__input {
+        font-size: 1rem;
+    }
+    
+    .formulario__campo {
+        font-size: 1rem;
+    }
+
+    /* From Uiverse.io by cssbuttons-io */ 
+    .boton-accion {
+        position: relative;
+        display: inline-block;
+        cursor: pointer;
+        outline: none;
+        border: 0;
+        vertical-align: middle;
+        text-decoration: none;
+        background: transparent;
+        padding: 0;
+        font-size: inherit;
+        font-family: inherit;
+        width: 12rem;
+        height: auto;
+    }
+
+    .boton-accion__circulo {
+        transition: all 0.45s cubic-bezier(0.65, 0, 0.076, 1);
+        position: relative;
+        display: block;
+        margin: 0;
+        width: 3rem;
+        height: 3rem;
+        background: #116cd4;
+        border-radius: 1.625rem;
+    }
+
+    .boton-accion__icono {
+        transition: all 0.45s cubic-bezier(0.65, 0, 0.076, 1);
+        position: absolute;
+        top: 0;
+        bottom: 0;
+        margin: auto;
+        background: #fff;
+    }
+
+    .boton-accion__icono--flecha {
+        left: 0.625rem;
+        width: 1.125rem;
+        height: 0.125rem;
+        background: none;
+    }
+
+    .boton-accion__icono--flecha::before {
+        position: absolute;
+        content: "";
+        top: -0.29rem;
+        right: 0.0625rem;
+        width: 0.625rem;
+        height: 0.625rem;
+        border-top: 0.125rem solid #fff;
+        border-right: 0.125rem solid #fff;
+        transform: rotate(45deg);
+    }
+
+    .boton-accion__texto {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: all 0.45s cubic-bezier(0.65, 0, 0.076, 1);
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        padding: 0.75rem 0;
+        margin: 0 0 0 1.85rem;
+        color: #282936;
+        font-size: 1rem;
+        font-weight: 700;
+        line-height: 1.6;
+        text-align: center;
+        text-transform: uppercase;
+    }
+
+    .boton-accion:hover .boton-accion__circulo {
+        width: 100%;
+    }
+
+    .boton-accion:hover .boton-accion__icono--flecha {
+        background: #fff;
+        transform: translate(1rem, 0);
+    }
+
+    .boton-accion:hover .boton-accion__texto {
+        color: #fff;
+    }
+
+    .tooltip-text {
+        font-size: 0.875rem;
+        top: -40px;
+    }
+
+    .consulta__resultados {
+        width: 96%;
+        margin: 0 auto 40px auto; /* Centrado horizontal */
+        padding: 40px;
+    }
+    
+    .consulta__subtitulo {
+        font-size: 1.125rem;
+    }
+
+    .tabla {
+        width: 100%;
+        border-collapse: collapse; /* Quitar el espacio entre celdas */
+        margin-top: 20px;
+        background-color: #ffffff;
+        border-radius: 8px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        overflow: hidden;
+    }
+    
+    /* Encabezados de la tabla */
+    .tabla__columna {
+        padding: 12px 14px;
+        font-size: 1rem;
+    }
+    
+    /* Filas de la tabla */
+    .tabla__celda {
+        font-size: 0.875rem;
+    }
+
+    .size-6 {
+        width: 1.5rem;
+        height: 1.5rem;
+    }
+}
+
+/* Laptop y notebook */
+@media (max-width: 1599px) {
+
+}
+
+/* Tablets */
+@media (max-width: 1024px) {
+
+}
+
+/* Celulares grandes */
+@media (max-width: 600px) {
+
 }

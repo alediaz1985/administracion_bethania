@@ -341,7 +341,7 @@ body {
 /* Monitores grandes */
 @media (min-width: 1600px) {
     .inscripcion {
-        height: calc(100vh - 130px);
+        height: calc(100vh - 100px);
     }
 
     .inscripcion__contenedor {
@@ -509,7 +509,7 @@ body {
     }
 
     .formulario-inscripcion__input {
-        padding: 0.5rem;
+        padding: 0.8rem;
         font-size: 1.2rem;
     }
 
@@ -519,17 +519,23 @@ body {
 
 }
 
-/* Laptop y notebook */
-@media (max-width: 1599px) {
+@media (max-width: 768px) {
+  .formulario-inscripcion__fila {
+    flex-direction: column; /* Cambia la disposición horizontal a vertical */
+    align-items: stretch;   /* Que los elementos ocupen todo el ancho disponible */
+    gap: 1rem;              /* Espaciado vertical entre inputs */
+  }
 
+  .formulario-inscripcion__grupo {
+    width: 100%;            /* Asegura que cada input ocupe el ancho del contenedor */
+  }
+ 
+.boton-accion__texto {
+  position: static; /* eliminar absolute */
+  margin: 0;
+  padding: 0;
+  color: inherit;
+  text-transform: uppercase;
+  line-height: 1.2;
 }
-
-/* Tablets */
-@media (max-width: 1024px) {
-
-}
-
-/* Celulares grandes */
-@media (max-width: 600px) {
-
 }

@@ -33,92 +33,59 @@
     <!-- Mostrar contenido solo si el usuario ha iniciado sesión -->
 
         <!-- Barra de navegación Lateral -->
-        <div id="sidebar" class="sidebar">
-            
-            <ul class="sidebar-items">
-                <li>
-                    <a href="{% url 'home' %}" onclick="window.location.href=this.href; return false;">
-                        <i class="fas fa-home"></i>
-                        <span class="text">Inicio</span>
-                    </a>
-                </li>
-                 <!--<li>
-                    <a href="#">
-                        <i class="fas fa-user-graduate"></i>
-                        <span class="text">Alumno</span>
-                        <button class="expand-btn">+</button>
-                    </a>
-                    <ul class="subitems">
-                        <li><a href="{% url 'estudiante_list' %}">● Lista de Alumnos</a></li>
-                        <li><a href="{% url 'consultar_alumno' %}">● Consultar Alumnos</a></li>
-                        <li><a href="{% url 'registrar_alumno' %}">● Registrar Alumno</a></li>
-                    </ul>
-                </li>
-                <li>
-                    <a href="#">
-                        <i class="fas fa-briefcase"></i>
-                        <span class="text">Administración</span>
-                        <button class="expand-btn">+</button>
-                    </a> -->
-                    <ul class="subitems">
-                        <li><a href="{% url 'cuotas:habilitar_ciclo_lectivo' %}">● Habilitar Ciclo Lectivo</a></li>
-                        <li><a href="{% url 'cuotas:actualizar_montos' %}">● Actualizar Montos</a></li>
-                        <li><a href="{% url 'cuotas:listar_montos' %}">● Listar Montos</a></li>
-                        <li><a href="{% url 'cuotas:consultar_ciclo_lectivo' %}">● Consultar Ciclo Lectivo</a></li>
-                        <li><a href="{% url 'cuotas:inscribir_alumno' %}">● Inscribir Alumno</a></li>
-                        <li><a href="{% url 'cuotas:buscar_cuotas_estudiante' %}">● Buscar Cuotas</a></li>
-                        <li><a href="{% url 'consulta' %}">● Consultar Comprobante</a></li>
-<<<<<<< Updated upstream
-                    </ul>
-                </li>
-                <!--
-                <li>
-                    <a href="#">
-                        <i class="fas fa-layer-group"></i>
-                        <span class="text">Niveles</span>
-                        <button class="expand-btn">+</button>
-                    </a>
-                    <ul class="subitems">
-                        <li><a href="{% url 'niveles_list' %}">● Lista de Niveles</a></li>
-                        <li><a href="{% url 'registrar_nivel' %}">● Registrar Nivel</a></li>
-                        <li><a href="{% url 'editar_nivel' %}">● Editar Nivel</a></li>
-=======
->>>>>>> Stashed changes
-                    </ul>
-                </li>
-                <!--
-                <li>
-                    <a href="#">
-<<<<<<< Updated upstream
-=======
-                        <i class="fas fa-layer-group"></i>
-                        <span class="text">Niveles</span>
-                        <button class="expand-btn">+</button>
-                    </a>
-                    <ul class="subitems">
-                        <li><a href="{% url 'niveles_list' %}">● Lista de Niveles</a></li>
-                        <li><a href="{% url 'registrar_nivel' %}">● Registrar Nivel</a></li>
-                        <li><a href="{% url 'editar_nivel' %}">● Editar Nivel</a></li>
-                    </ul>
-                </li>
-            -->
-                <li>
-                    <a href="#">
->>>>>>> Stashed changes
-                        <i class="fas fa-cogs"></i>
-                        <span class="text">Configuración</span>
-                        <button class="expand-btn">+</button>
-                    </a>
-                    <ul class="subitems">
-                        <li><a href="#">● Configurar Usuario</a></li>
-                    </ul>
-                </li> -->
-            </ul>
+        <div class="barra-lateral">
+            <div id="sidebar" class="sidebar">
+                <ul class="sidebar-items">
+                    <li>
+                        <a href="{% url 'home' %}" onclick="window.location.href=this.href; return false;">
+                            <i class="fas fa-home"></i>
+                            <span class="text">Inicio</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="#">
+                            <span class="text">Alumno</span>
+                            <button class="expand-btn">+</button>
+                        </a>
+                        <ul class="subitems">
+                            <li><a href="{% url 'estudiante_list' %}">● Lista de Alumnos</a></li>
+                            <li><a href="{% url 'consultar_alumno' %}">● Consultar Alumnos</a></li>
+                            <li><a href="{% url 'registrar_alumno' %}">● Registrar Alumno</a></li>
+                        </ul>
+                    </li>
+                    <li>
+                        <a href="#">
+                            <span class="text">Administración</span>
+                            <button class="expand-btn">+</button>
+                        </a>
+                        <ul class="subitems">
+                            <li><a href="{% url 'cuotas:habilitar_ciclo_lectivo' %}">● Habilitar Ciclo Lectivo</a></li>
+                            <li><a href="{% url 'cuotas:actualizar_montos' %}">● Actualizar Montos</a></li>
+                            <li><a href="{% url 'cuotas:listar_montos' %}">● Listar Montos</a></li>
+                            <li><a href="{% url 'cuotas:inscribir_alumno' %}">● Inscribir Alumno</a></li>
+                            <li><a href="{% url 'cuotas:buscar_cuotas_estudiante' %}">● Buscar Cuotas</a></li>
+                            <li><a href="{% url 'cuotas:buscar_comprobantes' %}">● Buscar Comprobantes</a></li>
+                            <li><a href="{% url 'consulta' %}">● Consultar Comprobantes</a></li>
+                        </ul>
+                    </li>
+                    <li>
+                        <a href="#">
+                            <span class="text">Configuración</span>
+                            <button class="expand-btn">+</button>
+                        </a>
+                        <ul class="subitems">
+                            <li><a href="#">● Configurar Usuario</a></li>
+                        </ul>
+                    </li>
+                </ul>
+            </div>
+            <div class="boton-open">
+                <button class="open-btn" onclick="toggleSidebar()">
+                    <i class="fas fa-bars" id="toggle-icon"></i>
+                </button>
+            </div>
         </div>
-        <button class="open-btn" onclick="toggleSidebar()">
-            <i class="fas fa-bars" id="toggle-icon"></i>
-        </button>
-
+        
         <nav class="navbar">
             <ul class="nav-items">
                 <li class="logo"><img src="{% static 'img/logo1.png' %}" alt="Poseidon"></li>
@@ -129,43 +96,16 @@
         </nav>
     
         <!-- Contenido del sitio -->
-        {% block content %}
-        {% endblock %}
+        <main class="principal">
+            {% block content %}
+            <!-- tu contenido dinámico -->
+            {% endblock %}
+        </main>
 
         <!-- Pie de página -->
         <footer class="footer">
-            <div class="top-footer"></div> <!-- Rectángulo superior vacío -->
-
-            <div class="floating-box">
-                <div class="box-content">
-                    <div class="developers">
-                        <p>Desarrollado por:</p>
-                        <ul>
-                            <li>- Alejandro Diaz</li>
-                            <li>- Sandoval Alexis</li>
-                            <li>- Ramiro Meza</li>
-                            <li>- Agustin Sandoval</li>
-                            <li>- Fabian Ojeda</li>
-                        </ul>
-                    </div>
-                    <div class="logo1">
-                        <img src="{% static 'img/logo1.png' %}" alt="Logo" class="logo-image">
-                    </div>
-                </div>
-            </div>
-
-            <div class="middle-footer">
-                <!-- <ul class="footer-nav">
-                    <li><a href="{% url 'home' %}">Inicio</a></li>
-                    <li><a href="{% url 'consultar_alumno' %}">Alumnos</a></li>
-                    <li><a href="{% url 'consulta' %}">Administración</a></li>
-                </ul> -->
-            </div>
-
             <div class="bottom-footer">
-                <div>
-                    <p class="copyright">&copy; 2024-2025 Hogar de Bethania. Todos los derechos reservados.</p>
-                </div>
+                <p>© <span id="anio-actual"></span> - Sistema de Gestión de Alumnos | UEGP N°82 "Hogar de Bethania" | Versión 1.0</p>
             </div>
         </footer>
 

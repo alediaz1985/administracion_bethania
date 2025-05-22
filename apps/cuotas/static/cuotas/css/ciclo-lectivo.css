@@ -30,7 +30,7 @@ body {
     justify-content: center;
     align-items: center;
     width: 80%;
-    height: 90%;
+    height: auto;
     margin: 20px auto; /* Centrado horizontal */
     border-radius: 10px;
     background: linear-gradient(360deg,rgba(134, 134, 135, 1) 0%, rgba(167, 173, 185, 1) 35%, rgba(201, 201, 202, 1) 100%);
@@ -195,7 +195,8 @@ body {
 /* Monitores grandes */
 @media (min-width: 1600px) {
     .ciclo {
-        height: calc(100vh - 130px);
+        height: calc(100vh - 100px);
+        max-height: auto;
     }
 
     .ciclo__contenedor {
@@ -204,7 +205,6 @@ body {
         justify-content: center;
         align-items: center;
         width: 80%;
-        height: calc(100vh - 120);
         margin: 20px auto; /* Centrado horizontal */
     }
 
@@ -258,7 +258,7 @@ body {
         margin: 0;
         width: 3rem;
         height: 3rem;
-        background: rgb(66 149 33);
+        background: #116cd4;
         border-radius: 1.625rem;
     }
 
@@ -325,17 +325,74 @@ body {
 
 }
 
-/* Laptop y notebook */
-@media (max-width: 1599px) {
-
-}
-
-/* Tablets */
-@media (max-width: 1024px) {
-
-}
-
-/* Celulares grandes */
 @media (max-width: 600px) {
+  .ciclo {
+    height: auto; /* que la altura no limite el contenido */
+    padding: 10px;
+  }
 
+  .ciclo__contenedor {
+    width: 95%; /* ocupar casi todo el ancho de pantalla */
+    margin: 10px auto;
+  }
+
+  .ciclo__formulario {
+    width: 100%;
+    padding: 15px 10px;
+    gap: 1rem;
+  }
+
+  .ciclo__seccion {
+    flex-direction: column; /* que las secciones que estaban en fila se apilen */
+    gap: 1rem;
+  }
+
+  .ciclo__campo {
+    width: 100%;
+  }
+
+  .ciclo__input,
+  .ciclo__select {
+    width: 100%; /* que los inputs y selects no excedan su contenedor */
+    font-size: 0.85rem;
+  }
+
+  .ciclo__botones {
+    width: 100%;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .boton-accion {
+  display: flex;
+  align-items: center;
+  gap: 0.8rem; /* espacio entre círculo y texto */
+  width: auto; /* que se ajuste al contenido */
+  padding: 0.5rem 1rem;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  font-size: 0.75rem;
+  font-weight: 700;
+  font-family: inherit;
+  color: #181818;
+}
+
+.boton-accion__circulo {
+  width: 2.5rem;
+  height: 2.5rem;
+  border-radius: 50%;
+  background: #116cd4;
+  flex-shrink: 0; /* para que no se reduzca */
+  position: relative;
+}
+
+.boton-accion__texto {
+  position: static; /* eliminar absolute */
+  margin: 0;
+  padding: 0;
+  color: inherit;
+  text-transform: uppercase;
+  line-height: 1.2;
+}
 }

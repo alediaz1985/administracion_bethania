@@ -6,7 +6,7 @@ html, body {
 
 .block-content-hero {
     width: 96%;
-    height: calc(100vh - 130px);  /* Restando los 140px del nav y footer */
+    height: calc(100vh - 90px);  /* Restando los 140px del nav y footer */
     float: right;
 }
 
@@ -136,11 +136,11 @@ html, body {
     opacity: 0.8;
 }
 
-/* Estilos para pantallas desde 1366px y menores */
-@media (max-width: 1599px) {
+/* Monitores grandes */
+@media (min-width: 1600px) {
     /* Para notebooks comunes, FullHD, 1366px */
     .block-content-hero {
-        height: calc(100vh - 90px);
+        height: calc(100vh - 100px);
     }
 
     .block-content-hero .text-content h1 {

@@ -244,144 +244,28 @@ body {
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
 }
   
-/* Monitores grandes */
-@media (min-width: 1600px) {
-    .consulta-alumno {
-        height: calc(100vh - 130px);
-    }
-
-    .consulta-alumno__etiqueta {
-        font-size: 1.125rem;
-    }
-
-    .consulta-alumno__input {
-        padding: 8px;
-        font-size: 1.125rem;
-    }
-
-    /* From Uiverse.io by cssbuttons-io */ 
-    .boton-accion {
-        position: relative;
-        display: inline-block;
-        cursor: pointer;
-        outline: none;
-        border: 0;
-        vertical-align: middle;
-        text-decoration: none;
-        background: transparent;
-        padding: 0;
-        font-size: inherit;
-        font-family: inherit;
-        width: 12rem;
-        height: auto;
-    }
-
-    .boton-accion__circulo {
-        transition: all 0.45s cubic-bezier(0.65, 0, 0.076, 1);
-        position: relative;
-        display: block;
-        margin: 0;
-        width: 3rem;
-        height: 3rem;
-        background: rgb(66 149 33);
-        border-radius: 1.625rem;
-    }
-
-    .boton-accion__icono {
-        transition: all 0.45s cubic-bezier(0.65, 0, 0.076, 1);
-        position: absolute;
-        top: 0;
-        bottom: 0;
-        margin: auto;
-        background: #fff;
-    }
-
-    .boton-accion__icono--flecha {
-        left: 0.625rem;
-        width: 1.125rem;
-        height: 0.125rem;
-        background: none;
-    }
-
-    .boton-accion__icono--flecha::before {
-        position: absolute;
-        content: "";
-        top: -0.29rem;
-        right: 0.0625rem;
-        width: 0.625rem;
-        height: 0.625rem;
-        border-top: 0.125rem solid #fff;
-        border-right: 0.125rem solid #fff;
-        transform: rotate(45deg);
-    }
-
-    .boton-accion__texto {
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        transition: all 0.45s cubic-bezier(0.65, 0, 0.076, 1);
-        position: absolute;
-        top: 0;
-        left: 0;
-        right: 0;
-        bottom: 0;
-        padding: 0.75rem 0;
-        margin: 0 0 0 1.85rem;
-        color: #282936;
-        font-size: 1rem;
-        font-weight: 700;
-        line-height: 1.6;
-        text-align: center;
-        text-transform: uppercase;
-    }
-
-    .boton-accion:hover .boton-accion__circulo {
-        width: 100%;
-    }
-
-    .boton-accion:hover .boton-accion__icono--flecha {
-        background: #fff;
-        transform: translate(1rem, 0);
-    }
-
-    .boton-accion:hover .boton-accion__texto {
-        color: #fff;
-    }
-
-    .consulta-alumno__titulo {
-        font-size: 1.25rem;
-    }
-
-    .consulta-alumno__subtitulo {
-        font-size: 1.25rem;
-    }
-    
-    .consulta-alumno__parrafo {
-        font-size: 1.125rem;
-    }
-
-    .consulta-alumno__mensaje-error {
-        padding: 0.75rem;
-        font-size: 1rem;
-    }
-    
-    .consulta-alumno__mensaje-info {
-        font-size: 1rem;
-    }
-
-}
-
-/* Laptop y notebook */
-@media (max-width: 1599px) {
-
-}
-
-/* Tablets */
-@media (max-width: 1024px) {
-
-}
-
-/* Celulares grandes */
 @media (max-width: 600px) {
-
+  .consulta-alumno__formulario {
+    flex-direction: column;       /* Apila los elementos verticalmente */
+    gap: 1rem;                    /* Espacio entre elementos */
+    height: auto;                 /* Que crezca según contenido */
+  }
+  .consulta-alumno__buscador {
+    width: 100%;                  
+  }
+  .consulta-alumno__input {
+    width: 100%;                  
+    font-size: 1rem;              
+  }
+  .boton-accion {
+    width: 100%;                  
+    height: 3.5rem;               
+  }
+  .consulta-alumno__resultado {
+    width: 100%;
+    padding: 10px;
+  }
+  .consulta-alumno__datos {
+    width: 100%;                  
+  }
 }
