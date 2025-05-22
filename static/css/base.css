@@ -365,3 +365,92 @@ body {
 
 }
 
+
+@media (max-width: 768px) {
+    .sidebar {
+      width: 0;
+      padding-left: 0;
+      padding-right: 0;
+      overflow-x: hidden;
+    }
+  
+    .sidebar.active {
+      width: 70vw; /* ancho mayor para móvil */
+      padding: 35px 15px; /* espacio interno para que no quede pegado */
+    }
+  
+    /* Mostrar íconos y texto en items cuando el sidebar está activo */
+    .sidebar.active .sidebar-items li a i {
+      display: inline-block !important;
+    }
+  
+    .sidebar.active .sidebar-items li a span.text {
+      display: inline-block !important;
+    }
+  }
+  @media (max-width: 768px) {
+    img {
+      max-width: 100% !important;
+      height: auto !important;
+      display: block !important;
+      margin-bottom: 80px !important; /* espacio extra para el footer */
+      position: relative !important;
+      z-index: 1 !important;
+    }
+  
+    .footer {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      width: 100%;
+      z-index: 10;
+    }
+  
+    /* Asegurar que el main-content no quede detrás del footer */
+    .main-content {
+      padding-bottom: 60px; /* igual que el footer, ajustar si cambia */
+    }
+  }
+  @media (max-width: 768px) {
+    .hero-container {
+      display: flex;
+      flex-direction: column; /* apila verticalmente */
+      align-items: center;
+      padding-bottom: 80px; /* para espacio del footer */
+    }
+  
+    .hero-container img {
+      max-width: 90%;
+      height: auto;
+      margin-bottom: 20px;
+    }
+    .text-container {
+        position: relative;  /* para que el h1 pueda estar bien posicionado */
+        z-index: 10;         /* que esté por encima de la imagen */
+        padding: 10px 15px;  /* un poco de espacio interno */
+    }
+    
+    .text-container h1 {
+        font-size: 1.8rem;
+        margin-bottom: 15px;
+        text-align: center;
+        line-height: 1.2;
+        color: #000;        /* asegurate que el color contraste */
+        position: relative;
+        z-index: 11;        /* más arriba que el contenedor */
+    }
+    
+  
+    .footer {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      width: 100%;
+      z-index: 10;
+    }
+  
+    .main-content {
+      padding-bottom: 60px; /* para que el contenido no quede debajo del footer */
+    }
+  }
+  

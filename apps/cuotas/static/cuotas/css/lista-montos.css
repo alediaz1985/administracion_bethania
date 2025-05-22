@@ -263,42 +263,32 @@ label {
     transform: rotateX(30deg);
 }
 
-/* Monitores grandes */
-@media (min-width: 1600px) {
-    .montos {
-        min-height: calc(100vh - 100px);
-    }
-
-    .montos__titulo {
-        font-size: 1.125rem;
-    }
-
-    .montos__fila-encabezado {
-        font-size: 1rem;
-    }
-    
-    .montos__celda {
-        font-size: 0.875rem;
-    }
-    
-    /* Estilos del select */
-    #filtro-ciclo, #filtro-subnivel {
-        font-size: 0.875rem;
-    }
-
-}
-
-/* Laptop y notebook */
-@media (max-width: 1599px) {
-
-}
-
-/* Tablets */
-@media (max-width: 1024px) {
-
-}
-
-/* Celulares grandes */
+/* 👇 Coloca esto al final del CSS para que sobreescriba correctamente */
 @media (max-width: 600px) {
+  .filters {
+    flex-direction: column !important;
+    align-items: stretch !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    padding: 10px;
+    gap: 12px;
+    margin: 0 auto 20px auto;
+  }
 
+  #filtro-ciclo,
+  #filtro-subnivel {
+    width: 100% !important;
+    min-width: auto !important;
+    max-width: 100% !important;
+    padding: 12px 20px;
+    font-size: 1rem;
+  }
+
+  .Documents-btn {
+    width: 100% !important;
+    height: 45px;
+    float: none !important;
+    justify-content: center;
+    font-size: 1rem;
+  }
 }
