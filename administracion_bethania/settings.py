@@ -34,6 +34,7 @@ INSTALLED_APPS = [
     'apps.administracion_alumnos',
     'apps.niveles',
     'apps.documentos',
+    'apps.dashboard',
 ]
 
 MIDDLEWARE = [
@@ -76,7 +77,8 @@ DATABASES = {
         'NAME': 'bethania2025',
         'USER': 'admin_remoto',
         'PASSWORD': 'admin123_remoto',
-        'HOST': '181.84.66.74',
+        #'HOST': '181.84.66.74',
+        'HOST': 'dalisserver.duckdns.org',
         'PORT': '3307',
     }
 }
