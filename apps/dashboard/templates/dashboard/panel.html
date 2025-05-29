@@ -1,0 +1,75 @@
+{% extends 'base.html' %}
+
+{% block title %}Dashboard{% endblock %}
+
+{% load static %}
+
+{% block extra_styles %}
+<link rel="stylesheet" href="{% static 'dashboard/css/dashboard.css' %}">
+<link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+{% endblock %}
+
+{% block content %}
+<h1 class="titulo-dashboard">📊 Panel de Control - Bethania</h1>
+
+<div class="cards-container">
+    <div class="card" data-aos="fade-up">
+        <i data-lucide="graduation-cap"></i>
+        <h2>{{ total_estudiantes }}</h2>
+        <p>Estudiantes registrados</p>
+    </div>
+    <div class="card" data-aos="fade-up" data-aos-delay="100">
+        <i data-lucide="dollar-sign"></i>
+        <h2>${{ total_cuotas_pagadas|floatformat:2 }}</h2>
+        <p>Total cuotas pagadas</p>
+    </div>
+    <div class="card" data-aos="fade-up" data-aos-delay="200">
+        <i data-lucide="file-text"></i>
+        <h2>{{ total_documentos }}</h2>
+        <p>Documentos registrados</p>
+    </div>
+    <div class="card" data-aos="fade-up" data-aos-delay="300">
+        <i data-lucide="layers"></i>
+        <h2>{{ cuotas_pendientes }}</h2>
+        <p>Cuotas pendientes</p>
+    </div>
+</div>
+
+<div class="charts-container">
+    <canvas id="graficoNiveles"></canvas>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="https://unpkg.com/lucide@latest"></script>
+<script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+<script>
+    lucide.createIcons();
+    AOS.init();
+
+    const dataNiveles = {
+        labels: {{ niveles_labels|safe }},
+        datasets: [{
+            label: 'Estudiantes por nivel',
+            data: {{ niveles_data|safe }},
+            backgroundColor: ['#3498db', '#2ecc71', '#e74c3c', '#9b59b6'],
+        }]
+    };
+
+    const configNiveles = {
+        type: 'doughnut',
+        data: dataNiveles,
+        options: {
+            responsive: true,
+            plugins: {
+                legend: {
+                    position: 'bottom'
+                }
+            }
+        }
+    };
+
+    new Chart(document.getElementById('graficoNiveles'), configNiveles);
+</script>
+{% endblock %}

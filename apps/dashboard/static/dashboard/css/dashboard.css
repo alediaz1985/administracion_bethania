@@ -1,0 +1,93 @@
+body {
+    font-family: 'Segoe UI', sans-serif;
+    background-color: #f4f6f9;
+    margin: 0;
+    padding: 0;
+}
+
+h1.titulo-dashboard {
+    text-align: center;
+    color: #2c3e50;
+    margin-top: 1rem;
+    font-size: 1.8rem;
+}
+
+/* Contenedor principal de tarjetas */
+.cards-container {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-items: stretch;
+    gap: 1rem;
+    margin: 1rem auto;
+    max-width: 960px;
+    padding: 0 1rem;
+}
+
+/* Tarjeta */
+.card {
+    background-color: #fff;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.08);
+    padding: 1.2rem;
+    flex: 1 1 200px;
+    max-width: 220px;
+    min-width: 180px;
+    text-align: center;
+    transition: transform 0.2s ease;
+}
+
+.card:hover {
+    transform: translateY(-4px);
+}
+
+.card i {
+    font-size: 2rem;
+    color: #3498db;
+    margin-bottom: 0.5rem;
+}
+
+.card h2 {
+    font-size: 1.6rem;
+    color: #3498db;
+    margin: 0;
+}
+
+.card p {
+    font-size: 0.95rem;
+    color: #7f8c8d;
+    margin: 0.4rem 0 0;
+}
+
+/* Contenedor del gráfico */
+.charts-container {
+    display: flex;
+    justify-content: center;
+    margin: 2rem auto;
+    max-width: 400px;
+    padding: 0 1rem;
+}
+
+#graficoNiveles {
+    width: 100% !important;
+    height: auto !important;
+    max-width: 360px;
+}
+
+/* Responsive para pantallas chicas */
+@media (max-width: 768px) {
+    .cards-container {
+        flex-direction: column;
+        align-items: center;
+        gap: 1rem;
+    }
+
+    .card {
+        width: 90%;
+        max-width: 320px;
+    }
+
+    .charts-container {
+        margin: 1.5rem 0;
+    }
+}
