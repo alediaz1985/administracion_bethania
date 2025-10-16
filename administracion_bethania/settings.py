@@ -27,14 +27,14 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'crispy_forms',
     'crispy_bootstrap4', 
-    'apps.administracion',
+    # 'apps.administracion',
     'apps.autenticacion',
-    'apps.cuotas',
-    'apps.administracion_docentes',
+    # 'apps.cuotas',
+    # 'apps.administracion_docentes',
     'apps.administracion_alumnos',
-    'apps.niveles',
-    'apps.documentos',
-    'apps.dashboard',
+    # 'apps.niveles',
+    # 'apps.documentos',
+    # 'apps.dashboard',
 ]
 
 MIDDLEWARE = [
@@ -74,11 +74,10 @@ WSGI_APPLICATION = 'administracion_bethania.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'bethania2025',
+        'NAME': 'hbethania',
         'USER': 'admin_remoto',
         'PASSWORD': 'admin123_remoto',
-        #'HOST': '181.84.66.74',
-        'HOST': 'dalisserver.duckdns.org',
+        'HOST': 'dalisserver1.duckdns.org',
         'PORT': '3307',
     }
 }
