@@ -22,44 +22,30 @@ from .utils import search_files_in_drive, download_file, archivo_existe
 
 from googleapiclient.http import MediaIoBaseDownload
 
+from django.shortcuts import render
+from apps.administracion_alumnos.models import Estudiante
+
 def estudiante_lista(request):
-    estudiantes = Estudiante.objects.all()
-    if not estudiantes:
-        return HttpResponse("No se encontraron estudiantes en la base de datos.")
-    return render(request, 'administracion_alumnos/estudiante_list.html', {'alumnos': alumnos})
+    # Trae todos los estudiantes con sus relaciones
+    estudiantes = Estudiante.objects.select_related(
+        'inscripcion', 'estado_documentacion'
+    ).all()
 
-def estudiante_list(request):
-    # Obtener todos los estudiantes con sus estados de documentación
-    estudiantes = Estudiante.objects.all()
-    estudiantes = Estudiante.objects.all().prefetch_related('estados_documentacion')
+    # Filtra por estado (pendiente / aprobado)
+    estudiantes_pendientes = estudiantes.filter(
+        estado_documentacion__estado='Pendiente'
+    )
+    estudiantes_aprobados = estudiantes.filter(
+        estado_documentacion__estado='Aprobado'
+    )
 
-    # Inicializar listas vacías para los estudiantes pendientes y aprobados
-    estudiantes_pendientes = []
-    estudiantes_aprobados = []
-
-    # Recorrer todos los estudiantes y separarlos según su estado
-    for estudiante in estudiantes:
-        # Verificar si existe un estado 'pendiente' en los estados de documentación
-        if estudiante.estados_documentacion.filter(estado='pendiente'):
-            estudiantes_pendientes.append(estudiante)
-        # Verificar si existe un estado 'aprobado' en los estados de documentación
-        elif estudiante.estados_documentacion.filter(estado='aprobado'):
-            estudiantes_aprobados.append(estudiante)
-
-    # Verificar si no existen estudiantes en ninguno de los estados
-    if not estudiantes_pendientes and not estudiantes_aprobados:
-        return HttpResponse("No se encontraron estudiantes en la base de datos.")
-    
-    # Renderizar la plantilla y pasar los resultados de las consultas
+    # Renderiza la plantilla con los datos
     return render(request, 'administracion_alumnos/estudiante_list.html', {
         'estudiantes': estudiantes,
         'estudiantes_pendientes': estudiantes_pendientes,
-        'estudiantes_aprobados': estudiantes_aprobados
+        'estudiantes_aprobados': estudiantes_aprobados,
     })
 
-# def estudiante_list(request):
-#     estudiantes = Estudiante.objects.all()
-#     return render(request, 'administracion_alumnos/estudiante_list.html',  {'estudiantes': estudiantes})
 
 def confirmar_aprobacion(request, estudiante_id):
     try:

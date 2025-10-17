@@ -132,94 +132,23 @@
                 <tbody id="table-body">
                     {% if estudiantes %}
                         {% for estudiante in estudiantes %}
-                            <tr data-nivel="{{ estudiante.nivel_estudiante }}" 
-                            data-subnivel="{{ estudiante.subnivel_estudiante }}" 
-                            data-turno="{{ estudiante.turno_estudiante }}">
+                            <tr data-nivel="{{ estudiante.inscripcion.nivel_estudiante }}" 
+                                data-turno="{{ estudiante.inscripcion.turno_estudiante }}">
+                                
                                 <td>
                                     <span id="cuil_{{ estudiante.id }}">{{ estudiante.cuil_estudiante }}</span>
                                     <button onclick="copyToClipboard('cuil_{{ estudiante.id }}')" style="border: none; background: transparent; cursor: pointer;">
-                                    <i class="fas fa-copy" style="color: #b6b6b6;"></i> <!-- Icono con color más suave (gris claro) -->
+                                        <i class="fas fa-copy" style="color: #b6b6b6;"></i>
                                     </button>
                                 </td>
-                                <!-- Toast (mensaje flotante) -->
-                                <div id="toast_{{ estudiante.id }}" style="position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); background-color: rgba(0, 128, 0, 0.8); color: white; padding: 10px 20px; border-radius: 5px; font-size: 14px; display: none; opacity: 0; pointer-events: none; z-index: 9999; transition: opacity 0.5s ease;">
-                                    ¡Copiado!
-                                </div>
+
                                 <td>{{ estudiante.apellidos_estudiante }}</td>
                                 <td>{{ estudiante.nombres_estudiante }}</td>
-                                <td>{{ estudiante.nivel_estudiante }}</td>
-                                <td>
-                                    {% if estudiante.nivel_inicial3 %}
-                                        3 Años
-                                    {% elif estudiante.nivel_inicial4 %}
-                                        4 Años
-                                    {% elif estudiante.nivel_inicial5 %}
-                                        5 Años
-                                    {% elif estudiante.nivel_primario1 %}
-                                        1er Grado
-                                    {% elif estudiante.nivel_primario2 %}
-                                        2do Grado
-                                    {% elif estudiante.nivel_primario3 %}
-                                        3er Grado
-                                    {% elif estudiante.nivel_primario4 %}
-                                        4to Grado
-                                    {% elif estudiante.nivel_primario5 %}
-                                        5to Grado
-                                    {% elif estudiante.nivel_primario6 %}
-                                        6to Grado
-                                    {% elif estudiante.nivel_primario7 %}
-                                        7mo Grado
-                                    {% elif estudiante.nivel_secundario1 %}
-                                        1er Año
-                                    {% elif estudiante.nivel_secundario2 %}
-                                        2do Año
-                                    {% elif estudiante.nivel_secundario3 %}
-                                        3er Año
-                                    {% elif estudiante.nivel_secundario4 %}
-                                        4to Año
-                                    {% elif estudiante.nivel_secundario5 %}
-                                        5to Año
-                                    {% else %}
-                                        No definido
-                                    {% endif %}
-                                </td>
-                                <td>
-                                    {% if estudiante.nivel_inicial3 %}
-                                        {{ estudiante.nivel_inicial3 }}
-                                    {% elif estudiante.nivel_inicial4 %}
-                                        {{ estudiante.nivel_inicial4 }}
-                                    {% elif estudiante.nivel_inicial5 %}
-                                        {{ estudiante.nivel_inicial5 }}
-                                    {% elif estudiante.nivel_primario1 %}
-                                        {{ estudiante.nivel_primario1 }}
-                                    {% elif estudiante.nivel_primario2 %}
-                                        {{ estudiante.nivel_primario2 }}
-                                    {% elif estudiante.nivel_primario3 %}
-                                        {{ estudiante.nivel_primario3 }}
-                                    {% elif estudiante.nivel_primario4 %}
-                                        {{ estudiante.nivel_primario4 }}
-                                    {% elif estudiante.nivel_primario5 %}
-                                        {{ estudiante.nivel_primario5 }}
-                                    {% elif estudiante.nivel_primario6 %}
-                                        {{ estudiante.nivel_primario6 }}
-                                    {% elif estudiante.nivel_primario7 %}
-                                        {{ estudiante.nivel_primario7 }}
-                                    {% elif estudiante.nivel_secundario1 %}
-                                        {{ estudiante.nivel_secundario1 }}
-                                    {% elif estudiante.nivel_secundario2 %}
-                                        {{ estudiante.nivel_secundario2 }}
-                                    {% elif estudiante.nivel_secundario3 %}
-                                        {{ estudiante.nivel_secundario3 }}
-                                    {% elif estudiante.nivel_secundario4 %}
-                                        {{ estudiante.nivel_secundario4 }}
-                                    {% elif estudiante.nivel_secundario5 %}
-                                        {{ estudiante.nivel_secundario5 }}
-                                    {% else %}
-                                        No definido
-                                    {% endif %}
-                                </td>
-                                </td>
-                                <td>{{ estudiante.fecha_recepcion }}</td>
+                                <td>{{ estudiante.inscripcion.nivel_estudiante }}</td>
+                                <td>{{ estudiante.inscripcion.curso_anio_estudiante }}</td>
+                                <td>{{ estudiante.inscripcion.turno_estudiante }}</td>
+                                <td>{{ estudiante.inscripcion.fecha_recepcion }}</td>
+
                                 <td>
                                     <form class="alumnos-controls" action="{% url 'ver_datos_estudiante' pk=estudiante.pk %}" method="get">
                                         <div class="tooltip-container">
@@ -240,11 +169,12 @@
                                         </div>
                                     </form>
                                 </td>                           
-                            </tr>  
+
+                            </tr>
                         {% endfor %}
                     {% else %}
                         <tr>
-                            <td colspan="26">No hay alumnos en la base de datos.</td>
+                            <td colspan="8">No hay alumnos en la base de datos.</td>
                         </tr>
                     {% endif %}
                 <tbody>
@@ -369,7 +299,7 @@
                                     </form>
                                 </td>
                                 <td>
-                                    <form class="alumnos-controls" action="{% url 'autoriza_imagen' estudiante.pk %}" method="get">
+                                    <form class="alumnos-controls" action="{% url 'generar_contrato' estudiante.pk %}" method="get">
                                         <div class="tooltip-container">
                                             <span class="tooltip-text">Generar Contrato</span>
                                             <button class="alumnos-btn-pdf" type="submit">
