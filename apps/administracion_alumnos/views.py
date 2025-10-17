@@ -16,15 +16,12 @@ from datetime import datetime
 from django.utils import timezone
 from .models import EstadoDocumentacion
 from django.urls import reverse
-
 from .utils import search_files_in_drive, download_file, archivo_existe
-
-
 from googleapiclient.http import MediaIoBaseDownload
-
 from django.shortcuts import render
 from apps.administracion_alumnos.models import Estudiante
 
+# ----------------FUNCIONA------------------------------
 def estudiante_lista(request):
     # Trae todos los estudiantes con sus relaciones
     estudiantes = Estudiante.objects.select_related(
@@ -45,7 +42,7 @@ def estudiante_lista(request):
         'estudiantes_pendientes': estudiantes_pendientes,
         'estudiantes_aprobados': estudiantes_aprobados,
     })
-
+# ----------------FUNCIONA---------------------------------
 
 def confirmar_aprobacion(request, estudiante_id):
     try:
@@ -82,7 +79,8 @@ from .models import Estudiante
 
 def ver_datos_estudiante(request, pk):
     """
-    Muestra los datos de un estudiante, incluyendo su foto si está disponible.
+    Muestra los datos completos de un estudiante,
+    incluyendo su foto desde la inscripción (si existe).
     """
     # Ruta base donde se almacenan las fotos localmente
     fotos_path = os.path.join(settings.MEDIA_ROOT, 'documentos', 'fotoPerfilEstudiante')
@@ -90,74 +88,42 @@ def ver_datos_estudiante(request, pk):
     # Obtener el estudiante según su ID (pk)
     estudiante = get_object_or_404(Estudiante, pk=pk)
 
-    # Buscar la foto del estudiante basada en el CUIL o ID de Google Drive
+    # Obtener la foto desde la inscripción (si existe)
+    foto_campo = None
+    if hasattr(estudiante, 'inscripcion') and estudiante.inscripcion.foto_estudiante:
+        foto_campo = estudiante.inscripcion.foto_estudiante
+
+    # Buscar la foto del estudiante basada en el enlace o ID de Google Drive
     foto_id = None
-    if estudiante.foto_estudiante:
-        # Extrae el ID del enlace de Google Drive si está en el campo
-        if "id=" in estudiante.foto_estudiante:
-            foto_id = estudiante.foto_estudiante.split("id=")[-1]
+    if foto_campo:
+        if "id=" in foto_campo:
+            foto_id = foto_campo.split("id=")[-1]
 
     # Inicializar la URL de la foto
     foto_url = None
     if foto_id:
-        # Verifica si existe algún archivo con el ID en su nombre en la carpeta local
-        for archivo in os.listdir(fotos_path):
-            if archivo.startswith(foto_id):  # Busca archivos que comiencen con el ID
-                # Genera la URL para acceder a la foto desde el navegador
-                foto_url = os.path.join(
-                    settings.MEDIA_URL, 'documentos', 'fotoPerfilEstudiante', archivo
-                )
-                break
+        # Buscar archivo local que comience con el ID
+        if os.path.exists(fotos_path):
+            for archivo in os.listdir(fotos_path):
+                if archivo.startswith(foto_id):
+                    foto_url = os.path.join(
+                        settings.MEDIA_URL, 'documentos', 'fotoPerfilEstudiante', archivo
+                    )
+                    break
 
     # Si no se encuentra la foto, usar una imagen por defecto
     if not foto_url:
         foto_url = os.path.join(settings.STATIC_URL, 'images/default.jpg')
 
-    # Renderizar la vista con los datos del estudiante y su foto
-    return render(request, 'administracion_alumnos/ver_datos_estudiante.html', {
-        'estudiante': estudiante,
-        'image_url': foto_url  # URL de la foto del estudiante
-    })
-
-
-# def estudiante_edit(request, pk):
-#     estudiante = get_object_or_404(Estudiante, pk=pk)
-#     if request.method == "POST":
-#         form = EstudianteForm(request.POST, request.FILES, instance=estudiante)
-#         if form.is_valid():
-#             form.save()
-#             messages.success(request, 'Los cambios han sido guardados correctamente.')
-#             return redirect('estudiante_detail', pk=estudiante.pk)
-#     else:
-#         form = EstudianteForm(instance=estudiante)
-#     return render(request, 'administracion_estudiantes/estudiante_edit.html', {'form': form})
-
-
-# def estudiante_delete(request, pk):
-#     estudiante = get_object_or_404(Estudiante, pk=pk)
-#     if request.method == "POST":
-#         estudiante.delete()
-#         messages.success(request, 'Estudiante eliminado correctamente.')
-#         return redirect('estudiante_list')
-#     return render(request, 'administracion_alumnos/alumno_confirm_delete.html', {'estudiante': estudiante}) 
-
-"""def registrar_estudiante(request):
-    if request.method == 'POST':
-        form = EstudianteForm(request.POST)
-        if form.is_valid():
-            estudiante = form.save(commit=False)
-            estudiante.marca_temporal = timezone.localtime(timezone.now())  # Registrar fecha y hora actual
-            estudiante.save()
-            messages.success(request, 'Estudiante registrado correctamente.')
-            return redirect('estudiante_list')
-        else:
-            messages.error(request, 'Por favor, corrija los errores a continuación.')
-    else:
-        form = EstudianteForm()
-    return render(request, 'administracion_alumnos/registrar_estudiante.html', {'form': form})
-
-"""
-
+    # Renderizar la vista con todos los datos
+    return render(
+        request,
+        'administracion_alumnos/ver_datos_estudiante.html',
+        {
+            'estudiante': estudiante,
+            'image_url': foto_url
+        }
+    )
 
 from django.shortcuts import render, redirect
 from django.contrib import messages
@@ -307,14 +273,6 @@ def generar_pdf_estudiante(estudiante, datos_institucion, logo_path):
 
     elements.append(encabezado_tabla)
     elements.append(Spacer(1, 0.25 * inch))
-
-
-    # Otra forma de titulo institucion 
-    # Información de la institución
-    #elements.append(Paragraph(datos_institucion["Nombre"], styles['Title']))
-    #elements.append(Paragraph(datos_institucion["Dirección"], styles['Normal']))
-    #elements.append(Paragraph(f"Teléfono: {datos_institucion['Teléfono']}", styles['Normal']))
-    #elements.append(Paragraph(f"Email: {datos_institucion['Email']}", styles['Normal']))
 
     # Datos del estudiante
     elements.append(Paragraph("Ficha del Estudiante", styles['Heading2']))
@@ -542,27 +500,36 @@ def generar_pdf_lista_estudiantes_view(request):
     return response
 
 def estudiante_edit(request, pk):
-    alumno = get_object_or_404(Estudiante, pk=pk)
+    estudiante = get_object_or_404(Estudiante, pk=pk)
+    form = EstudianteForm(request.POST or None, instance=estudiante)
+
     if request.method == "POST":
-        form = EstudianteForm(request.POST, instance=alumno)
         if form.is_valid():
             form.save()
             return redirect('estudiante_list')
-        else:
-            print(form.errors)  # Esto te dará detalles de cualquier error en el formulario
-    else:
-        form = EstudianteForm(instance=alumno)
-    return render(request, 'administracion_alumnos/estudiante_edit.html', {'form': form})
 
-# def estudiante_delete(request, pk):
-#     """
-#     Vista para eliminar un alumno.
-#     """
-#     alumno = get_object_or_404(Estudiante, pk=pk)
-#     if request.method == "POST":
-#         alumno.delete()
-#         return redirect(reverse('estudiante_list'))  # Redirige a la lista de alumnos
-#     return render(request, 'administracion_alumnos/alumno_confirm_delete.html', {'alumno': alumno})
+    # 🧩 Agregamos las relaciones relacionadas (OneToOne o ForeignKey)
+    context = {
+        'form': form,
+        'estudiante': estudiante,
+        'image_url': None,
+    }
+
+    # Si tenés fotos o imágenes del estudiante:
+    if hasattr(estudiante, 'inscripcion') and estudiante.inscripcion:
+        context['inscripcion'] = estudiante.inscripcion
+    if hasattr(estudiante, 'info_academica') and estudiante.info_academica:
+        context['info_academica'] = estudiante.info_academica
+    if hasattr(estudiante, 'contacto') and estudiante.contacto:
+        context['contacto'] = estudiante.contacto
+    if hasattr(estudiante, 'salud') and estudiante.salud:
+        context['salud'] = estudiante.salud
+    if hasattr(estudiante, 'documentacion') and estudiante.documentacion:
+        context['documentacion'] = estudiante.documentacion
+    if hasattr(estudiante, 'estado_documentacion') and estudiante.estado_documentacion:
+        context['estado_documentacion'] = estudiante.estado_documentacion
+
+    return render(request, 'administracion_alumnos/estudiante_edit.html', context)
 
 
 def estudiante_delete(request, pk):
@@ -575,24 +542,30 @@ def estudiante_delete(request, pk):
     
     return render(request, 'administracion_alumnos/alumno_confirm_delete.html', {'estudiante': estudiante})
 
+# ----------------------FUNCIONA--------------------------------
 def estudiante_consultar(request):
     estudiante = None
     error = None
 
     if request.method == "POST":
         cuil = request.POST.get('cuil')
+
+        # Validación básica del campo CUIL
         if not cuil or not re.fullmatch(r'\d+', cuil):
             error = 'El CUIL debe contener solo números y no puede estar vacío.'
         else:
             try:
-                # Obtén el registro más reciente para el CUIL
+                # Busca el estudiante por CUIL y trae las relaciones asociadas
                 estudiante = (
-                    Estudiante.objects.filter(cuil_estudiante=cuil)
-                    .order_by('-marca_temporal')  # Ordena por la última marca temporal
-                    .first()  # Obtén el primer registro
+                    Estudiante.objects
+                    .select_related('inscripcion', 'contacto', 'estado_documentacion')
+                    .filter(cuil_estudiante=cuil)
+                    .first()
                 )
+
                 if not estudiante:
                     error = 'No se encontró un estudiante con ese CUIL.'
+
             except Exception as e:
                 error = f'Ocurrió un error inesperado: {e}'
 
@@ -601,6 +574,7 @@ def estudiante_consultar(request):
         'administracion_alumnos/estudiante_consultar.html',
         {'estudiante': estudiante, 'error': error}
     )
+# ----------------------FUNCIONA--------------------------------
 
 import locale
 from datetime import datetime
@@ -611,24 +585,6 @@ from reportlab.lib.pagesizes import A4
 from reportlab.lib.styles import getSampleStyleSheet
 from .models import Estudiante
 
-
-"""
- estudiante = get_object_or_404(Estudiante, pk=estudiante_id)
-    datos_institucion = {
-        "Nombre": "U.E.G.P. N°82",
-        "Dirección": "Urquiza 768 / 846 Presidencia Roque Sáenz Peña.",
-        "Teléfono": "0364-4423041 / 0364-4436798",
-        "Email": "contacto@hdebethania.edu.ar"
-    }
-    logo_path = os.path.join(settings.BASE_DIR, 'static', 'img', 'logo.png')
-    pdf_path = generar_pdf_estudiante(estudiante, datos_institucion, logo_path)
-
-    # Incluir el CUIL, fecha y hora en el nombre del archivo
-    fecha_hora_actual = datetime.now().strftime("%Y-%m-%d_%H-%M")
-    filename = f"Ficha del Estudiante - {estudiante.cuil_estudiante} - {fecha_hora_actual}.pdf"
-
-    return FileResponse(open(pdf_path, 'rb'), as_attachment=True, filename=filename)
-"""
 from reportlab.lib.pagesizes import A4
 from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer, Image
 from reportlab.lib.styles import getSampleStyleSheet
@@ -1205,37 +1161,3 @@ def lista_fotos_estudiantes(request):
     return render(request, 'administracion_alumnos/lista_fotos_estudiantes.html', {
         'fotos_estudiantes': fotos_estudiantes
     })
-
-"""def estudiante_consultar(request):
-
-    Vista para consultar alumnos.
-
-    query = request.GET.get('query', '')  # Captura el término de búsqueda del formulario
-    alumnos = Alumno.objects.filter(
-        nombres_alumno__icontains=query
-    ) | Alumno.objects.filter(
-        apellidos_alumno__icontains=query
-    )  # Filtra por nombre o apellido
-    return render(request, 'administracion_alumnos/estudiante_consultar.html', {'alumnos': alumnos, 'query': query})
-
-def estudiante_consultar(request):
-    estudiante = None
-    error = None
-
-    if request.method == "POST":
-        cuil = request.POST.get('cuil')
-        if not cuil or not re.fullmatch(r'\d+', cuil):
-            error = 'El CUIL debe contener solo números y no puede estar vacío.'
-        else:
-            try:
-                estudiante = Estudiante.objects.get(cuil_estudiante=cuil)
-            except Estudiante.DoesNotExist:
-                error = 'No se encontró un estudiante con ese CUIL.'
-
-    return render(request, 'administracion_alumnos/estudiante_consultar.html', {'estudiante': estudiante, 'error': error})
-
-"""
-
-# def estudiante_list(request):
-#     estudiantes = Estudiante.objects.all()
-#     return render(request, 'administracion_alumnos/estudiante_list.html',  {'estudiantes': estudiantes})

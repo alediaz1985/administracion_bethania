@@ -22,7 +22,6 @@
                 </span>
                 <span class="boton-accion__texto">Buscar</span>
             </button>
-
         </form>
 
         <div class="consulta-alumno__resultado">
@@ -32,11 +31,20 @@
                 <div class="consulta-alumno__resultados-estudiante">
                     <div class="consulta-alumno__datos">
                         <h2 class="consulta-alumno__subtitulo">Datos del Estudiante</h2>
+
                         <p class="consulta-alumno__parrafo"><strong>CUIL:</strong> {{ estudiante.cuil_estudiante }}</p>
                         <p class="consulta-alumno__parrafo"><strong>Nombre:</strong> {{ estudiante.apellidos_estudiante }}, {{ estudiante.nombres_estudiante }}</p>
-                        <p class="consulta-alumno__parrafo"><strong>Tel-Cel:</strong> {{ estudiante.tel_cel_estudiante }}</p>
-                        <p class="consulta-alumno__parrafo"><strong>Última Actualización:</strong> {{ estudiante.marca_temporal }}</p>
+
+                        {% if estudiante.inscripcion %}
+                            <p class="consulta-alumno__parrafo"><strong>Última Actualización:</strong> {{ estudiante.inscripcion.marca_temporal }}</p>
+                            <p class="consulta-alumno__parrafo"><strong>Nivel:</strong> {{ estudiante.inscripcion.nivel_estudiante }}</p>
+                            <p class="consulta-alumno__parrafo"><strong>Curso / Año:</strong> {{ estudiante.inscripcion.curso_anio_estudiante }}</p>
+                            <p class="consulta-alumno__parrafo"><strong>Turno:</strong> {{ estudiante.inscripcion.turno_estudiante }}</p>
+                        {% else %}
+                            <p class="consulta-alumno__parrafo"><em>Sin datos de inscripción.</em></p>
+                        {% endif %}
                     </div>
+
                     <div class="consulta-alumno__grupo-botones">
                         <form method="get" action="{% url 'ver_datos_estudiante' pk=estudiante.pk %}" class="consulta-alumno__formulario-boton">
                             <button class="boton-accion">
@@ -68,16 +76,17 @@
 
 {% endblock %}
 
-
 {% block extra_scripts %}
     <script>
         document.addEventListener('DOMContentLoaded', function() {
-            document.getElementById('delete-button').addEventListener('click', function() {
-                if (confirm('¿Estás seguro de que quieres eliminar este alumno?')) {
-                    document.getElementById('delete-form').submit();
-                }
-            });
+            const btnDelete = document.getElementById('delete-button');
+            if (btnDelete) {
+                btnDelete.addEventListener('click', function() {
+                    if (confirm('¿Estás seguro de que quieres eliminar este alumno?')) {
+                        document.getElementById('delete-form').submit();
+                    }
+                });
+            }
         });
-        
     </script>
 {% endblock %}

@@ -2,11 +2,8 @@ body {
     font-family: 'Roboto', sans-serif;
     margin: 0;
     padding: 0;
-    background-image: url('../img/fondo1.png'); /* Cambia por la ruta de tu imagen */
-    background-size: cover;  /* Asegura que la imagen cubra todo el fondo */
-    background-position: center; /* Centra la imagen */
-    background-repeat: no-repeat; /* Evita que la imagen se repita */
-    color: #000000;
+    background-color: #dfdfdf;  /* ✅ Fondo blanco liso */
+    color: #000000;             /* Texto negro */
 }
 
 .alumnos-container {
@@ -73,164 +70,60 @@ body {
     box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2); /* Sombra más marcada */
 }
 
-/* Segundo botón */
-/* Botón Ver Datos */
-.alumnos-btn-ver {
-    padding: 3px 13px;
-    background-color: #116cd4;
-    color: white;
-    border: none;
-    cursor: pointer;
-    border-radius: 10px;
-    transition: all 0.3s ease;
-    box-shadow: 0 8px 4px rgba(0, 0, 0, 0.4);
-    font-size: 20px;
-}
-
-/* Contenedor del mensaje */
-.tooltip-container-1 {
-    position: relative;
+/* ------------------------------------------------------- */
+/* Contenedor: botones bien juntos */
+.icon-form {
     display: inline-block;
+    margin: 0;
+    padding: 0;
 }
 
-/* Estilo del globo de diálogo */
-.tooltip-text-1 {
-    visibility: hidden;
-    background-color: rgb(167, 167, 167);
-    color: white;
-    font-size: 8px;
-    padding: 5px 10px;
-    border-radius: 65px; /* Redondeo para forma de globo */
-    position: absolute;
-    top: -35px;
-    left: 50%;
-    transform: translateX(-40%);
-    opacity: 0;
-    white-space: nowrap;
-    transition: opacity 0.3s ease, transform 0.3s ease;
-    z-index: 10;
-    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.2);
+/* Botón simple y limpio */
+/* 🔹 Celda que contiene los íconos: alineada a la derecha */
+td.acciones {
+    text-align: right;       /* ✅ los lleva al borde derecho */
+    white-space: nowrap;     /* evita que se vayan a otra línea */
+    padding-right: 12px;     /* pequeño margen interno */
 }
 
-/* Triángulo debajo del globo */
-.tooltip-text-1::after {
-    content: '';
-    position: absolute;
-    top: 100%;
-    left: 50%;
-    transform: translateX(-40%);
-    border-width: 8px;
-    border-style: solid;
-    border-color: rgb(167, 167, 167) transparent transparent transparent;
-}
-
-/* Mostrar el mensaje al hacer hover */
-.tooltip-container-1:hover .tooltip-text-1 {
-    visibility: visible;
-    opacity: 1;
-    transform: translateX(-50%) translateY(2px); /* Movimiento sutil hacia arriba */
-}
-
-/* Animación del parpadeo en el ícono */
-.alumnos-btn-ver:hover i {
-    animation: blink 1.5s infinite;
-}
-
-/* Efecto de parpadeo (línea que cruza el ojo) */
-@keyframes blink {
-    0%, 100% {
-        clip-path: inset(0% 0% 0% 0%); /* Ojo completamente visible */
-    }
-    50% {
-        clip-path: inset(50% 0% 50% 0%); /* Ojo parcialmente cerrado (línea horizontal) */
-    }
-}
-
-/* Botón Generar Contrato */
-.alumnos-btn-pdf {
-    padding: 3px 13px;
-    background-color: #381789;
-    color: white;
-    border: none;
-    cursor: pointer;
-    border-radius: 10px;
-    transition: all 0.3s ease;
-    box-shadow: 0 8px 4px rgba(0, 0, 0, 0.4);
-    font-size: 20px;
-}
-
-.alumnos-btn-pdf:hover {
-    animation: shake 0.5s ease-in-out;
-}
-
-@keyframes shake {
-    0% { transform: translateX(0); }
-    25% { transform: translateX(-5px); }
-    50% { transform: translateX(5px); }
-    75% { transform: translateX(-5px); }
-    100% { transform: translateX(0); }
-}
-
-
-/* Contenedor del mensaje */
-.tooltip-container {
-    position: relative;
+/* 🔹 Formularios uno al lado del otro */
+.icon-form {
     display: inline-block;
+    margin: 0;
+    padding: 0;
 }
 
-/* Estilo del globo de diálogo */
-.tooltip-text {
-    visibility: hidden;
-    background-color: rgb(167, 167, 167);
-    color: white;
-    font-size: 8px;
-    padding: 5px 10px;
-    border-radius: 65px; /* Redondeo para forma de globo */
-    position: absolute;
-    top: -35px;
-    left: 50%;
-    transform: translateX(-40%);
-    opacity: 0;
-    white-space: nowrap;
-    transition: opacity 0.3s ease, transform 0.3s ease;
-    z-index: 10;
-    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.2);
+/* 🔹 Botones minimalistas (solo ícono) */
+.icon-btn {
+    background: none;
+    border: none;
+    color: #000;
+    font-size: 14px;
+    cursor: pointer;
+    padding: 4px 12px;
+    transition: color 0.2s ease, transform 0.2s ease;
 }
 
-/* Triángulo debajo del globo */
-.tooltip-text::after {
-    content: '';
-    position: absolute;
-    top: 100%;
-    left: 50%;
-    transform: translateX(-40%);
-    border-width: 8px;
-    border-style: solid;
-    border-color: rgb(167, 167, 167) transparent transparent transparent;
+/* 🔹 Hover sutil */
+.icon-btn:hover {
+    color: #555;
+    transform: scale(1.1);
 }
 
-/* Mostrar el mensaje al hacer hover */
-.tooltip-container:hover .tooltip-text {
-    visibility: visible;
-    opacity: 1;
-    transform: translateX(-50%) translateY(2px); /* Movimiento sutil hacia arriba */
+/* 🔹 Diferenciar el ícono PDF (opcional pero elegante) */
+.icon-btn.pdf {
+    color: #000;
 }
 
-/* Animación del parpadeo en el ícono */
-.alumnos-btn-1:hover i {
-    position: relative;
-    animation: blink 1.5s infinite;
+.icon-btn.pdf:hover {
+    color: #c00;
 }
 
-/* Efecto de parpadeo (línea que cruza el ojo) */
-@keyframes blink {
-    0%, 100% {
-        clip-path: inset(0% 0% 0% 0%); /* Ojo completamente visible */
-    }
-    50% {
-        clip-path: inset(50% 0% 50% 0%); /* Ojo parcialmente cerrado (línea horizontal) */
-    }
+/* 🔹 Quitar espacio extra entre botones */
+td.acciones .icon-form + .icon-form {
+    margin-left: -2px;
 }
+/* ------------------------------------------------------- */
 
 .alumnos-btn:active {
     background-color: rgb(39, 70, 27);
@@ -297,199 +190,63 @@ body {
     border-color: #007bff;
 }
 
-/* From Uiverse.io by vinodjangid07 */ 
-.Documents-btn {
+/* 🔹 Contenedor general: filtro a la izquierda, botón a la derecha */
+.alumnos {
     display: flex;
+    justify-content: space-between;
     align-items: center;
-    justify-content: flex-start;
-    width: fit-content;
-    height: 35px;
-    border: none;
-    padding: 0px 5px;
-    border-radius: 5px;
-    background-color: #381789;
-    gap: 10px;
-    cursor: pointer;
-    transition: all 0.3s;
-    box-shadow: 0 1px 16px rgba(0, 0, 0, 0.4); /* Sombra más marcada */
-    float: right;
-    padding-right: 10px;
+    flex-wrap: wrap;            /* ✅ se adapta si se achica la pantalla */
+    gap: 15px;
+    margin-bottom: 20px;
+    margin-top: 20px;
 }
 
-.folderContainer {
-    width: 30px;
-    height: fit-content;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: flex-end;
-    position: relative;
-}
-
-.fileBack {
-    z-index: 1;
-    width: 80%;
-    height: auto;
-}
-
-.filePage {
-    width: 60%;
-    height: auto;
-    position: absolute;
-    z-index: 2;
-    transition: all 0.3s ease-out;
-}
-
-.fileFront {
-    width: 90%;
-    height: auto;
-    position: absolute;
-    z-index: 3;
-    opacity: 0.95;
-    transform-origin: bottom;
-    transition: all 0.3s ease-out;
-}
-
-.text {
-    color: white;
-    font-size: 10px;
-    font-weight: 400;
-    letter-spacing: 0.5px;
-}
-
-.Documents-btn:hover .filePage {
-    transform: translateY(-5px);
-}
-
-.Documents-btn:hover {
-    background-color:#1a054f;
-    transform: translateY(-3px); /* Efecto de "levantamiento" al pasar el mouse */
-    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1); /* Sombra más marcada */
-}
-
-.Documents-btn:active {
-    transform: scale(0.95);
-}
-
-.Documents-btn:hover .fileFront {
-    transform: rotateX(30deg);
-}
-
-/* Estilo general del contenedor de filtros */
-.filters {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    margin: 0 40px 0 0;
-    position: relative;
-}
-
-/* Estilos del select */
+/* 🔹 Filtro simple pero elegante */
 #nivel-filter {
-    appearance: none;
-    -webkit-appearance: none;
-    -moz-appearance: none;
-    width: 100%;
-    max-width: 250px;
-    padding: 14px 20px;
-    font-size: 11px;
+    padding: 10px 18px;
+    font-size: 14px;
     font-family: 'Roboto', sans-serif;
-    color: #444;
-    background: linear-gradient(135deg, #f0f4f8, #e0e8f0);
-    border: 2px solid #ddd;
-    border-radius: 50px;
-    outline: none;
-    transition: all 0.3s ease-in-out;
-    position: relative;
+    color: #333;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    background-color: #fff;
     cursor: pointer;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.4);
+    transition: all 0.3s ease;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
 }
 
-/* Efectos cuando el select está en foco o el mouse pasa sobre él */
 #nivel-filter:hover,
 #nivel-filter:focus {
-    border-color: #007bff;
-    background: linear-gradient(135deg, #ffffff, #f8f9fc);
-    box-shadow: 0 4px 15px rgba(0, 123, 255, 0.3);
-    transform: translateY(-2px);
+    border-color: #4b6cb7;
+    box-shadow: 0 4px 10px rgba(75, 108, 183, 0.2);
+    outline: none;
 }
 
-/* Flecha personalizada en el desplegable */
-#nivel-filter::after {
-    content: '';
-    position: absolute;
-    top: 50%;
-    right: 15px;
-    width: 0;
-    height: 0;
-    border-left: 6px solid transparent;
-    border-right: 6px solid transparent;
-    border-top: 8px solid #333;
-    transform: translateY(-50%);
-    pointer-events: none;
-    transition: all 0.3s ease;
-}
-
-/* Animación cuando el select es enfocado */
-#nivel-filter:focus::after {
-    border-top-color: #007bff;
-}
-
-/* Estilos para las opciones del select */
-#nivel-filter option {
-    background-color: #fff;
-    color: #333;
-    font-size: 11px;
-    font-weight: 400;
-    padding: 12px;
-    transition: all 0.3s ease-in-out;
-}
-
-/* Efecto de hover en las opciones */
-#nivel-filter option:hover {
-    background-color: #f1f9ff;
-    color: #007bff;
-    transform: scale(1.05);
-    box-shadow: inset 0 0 10px rgba(0, 123, 255, 0.2);
-}
-
-/* Estilo cuando el select está deshabilitado */
-#nivel-filter:disabled {
-    background-color: #f9f9f9;
-    color: #aaa;
-    cursor: not-allowed;
-}
-
-/* Resaltar etiquetas o indicaciones */
-label {
-    font-size: 12px;
-    color: #444;
+/* 🔹 Botón para generar PDF */
+.btn-generar-pdf {
+    background-color: #1a2942;
+    color: #fff;
+    border: none;
+    padding: 10px 22px;
+    border-radius: 8px;
+    font-size: 9px;
     font-weight: 600;
-    text-align: center;
-    margin-bottom: 15px;
-    letter-spacing: 0.5px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 3px 8px rgba(0, 0, 0, 0.2);
 }
 
-/* Aplicar una animación de enfoque cuando el campo es clickeado */
-@keyframes focusEffect {
-    0% {
-        box-shadow: 0 0 0px rgba(0, 123, 255, 0.4);
-    }
-    100% {
-        box-shadow: 0 0 10px rgba(0, 123, 255, 0.7);
-    }
+.btn-generar-pdf:hover {
+    transform: translateY(-2px);
+    background: #22385d;   
+    box-shadow: 0 5px 12px rgba(0, 0, 0, 0.3);
 }
 
-#nivel-filter:focus {
-    animation: focusEffect 0.5s ease-out;
+.btn-generar-pdf:active {
+    transform: translateY(0);
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
 }
 
-/* Estilo para la caja de filtro para mantener la estética profesional */
-.filters {
-    max-width: 320px;
-    width: 100%;
-    padding: 10px;
-}
 
 /* Media queries para pantallas más pequeñas */
 @media (max-width: 1366px) {

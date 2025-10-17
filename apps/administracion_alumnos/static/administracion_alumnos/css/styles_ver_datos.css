@@ -1,620 +1,271 @@
-/* Estilos generales */
-body {
-    font-family: Arial, sans-serif;
-    background-image: url('../img/fondo1.png'); /* Cambia por la ruta de tu imagen */
-    background-size: cover;  /* Asegura que la imagen cubra todo el fondo */
-    background-position: center; /* Centra la imagen */
-    background-repeat: no-repeat; /* Evita que la imagen se repita */
-    width: 96%;
-    float: right;
+:root {
+  --azul: #1a2942;
+  --gris-claro: #f9f9f9;
+  --borde: #b8b8b8;
+  --texto: #222;
+  --secundario: #555;
+}
+
+/* ============================
+   CONTENEDOR PRINCIPAL
+============================ */
+.student-card {
+  max-width: 1180px;
+  margin: 2rem auto;
+  background: #fff;
+  border-radius: 10px;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+  padding: 2rem;
+  font-family: 'Inter', sans-serif;
+}
+
+/* ============================
+   CABECERA
+============================ */
+.student-header {
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+  border-bottom: 1px solid var(--borde);
+  padding-bottom: 1.5rem;
+  margin-bottom: 1.5rem;
+}
+
+.student-photo {
+  width: 90px;
+  height: 90px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 1px solid var(--borde);
+}
+
+.student-info h2 {
+  font-size: 1.25rem;
+  margin: 0;
+  color: var(--azul);
+}
+
+.student-info p {
+  margin: 0.25rem 0;
+  color: var(--secundario);
+}
+
+/* ============================
+   BOTONES
+============================ */
+.student-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-bottom: 1.5rem;
+}
+
+.btn {
+  background: var(--azul);
+  color: white;
+  text-align: center;
+  padding: 0.45rem 0;
+  width: 150px;
+  border-radius: 5px;
+  text-decoration: none;
+  font-size: 0.75rem;
+  letter-spacing: 0.3px;
+  font-weight: 500;
+  transition: all 0.25s ease;
+  border: 1px solid transparent;
+}
+
+.btn:hover {
+  background: #22385d;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
+}
+
+.btn-light {
+  background: #f3f3f3;
+  color: #333;
+  border: 1px solid #dcdcdc;
+}
+
+.btn-light:hover {
+  background: #e8e8e8;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+}
+
+/* ============================
+   🔹 PESTAÑAS
+============================ */
+.tabs {
+  display: flex;
+  flex-wrap: nowrap;
+  overflow-x: auto;
+  gap: 6px;
+  border-bottom: 2px solid var(--borde);
+  margin-bottom: 1.2rem;
+  scrollbar-width: thin;
+  scrollbar-color: var(--azul) #eaeaea;
 }
 
-h1 {
-    text-align: center;
-    font-size: 18px;
+.tabs::-webkit-scrollbar {
+  height: 6px;
 }
 
-/* Contenedor principal */
-.see-student-container {
-    padding: 65px 0;
-    display: flex;
-    flex-direction: column;
-    /* align-items: stretch;  */
-    /* Permite que los hijos se expandan a todo el ancho */
+.tabs::-webkit-scrollbar-thumb {
+  background: var(--azul);
+  border-radius: 10px;
 }
 
-.see-student-container h1 {
-    padding-bottom: 50px;
+.tab-button {
+  flex: 1;
+  background: var(--gris-claro);
+  border: 1px solid var(--borde);
+  border-bottom: none;
+  padding: 10px 14px;
+  cursor: pointer;
+  font-weight: 600;
+  border-radius: 8px 8px 0 0;
+  color: var(--texto);
+  transition: all 0.3s;
+  white-space: nowrap;
+  font-size: 0.9rem;
 }
 
-.alumno-section {
-    margin: auto;
+.tab-button:hover {
+  background: #efefef;
 }
 
-/* Dividir la sección de Alumno en dos columnas */
-.alumno-section .student-info {
-    display: flex;
-    justify-content: space-between;
-    gap: 8px; /* Espacio entre las columnas */
+.tab-button.active {
+  background: var(--azul);
+  color: #fff;
+  border-color: var(--azul);
 }
 
-/* Columna para la Foto y Legajo */
-.alumno-section .student-info .column-left {
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
+/* ============================
+   CONTENIDO DE PESTAÑAS
+============================ */
+.tab-content {
+  display: none;
+  animation: fadeIn 0.25s ease-in-out;
+  border: 1px solid var(--borde);
+  border-radius: 0 10px 10px 10px;
+  padding: 1rem 1.5rem;
+  background-color: #fff;
 }
 
-.imagen-contenedor {
-    width: 226px; /* Ajusta el ancho del contenedor */
-    height: 231px; /* Ajusta la altura del contenedor */
-    overflow: hidden; /* Oculta cualquier parte de la imagen que sobresalga */
-    display: flex; /* Utiliza flexbox para centrar la imagen verticalmente */
-    justify-content: center; /* Centra la imagen horizontalmente */
-    align-items: center; /* Centra la imagen verticalmente */
+.tab-content.active {
+  display: block;
 }
 
-.imagen-contenedor img {
-    width: 100%; /* Ajusta el ancho de la imagen al 100% del contenedor */
-    height: 100%; /* Ajusta la altura de la imagen al 100% del contenedor */
-    object-fit: cover; /* Mantiene la relación de aspecto de la imagen y la recorta si es necesario */
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
 }
 
-/* Columna para Salita, Nivel y Fecha de Recepción */
-.alumno-section .student-info .column-right {
-    flex: 1;
-    display: flex;
-    flex-direction: column;
+/* ============================
+   TABLAS Y CAMPOS
+============================ */
+.tab-content table {
+  width: 100%;
+  border-collapse: collapse;
 }
-
-/* Estilo de la tabla dentro de las columnas */
-.alumno-section table {
-    width: 100%;
-    margin-bottom: 15px;
-    border-collapse: collapse;
-}
-
-/* Sección Alumno */
-.alumno-section {
-    width: 98%;
-    margin-bottom: 1px;
-    border: 1px solid #ddd;
-    padding: 18px 20px;
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.4);
-    border-radius: 5px;
-    background-color: #f7f7f7;
-}
-
-/* Efecto de elevación al pasar el mouse */
-.alumno-section:hover {
-    transform: scale(1.01); /* Incrementa ligeramente el tamaño */
-    box-shadow: 0 12px 24px rgba(0, 0, 0, 0.4); /* Sombra más intensa */
-}
-
-.alumno-section h2 {
-    font-size: 16px;
-    color: #333;
-    margin-bottom: 15px;
-    text-align: center;
-}
-
-/* Contenedor de las secciones Datos del Alumno y Domicilio (ambas en contenedores separados) */
-.sections-container {
-    display: flex;
-    justify-content: space-between;
-    width: 98%;
-    gap: 1px;
-    margin-bottom: 1px;
-}
-
-/* Efecto de elevación al pasar el mouse */
-.sections-container:hover {
-    transform: scale(1.01); /* Incrementa ligeramente el tamaño */
-    box-shadow: 0 12px 24px rgba(0, 0, 0, 0.4); /* Sombra más intensa */
-}
-
-/* Estilo para la sección Datos del Alumno */
-.section-datos {
-    width: 55%; /* Ocupa el 48% del contenedor */
-    border: 1px solid #ddd;
-    padding: 18px 20px;
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.4);
-    border-radius: 5px;
-    background-color: #f7f7f7;
-}
-
-/* Estilo para la sección Domicilio */
-.section-domicilio {
-    width: 55%; /* Ocupa el 48% del contenedor */
-    border: 1px solid #ddd;
-    padding: 18px 20px;
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.4);
-    background-color: #f7f7f7;
-    border-radius: 5px;
-}
-
-h4 {
-    font-size: 16px;
-    color: #333;
-    margin-bottom: 10px;
-    text-align: center;
-}
-
-/* Estilos de las tablas */
-table {
-    width: 98%;
-    border-collapse: collapse;
-    margin-bottom: 15px;
-    table-layout: fixed; /* Forzar celdas del mismo tamaño */
-}
-
-table td:empty::before {
-    content: "\00a0"; /* Espacio no rompible para celdas vacías */
-}
-
-th {
-    width: 100%;
-    font-weight: bold;
-    font-size: 12px;
-    background-color: #c9c6c6;
-    padding: 8px;
-    text-align: left;
-    font-weight: bold;
-    border-bottom: 2px solid #807f7f;
-}
-
-td {
-    font-size: 12px;
-    height: 30px; /* Altura consistente */
-    text-align: left; /* Alineación */
-}
-
-.health-section {
-    padding: 18px 20px;
-    background-color: #f7f7f7;
-    border-radius: 5px;
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.4);
-    width: 98%;
-    margin-left: auto; /* Centra horizontalmente */
-    margin-right: auto; /* Centra horizontalmente */
-    margin-bottom: 40px; /* Espacio específico en la parte inferior */
-}
-
-.health-section:hover {
-    transform: scale(1.01); /* Incrementa ligeramente el tamaño */
-    box-shadow: 0 12px 24px rgba(0, 0, 0, 0.4); /* Sombra más intensa */
-}
-
-.health-section h4 {
-    text-align: center;
-    margin-bottom: 20px;
-    font-size: 16px;
-    color: #333;
-}
-
-.health-columns {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 1px;
-}
-
-.health-column {
-    background-color: #f7f7f7;
-}
-
-.health-column table {
-    border-collapse: collapse;
-}
-
-/* Responsables */
-/* Contenedor principal */
-.parent-responsibles-container {
-    padding: 18px 20px;
-    background-color: #f7f7f7;
-    border-radius: 5px;
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.4);
-    width: 98%;
-    margin-left: auto; /* Centra horizontalmente */
-    margin-right: auto; /* Centra horizontalmente */
-    margin-bottom: 40px; /* Espacio específico en la parte inferior */
-}
-
-.parent-responsibles-container:hover {
-    transform: scale(1.01); /* Incrementa ligeramente el tamaño */
-    box-shadow: 0 12px 24px rgba(0, 0, 0, 0.4); /* Sombra más intensa */
-}
-
-/* Título centrado */
-.parent-responsibles-container h2 {
-    text-align: center;
-    font-size: 16px;
-    margin-bottom: 30px;
-    color: #333;
-}
-
-/* Diseño de la cuadrícula */
-.responsibles-grid {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr); /* Tres columnas para los tres responsables */
-    gap: 8px;
-}
-
-/* Tarjetas individuales */
-.responsible-card {
-    background-color: #f7f7f7;
-    border-radius: 8px;
-}
-
-.responsible-card h3 {
-    font-size: 14px;
-    margin-bottom: 15px;
-    text-align: center;
-    color: #333;
-}
-
-/* Secciones internas */
-.responsible-section {
-    margin-bottom: 20px;
-}
-
-.responsible-section h4 {
-    font-size: 14px;
-    margin-bottom: 10px;
-    color: #333;
-}
-
-/* Tablas */
-.responsible-section table {
-    width: 100%;
-    border-collapse: collapse;
-    margin-bottom: 10px;
-}
-
-thead th {
-    background-color: #c9c6c6;
-    text-align: left;
-    padding: 8px;
-    font-weight: bold;
-    border-bottom: 2px solid #807f7f;
-}
-
-tbody td {
-    padding: 8px;
-    border-bottom: 1px solid #ddd;
-}
-
-
-/* Contenedor principal */
-.academic-info-container {
-    width: 98%;
-    padding: 18px 20px;
-    margin: 0 auto;
-    background-color: #f7f7f7;
-    border-radius: 5px;
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.4);
-    margin-bottom: 40px;
-}
-
-.academic-info-container:hover {
-    transform: scale(1.01); /* Incrementa ligeramente el tamaño */
-    box-shadow: 0 12px 24px rgba(0, 0, 0, 0.4); /* Sombra más intensa */
-}
-
-/* Título centrado */
-.academic-info-container h2 {
-    text-align: center;
-    font-size: 16px;
-    margin-bottom: 30px;
-    color: #333;
+
+.tab-content th {
+  text-align: left;
+  padding: 6px;
+  width: 35%;
+  color: var(--secundario);
+  font-weight: 500;
+  vertical-align: top;
 }
 
-/* Diseño de la cuadrícula */
-.academic-info-grid {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr); /* Tres columnas */
-    gap: 1px;
+.tab-content td {
+  padding: 6px;
+  vertical-align: top;
 }
 
-/* Columnas */
-.academic-info-column {
-    background-color: #f7f7f7;
-    border-radius: 8px;
+.tab-content input {
+  width: 100%;
+  padding: 6px 8px;
+  border: 1px solid var(--borde);
+  border-radius: 6px;
+  font-size: 0.9rem;
+  color: var(--texto);
 }
 
-.academic-info-2-grid {
-    display: grid;
-    grid-template-columns: 1fr; /* Una sola columna */
-    gap: 1px;
-    width: 50%; /* Asegura que ocupe el 100% del contenedor */
-    margin: auto;
+.tab-content tr:nth-child(even) {
+  background: #fafafa;
 }
 
-.academic-info-2-column {
-    justify-items: center; /* Centra el contenido horizontalmente */
+/* ============================
+   RESPONSABLES
+============================ */
+#tab-responsables h4 {
+  margin-top: 1rem;
+  margin-bottom: 1rem;
+  color: var(--azul);
+  font-weight: 600;
+  font-size: 1rem;
 }
 
-.academic-info-3-container {
-    width: 98%;
-    padding: 18px 20px;
-    margin: 0 auto;
-    background-color: #f7f7f7;
-    border-radius: 5px;
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.4);
-    margin-bottom: 40px;
+/* ============================
+   ESTADO VISUAL
+============================ */
+.status {
+  margin-top: 1.2rem;
+  text-align: center;
+  font-weight: 500;
+  padding: 1rem;
+  border-radius: 6px;
 }
 
-.academic-info-3-container:hover {
-    transform: scale(1.01); /* Incrementa ligeramente el tamaño */
-    box-shadow: 0 12px 24px rgba(0, 0, 0, 0.4); /* Sombra más intensa */
+.status.aprobado {
+  background: #f3fdf3;
+  color: #267c2e;
+  border: 1px solid #b8e0b8;
 }
 
-/* Título centrado */
-.academic-info-3-container h2 {
-    text-align: center;
-    font-size: 16px;
-    margin-bottom: 30px;
-    color: #333;
+.status.pendiente {
+  background: #fdf6f6;
+  color: #a73636;
+  border: 1px solid #f0c3c3;
 }
 
-/* Diseño de la cuadrícula */
-.academic-info-3-grid {
-    display: grid;
-    grid-template-columns: repeat(2, 1fr); /* Tres columnas */
-    gap: 1px;
-}
-
-/* Columnas */
-.academic-info-3-column {
-    background-color: #f7f7f7;
-    border-radius: 8px;
-}
-
-.academic-info-4-container {
-    width: 98%;
-    padding: 18px 20px;
-    margin: 0 auto;
-    background-color: #f7f7f7;
-    border-radius: 5px;
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.4);
-    margin-bottom: 40px;
-}
-
-.academic-info-4-container:hover {
-    transform: scale(1.01); /* Incrementa ligeramente el tamaño */
-    box-shadow: 0 12px 24px rgba(0, 0, 0, 0.4); /* Sombra más intensa */
-}
-
-/* Título centrado */
-.academic-info-4-container h2 {
-    text-align: center;
-    font-size: 16px;
-    margin-bottom: 30px;
-    color: #333;
-}
-
-/* Diseño de la cuadrícula */
-.academic-info-4-grid {
-    display: grid;
-    grid-template-columns: repeat(2, 1fr); /* Tres columnas */
-    gap: 1px;
-}
-
-/* Columnas */
-.academic-info-4-column {
-    background-color: #f7f7f7;
-    border-radius: 8px;
-}
-
-.academic-info-5-container {
-    width: 98%;
-    padding: 18px 20px;
-    margin: 0 auto;
-    background-color: #f7f7f7;
-    border-radius: 5px;
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.4);
-    margin-bottom: 2px;
-}
-
-.academic-info-5-container:hover {
-    transform: scale(1.01); /* Incrementa ligeramente el tamaño */
-    box-shadow: 0 12px 24px rgba(0, 0, 0, 0.4); /* Sombra más intensa */
-}
-
-.academic-info-5-container h2 {
-    text-align: center;
-    font-size: 16px;
-    margin-bottom: 30px;
-    color: #333;
-}
-
-.button-container {
-    display: flex;
-    justify-content: flex-end; /* Alinea los botones a la derecha */
-    padding-right: 28px; /* Espacio al lado derecho */
-    position: absolute; /* Lo hace absoluto respecto al contenedor */
-    right: 0;
-    z-index: 10; /* Asegura que los botones no cubran el contenido */
-    align-items: center; /* Asegura que el contenido esté alineado verticalmente */
-    top: 75px;
-}
-
-.button-group {
-    display: flex;
-    justify-content: space-between;
-}
-
-.button-submit {
-    padding: 12px 25px;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-    color: white;
-    font-size: 8px;
-    transition: background 0.3s ease;
-    text-decoration: none;
-    margin-right: 5px;
-}
-
-/* Estilo para los botones con clase alumnos-btn-1 */
-.alumnos-btn-1 {
-    padding: 6px 16px;
-    background-color: rgb(66 149 33); /* Verde */
-    color: white;
-    border: none;
-    cursor: pointer;
-    border-radius: 5px;
-    transition: all 0.3s ease;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-    font-size: 14px;
-}
-
-.alumnos-btn-1:hover {
-    background-color: rgb(68, 123, 46); /* Verde más oscuro */
-    transform: translateY(-3px);
-    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
-}
-
-.alumnos-btn-1:active {
-    background-color: rgb(39, 70, 27); /* Verde más oscuro */
-    transform: translateY(0);
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-}
-
-/* Estilo para los botones con clase alumnos-btn-2 */
-.alumnos-btn-2 {
-    padding: 6px 14px;
-    background-color: rgb(226, 22, 22); /* Rojo */
-    color: white;
-    border: none;
-    cursor: pointer;
-    border-radius: 5px;
-    transition: all 0.3s ease;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-    font-size: 14px;
-}
+/* ============================
+   📱 MEDIA QUERY
+   Controla tamaño general
+============================ */
+@media screen and (max-width: 1366px) and (max-height: 768px) {
+  /* 🔧 Control global del texto (afecta todo el contenido proporcionalmente) */
+  html {
+    font-size: 13px; /* cambiá a 13px o 15px para más chico o más grande */
+  }
 
-.alumnos-btn-2:hover {
-    background-color: rgb(153, 50, 50); /* Rojo más oscuro */
-    transform: translateY(-3px);
-    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
-}
-
-.alumnos-btn-2:active {
-    background-color: rgb(105, 26, 26); /* Rojo aún más oscuro */
-    transform: translateY(0);
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-}
-
-/* From Uiverse.io by vinodjangid07 */ 
-
-.contenedor {
-    position: absolute;
-    z-index: 20; /* Asegura que los botones no cubran el contenido */
-    top: 70px;
-}
-
-.Documents-btn {
-    display: flex;
-    align-items: center;
-    width: fit-content;
-    height: 35px;
-    border: none;
-    padding: 0px 5px;
-    border-radius: 5px;
-    background-color: rgb(66 149 33);
-    gap: 10px;
-    cursor: pointer;
-    transition: all 0.3s;
-    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.4); /* Sombra más marcada */
-    float: left; /* Lleva el botón al borde izquierdo */
-    margin-left: 13px; /* Asegura que no haya margen extra a la izquierda */
-    margin-bottom: 30px;
-    padding-right: 10px;
-}
-
-.folderContainer {
-    width: 30px;
-    height: fit-content;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: flex-end;
-    position: relative;
-}
-
-.fileBack {
-    z-index: 1;
-    width: 80%;
-    height: auto;
-}
-
-.filePage {
-    width: 60%;
-    height: auto;
-    position: absolute;
-    z-index: 2;
-    transition: all 0.3s ease-out;
-}
-
-.fileFront {
-    width: 90%;
-    height: auto;
-    position: absolute;
-    z-index: 3;
-    opacity: 0.95;
-    transform-origin: bottom;
-    transition: all 0.3s ease-out;
-}
+  /* 🔹 Tamaño de texto de las pestañas */
+  .tab-button {
+    font-size: 0.8rem; /* ✅ acá controlás SOLO la letra de las pestañas */
+    padding: 8px 10px;
+  }
 
-.text {
-    color: white;
-    font-size: 10px;
-    font-weight: 400;
-    letter-spacing: 0.5px;
-}
-
-.Documents-btn:hover .filePage {
-    transform: translateY(-5px);
-}
-
-.Documents-btn:hover {
-    background-color:rgb(68, 123, 46);
-    transform: translateY(-3px); /* Efecto de "levantamiento" al pasar el mouse */
-    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1); /* Sombra más marcada */
-}
-
-.Documents-btn:active {
-    transform: scale(0.95);
-}
-
-.Documents-btn:hover .fileFront {
-    transform: rotateX(30deg);
-}
-
-.boton-para-descargar {
-    width: 50%;
-}
-
-.boton-descargar {
-    
-}
-  
-@media (min-width: 1600px) {
-    
-}
+  .student-card {
+    max-width: 1080px;
+    padding: 1.5rem;
+  }
 
-/* Laptop y notebook */
-@media (max-width: 1599px) {
+  .student-info h2 {
+    font-size: 1.05rem;
+  }
 
-}
+  .student-info p {
+    font-size: 0.9rem;
+  }
 
-/* Tablets */
-@media (max-width: 1024px) {
+  .tab-content input {
+    font-size: 0.85rem;
+  }
 
+  .btn {
+    width: 130px;
+    font-size: 0.85rem;
+    padding: 0.35rem 0;
+  }
 }
 
-/* Celulares grandes */
-@media (max-width: 600px) {
-
-}

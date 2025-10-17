@@ -6,13 +6,11 @@
 }
   
 body {
-    font-family: 'Helvetica Neue', Arial, sans-serif;
-    line-height: 1.5;
-    color: #333;
-    background-image: url('../img/fondo1.png'); /* Cambia por la ruta de tu imagen */
-    background-size: cover;  /* Asegura que la imagen cubra todo el fondo */
-    background-position: center; /* Centra la imagen */
-    background-repeat: no-repeat; /* Evita que la imagen se repita */
+    font-family: 'Roboto', sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: #dfdfdf;  /* ✅ Fondo blanco liso */
+    color: #000000;             /* Texto negro */
 }
 
 .consulta-alumno {
@@ -70,104 +68,65 @@ body {
     width: 25rem;
 }
 
-/* From Uiverse.io by cssbuttons-io */ 
+/* ------ BOTONES COMPACTOS Y PROFESIONALES (NUEVO) ----------- */
 .boton-accion {
-    position: relative;
-    display: inline-block;
-    cursor: pointer;
-    outline: none;
-    border: 0;
-    vertical-align: middle;
-    text-decoration: none;
-    background: transparent;
-    padding: 0;
-    font-size: inherit;
-    font-family: inherit;
-    width: 9rem;
-    height: auto;
-}
-
-.boton-accion__circulo {
-    transition: all 0.45s cubic-bezier(0.65, 0, 0.076, 1);
-    position: relative;
-    display: block;
-    margin: 0;
-    width: 2.5rem; /* Reducir tamaño del círculo */
-    height: 2.5rem; /* Reducir tamaño del círculo */
-    background: #116cd4;
-    border-radius: 1.25rem; /* Ajustar el radio para mantener la forma circular */
-}
-
-.otro-boton {
-    background: #d48a11;
-}
-
-.boton-accion__icono {
-    transition: all 0.45s cubic-bezier(0.65, 0, 0.076, 1);
-    position: absolute;
-    top: 0;
-    bottom: 0;
-    margin: auto;
-    background: #fff;
-    width: 0.875rem; /* Ajustar el tamaño del icono */
-    height: 0.875rem;
-}
-
-.boton-accion__icono--flecha {
-    left: 0.625rem;
-    width: 0.925rem;
-    height: 0.125rem;
-    background: none;
-}
-
-.boton-accion__icono--flecha::before {
-    position: absolute;
-    content: "";
-    top: -0.29rem;
-    right: 0.0625rem;
-    width: 0.5rem; /* Reducir el tamaño de la flecha */
-    height: 0.5rem;
-    border-top: 0.125rem solid #fff;
-    border-right: 0.125rem solid #fff;
-    transform: rotate(45deg);
-}
-
-.otra-flecha::before {
-    top: -0.25rem;
-}
-
-.boton-accion__texto {
-    display: flex;
+    display: inline-flex;
     align-items: center;
     justify-content: center;
-    transition: all 0.45s cubic-bezier(0.65, 0, 0.076, 1);
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    padding: 0.6rem 0; /* Reducir el padding */
-    margin: 0 0 0 1rem; /* Ajustar el margen izquierdo */
-    color: #181818;
-    font-size: 0.75rem;
-    font-weight: 700;
-    line-height: 1.6;
-    text-align: center;
-    text-transform: uppercase;
-}
-
-.boton-accion:hover .boton-accion__circulo {
-    width: 100%;
-}
-
-.boton-accion:hover .boton-accion__icono--flecha {
-    background: #fff;
-    transform: translate(1rem, 0);
-}
-
-.boton-accion:hover .boton-accion__texto {
+    width: 120px;               /* 🔹 ancho reducido */
+    height: 32px;               /* 🔹 más bajo */
+    background-color: #1a2942;  /* azul institucional */
     color: #fff;
+    font-family: 'Poppins', sans-serif;
+    font-size: 0.72rem;         /* 🔹 texto más pequeño */
+    font-weight: 500;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12);
 }
+
+.boton-accion:hover {
+    background-color: #22385d;
+    transform: translateY(-1px);
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.18);
+}
+
+/* --- Variante secundaria (naranja) --- */
+.otro-boton {
+    background-color: #d48a11;
+}
+
+.otro-boton:hover {
+    background-color: #b8740f;
+}
+
+/* --- Variante neutra (gris, para "Volver" o "Cancelar") --- */
+.boton-accion--gris {
+    background-color: #e3e3e3;
+    color: #333;
+}
+
+.boton-accion--gris:hover {
+    background-color: #cecece;
+}
+
+/* --- Texto del botón --- */
+.boton-accion__texto {
+    color: inherit;
+    font-weight: 500;
+    letter-spacing: 0.1px;
+    margin: 0;
+    padding: 0;
+}
+
+/* --- Oculta restos del diseño anterior --- */
+.boton-accion__circulo,
+.boton-accion__icono {
+    display: none !important;
+}
+/* --------------------------------------------------- */
 
 .consulta-alumno__resultado {
     width: 100%;
@@ -181,11 +140,12 @@ body {
 
 .consulta-alumno__titulo {
     text-align: center;
-    font-weight: bold;
+    font-weight: 600;
     color: #181818;
-    font-size: 1rem;
+    font-size: 1.1rem;
     border-bottom: 2px solid #5a5757;
-    padding-bottom: 10px;
+    padding-bottom: 6px;
+    margin: 20px 0 15px 0;  /* 👈 más aire arriba y abajo */
     width: 90%;
 }
 
@@ -207,11 +167,13 @@ body {
     text-align: left;
     font-weight: bold;
     color: #181818;
-    font-size: 1rem;
+    font-size: 0.85rem;
+    margin-top: 10px;      /* 👈 espacio superior */
+    margin-bottom: 6px;    /* 👈 espacio entre subtítulo y contenido */
 }
 
 .consulta-alumno__parrafo {
-    font-size: 0.875rem;
+    font-size: 0.785rem;
 }
 
 .consulta-alumno__grupo-botones {
