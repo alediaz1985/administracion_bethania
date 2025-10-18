@@ -205,16 +205,12 @@
                                 <td>{{ estudiante.inscripcion.fecha_recepcion }}</td>
 
                                 <td class="acciones">
-                                    <form action="{% url 'ver_datos_estudiante' pk=estudiante.pk %}" method="get" class="icon-form">
-                                        <button class="icon-btn" title="Ver datos" type="submit">
-                                            <i class="fas fa-search"></i>
-                                        </button>
-                                    </form>
-                                    <form action="{% url 'generar_contrato' estudiante.pk %}" method="get" class="icon-form">
-                                        <button class="icon-btn pdf" title="Generar contrato PDF" type="submit">
-                                            <i class="fas fa-file-pdf"></i>
-                                        </button>
-                                    </form>
+                                <a class="icon-btn" title="Ver datos" href="{% url 'ver_datos_estudiante' pk=estudiante.pk %}">
+                                    <i class="fas fa-search"></i>
+                                </a>
+                                <a class="icon-btn pdf" title="Generar contrato PDF" href="{% url 'generar_contrato' estudiante.pk %}" target="_blank" rel="noopener">
+                                    <i class="fas fa-file-pdf"></i>
+                                </a>
                                 </td>
                             </tr>
                         {% endfor %}

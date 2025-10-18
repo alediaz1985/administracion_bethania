@@ -605,94 +605,279 @@ from reportlab.lib.styles import ParagraphStyle
 from reportlab.lib.enums import TA_LEFT
 from reportlab.lib.enums import TA_CENTER
 
+
+# views.py
+
+import os
+import locale
+from io import BytesIO
+from datetime import datetime
+
+from django.conf import settings
+from django.http import FileResponse
+from django.shortcuts import get_object_or_404
+from django.contrib.staticfiles import finders
+
+from reportlab.lib.pagesizes import A4
+from reportlab.lib.units import inch
+from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
+from reportlab.lib.enums import TA_JUSTIFY, TA_CENTER
+from reportlab.platypus import Image, Paragraph, SimpleDocTemplate, Spacer, Table, TableStyle
+from reportlab.lib import colors
+
+from .models import (
+    Estudiante,
+    Inscripcion,
+    ContactoEstudiante,
+    Responsable,
+    Documentacion,
+)
+
+# -------------------------
+# Locale seguro en español
+# -------------------------
+def _set_spanish_locale_safe():
+    for loc in ('es_AR.UTF-8', 'es_ES.UTF-8', 'es_AR', 'es_ES', 'Spanish_Argentina', 'Spanish_Spain'):
+        try:
+            locale.setlocale(locale.LC_TIME, loc)
+            return True
+        except Exception:
+            continue
+    return False
+
+_MONTHS_ES = {
+    1: 'enero', 2: 'febrero', 3: 'marzo', 4: 'abril', 5: 'mayo', 6: 'junio',
+    7: 'julio', 8: 'agosto', 9: 'septiembre', 10: 'octubre', 11: 'noviembre', 12: 'diciembre'
+}
+
+def _mes_en_espanol(dt: datetime) -> str:
+    if _set_spanish_locale_safe():
+        return dt.strftime('%B')
+    return _MONTHS_ES.get(dt.month, '')
+
+# -------------------------
+# Utilidades de mapeo
+# -------------------------
+def _str(x, default=''):
+    if x is None:
+        return default
+    s = str(x).strip()
+    return s if s else default
+
+def _find_logo():
+    # 1) /static/img/logo.png  2) /staticfiles/img/logo.png  3) collectstatic finders
+    paths = [
+        os.path.join(settings.BASE_DIR, 'static', 'img', 'logo.png'),
+        os.path.join(settings.BASE_DIR, 'staticfiles', 'img', 'logo.png'),
+    ]
+    for p in paths:
+        if os.path.exists(p):
+            return p
+    return finders.find('img/logo.png')
+
+def _nombre_completo(apellidos, nombres):
+    return f"{_str(apellidos)} {_str(nombres)}".strip()
+
+def _contacto_estudiante_full(contacto: ContactoEstudiante | None) -> dict:
+    if not contacto:
+        return {
+            'domicilio': '',
+            'email': '',
+        }
+    domicilio = " ".join(filter(None, [
+        _str(contacto.calle_estudiante),
+        _str(contacto.n_mz_pc_estudiante),
+        _str(contacto.barrio_estudiante),
+        _str(contacto.ciudad_estudiante),
+        _str(contacto.provincia_estudiante),
+        _str(contacto.codigo_postal_estudiante),
+    ]))
+    return {
+        'domicilio': domicilio,
+        'email': _str(contacto.email_estudiante),
+    }
+
+def _responsables_pair(estudiante: Estudiante):
+    """
+    Devuelve hasta dos responsables (1 y 2) por orden de creación.
+    Si hay menos de dos, completa con strings vacíos.
+    """
+    qs = Responsable.objects.filter(estudiante=estudiante).order_by('id')[:2]
+    datos = []
+    for r in qs:
+        domicilio = " ".join(filter(None, [
+            _str(r.calle), _str(r.n_mz_pc), _str(r.barrio),
+            _str(r.ciudad), _str(r.provincia), _str(r.codigo_postal),
+        ]))
+        datos.append({
+            'nombre_completo': _nombre_completo(r.apellidos, r.nombres),
+            'dni': _str(r.dni),
+            'domicilio': domicilio,
+            'email': _str(r.email),
+            'apellidos': _str(r.apellidos),
+            'nombres': _str(r.nombres),
+        })
+    # Pad a 2
+    while len(datos) < 2:
+        datos.append({
+            'nombre_completo': '',
+            'dni': '',
+            'domicilio': '',
+            'email': '',
+            'apellidos': '',
+            'nombres': '',
+        })
+    return datos[0], datos[1]
+
+def _nivel_texto(insc: Inscripcion | None) -> str:
+    if not insc:
+        return "Nivel de Enseñanza:  "
+    nivel = _str(insc.nivel_ensenanza) or _str(insc.nivel_estudiante)
+    return f"Nivel de Enseñanza:  {nivel.upper()}" if nivel else "Nivel de Enseñanza:  "
+
+def _map_datos_contrato(estudiante: Estudiante) -> dict:
+    """
+    Funde datos desde Documentacion (si existe) y, si faltan,
+    los construye con Estudiante + ContactoEstudiante + Responsable + Inscripcion.
+    """
+    doc = getattr(estudiante, 'documentacion', None)
+    insc = getattr(estudiante, 'inscripcion', None)
+    cont = getattr(estudiante, 'contacto', None)
+
+    contacto = _contacto_estudiante_full(cont)
+    resp1, resp2 = _responsables_pair(estudiante)
+
+    # Preferencia: Documentacion primero
+    senores1 = _str(getattr(doc, 'senores1', None)) or resp1['nombre_completo']
+    dni_senores1 = _str(getattr(doc, 'dni_senores1', None)) or resp1['dni']
+    senores2 = _str(getattr(doc, 'senores2', None)) or resp2['nombre_completo']
+    dni_senores2 = _str(getattr(doc, 'dni_senores2', None)) or resp2['dni']
+
+    domicilios_senores = _str(getattr(doc, 'domicilios_senores', None)) or \
+                         ", ".join(filter(None, [resp1['domicilio'], resp2['domicilio']]))
+
+    domicilio_especial_electronico = _str(getattr(doc, 'domicilio_especial_electronico', None)) or \
+                                     _str(contacto['email']) or \
+                                     ", ".join(filter(None, [resp1['email'], resp2['email']]))
+
+    actuan_nombres_estudiante = _str(getattr(doc, 'actuan_nombres_estudiante', None)) or \
+                                _nombre_completo(estudiante.apellidos_estudiante, estudiante.nombres_estudiante)
+
+    dni_acutan_estudiante = _str(getattr(doc, 'dni_acutan_estudiante', None)) or _str(estudiante.dni_estudiante)
+
+    domicilio_actuan_estudiante = _str(getattr(doc, 'domicilio_actuan_estudiante', None)) or _str(contacto['domicilio'])
+
+    # Para firmas (si Documentacion no trajo “aclaración” separado, usamos resp1/resp2)
+    apellidos_responsable1 = resp1['apellidos']
+    nombres_responsable1 = resp1['nombres']
+    apellidos_responsable2 = resp2['apellidos']
+    nombres_responsable2 = resp2['nombres']
+
+    # Nivel
+    nivel_texto = _nivel_texto(insc)
+
+    return {
+        'cuil_estudiante': _str(estudiante.cuil_estudiante),
+        'nivel_texto': nivel_texto,
+
+        'senores1': senores1,
+        'dni_senores1': dni_senores1,
+        'senores2': senores2,
+        'dni_senores2': dni_senores2,
+        'domicilios_senores': domicilios_senores,
+        'domicilio_especial_electronico': domicilio_especial_electronico,
+
+        'actuan_nombres_estudiante': actuan_nombres_estudiante,
+        'dni_acutan_estudiante': dni_acutan_estudiante,
+        'domicilio_actuan_estudiante': domicilio_actuan_estudiante,
+
+        'apellidos_responsable1': apellidos_responsable1,
+        'nombres_responsable1': nombres_responsable1,
+        'apellidos_responsable2': apellidos_responsable2,
+        'nombres_responsable2': nombres_responsable2,
+    }
+
+# -------------------------
+# View principal
+# -------------------------
 def generar_contrato_view(request, estudiante_id):
-    # Establecer el idioma a español
-    locale.setlocale(locale.LC_TIME, 'es_ES.UTF-8')
-
-    # Obtener el mes en español
-    mes_en_espanol = datetime.now().strftime('%B')
-
-    # Obtener los datos del estudiante
     estudiante = get_object_or_404(Estudiante, pk=estudiante_id)
+    data = _map_datos_contrato(estudiante)
 
-    # Configuración del nombre del archivo
-    fecha_hora_actual = datetime.now().strftime("%Y-%m-%d_%H-%M")
-    pdf_path = f"Contrato - {estudiante.cuil_estudiante} - {fecha_hora_actual}.pdf"
+    ahora = datetime.now()
+    mes_es = _mes_en_espanol(ahora)
 
-    # Ruta del logo
-    logo_path = os.path.join(settings.BASE_DIR, 'static', 'img', 'logo.png')
+    # Nombre de archivo
+    filename = f"Contrato_{data['cuil_estudiante'] or estudiante_id}_{ahora.strftime('%Y-%m-%d_%H-%M')}.pdf"
 
-    # Crear el PDF
+    # Buffer PDF en memoria
+    buffer = BytesIO()
     doc = SimpleDocTemplate(
-        pdf_path,
+        buffer,
         pagesize=A4,
         rightMargin=20,
         leftMargin=25,
         topMargin=10,
         bottomMargin=10,
+        title="Contrato de Enseñanza Educativa",
+        author="Hogar de Bethania",
+        subject="Contrato personalizado para el estudiante",
+        creator="Hogar de Bethania - Sistema de Gestión Educativa",
     )
-
-    # Metadata del PDF
-    doc.title = "Contrato de Enseñanza Educativa"
-    doc.author = "Hogar de Bethania"
-    doc.subject = "Contrato personalizado para el estudiante"
-    doc.creator = "Hogar de Bethania - Sistema de Gestión Educativa"
 
     styles = getSampleStyleSheet()
     elements = []
 
-    # Agregar el logo al PDF
-    #elements.append(Spacer(1, 0.5 * inch))  # Espaciado inicial
-    logo = Image(logo_path)
-    logo.drawHeight = 0.5 * inch  # Altura del logo
-    logo.drawWidth = 0.5 * inch  # Ancho del logo
-    logo.hAlign = 'CENTER'  # Centrar el logo
-    elements.append(logo)
-    #elements.append(Spacer(1, 0.5 * inch))  # Espaciado debajo del logo
+    # Logo (si existe)
+    logo_path = _find_logo()
+    if logo_path and os.path.exists(logo_path):
+        try:
+            logo = Image(logo_path)
+            logo.drawHeight = 0.5 * inch
+            logo.drawWidth = 0.5 * inch
+            logo.hAlign = 'CENTER'
+            elements.append(logo)
+        except Exception:
+            pass
 
-    # Crear un estilo personalizado
+    # Título
     custom_title_style = ParagraphStyle(
-        'CustomTitle',  # Nombre del estilo
-        fontName='Times-Bold',  # Times New Roman en negrita
-        fontSize=16,  # Tamaño de la fuente
-        leading=22,  # Espaciado entre líneas
-        alignment=1,  # Centrar el texto
-        textColor=colors.white,  # Color del texto
-        backColor=colors.navy,  # Color de fondo
-        padding=10,  # Margen interno
+        'CustomTitle',
+        fontName='Times-Bold',
+        fontSize=16,
+        leading=22,
+        alignment=1,
+        textColor=colors.white,
+        backColor=colors.navy,
+        spaceBefore=8,
+        spaceAfter=8,
     )
     elements.append(Spacer(1, 0.3 * inch))
-    # Usar el estilo personalizado Título del contrato
     elements.append(Paragraph("CONTRATO DE ENSEÑANZA EDUCATIVA CICLO LECTIVO 2025", custom_title_style))
-
     elements.append(Spacer(1, 0.2 * inch))
 
-    # Obtener el nivel de enseñanza actual desde la base de datos
-    nivel_ensenanza_texto = "Nivel de Enseñanza: " + "  " + estudiante.nivel_ensenanza.strip().upper()
-   
-    # Agregarlo al contenido del PDF
-    elements.append(Paragraph(nivel_ensenanza_texto, styles['Normal']))
-
+    # Nivel
+    elements.append(Paragraph(data['nivel_texto'], styles['Normal']))
     elements.append(Spacer(1, 0.1 * inch))
 
+    # Cuerpo contrato
     contrato_style = ParagraphStyle(
-    'ContratoStyle',
-    fontName='Times-Roman',
-    fontSize=10,
-    leading=14,  # Espaciado entre líneas
-    alignment=TA_JUSTIFY,  # Justificar el texto
-    #leftIndent=30,  # Sangría en todos los párrafos
-    firstLineIndent=25,  # Sangría solo para la primera línea
-)
-    # Contenido del contrato (rellenado con datos del estudiante)
+        'ContratoStyle',
+        fontName='Times-Roman',
+        fontSize=10,
+        leading=14,
+        alignment=TA_JUSTIFY,
+        firstLineIndent=25,
+    )
+
     contrato_texto = f"""
-        En la ciudad de Presidencia Roque Sáenz Peña, Provincia del Chaco, a los {datetime.now().day} días del mes de {mes_en_espanol} del año {datetime.now().year}, 
+        En la ciudad de Presidencia Roque Sáenz Peña, Provincia del Chaco, a los {ahora.day} días del mes de {mes_es} del año {ahora.year},
         entre la UNIDAD EDUCATIVA DE GESTIÓN PRIVADA N° 82 “HOGAR DE BETHANIA”, con domicilio legal en URQUIZA N° 768 localidad
         de Presidencia Roque Sáenz Peña, provincia del Chaco, representada en este acto por el Sr. Moreno, Rodolfo Jonatan, D.N.I. N° 27.482.233
         en su carácter de Representante Legal, en adelante denominada LA INSTITUCIÓN, por una parte; y por la otra, los
-        señores(1) {estudiante.senores1} D.N.I.: {estudiante.dni_senores1} y (2) {estudiante.senores2} D.N.I.: {estudiante.dni_senores2} con domicilio en {estudiante.domicilios_senores} y domicilio especial
-        electrónico {estudiante.domicilio_especial_electronico} actúan en su propio nombre y en representación del estudiante, menor de edad, {estudiante.actuan_nombres_estudiante} D.N.I. N° {estudiante.dni_acutan_estudiante}, domiciliado
-        realmente en {estudiante.domicilio_actuan_estudiante},en adelante denominado LOS RESPONSABLES,
+        señores(1) {data['senores1']} D.N.I.: {data['dni_senores1']} y (2) {data['senores2']} D.N.I.: {data['dni_senores2']} con domicilio en {data['domicilios_senores']} y domicilio especial
+        electrónico {data['domicilio_especial_electronico']} actúan en su propio nombre y en representación del estudiante, menor de edad, {data['actuan_nombres_estudiante']} D.N.I. N° {data['dni_acutan_estudiante']}, domiciliado
+        realmente en {data['domicilio_actuan_estudiante']}, en adelante denominado LOS RESPONSABLES,
         acuerdan suscribir el presente Contrato de Enseñanza, que es anual y que se regirá por las cláusulas que a continuación se detallan:<br/>
         PRIMERA: LOS RESPONSABLES reconocen que LA INSTITUCIÓN es una Unidad Educativa de Gestión Privada, cuyo objetivo es
         promover la formación integral del estudiante, capacitándolo para que a partir de la apropiación de los distintos saberes, y de una línea de
@@ -855,41 +1040,35 @@ def generar_contrato_view(request, estudiante_id):
         VIGÉSIMA SEGUNDA: A todos los efectos del presente contrato las partes se someten voluntariamente a los tribunales ordinarios,
         correspondientes al domicilio de LA INSTITUCION, renunciando a cualquier otro fuero o jurisdicción que pudiere corresponder. -<br/>
         <br/>
-        Se firma un ejemplar a modo CONTRATO DE ADHESION en la ciudad de Presidencia Roque Sáenz Peña, Chaco a los {datetime.now().day} días del mes de {mes_en_espanol} del año {datetime.now().year}.-
-
-        """
+        Se firma un ejemplar a modo CONTRATO DE ADHESION en la ciudad de Presidencia Roque Sáenz Peña, Chaco a los {ahora.day} días del mes de {mes_es} del año {ahora.year}.-
+    """
 
     elements.append(Paragraph(contrato_texto, contrato_style))
-
-    # Firma de los responsables
     elements.append(Spacer(1, 0.2 * inch))
 
-    # Definir el estilo para las firmas
+    # Firmas
     firma_style = ParagraphStyle(
         'FirmaStyle',
         fontName='Times-Roman',
-        fontSize=9,  # Tamaño de la fuente
-        leading=11,  # Espaciado entre líneas
-        alignment=TA_CENTER,  # Alineación centrada
-        spaceBefore=0,  # Espaciado antes del texto
-        spaceAfter=0,  # Espaciado después del texto
+        fontSize=9,
+        leading=11,
+        alignment=TA_CENTER,
     )
 
-    # Datos para la tabla de firmas (convertidos a Paragraphs)
     firma_datos = [
         [
             Paragraph(f"""
             FIRMA DEL RESPONSABLE PARENTAL 1:<br/><br/><br/>
             ____________________________<br/>
-            DNI: {estudiante.dni_senores1}<br/>
-            ACLARACIÓN: {estudiante.apellidos_responsable1} {estudiante.nombres_responsable1}<br/>
+            DNI: {data['dni_senores1']}<br/>
+            ACLARACIÓN: {(_str(data['apellidos_responsable1']) + ' ' + _str(data['nombres_responsable1'])).strip()}<br/>
             FECHA: ____________________________
             """, firma_style),
             Paragraph(f"""
             FIRMA DEL RESPONSABLE PARENTAL 2:<br/><br/><br/>
             ____________________________<br/>
-            DNI: {estudiante.dni_senores2}<br/>
-            ACLARACIÓN: {estudiante.apellidos_responsable2} {estudiante.nombres_responsable2}<br/>
+            DNI: {data['dni_senores2']}<br/>
+            ACLARACIÓN: {(_str(data['apellidos_responsable2']) + ' ' + _str(data['nombres_responsable2'])).strip()}<br/>
             FECHA: ____________________________
             """, firma_style),
         ],
@@ -897,35 +1076,29 @@ def generar_contrato_view(request, estudiante_id):
             Paragraph(f"""
             FIRMA DEL RESPONSABLE PARENTAL 1:<br/><br/><br/>
             ____________________________<br/>
-            DNI: {estudiante.dni_senores1}<br/>
-            ACLARACIÓN: {estudiante.apellidos_responsable1} {estudiante.nombres_responsable1}<br/>
+            DNI: {data['dni_senores1']}<br/>
+            ACLARACIÓN: {(_str(data['apellidos_responsable1']) + ' ' + _str(data['nombres_responsable1'])).strip()}<br/>
             FECHA: ____________________________
             """, firma_style),
             Paragraph(f"""
             FIRMA DEL RESPONSABLE PARENTAL 2:<br/><br/><br/>
             ____________________________<br/>
-            DNI: {estudiante.dni_senores2}<br/>
-            ACLARACIÓN: {estudiante.apellidos_responsable2} {estudiante.nombres_responsable2}<br/>
+            DNI: {data['dni_senores2']}<br/>
+            ACLARACIÓN: {(_str(data['apellidos_responsable2']) + ' ' + _str(data['nombres_responsable2'])).strip()}<br/>
             FECHA: ____________________________
             """, firma_style),
         ]
     ]
 
-    # Crear una tabla con las firmas
-    firma_tabla = Table(firma_datos, colWidths=[250, 250])  # Ancho de columnas
-
-    # Estilo para la tabla
+    firma_tabla = Table(firma_datos, colWidths=[250, 250])
     firma_tabla.setStyle(TableStyle([
-        ('VALIGN', (0, 0), (-1, -1), 'TOP'),  # Alineación vertical
-        ('ALIGN', (0, 0), (-1, -1), 'CENTER'),  # Alineación horizontal
-        ('BOX', (0, 0), (-1, -1), 0, colors.white),  # Sin borde externo
-        ('INNERGRID', (0, 0), (-1, -1), 0, colors.white),  # Sin líneas internas
+        ('VALIGN', (0, 0), (-1, -1), 'TOP'),
+        ('ALIGN', (0, 0), (-1, -1), 'CENTER'),
+        ('BOX', (0, 0), (-1, -1), 0, colors.white),
+        ('INNERGRID', (0, 0), (-1, -1), 0, colors.white),
     ]))
-
-    # Agregar la tabla al PDF
     elements.append(firma_tabla)
 
-    # Agregar espacio para la firma de la institución
     elements.append(Spacer(1, 0.5 * inch))
     elements.append(Paragraph("""
         FIRMA DE REPRESENTANTE DE LA INSTITUCIÓN:<br/><br/>
@@ -934,11 +1107,11 @@ def generar_contrato_view(request, estudiante_id):
         FECHA: ____________________________
     """, firma_style))
 
-    # Generar el PDF
+    # Render
     doc.build(elements)
+    buffer.seek(0)
+    return FileResponse(buffer, as_attachment=True, filename=filename)
 
-    # Devolver el PDF como respuesta
-    return FileResponse(open(pdf_path, 'rb'), as_attachment=True, filename=f"Contrato_{estudiante.cuil_estudiante}.pdf")
 
 
 from django.shortcuts import render
