@@ -12,7 +12,7 @@
 
 <div class="alumnos-container">
     <div class="alumnos">
-        <!-- Filtro -->
+        <!-- 🔹 Filtro a la izquierda -->
         <div class="filters">
             <select id="nivel-filter" name="nivel">
                 <option value="">Seleccionar Nivel</option>
@@ -22,12 +22,20 @@
             </select>
         </div>
 
-        <!-- Botón PDF -->
-        <form action="{% url 'generar_pdf_lista_alumnos' %}" method="get">
-            <button type="submit" class="btn-generar-pdf">
-                Generar PDF
+        <!-- 🔹 Botones a la derecha -->
+        <div class="actions">
+            <form action="{% url 'generar_pdf_lista_alumnos' %}" method="get">
+                <button type="submit" class="btn-minimal" title="Generar PDF">
+                    <i class="fas fa-file-pdf"></i>
+                    <span>Generar PDF</span>
+                </button>
+            </form>
+
+            <!-- ✅ Botón de actualización -->
+            <button type="button" id="btn-refresh" class="btn-minimal" title="Actualizar datos" onclick="refrescarDatos()">
+                <i class="fas fa-sync-alt"></i>
             </button>
-        </form>
+        </div>
     </div>
     
     <div class="tabs">
@@ -349,6 +357,33 @@ function copiarValorCuil(refId) {
             alerta.style.display = "none";
         }, 500);
     }, 2000);
+}
+
+function refrescarDatos() {
+    const btn = document.getElementById('btn-refresh');
+    const icon = btn.querySelector('i');
+
+    btn.classList.add('loading');
+    btn.disabled = true;
+
+    fetch(window.location.href, { cache: "no-store" })
+        .then(response => response.text())
+        .then(html => {
+            const parser = new DOMParser();
+            const doc = parser.parseFromString(html, 'text/html');
+            const newTable = doc.querySelector('.alumnos-scroll-container');
+            document.querySelector('.alumnos-scroll-container').innerHTML = newTable.innerHTML;
+
+            mostrarToast("✅ Datos actualizados correctamente");
+        })
+        .catch(error => {
+            console.error('Error al actualizar los datos:', error);
+            mostrarToast("❌ Error al actualizar los datos");
+        })
+        .finally(() => {
+            btn.classList.remove('loading');
+            btn.disabled = false;
+        });
 }
 
 </script>

@@ -190,63 +190,96 @@ td.acciones .icon-form + .icon-form {
     border-color: #007bff;
 }
 
-/* 🔹 Contenedor general: filtro a la izquierda, botón a la derecha */
 .alumnos {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    flex-wrap: wrap;            /* ✅ se adapta si se achica la pantalla */
-    gap: 15px;
-    margin-bottom: 20px;
-    margin-top: 20px;
+    margin: 20px 0;
 }
 
-/* 🔹 Filtro simple pero elegante */
+/* Filtro */
 #nivel-filter {
-    padding: 10px 18px;
+    padding: 8px 14px;
     font-size: 14px;
-    font-family: 'Roboto', sans-serif;
-    color: #333;
     border: 1px solid #ccc;
-    border-radius: 8px;
+    border-radius: 6px;
     background-color: #fff;
-    cursor: pointer;
-    transition: all 0.3s ease;
-    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+    color: #333;
+    transition: border-color 0.2s ease;
 }
 
 #nivel-filter:hover,
 #nivel-filter:focus {
-    border-color: #4b6cb7;
-    box-shadow: 0 4px 10px rgba(75, 108, 183, 0.2);
+    border-color: #999;
     outline: none;
 }
 
-/* 🔹 Botón para generar PDF */
-.btn-generar-pdf {
-    background-color: #1a2942;
-    color: #fff;
-    border: none;
-    padding: 10px 22px;
-    border-radius: 8px;
-    font-size: 9px;
-    font-weight: 600;
+/* Contenedor botones */
+.actions {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+/* Botones minimalistas */
+.btn-minimal {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    background: transparent;
+    color: #1e1e1e;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    padding: 8px 12px;
+    font-size: 14px;
     cursor: pointer;
-    transition: all 0.3s ease;
-    box-shadow: 0 3px 8px rgba(0, 0, 0, 0.2);
+    transition: all 0.2s ease-in-out;
 }
 
-.btn-generar-pdf:hover {
-    transform: translateY(-2px);
-    background: #22385d;   
-    box-shadow: 0 5px 12px rgba(0, 0, 0, 0.3);
+.btn-minimal i {
+    font-size: 16px;
 }
 
-.btn-generar-pdf:active {
-    transform: translateY(0);
-    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+/* Hover suave */
+.btn-minimal:hover {
+    background-color: #f5f5f5;
+    border-color: #999;
 }
 
+/* Estados activos */
+.btn-minimal:active {
+    background-color: #eaeaea;
+}
+
+/* Hover PDF */
+.btn-minimal[title="Generar PDF"]:hover {
+    color: #b71c1c;
+    border-color: #b71c1c;
+}
+
+/* Hover Refresh */
+.btn-minimal[title="Actualizar datos"]:hover {
+    color: #0d6efd;
+    border-color: #0d6efd;
+}
+
+/* 🔁 Animación de giro */
+@keyframes spin {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+}
+
+/* 🔹 Estado de carga: ícono girando */
+.btn-minimal.loading i {
+    animation: spin 1s linear infinite;
+    color: #0d6efd; /* Azul suave para mostrar que está activo */
+}
+
+/* 🔹 Botón deshabilitado mientras actualiza */
+.btn-minimal.loading {
+    opacity: 0.6;
+    pointer-events: none;
+}
 
 /* Media queries para pantallas más pequeñas */
 @media (max-width: 1366px) {
