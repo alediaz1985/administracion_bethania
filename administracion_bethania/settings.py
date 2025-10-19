@@ -34,7 +34,7 @@ INSTALLED_APPS = [
     'apps.administracion_alumnos',
     # 'apps.niveles',
     # 'apps.documentos',
-    # 'apps.dashboard',
+    'apps.dashboard',
 ]
 
 MIDDLEWARE = [

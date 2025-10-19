@@ -1,8 +1,7 @@
 {% extends 'base.html' %}
+{% load static %}
 
 {% block title %}Dashboard{% endblock %}
-
-{% load static %}
 
 {% block extra_styles %}
 <link rel="stylesheet" href="{% static 'dashboard/css/dashboard.css' %}">
@@ -10,66 +9,114 @@
 {% endblock %}
 
 {% block content %}
-<h1 class="titulo-dashboard">📊 Panel de Control - Bethania</h1>
+<h1 class="titulo-dashboard" data-aos="fade-down">📊 Panel de Control</h1>
 
+<!-- ============ TARJETAS KPI ============ -->
 <div class="cards-container">
-    <div class="card" data-aos="fade-up">
-        <i data-lucide="graduation-cap"></i>
-        <h2>{{ total_estudiantes }}</h2>
-        <p>Estudiantes registrados</p>
-    </div>
-    <div class="card" data-aos="fade-up" data-aos-delay="100">
-        <i data-lucide="dollar-sign"></i>
-        <h2>${{ total_cuotas_pagadas|floatformat:2 }}</h2>
-        <p>Total cuotas pagadas</p>
-    </div>
-    <div class="card" data-aos="fade-up" data-aos-delay="200">
-        <i data-lucide="file-text"></i>
-        <h2>{{ total_documentos }}</h2>
-        <p>Documentos registrados</p>
-    </div>
-    <div class="card" data-aos="fade-up" data-aos-delay="300">
-        <i data-lucide="layers"></i>
-        <h2>{{ cuotas_pendientes }}</h2>
-        <p>Cuotas pendientes</p>
-    </div>
+  <div class="card" data-aos="fade-up">
+    <i data-lucide="users"></i>
+    <div class="kpi-title">Estudiantes</div>
+    <div class="kpi-value">{{ total_estudiantes }}</div>
+  </div>
+
+  <div class="card" data-aos="fade-up" data-aos-delay="100">
+    <i data-lucide="id-card"></i>
+    <div class="kpi-title">Con Inscripción</div>
+    <div class="kpi-value">{{ total_con_inscripcion }}</div>
+  </div>
+
+  <div class="card" data-aos="fade-up" data-aos-delay="200">
+    <i data-lucide="check-circle-2"></i>
+    <div class="kpi-title">Aprobados</div>
+    <div class="kpi-value">{{ aprobados }} ({{ porc_aprobado }}%)</div>
+  </div>
+
+  <div class="card" data-aos="fade-up" data-aos-delay="300">
+    <i data-lucide="hourglass"></i>
+    <div class="kpi-title">Pendientes</div>
+    <div class="kpi-value">{{ pendientes }}</div>
+  </div>
+
+  <div class="card" data-aos="fade-up" data-aos-delay="400">
+    <i data-lucide="image-off"></i>
+    <div class="kpi-title">Fotos faltantes</div>
+    <div class="kpi-value">{{ fotos_pendientes }}</div>
+  </div>
+
+  <div class="card" data-aos="fade-up" data-aos-delay="500">
+    <i data-lucide="phone-off"></i>
+    <div class="kpi-title">Contacto incompleto</div>
+    <div class="kpi-value">{{ contacto_incompleto }}</div>
+  </div>
 </div>
 
-<div class="charts-container">
-    <canvas id="graficoNiveles"></canvas>
+<!-- ============ GRÁFICOS ============ -->
+<div class="charts-grid">
+  <div class="chart-card" data-aos="zoom-in-up">
+    <div class="chart-title">Estudiantes por Nivel</div>
+    <div class="chart-canvas"><canvas id="chartNiveles"></canvas></div>
+  </div>
+
+  <div class="chart-card" data-aos="zoom-in-up" data-aos-delay="100">
+    <div class="chart-title">Turnos</div>
+    <div class="chart-canvas"><canvas id="chartTurnos"></canvas></div>
+  </div>
+
+  <div class="chart-card" data-aos="zoom-in-up" data-aos-delay="200">
+    <div class="chart-title">Top 5 Ciudades</div>
+    <div class="chart-canvas"><canvas id="chartCiudades"></canvas></div>
+  </div>
 </div>
+
+<!-- ============ TABLA ============ -->
+<div class="table-card" data-aos="fade-up" data-aos-delay="300">
+  <div class="table-title">Últimos 10 Estudiantes</div>
+  <div class="table-responsive">
+    <table class="nice-table">
+      <thead>
+        <tr>
+          <th>Apellido/s</th>
+          <th>Nombre/s</th>
+          <th>CUIL</th>
+          <th>Nivel</th>
+          <th>Curso/Año</th>
+          <th>Turno</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for e in ultimos_estudiantes %}
+        <tr>
+          <td>{{ e.apellidos_estudiante }}</td>
+          <td>{{ e.nombres_estudiante }}</td>
+          <td>{{ e.cuil_estudiante }}</td>
+          <td>{{ e.inscripcion.nivel_estudiante|default:"-" }}</td>
+          <td>{{ e.inscripcion.curso_anio_estudiante|default:"-" }}</td>
+          <td>{{ e.inscripcion.turno_estudiante|default:"-" }}</td>
+        </tr>
+        {% empty %}
+        <tr><td colspan="6" class="empty">No hay estudiantes.</td></tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- ======= Datos seguros para JS (usando el filtro json_script) ======= -->
+{{ niveles_labels|json_script:"niveles-labels" }}
+{{ niveles_data|json_script:"niveles-data" }}
+{{ turnos_labels|json_script:"turnos-labels" }}
+{{ turnos_data|json_script:"turnos-data" }}
+{{ ciudades_labels|json_script:"ciudades-labels" }}
+{{ ciudades_data|json_script:"ciudades-data" }}
+
 {% endblock %}
 
 {% block extra_js %}
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-<script src="https://unpkg.com/lucide@latest"></script>
-<script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
-<script>
-    lucide.createIcons();
-    AOS.init();
+<!-- Librerías (CDN) -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4" defer></script>
+<script src="https://unpkg.com/lucide@latest" defer></script>
+<script src="https://unpkg.com/aos@2.3.1/dist/aos.js" defer></script>
 
-    const dataNiveles = {
-        labels: {{ niveles_labels|safe }},
-        datasets: [{
-            label: 'Estudiantes por nivel',
-            data: {{ niveles_data|safe }},
-            backgroundColor: ['#3498db', '#2ecc71', '#e74c3c', '#9b59b6'],
-        }]
-    };
-
-    const configNiveles = {
-        type: 'doughnut',
-        data: dataNiveles,
-        options: {
-            responsive: true,
-            plugins: {
-                legend: {
-                    position: 'bottom'
-                }
-            }
-        }
-    };
-
-    new Chart(document.getElementById('graficoNiveles'), configNiveles);
-</script>
+<!-- Tu JS -->
+<script src="{% static 'dashboard/js/dashboard.js' %}" defer></script>
 {% endblock %}

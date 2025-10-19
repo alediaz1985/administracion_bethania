@@ -1,93 +1,247 @@
+/* =========================================================
+   DASHBOARD MODERNO – Bethania
+   Tipografías, color system, glassmorphism & responsive grid
+   ========================================================= */
+
+/* Tipografías (Google Fonts) */
+@import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap");
+
+/* Reset & base */
+*,
+*::before,
+*::after { box-sizing: border-box; }
+html, body { height: 100%; }
+
+:root {
+  --bg-1: #0b0f1a;
+  --bg-2: #0f1726;
+  --bg-3: #0b1324;
+
+  --text-1: #e7ecf7;
+  --text-2: #a9b6d3;
+
+  --accent-1: #8ab4ff;
+  --accent-2: #22d3ee;
+  --accent-3: #fca5a5;
+  --accent-4: #c084fc;
+
+  --success: #22c55e;
+  --warning: #f59e0b;
+  --danger:  #ef4444;
+
+  --border: rgba(255,255,255,0.08);
+  --shadow-1: 0 10px 30px rgba(0,0,0,0.35);
+  --shadow-2: 0 20px 40px rgba(0,0,0,0.40);
+
+  --radius-lg: 16px;
+  --radius-xl: 22px;
+  --gap: 16px;
+
+  --grad-1: radial-gradient(1200px 600px at 80% -20%, rgba(34,211,238,0.18), transparent 60%),
+            radial-gradient(900px 500px at -20% 10%, rgba(192,132,252,0.15), transparent 55%);
+  --glass: linear-gradient(180deg, rgba(255,255,255,0.06), rgba(255,255,255,0.02));
+
+  /* Para Chart.js */
+  --chart-1: #8ab4ff;
+  --chart-2: #22d3ee;
+  --chart-3: #c084fc;
+  --chart-4: #fca5a5;
+  --chart-5: #f59e0b;
+  --chart-6: #34d399;
+  --chart-7: #60a5fa;
+  --chart-8: #f472b6;
+}
+
 body {
-    font-family: 'Segoe UI', sans-serif;
-    background-color: #f4f6f9;
-    margin: 0;
-    padding: 0;
+  margin: 0;
+  padding: 0;
+  overflow-x: hidden;
+  font-family: "Inter", ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Ubuntu, Cantarell, "Helvetica Neue", Arial;
+  color: var(--text-1);
+  background:
+    var(--grad-1),
+    linear-gradient(180deg, var(--bg-1), var(--bg-1));
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
-h1.titulo-dashboard {
-    text-align: center;
-    color: #2c3e50;
-    margin-top: 1rem;
-    font-size: 1.8rem;
+/* Scrollbar */
+*::-webkit-scrollbar { height: 10px; width: 10px; }
+*::-webkit-scrollbar-track { background: transparent; }
+*::-webkit-scrollbar-thumb {
+  background: linear-gradient(180deg, var(--accent-1), var(--accent-4));
+  border-radius: 999px;
+}
+* { scrollbar-color: var(--accent-1) transparent; scrollbar-width: thin; }
+
+/* Contenedores principales */
+.titulo-dashboard,
+.cards-container,
+.charts-grid,
+.table-card {
+  width: 100%;
+  max-width: 1240px;
+  margin-inline: auto;
+  padding-inline: 18px;
 }
 
-/* Contenedor principal de tarjetas */
+/* Título */
+.titulo-dashboard {
+  font-size: clamp(1.35rem, 2.4vw, 2rem);
+  font-weight: 700;
+  letter-spacing: 0.2px;
+  margin: 18px auto 12px;
+  line-height: 1.25;
+  position: relative;
+}
+.titulo-dashboard::after {
+  content: "";
+  position: absolute;
+  inset: auto 0 -6px 0;
+  height: 2px;
+  background: linear-gradient(90deg, transparent, var(--accent-2), transparent);
+  opacity: .8;
+}
+
+/* Cards KPI */
 .cards-container {
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: center;
-    align-items: stretch;
-    gap: 1rem;
-    margin: 1rem auto;
-    max-width: 960px;
-    padding: 0 1rem;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: var(--gap);
+  margin-block: 8px 14px;
 }
 
-/* Tarjeta */
 .card {
-    background-color: #fff;
-    border-radius: 10px;
-    box-shadow: 0 4px 8px rgba(0,0,0,0.08);
-    padding: 1.2rem;
-    flex: 1 1 200px;
-    max-width: 220px;
-    min-width: 180px;
-    text-align: center;
-    transition: transform 0.2s ease;
+  background: var(--glass);
+  backdrop-filter: blur(10px);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-xl);
+  padding: 18px 18px 16px;
+  position: relative;
+  overflow: hidden;
+  min-width: 0;
+  box-shadow: var(--shadow-1);
+  transition: transform .18s ease, box-shadow .18s ease, border-color .18s ease;
 }
-
+.card::before {
+  content: "";
+  position: absolute;
+  inset: -30% -30% auto auto;
+  width: 240px;
+  height: 240px;
+  filter: blur(40px);
+  background: radial-gradient(closest-side, rgba(138,180,255,0.28), transparent 70%);
+  opacity: .6;
+  pointer-events: none;
+}
 .card:hover {
-    transform: translateY(-4px);
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-2);
+  border-color: rgba(138,180,255,0.28);
 }
-
 .card i {
-    font-size: 2rem;
-    color: #3498db;
-    margin-bottom: 0.5rem;
+  position: absolute; right: 14px; top: 14px;
+  width: 22px; height: 22px;
+  color: var(--text-2);
+  opacity: .9;
+}
+.kpi-title { font-size: .92rem; color: var(--text-2); margin-top: 6px; }
+.kpi-value { font-size: clamp(1.25rem, 2.2vw, 1.8rem); font-weight: 700; margin-top: 4px; }
+
+/* Charts */
+.charts-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: var(--gap);
+  margin-top: 16px;
+}
+.chart-card {
+  background: var(--bg-2);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-xl);
+  padding: 16px;
+  box-shadow: var(--shadow-1);
+  min-width: 0;
+  position: relative;
+  overflow: hidden;
+}
+.chart-card::after {
+  content: "";
+  position: absolute;
+  inset: auto auto -30% -20%;
+  width: 300px; height: 300px;
+  background: radial-gradient(closest-side, rgba(34,211,238,0.12), transparent 65%);
+  pointer-events: none;
+}
+.chart-title { font-size: 1rem; color: var(--text-2); margin-bottom: 10px; }
+
+/* Contenedor del canvas con altura fija para Chart.js */
+.chart-canvas { height: 280px; }
+.chart-card canvas {
+  display: block;
+  width: 100% !important;
+  height: 100% !important; /* toma la altura del contenedor */
+  max-width: 100%;
 }
 
-.card h2 {
-    font-size: 1.6rem;
-    color: #3498db;
-    margin: 0;
+/* Tabla */
+.table-card {
+  background: var(--bg-2);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-xl);
+  padding: 16px;
+  box-shadow: var(--shadow-1);
+  margin-top: 16px;
+  overflow: hidden;
+}
+.table-title { font-size: 1rem; color: var(--text-2); margin-bottom: 10px; }
+
+.table-responsive {
+  width: 100%;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
 }
 
-.card p {
-    font-size: 0.95rem;
-    color: #7f8c8d;
-    margin: 0.4rem 0 0;
+.nice-table {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0;
+  min-width: 640px;
+  font-size: 0.95rem;
+  line-height: 1.35;
 }
 
-/* Contenedor del gráfico */
-.charts-container {
-    display: flex;
-    justify-content: center;
-    margin: 2rem auto;
-    max-width: 400px;
-    padding: 0 1rem;
+.nice-table thead th {
+  position: sticky; top: 0;
+  background: var(--bg-3);
+  color: #cdd9ff;
+  border-bottom: 1px solid var(--border);
+  text-align: left;
+  font-weight: 600;
+  padding: 12px 14px;
+  z-index: 1;
 }
 
-#graficoNiveles {
-    width: 100% !important;
-    height: auto !important;
-    max-width: 360px;
+.nice-table th, .nice-table td {
+  padding: 12px 14px;
+  border-bottom: 1px solid var(--border);
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  overflow: hidden;
+  max-width: 260px;
 }
 
-/* Responsive para pantallas chicas */
-@media (max-width: 768px) {
-    .cards-container {
-        flex-direction: column;
-        align-items: center;
-        gap: 1rem;
-    }
+.nice-table tbody tr { transition: background-color .15s ease; }
+.nice-table tbody tr:hover { background: rgba(255,255,255,0.035); }
+.nice-table .empty { text-align: center; color: var(--text-2); }
 
-    .card {
-        width: 90%;
-        max-width: 320px;
-    }
+/* Utilidades */
+img, svg, video, canvas, audio, iframe, embed, object { max-width: 100%; }
+:is(h1,h2,h3,h4,h5,h6,p) { overflow-wrap: anywhere; }
 
-    .charts-container {
-        margin: 1.5rem 0;
-    }
+/* Responsive fino */
+@media (max-width: 520px) {
+  .card { padding: 14px; }
+  .chart-card, .table-card { padding: 14px; }
+  .nice-table { min-width: 560px; }
 }
