@@ -3,10 +3,13 @@ from . import views
 from django.conf.urls.static import static
 from django.conf import settings
 
+from .views import estudiante_edit
+
+
 urlpatterns = [
     path('list/', views.estudiante_lista, name='estudiante_list'),
     path('detail/<int:pk>/', views.estudiante_detail, name='estudiante_detail'),
-    path('edit/<int:pk>/', views.estudiante_edit,name='estudiante_edit'),
+    path('estudiantes/<int:pk>/editar/', estudiante_edit, name='estudiante_edit'),
     path('delete/<int:pk>/', views.estudiante_delete, name='estudiante_delete'),
     path('consultar/', views.estudiante_consultar, name='consultar_alumno'),
     #path('ver-datos/<int:pk>/', views.ver_datos_estudiante, name='ver_datos_estudiante'),

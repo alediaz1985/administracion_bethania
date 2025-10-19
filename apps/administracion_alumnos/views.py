@@ -1334,3 +1334,91 @@ def lista_fotos_estudiantes(request):
     return render(request, 'administracion_alumnos/lista_fotos_estudiantes.html', {
         'fotos_estudiantes': fotos_estudiantes
     })
+
+from django.shortcuts import render, get_object_or_404, redirect
+from django.db import transaction
+from .models import (
+    Estudiante, Inscripcion, InformacionAcademica, ContactoEstudiante,
+    SaludEstudiante, Documentacion, EstadoDocumentacion
+)
+from .forms import (
+    EstudianteForm, InscripcionForm, InformacionAcademicaForm,
+    ContactoEstudianteForm, SaludEstudianteForm, DocumentacionForm,
+    EstadoDocumentacionForm, ResponsableFormSet
+)
+
+def _ensure_onetoones(estudiante: Estudiante):
+    Inscripcion.objects.get_or_create(estudiante=estudiante)
+    InformacionAcademica.objects.get_or_create(estudiante=estudiante)
+    ContactoEstudiante.objects.get_or_create(estudiante=estudiante)
+    SaludEstudiante.objects.get_or_create(estudiante=estudiante)
+    Documentacion.objects.get_or_create(estudiante=estudiante)
+    EstadoDocumentacion.objects.get_or_create(estudiante=estudiante)
+
+@transaction.atomic
+def estudiante_edit(request, pk):
+    estudiante = get_object_or_404(Estudiante, pk=pk)
+    _ensure_onetoones(estudiante)
+
+    # Instancias existentes
+    insc = estudiante.inscripcion
+    info = estudiante.info_academica
+    cont = estudiante.contacto
+    salud = estudiante.salud
+    docu = estudiante.documentacion
+    estado = estudiante.estado_documentacion
+
+    if request.method == 'POST':
+        est_form   = EstudianteForm(request.POST, instance=estudiante, prefix='est')
+        insc_form  = InscripcionForm(request.POST, instance=insc,        prefix='insc')
+        info_form  = InformacionAcademicaForm(request.POST, instance=info, prefix='info')
+        cont_form  = ContactoEstudianteForm(request.POST, instance=cont,  prefix='cont')
+        salud_form = SaludEstudianteForm(request.POST, instance=salud,    prefix='salud')
+        docu_form  = DocumentacionForm(request.POST, instance=docu,       prefix='docu')
+        estd_form  = EstadoDocumentacionForm(request.POST, instance=estado, prefix='estado')
+        resp_fs    = ResponsableFormSet(request.POST, instance=estudiante, prefix='resp')
+
+        forms_ok = all([
+            est_form.is_valid(),
+            insc_form.is_valid(),
+            info_form.is_valid(),
+            cont_form.is_valid(),
+            salud_form.is_valid(),
+            docu_form.is_valid(),
+            estd_form.is_valid(),
+            resp_fs.is_valid(),
+        ])
+
+        if forms_ok:
+            est_form.save()
+            insc_form.save()
+            info_form.save()
+            cont_form.save()
+            salud_form.save()
+            docu_form.save()
+            estd_form.save()
+            resp_fs.save()
+            return redirect('estudiante_list')
+
+    else:
+        est_form   = EstudianteForm(instance=estudiante, prefix='est')
+        insc_form  = InscripcionForm(instance=insc,        prefix='insc')
+        info_form  = InformacionAcademicaForm(instance=info, prefix='info')
+        cont_form  = ContactoEstudianteForm(instance=cont,  prefix='cont')
+        salud_form = SaludEstudianteForm(instance=salud,    prefix='salud')
+        docu_form  = DocumentacionForm(instance=docu,       prefix='docu')
+        estd_form  = EstadoDocumentacionForm(instance=estado, prefix='estado')
+        resp_fs    = ResponsableFormSet(instance=estudiante, prefix='resp')
+
+    context = {
+        'est_form': est_form,
+        'insc_form': insc_form,
+        'info_form': info_form,
+        'cont_form': cont_form,
+        'salud_form': salud_form,
+        'docu_form': docu_form,
+        'estd_form': estd_form,
+        'resp_fs': resp_fs,
+        'estudiante': estudiante,
+    }
+    return render(request, 'administracion_alumnos/estudiante_edit.html', context)

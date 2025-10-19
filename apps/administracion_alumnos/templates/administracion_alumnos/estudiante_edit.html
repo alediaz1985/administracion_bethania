@@ -8,22 +8,22 @@
 {% endblock %}
 
 {% block content %}
-<form method="post">
+<form method="post" enctype="multipart/form-data">
   {% csrf_token %}
   <div class="student-card">
 
     <!-- CABECERA -->
     <div class="student-header">
-    {% if estudiante.inscripcion.foto_estudiante %}
+      {% if estudiante.inscripcion.foto_estudiante %}
         <img src="{{ estudiante.inscripcion.foto_estudiante }}" alt="Foto del Estudiante" class="student-photo">
-    {% else %}
+      {% else %}
         <img src="{% static 'administracion_alumnos/img/default-user.png' %}" alt="Sin Foto" class="student-photo">
-    {% endif %}
-    <div class="student-info">
+      {% endif %}
+      <div class="student-info">
         <h2>{{ estudiante.apellidos_estudiante }}, {{ estudiante.nombres_estudiante }}</h2>
         <p><strong>DNI:</strong> {{ estudiante.dni_estudiante }}</p>
         <p><strong>CUIL:</strong> {{ estudiante.cuil_estudiante }}</p>
-    </div>
+      </div>
     </div>
 
     <!-- BOTONES -->
@@ -44,165 +44,157 @@
       <button type="button" class="tab-button" data-tab="estado">Estado Doc.</button>
     </div>
 
-    <!-- DATOS PERSONALES -->
+    <!-- DATOS PERSONALES (Estudiante) -->
     <div class="tab-content active" id="tab-datos">
-      <table>
-        <tr><th>Apellidos</th><td><input name="apellidos_estudiante" value="{{ estudiante.apellidos_estudiante }}"></td></tr>
-        <tr><th>Nombres</th><td><input name="nombres_estudiante" value="{{ estudiante.nombres_estudiante }}"></td></tr>
-        <tr><th>Sexo</th><td><input name="sexo_estudiante" value="{{ estudiante.sexo_estudiante }}"></td></tr>
-        <tr><th>Fecha de Nacimiento</th><td><input name="fecha_nac_estudiante" value="{{ estudiante.fecha_nac_estudiante }}"></td></tr>
-        <tr><th>Nacionalidad</th><td><input name="nacionalidad_estudiante" value="{{ estudiante.nacionalidad_estudiante }}"></td></tr>
-        <tr><th>Religión</th><td><input name="religion_estudiante" value="{{ estudiante.religion_estudiante }}"></td></tr>
-        <tr><th>CUIL</th><td><input name="cuil_estudiante" value="{{ estudiante.cuil_estudiante }}"></td></tr>
-        <tr><th>DNI</th><td><input name="dni_estudiante" value="{{ estudiante.dni_estudiante }}"></td></tr>
+      <table class="table-like">
+        {{ est_form.non_field_errors }}
+        <tr><th>Apellidos</th><td>{{ est_form.apellidos_estudiante }}</td></tr>
+        <tr><th>Nombres</th><td>{{ est_form.nombres_estudiante }}</td></tr>
+        <tr><th>Sexo</th><td>{{ est_form.sexo_estudiante }}</td></tr>
+        <tr><th>Fecha de Nacimiento</th><td>{{ est_form.fecha_nac_estudiante }}</td></tr>
+        <tr><th>Nacionalidad</th><td>{{ est_form.nacionalidad_estudiante }}</td></tr>
+        <tr><th>Religión</th><td>{{ est_form.religion_estudiante }}</td></tr>
+        <tr><th>CUIL</th><td>{{ est_form.cuil_estudiante }}</td></tr>
+        <tr><th>DNI</th><td>{{ est_form.dni_estudiante }}</td></tr>
       </table>
     </div>
 
     <!-- INSCRIPCIÓN -->
     <div class="tab-content" id="tab-inscripcion">
-      {% if estudiante.inscripcion %}
-      <table>
-        <tr><th>Marca Temporal</th><td><input name="marca_temporal" value="{{ estudiante.inscripcion.marca_temporal }}"></td></tr>
-        <tr><th>Email Registro</th><td><input name="email_registro" value="{{ estudiante.inscripcion.email_registro }}"></td></tr>
-        <tr><th>Foto</th><td><input name="foto_estudiante" value="{{ estudiante.inscripcion.foto_estudiante }}"></td></tr>
-        <tr><th>N° Legajo</th><td><input name="num_legajo_estudiante" value="{{ estudiante.inscripcion.num_legajo_estudiante }}"></td></tr>
-        <tr><th>Fecha Recepción</th><td><input name="fecha_recepcion" value="{{ estudiante.inscripcion.fecha_recepcion }}"></td></tr>
-        <tr><th>Salita/Grado/Año</th><td><input name="salita_grado_anio_estudiante" value="{{ estudiante.inscripcion.salita_grado_anio_estudiante }}"></td></tr>
-        <tr><th>Nivel</th><td><input name="nivel_estudiante" value="{{ estudiante.inscripcion.nivel_estudiante }}"></td></tr>
-        <tr><th>Curso/Año</th><td><input name="curso_anio_estudiante" value="{{ estudiante.inscripcion.curso_anio_estudiante }}"></td></tr>
-        <tr><th>Turno</th><td><input name="turno_estudiante" value="{{ estudiante.inscripcion.turno_estudiante }}"></td></tr>
-        <tr><th>Nivel Enseñanza</th><td><input name="nivel_ensenanza" value="{{ estudiante.inscripcion.nivel_ensenanza }}"></td></tr>
+      <table class="table-like">
+        {{ insc_form.non_field_errors }}
+        <tr><th>Marca Temporal</th><td>{{ insc_form.marca_temporal }}</td></tr>
+        <tr><th>Email Registro</th><td>{{ insc_form.email_registro }}</td></tr>
+        <tr><th>Foto</th><td>{{ insc_form.foto_estudiante }}</td></tr>
+        <tr><th>N° Legajo</th><td>{{ insc_form.num_legajo_estudiante }}</td></tr>
+        <tr><th>Fecha Recepción</th><td>{{ insc_form.fecha_recepcion }}</td></tr>
+        <tr><th>Salita/Grado/Año</th><td>{{ insc_form.salita_grado_anio_estudiante }}</td></tr>
+        <tr><th>Nivel</th><td>{{ insc_form.nivel_estudiante }}</td></tr>
+        <tr><th>Curso/Año</th><td>{{ insc_form.curso_anio_estudiante }}</td></tr>
+        <tr><th>Turno</th><td>{{ insc_form.turno_estudiante }}</td></tr>
+        <tr><th>Nivel Enseñanza</th><td>{{ insc_form.nivel_ensenanza }}</td></tr>
       </table>
-      {% else %}
-      <p>No hay datos de inscripción.</p>
-      {% endif %}
     </div>
 
     <!-- INFORMACIÓN ACADÉMICA -->
     <div class="tab-content" id="tab-academica">
-      {% if estudiante.info_academica %}
-      <table>
-        <tr><th>Año Cursado</th><td><input name="anio_cursado" value="{{ estudiante.info_academica.anio_cursado }}"></td></tr>
-        <tr><th>Dónde Cursó</th><td><input name="donde_cursado" value="{{ estudiante.info_academica.donde_cursado }}"></td></tr>
-        <tr><th>Asignaturas Pendientes</th><td><input name="asignaturas_pendientes" value="{{ estudiante.info_academica.asignaturas_pendientes }}"></td></tr>
-        <tr><th>Indica Cuáles</th><td><input name="indica_asig_pendientes" value="{{ estudiante.info_academica.indica_asig_pendientes }}"></td></tr>
-        <tr><th>Tiene Hermanos</th><td><input name="tiene_hermanos_institucion" value="{{ estudiante.info_academica.tiene_hermanos_institucion }}"></td></tr>
-        <tr><th>Cuántos Hermanos</th><td><input name="cuantos_hermanos" value="{{ estudiante.info_academica.cuantos_hermanos }}"></td></tr>
-        <tr><th>Cómo Conoció la Institución</th><td><input name="como_conociste_institucion" value="{{ estudiante.info_academica.como_conociste_institucion }}"></td></tr>
-        <tr><th>Quién Eligió la Institución</th><td><input name="eligio_institucion" value="{{ estudiante.info_academica.eligio_institucion }}"></td></tr>
+      <table class="table-like">
+        {{ info_form.non_field_errors }}
+        <tr><th>Año Cursado</th><td>{{ info_form.anio_cursado }}</td></tr>
+        <tr><th>Dónde Cursó</th><td>{{ info_form.donde_cursado }}</td></tr>
+        <tr><th>Asignaturas Pendientes</th><td>{{ info_form.asignaturas_pendientes }}</td></tr>
+        <tr><th>Indica Cuáles</th><td>{{ info_form.indica_asig_pendientes }}</td></tr>
+        <tr><th>Tiene Hermanos</th><td>{{ info_form.tiene_hermanos_institucion }}</td></tr>
+        <tr><th>Cuántos Hermanos</th><td>{{ info_form.cuantos_hermanos }}</td></tr>
+        <tr><th>Cómo Conoció la Institución</th><td>{{ info_form.como_conociste_institucion }}</td></tr>
+        <tr><th>Quién Eligió la Institución</th><td>{{ info_form.eligio_institucion }}</td></tr>
       </table>
-      {% else %}
-      <p>No hay datos académicos.</p>
-      {% endif %}
     </div>
 
     <!-- CONTACTO -->
     <div class="tab-content" id="tab-contacto">
-      {% if estudiante.contacto %}
-      <table>
-        <tr><th>Ciudad</th><td><input name="ciudad_estudiante" value="{{ estudiante.contacto.ciudad_estudiante }}"></td></tr>
-        <tr><th>Provincia</th><td><input name="provincia_estudiante" value="{{ estudiante.contacto.provincia_estudiante }}"></td></tr>
-        <tr><th>Barrio</th><td><input name="barrio_estudiante" value="{{ estudiante.contacto.barrio_estudiante }}"></td></tr>
-        <tr><th>Calle</th><td><input name="calle_estudiante" value="{{ estudiante.contacto.calle_estudiante }}"></td></tr>
-        <tr><th>N° / Mz / Pc</th><td><input name="n_mz_pc_estudiante" value="{{ estudiante.contacto.n_mz_pc_estudiante }}"></td></tr>
-        <tr><th>Código Postal</th><td><input name="codigo_postal_estudiante" value="{{ estudiante.contacto.codigo_postal_estudiante }}"></td></tr>
-        <tr><th>Email</th><td><input name="email_estudiante" value="{{ estudiante.contacto.email_estudiante }}"></td></tr>
-        <tr><th>Tel. Fijo</th><td><input name="tel_fijo_estudiante" value="{{ estudiante.contacto.tel_fijo_estudiante }}"></td></tr>
-        <tr><th>Tel. Celular</th><td><input name="tel_cel_estudiante" value="{{ estudiante.contacto.tel_cel_estudiante }}"></td></tr>
-        <tr><th>Tel. Emergencia</th><td><input name="tel_emergencia_estudiante" value="{{ estudiante.contacto.tel_emergencia_estudiante }}"></td></tr>
-        <tr><th>Parentesco</th><td><input name="parentesco_estudiante" value="{{ estudiante.contacto.parentesco_estudiante }}"></td></tr>
+      <table class="table-like">
+        {{ cont_form.non_field_errors }}
+        <tr><th>Ciudad</th><td>{{ cont_form.ciudad_estudiante }}</td></tr>
+        <tr><th>Provincia</th><td>{{ cont_form.provincia_estudiante }}</td></tr>
+        <tr><th>Barrio</th><td>{{ cont_form.barrio_estudiante }}</td></tr>
+        <tr><th>Calle</th><td>{{ cont_form.calle_estudiante }}</td></tr>
+        <tr><th>N° / Mz / Pc</th><td>{{ cont_form.n_mz_pc_estudiante }}</td></tr>
+        <tr><th>Código Postal</th><td>{{ cont_form.codigo_postal_estudiante }}</td></tr>
+        <tr><th>Email</th><td>{{ cont_form.email_estudiante }}</td></tr>
+        <tr><th>Tel. Fijo</th><td>{{ cont_form.tel_fijo_estudiante }}</td></tr>
+        <tr><th>Tel. Celular</th><td>{{ cont_form.tel_cel_estudiante }}</td></tr>
+        <tr><th>Tel. Emergencia</th><td>{{ cont_form.tel_emergencia_estudiante }}</td></tr>
+        <tr><th>Parentesco</th><td>{{ cont_form.parentesco_estudiante }}</td></tr>
       </table>
-      {% else %}
-      <p>No hay datos de contacto.</p>
-      {% endif %}
     </div>
 
     <!-- SALUD -->
     <div class="tab-content" id="tab-salud">
-      {% if estudiante.salud %}
-      <table>
-        <tr><th>Peso</th><td><input name="peso_estudiante" value="{{ estudiante.salud.peso_estudiante }}"></td></tr>
-        <tr><th>Talla</th><td><input name="talla_estudiante" value="{{ estudiante.salud.talla_estudiante }}"></td></tr>
-        <tr><th>Obra Social</th><td><input name="obra_social_estudiante" value="{{ estudiante.salud.obra_social_estudiante }}"></td></tr>
-        <tr><th>Cuál</th><td><input name="cual_osocial_estudiante" value="{{ estudiante.salud.cual_osocial_estudiante }}"></td></tr>
-        <tr><th>Problema Neurológico</th><td><input name="problema_neurologico_estudiante" value="{{ estudiante.salud.problema_neurologico_estudiante }}"></td></tr>
-        <tr><th>Cuál</th><td><input name="cual_prob_neurologico_estudiante" value="{{ estudiante.salud.cual_prob_neurologico_estudiante }}"></td></tr>
-        <tr><th>Problema Físico</th><td><input name="problema_fisico_estudiante" value="{{ estudiante.salud.problema_fisico_estudiante }}"></td></tr>
-        <tr><th>Certificado Médico</th><td><input name="certificado_medico_estudiante" value="{{ estudiante.salud.certificado_medico_estudiante }}"></td></tr>
-        <tr><th>Problema de Aprendizaje</th><td><input name="problema_aprendizaje_estudiante" value="{{ estudiante.salud.problema_aprendizaje_estudiante }}"></td></tr>
-        <tr><th>Cuál</th><td><input name="cual_aprendizaje_estudiante" value="{{ estudiante.salud.cual_aprendizaje_estudiante }}"></td></tr>
-        <tr><th>Atención Médica</th><td><input name="atencion_medica_estudiante" value="{{ estudiante.salud.atencion_medica_estudiante }}"></td></tr>
-        <tr><th>Alergias</th><td><input name="alergia_estudiante" value="{{ estudiante.salud.alergia_estudiante }}"></td></tr>
+      <table class="table-like">
+        {{ salud_form.non_field_errors }}
+        <tr><th>Peso</th><td>{{ salud_form.peso_estudiante }}</td></tr>
+        <tr><th>Talla</th><td>{{ salud_form.talla_estudiante }}</td></tr>
+        <tr><th>Obra Social</th><td>{{ salud_form.obra_social_estudiante }}</td></tr>
+        <tr><th>Cuál</th><td>{{ salud_form.cual_osocial_estudiante }}</td></tr>
+        <tr><th>Problema Neurológico</th><td>{{ salud_form.problema_neurologico_estudiante }}</td></tr>
+        <tr><th>Cuál</th><td>{{ salud_form.cual_prob_neurologico_estudiante }}</td></tr>
+        <tr><th>Problema Físico</th><td>{{ salud_form.problema_fisico_estudiante }}</td></tr>
+        <tr><th>Certificado Médico</th><td>{{ salud_form.certificado_medico_estudiante }}</td></tr>
+        <tr><th>Problema de Aprendizaje</th><td>{{ salud_form.problema_aprendizaje_estudiante }}</td></tr>
+        <tr><th>Cuál</th><td>{{ salud_form.cual_aprendizaje_estudiante }}</td></tr>
+        <tr><th>Atención Médica</th><td>{{ salud_form.atencion_medica_estudiante }}</td></tr>
+        <tr><th>Alergias</th><td>{{ salud_form.alergia_estudiante }}</td></tr>
       </table>
-      {% else %}
-      <p>No hay datos de salud.</p>
-      {% endif %}
     </div>
 
-    <!-- RESPONSABLES -->
+    <!-- RESPONSABLES (Inline Formset) -->
     <div class="tab-content" id="tab-responsables">
-      {% if estudiante.responsables.all %}
-      {% for r in estudiante.responsables.all %}
-      <h4>{{ r.apellidos }}, {{ r.nombres }}</h4>
-      <table>
-        <tr><th>DNI</th><td><input name="dni" value="{{ r.dni }}"></td></tr>
-        <tr><th>Fecha Nac.</th><td><input name="fecha_nac" value="{{ r.fecha_nac }}"></td></tr>
-        <tr><th>Nacionalidad</th><td><input name="nacionalidad" value="{{ r.nacionalidad }}"></td></tr>
-        <tr><th>Estado Civil</th><td><input name="estado_civil" value="{{ r.estado_civil }}"></td></tr>
-        <tr><th>CUIL</th><td><input name="cuil" value="{{ r.cuil }}"></td></tr>
-        <tr><th>Nivel Instrucción</th><td><input name="nivel_instruccion" value="{{ r.nivel_instruccion }}"></td></tr>
-        <tr><th>Religión</th><td><input name="religion" value="{{ r.religion }}"></td></tr>
-        <tr><th>Email</th><td><input name="email" value="{{ r.email }}"></td></tr>
-        <tr><th>Tel. Fijo</th><td><input name="tel_fijo" value="{{ r.tel_fijo }}"></td></tr>
-        <tr><th>Tel. Celular</th><td><input name="tel_cel" value="{{ r.tel_cel }}"></td></tr>
-        <tr><th>Tel. Laboral</th><td><input name="tel_laboral" value="{{ r.tel_laboral }}"></td></tr>
-        <tr><th>Horario Trabajo</th><td><input name="horario_trabajo" value="{{ r.horario_trabajo }}"></td></tr>
-        <tr><th>Ocupación</th><td><input name="ocupacion" value="{{ r.ocupacion }}"></td></tr>
-        <tr><th>Domicilio</th><td><input name="domicilio" value="{{ r.calle }} {{ r.n_mz_pc }}, {{ r.barrio }} - {{ r.ciudad }} ({{ r.codigo_postal }}), {{ r.provincia }}"></td></tr>
-      </table>
-      <hr>
+      {{ resp_fs.management_form }}
+      {% for form in resp_fs.forms %}
+        <h4>{{ form.instance.apellidos }}, {{ form.instance.nombres }}</h4>
+        <table class="table-like">
+          {{ form.non_field_errors }}
+          <tr><th>Apellidos</th><td>{{ form.apellidos }}</td></tr>
+          <tr><th>Nombres</th><td>{{ form.nombres }}</td></tr>
+          <tr><th>DNI</th><td>{{ form.dni }}</td></tr>
+          <tr><th>Fecha Nac.</th><td>{{ form.fecha_nac }}</td></tr>
+          <tr><th>Nacionalidad</th><td>{{ form.nacionalidad }}</td></tr>
+          <tr><th>Estado Civil</th><td>{{ form.estado_civil }}</td></tr>
+          <tr><th>CUIL</th><td>{{ form.cuil }}</td></tr>
+          <tr><th>Nivel Instrucción</th><td>{{ form.nivel_instruccion }}</td></tr>
+          <tr><th>Email</th><td>{{ form.email }}</td></tr>
+          <tr><th>Tel. Fijo</th><td>{{ form.tel_fijo }}</td></tr>
+          <tr><th>Tel. Celular</th><td>{{ form.tel_cel }}</td></tr>
+          <tr><th>Tel. Laboral</th><td>{{ form.tel_laboral }}</td></tr>
+          <tr><th>Horario Trabajo</th><td>{{ form.horario_trabajo }}</td></tr>
+          <tr><th>Calle</th><td>{{ form.calle }}</td></tr>
+          <tr><th>N° / Mz / Pc</th><td>{{ form.n_mz_pc }}</td></tr>
+          <tr><th>Barrio</th><td>{{ form.barrio }}</td></tr>
+          <tr><th>Ciudad</th><td>{{ form.ciudad }}</td></tr>
+          <tr><th>Código Postal</th><td>{{ form.codigo_postal }}</td></tr>
+          <tr><th>Provincia</th><td>{{ form.provincia }}</td></tr>
+          {% if form.DELETE %}
+            <tr><th>Eliminar</th><td>{{ form.DELETE }}</td></tr>
+          {% endif %}
+        </table>
+        <hr>
+      {% empty %}
+        <p>No hay responsables cargados.</p>
       {% endfor %}
-      {% else %}
-      <p>No hay responsables cargados.</p>
-      {% endif %}
+      {# Si querés un botón "Agregar responsable", dale extra=1 en el formset y/o un formset vacío adicional por JS #}
     </div>
 
     <!-- DOCUMENTACIÓN -->
     <div class="tab-content" id="tab-documentacion">
-      {% if estudiante.documentacion %}
-      <table>
-        <tr><th>Fecha Contrato</th><td><input name="fecha_contrato" value="{{ estudiante.documentacion.fecha_contrato }}"></td></tr>
-        <tr><th>Ciudad a los Días</th><td><input name="ciudad_a_los_dias" value="{{ estudiante.documentacion.ciudad_a_los_dias }}"></td></tr>
-        <tr><th>Señores 1</th><td><input name="senores1" value="{{ estudiante.documentacion.senores1 }}"></td></tr>
-        <tr><th>DNI Señores 1</th><td><input name="dni_senores1" value="{{ estudiante.documentacion.dni_senores1 }}"></td></tr>
-        <tr><th>Señores 2</th><td><input name="senores2" value="{{ estudiante.documentacion.senores2 }}"></td></tr>
-        <tr><th>DNI Señores 2</th><td><input name="dni_senores2" value="{{ estudiante.documentacion.dni_senores2 }}"></td></tr>
-        <tr><th>Domicilios Señores</th><td><input name="domicilios_senores" value="{{ estudiante.documentacion.domicilios_senores }}"></td></tr>
-        <tr><th>Domicilio Especial Electrónico</th><td><input name="domicilio_especial_electronico" value="{{ estudiante.documentacion.domicilio_especial_electronico }}"></td></tr>
-        <tr><th>Actúan Nombres Estudiante</th><td><input name="actuan_nombres_estudiante" value="{{ estudiante.documentacion.actuan_nombres_estudiante }}"></td></tr>
-        <tr><th>DNI Actúan</th><td><input name="dni_acutan_estudiante" value="{{ estudiante.documentacion.dni_acutan_estudiante }}"></td></tr>
-        <tr><th>Domicilio Actúan</th><td><input name="domicilio_actuan_estudiante" value="{{ estudiante.documentacion.domicilio_actuan_estudiante }}"></td></tr>
-        <tr><th>Responsable Pago</th><td><input name="responsable_pago" value="{{ estudiante.documentacion.responsable_pago }}"></td></tr>
-        <tr><th>DNI Responsable Pago</th><td><input name="dni_responsable_pago" value="{{ estudiante.documentacion.dni_responsable_pago }}"></td></tr>
-        <tr><th>Manifiesta Responsable</th><td><input name="manifiesta_responsable" value="{{ estudiante.documentacion.manifiesta_responsable }}"></td></tr>
-        <tr><th>Autoriza Facturación A</th><td><input name="autoriza_facturacion_a" value="{{ estudiante.documentacion.autoriza_facturacion_a }}"></td></tr>
-        <tr><th>Autoriza Imagen</th><td><input name="autoriza_imagen" value="{{ estudiante.documentacion.autoriza_imagen }}"></td></tr>
+      <table class="table-like">
+        {{ docu_form.non_field_errors }}
+        <tr><th>Fecha Contrato</th><td>{{ docu_form.fecha_contrato }}</td></tr>
+        <tr><th>Ciudad a los Días</th><td>{{ docu_form.ciudad_a_los_dias }}</td></tr>
+        <tr><th>Señores 1</th><td>{{ docu_form.senores1 }}</td></tr>
+        <tr><th>DNI Señores 1</th><td>{{ docu_form.dni_senores1 }}</td></tr>
+        <tr><th>Señores 2</th><td>{{ docu_form.senores2 }}</td></tr>
+        <tr><th>DNI Señores 2</th><td>{{ docu_form.dni_senores2 }}</td></tr>
+        <tr><th>Domicilios Señores</th><td>{{ docu_form.domicilios_senores }}</td></tr>
+        <tr><th>Domicilio Especial Electrónico</th><td>{{ docu_form.domicilio_especial_electronico }}</td></tr>
+        <tr><th>Actúan Nombres Estudiante</th><td>{{ docu_form.actuan_nombres_estudiante }}</td></tr>
+        <tr><th>DNI Actúan</th><td>{{ docu_form.dni_acutan_estudiante }}</td></tr>
+        <tr><th>Domicilio Actúan</th><td>{{ docu_form.domicilio_actuan_estudiante }}</td></tr>
+        <tr><th>Responsable Pago</th><td>{{ docu_form.responsable_pago }}</td></tr>
+        <tr><th>DNI Responsable Pago</th><td>{{ docu_form.dni_responsable_pago }}</td></tr>
+        <tr><th>Manifiesta Responsable</th><td>{{ docu_form.manifiesta_responsable }}</td></tr>
+        <tr><th>Autoriza Facturación A</th><td>{{ docu_form.autoriza_facturacion_a }}</td></tr>
+        <tr><th>Autoriza Imagen</th><td>{{ docu_form.autoriza_imagen }}</td></tr>
       </table>
-      {% else %}
-      <p>No hay datos de documentación.</p>
-      {% endif %}
     </div>
 
     <!-- ESTADO -->
     <div class="tab-content" id="tab-estado">
-      {% if estudiante.estado_documentacion %}
-      <table>
-        <tr><th>Estado Actual</th><td><input name="estado" value="{{ estudiante.estado_documentacion.estado }}"></td></tr>
-        <tr><th>Última Actualización</th><td><input name="fecha_actualizacion" value="{{ estudiante.estado_documentacion.fecha_actualizacion }}"></td></tr>
+      <table class="table-like">
+        {{ estd_form.non_field_errors }}
+        <tr><th>Estado Actual</th><td>{{ estd_form.estado }}</td></tr>
+        <tr><th>Última Actualización</th><td><em>se actualiza automáticamente</em></td></tr>
       </table>
-      {% else %}
-      <p>No hay registro de estado de documentación.</p>
-      {% endif %}
     </div>
 
   </div>
@@ -214,7 +206,6 @@
 document.addEventListener("DOMContentLoaded", () => {
   const tabButtons = document.querySelectorAll(".tab-button");
   const tabContents = document.querySelectorAll(".tab-content");
-
   tabButtons.forEach(button => {
     button.addEventListener("click", () => {
       const tabId = button.getAttribute("data-tab");
