@@ -29,7 +29,7 @@ INSTALLED_APPS = [
     'crispy_bootstrap4', 
     # 'apps.administracion',
     'apps.autenticacion',
-    # 'apps.cuotas',
+    'apps.cuotas',
     # 'apps.administracion_docentes',
     'apps.administracion_alumnos',
     # 'apps.niveles',

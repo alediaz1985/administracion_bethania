@@ -1,70 +1,116 @@
 from django.contrib import admin
-from .models import CicloLectivo,MontosCicloLectivo, Inscripcion, Cuota, Pago, MedioPago, NivelCursado, SubNivelCursado
+from .models import (
+    CicloLectivo, Nivel, Curso, TarifaNivel,
+    VencimientoMensual, Beneficio, BeneficioInscripcion,
+    Inscripcion, Cuota, MedioPago, Pago,
+    ComprobanteDrivePago, ComprobantePago
+)
 
+# 👇 IMPORTANTE: agregar Estudiante (de la app de alumnos)
+from apps.administracion_alumnos.models import Estudiante
 
-# Admin para Ciclo Lectivo
+# ===============================
+# 🔍 Admin para modelos usados en autocomplete
+# ===============================
+
 @admin.register(CicloLectivo)
 class CicloLectivoAdmin(admin.ModelAdmin):
-    list_display = ('año_lectivo', 'fecha_inicio', 'fecha_fin')
-    search_fields = ('año_lectivo',)
-    ordering = ('año_lectivo',)
+    list_display = ("anio", "fecha_inicio", "fecha_fin")
+    search_fields = ("anio",)
+    ordering = ("-anio",)
 
 
-# Admin para Inscripción
+@admin.register(Nivel)
+class NivelAdmin(admin.ModelAdmin):
+    list_display = ("nombre",)
+    search_fields = ("nombre",)
+
+
+@admin.register(Curso)
+class CursoAdmin(admin.ModelAdmin):
+    list_display = ("nivel", "nombre", "monto_cuota_override", "monto_inscripcion_override")
+    list_filter = ("nivel",)
+    search_fields = ("nombre",)
+
+
+@admin.register(TarifaNivel)
+class TarifaNivelAdmin(admin.ModelAdmin):
+    list_display = ("ciclo", "nivel", "monto_inscripcion", "monto_cuota_mensual")
+    list_filter = ("ciclo", "nivel")
+    search_fields = ("nivel__nombre",)
+    autocomplete_fields = ("ciclo", "nivel")  # CicloLectivo y Nivel ya tienen search_fields
+
+
+@admin.register(VencimientoMensual)
+class VencimientoMensualAdmin(admin.ModelAdmin):
+    list_display = ("ciclo", "mes", "dia_ultimo_sin_recargo", "recargo_porcentaje")
+    list_filter = ("ciclo",)
+    ordering = ("ciclo__anio", "mes")
+
+
+class BeneficioInscripcionInline(admin.TabularInline):
+    model = BeneficioInscripcion
+    extra = 0
+    autocomplete_fields = ("beneficio",)  # BeneficioAdmin tiene search_fields
+
+
+@admin.register(Beneficio)
+class BeneficioAdmin(admin.ModelAdmin):
+    list_display = ("nombre", "tipo", "porcentaje", "monto_fijo", "prioridad", "activo")
+    list_filter = ("tipo", "activo")
+    search_fields = ("nombre",)
+
+
 @admin.register(Inscripcion)
 class InscripcionAdmin(admin.ModelAdmin):
-    list_display = ('cuil_alumno', 'ciclo_lectivo', 'fecha_inscripcion', 'pagada')
-    search_fields = ('cuil_alumno__nombres_alumno', 'ciclo_lectivo__año_lectivo')
-    ordering = ('fecha_inscripcion',)
+    list_display = ("estudiante", "ciclo", "nivel", "curso", "monto_inscripcion", "fecha_inscripcion")
+    list_filter = ("ciclo", "nivel", "curso")
+    search_fields = (
+        "estudiante__apellidos_estudiante",
+        "estudiante__nombres_estudiante",
+        "estudiante__dni_estudiante",
+        "estudiante__cuil_estudiante",
+    )
+    autocomplete_fields = ("estudiante", "ciclo", "nivel", "curso")
+    list_select_related = ("estudiante", "ciclo", "nivel", "curso")  # 🚀 mejora de rendimiento
+    inlines = [BeneficioInscripcionInline]
 
 
-# Admin para Cuota
+
 @admin.register(Cuota)
 class CuotaAdmin(admin.ModelAdmin):
-    list_display = ('inscripcion', 'mes', 'monto_cuota', 'pagado', 'fecha_pago', 'fuera_de_termino', 'total_a_pagar')
-    search_fields = ('inscripcion__cuil_alumno__nombres_alumno',)
-    list_filter = ('pagado', 'fuera_de_termino')
-    ordering = ('inscripcion', 'mes')
+    list_display = ("inscripcion", "mes", "monto_base", "monto_descuentos", "monto_recargos", "total_a_pagar", "pagada")
+    list_filter = ("inscripcion__ciclo", "inscripcion__nivel", "mes", "pagada")
+    search_fields = ("inscripcion__estudiante__apellidos_estudiante", "inscripcion__estudiante__dni_estudiante")
+    autocomplete_fields = ("inscripcion",)  # InscripcionAdmin ya define search_fields
 
 
-# Admin para Pago
-@admin.register(Pago)
-class PagoAdmin(admin.ModelAdmin):
-    list_display = ('cuota', 'fecha_pago', 'monto_pagado', 'medio_pago')
-    search_fields = ('cuota__inscripcion__cuil_alumno__nombres_alumno',)
-    list_filter = ('medio_pago',)
-    ordering = ('fecha_pago',)
-
-
-# Admin para Medio de Pago
 @admin.register(MedioPago)
 class MedioPagoAdmin(admin.ModelAdmin):
-    list_display = ('nombre_medio_pago',)
-    search_fields = ('nombre_medio_pago',)
-    ordering = ('nombre_medio_pago',)
+    list_display = ("nombre",)
+    search_fields = ("nombre",)
 
 
-class MontosCicloLectivoAdmin(admin.ModelAdmin):
-    list_display = ('ciclo_lectivo', 'subnivel_cursado', 'monto_inscripcion', 'monto_cuota_mensual', 'fecha_actualizacion')
-    readonly_fields = ('fecha_actualizacion',)  # Hacer solo lectura la fecha de actualización
+@admin.register(Pago)
+class PagoAdmin(admin.ModelAdmin):
+    list_display = ("cuota", "fecha_pago", "monto_pagado", "medio_pago")
+    list_filter = ("medio_pago", "fecha_pago")
+    autocomplete_fields = ("cuota", "medio_pago")  # Ambos tienen search_fields
 
-    def has_change_permission(self, request, obj=None):
-        # Solo permitir cambios si el usuario es un administrador
-        if request.user.is_superuser:
-            return True
-        return False
 
-admin.site.register(MontosCicloLectivo, MontosCicloLectivoAdmin)
+@admin.register(ComprobanteDrivePago)
+class ComprobanteDrivePagoAdmin(admin.ModelAdmin):
+    list_display = ("id", "correo_electronico", "cuil_estudiante", "cuil_responsable_pago")
 
-admin.site.register(NivelCursado)
-admin.site.register(SubNivelCursado)
 
-# admin.py
-from django.contrib import admin
-from .models import ComprobantePago
-
+# Solo lectura para la tabla externa
 @admin.register(ComprobantePago)
 class ComprobantePagoAdmin(admin.ModelAdmin):
-    list_display = ('marca_temporal', 'email', 'url_comprobante', 'cuil_alumno', 'cuil_responsable')
-    search_fields = ('email', 'cuil_alumno', 'cuil_responsable')
+    list_display = ("email", "marca_temporal", "url_comprobante", "cuil_alumno", "cuil_responsable")
+    readonly_fields = ("email", "marca_temporal", "url_comprobante", "cuil_alumno", "cuil_responsable", "ruta_local")
 
+    def has_add_permission(self, request):
+        return False
+
+    def has_delete_permission(self, request, obj=None):
+        return False
