@@ -136,3 +136,116 @@
   {% endif %}
 </div>
 {% endblock %}
+
+
+{% load static %}
+{% load i18n %}
+
+{% block title %}Listado{% endblock %}
+
+<div class="container my-4">
+  <div class="d-flex justify-content-between align-items-center mb-3">
+    <h2 class="m-0">
+      {% if view.model %}
+        {{ view.model._meta.verbose_name_plural }}
+      {% else %}
+        Listado
+      {% endif %}
+    </h2>
+
+    <!-- Botón "Nuevo" según el modelo -->
+    {% if view.model and view.model._meta.model_name == 'nivel' %}
+      <a href="{% url 'cuotas:nivel_create' %}" class="btn btn-primary">Nuevo Nivel</a>
+    {% elif view.model and view.model._meta.model_name == 'curso' %}
+      <a href="{% url 'cuotas:curso_create' %}" class="btn btn-primary">Nuevo Curso</a>
+    {% endif %}
+  </div>
+
+  <!-- Mensajes -->
+  {% if messages %}
+    {% for message in messages %}
+      <div class="alert alert-{{ message.tags }} mb-3">{{ message }}</div>
+    {% endfor %}
+  {% endif %}
+
+  <!-- Tabla -->
+  <div class="card shadow-sm">
+    <div class="card-body p-0">
+      <table class="table table-hover table-sm mb-0 align-middle">
+        <thead class="table-light">
+          <tr>
+            {% if view.model and view.model._meta.model_name == 'nivel' %}
+              <th style="width:70%">Nombre</th>
+              <th class="text-end" style="width:30%">Acciones</th>
+            {% elif view.model and view.model._meta.model_name == 'curso' %}
+              <th>Nombre</th>
+              <th>Nivel</th>
+              <th class="text-end">Acciones</th>
+            {% else %}
+              <th>Objeto</th>
+              <th class="text-end">Acciones</th>
+            {% endif %}
+          </tr>
+        </thead>
+        <tbody>
+          {% for obj in object_list %}
+            <tr>
+              {% if view.model and view.model._meta.model_name == 'nivel' %}
+                <td>{{ obj.nombre }}</td>
+                <td class="text-end">
+                  <a class="btn btn-outline-secondary btn-sm"
+                     href="{% url 'cuotas:nivel_update' obj.pk %}">Editar</a>
+                </td>
+
+              {% elif view.model and view.model._meta.model_name == 'curso' %}
+                <td>{{ obj.nombre }}</td>
+                <td>{{ obj.nivel }}</td>
+                <td class="text-end">
+                  <a class="btn btn-outline-secondary btn-sm"
+                     href="{% url 'cuotas:curso_update' obj.pk %}">Editar</a>
+                </td>
+
+              {% else %}
+                <td>{{ obj }}</td>
+                <td class="text-end">
+                  <!-- sin acciones genéricas -->
+                </td>
+              {% endif %}
+            </tr>
+          {% empty %}
+            <tr>
+              <td colspan="3" class="text-center text-muted py-4">No hay registros.</td>
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- Paginación -->
+  {% if is_paginated %}
+    <nav class="mt-3">
+      <ul class="pagination pagination-sm mb-0">
+        {% if page_obj.has_previous %}
+          <li class="page-item"><a class="page-link" href="?page=1">&laquo;</a></li>
+          <li class="page-item"><a class="page-link" href="?page={{ page_obj.previous_page_number }}">&lsaquo;</a></li>
+        {% else %}
+          <li class="page-item disabled"><span class="page-link">&laquo;</span></li>
+          <li class="page-item disabled"><span class="page-link">&lsaquo;</span></li>
+        {% endif %}
+
+        <li class="page-item disabled">
+          <span class="page-link">Página {{ page_obj.number }} de {{ paginator.num_pages }}</span>
+        </li>
+
+        {% if page_obj.has_next %}
+          <li class="page-item"><a class="page-link" href="?page={{ page_obj.next_page_number }}">&rsaquo;</a></li>
+          <li class="page-item"><a class="page-link" href="?page={{ paginator.num_pages }}">&raquo;</a></li>
+        {% else %}
+          <li class="page-item disabled"><span class="page-link">&rsaquo;</span></li>
+          <li class="page-item disabled"><span class="page-link">&raquo;</span></li>
+        {% endif %}
+      </ul>
+    </nav>
+  {% endif %}
+</div>

@@ -1,83 +1,158 @@
 {% extends "base.html" %}
+{% load static %}
+
 {% block title %}Gestión de Ciclos Lectivos{% endblock %}
 
+{% block extra_styles %}
+<link rel="stylesheet" href="{% static 'cuotas/css/ciclos.css' %}">
+{% endblock %}
+
 {% block content %}
-<div class="container mt-4">
-  <h2 class="mb-4">📅 Gestión de Ciclos Lectivos</h2>
-
-  <!-- Ciclo activo actual -->
-  {% if CUOTAS_CICLO_ACTIVO %}
-    <div class="alert alert-success">
-      <strong>Ciclo activo:</strong> {{ CUOTAS_CICLO_ACTIVO.anio }} 
-      ({{ CUOTAS_CICLO_ACTIVO.fecha_inicio }} → {{ CUOTAS_CICLO_ACTIVO.fecha_fin }})
+<div class="student-card cuotas-card">
+  <!-- CABECERA -->
+  <div class="student-header cuotas-header">
+    <div>
+      <h2>📅 Gestión de Ciclos Lectivos</h2>
+      <p class="cuotas-header__subtitle">Creá, activá y administrá los ciclos lectivos.</p>
     </div>
-  {% else %}
-    <div class="alert alert-danger">
-      <strong>No hay ciclo activo.</strong> Crea o activa uno nuevo.
-    </div>
-  {% endif %}
-
-  <!-- Formulario de creación -->
-  <div class="card mb-4">
-    <div class="card-header bg-light">
-      <strong>➕ Crear nuevo ciclo</strong>
-    </div>
-    <div class="card-body">
-      <form method="post" class="row g-3">
-        {% csrf_token %}
-        {{ form.as_p }}
-        <div class="col-12">
-          <button class="btn btn-success" type="submit">Crear Ciclo</button>
-        </div>
-      </form>
+    <div class="student-actions">
+      <!-- Botones tipo button para evitar submits involuntarios -->
+      <button class="btn" type="button" data-jump="tab-crear">Nuevo ciclo</button>
+      <button class="btn btn-light" type="button" data-jump="tab-listado">Ver listado</button>
     </div>
   </div>
 
-  <!-- Lista de ciclos -->
-  <div class="card">
-    <div class="card-header bg-light">
-      <strong>📘 Ciclos existentes</strong>
+  <!-- ESTADO ACTUAL -->
+  {% if CUOTAS_CICLO_ACTIVO %}
+    <div class="status aprobado">
+      <strong>Ciclo activo:</strong> {{ CUOTAS_CICLO_ACTIVO.anio }}
+      <span class="muted">({{ CUOTAS_CICLO_ACTIVO.fecha_inicio|date:"d/m/Y" }} → {{ CUOTAS_CICLO_ACTIVO.fecha_fin|date:"d/m/Y" }})</span>
     </div>
-    <div class="card-body">
-      <table class="table table-striped align-middle">
+  {% else %}
+    <div class="status pendiente">
+      <strong>No hay ciclo activo.</strong> Creá o activá uno nuevo.
+    </div>
+  {% endif %}
+
+  <!-- PESTAÑAS -->
+  <div class="tabs" role="tablist" aria-label="Ciclos lectivos">
+    <button class="tab-button active" type="button" role="tab" data-tab="tab-crear" aria-selected="true">➕ Crear ciclo</button>
+    <button class="tab-button" type="button" role="tab" data-tab="tab-listado" aria-selected="false">📘 Ciclos existentes</button>
+  </div>
+
+  <!-- CREAR -->
+  <section id="tab-crear" class="tab-content active" role="tabpanel">
+<form method="post" action="{% url 'cuotas:ciclo_create' %}" class="form-grid" id="form-crear-ciclo">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <div class="form-actions">
+        <button class="btn" type="submit" id="btn-crear">Crear Ciclo</button>
+        <span class="hint">Atajos: <kbd>N</kbd> “Nuevo” · <kbd>S</kbd> guardar</span>
+    </div>
+</form>
+
+  </section>
+
+  <!-- LISTADO -->
+  <section id="tab-listado" class="tab-content" role="tabpanel" aria-hidden="true">
+    <div class="table-wrap">
+      <table class="table-like">
         <thead>
           <tr>
             <th>Año</th>
             <th>Fecha Inicio</th>
             <th>Fecha Fin</th>
             <th>Estado</th>
-            <th>Acciones</th>
+            <th class="col-actions">Acciones</th>
           </tr>
         </thead>
         <tbody>
           {% for ciclo in ciclos %}
           <tr>
             <td>{{ ciclo.anio }}</td>
-            <td>{{ ciclo.fecha_inicio }}</td>
-            <td>{{ ciclo.fecha_fin }}</td>
+            <td>{{ ciclo.fecha_inicio|date:"d/m/Y" }}</td>
+            <td>{{ ciclo.fecha_fin|date:"d/m/Y" }}</td>
             <td>
               {% if ciclo.activo %}
-                <span class="badge bg-success">Activo</span>
+                <span class="badge success">Activo</span>
               {% else %}
-                <span class="badge bg-secondary">Inactivo</span>
+                <span class="badge muted">Inactivo</span>
               {% endif %}
             </td>
-            <td>
+            <td class="col-actions">
               {% if not ciclo.activo %}
-                <a href="{% url 'cuotas:activar_ciclo' ciclo.id %}" class="btn btn-sm btn-outline-primary">
-                  Activar
-                </a>
+                <a href="{% url 'cuotas:activar_ciclo' ciclo.id %}" class="btn btn-light btn-xs">Activar</a>
               {% else %}
-                <button class="btn btn-sm btn-success" disabled>Activo</button>
+                <button class="btn btn-xs" disabled>Activo</button>
               {% endif %}
             </td>
           </tr>
           {% empty %}
-          <tr><td colspan="5" class="text-center">No hay ciclos creados aún.</td></tr>
+          <tr>
+            <td colspan="5" class="empty">No hay ciclos creados aún.</td>
+          </tr>
           {% endfor %}
         </tbody>
       </table>
     </div>
-  </div>
+    <div class="hint mt-8">Atajos: <kbd>L</kbd> ir a “Listado”</div>
+  </section>
 </div>
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+(function(){
+  if (window.__ciclosInit) return;
+  window.__ciclosInit = true;
+
+  function activate(id){
+    document.querySelectorAll('.tab-button').forEach(b=>{
+      const on = b.dataset.tab === id;
+      b.classList.toggle('active', on);
+      b.setAttribute('aria-selected', on ? 'true':'false');
+    });
+    document.querySelectorAll('.tab-content').forEach(p=>{
+      const on = p.id === id;
+      p.classList.toggle('active', on);
+      p.setAttribute('aria-hidden', on ? 'false':'true');
+    });
+  }
+
+  // Delegación de clicks
+  document.addEventListener('click', function(e){
+    const jump = e.target.closest('[data-jump]');
+    if (jump){
+      e.preventDefault();
+      activate(jump.getAttribute('data-jump'));
+      document.querySelector('.student-card')?.scrollIntoView({ behavior:'smooth', block:'start' });
+      return;
+    }
+    const tab = e.target.closest('.tab-button');
+    if (tab){
+      e.preventDefault();
+      activate(tab.dataset.tab);
+      return;
+    }
+  }, true);
+
+  // Atajos: N (nuevo), L (listado), S (submit si estás en "crear")
+  document.addEventListener('keydown', function(e){
+    const tag = (document.activeElement?.tagName || '').toUpperCase();
+    if (['INPUT','TEXTAREA','SELECT','BUTTON'].includes(tag)) return;
+
+    const k = e.key.toLowerCase();
+    if (k === 'n') activate('tab-crear');
+    if (k === 'l') activate('tab-listado');
+    if (k === 's'){
+      const crearVisible = document.getElementById('tab-crear')?.classList.contains('active');
+      if (crearVisible) document.getElementById('form-crear-ciclo')?.requestSubmit();
+    }
+  });
+
+  // Reenganche si usás Turbo/HTMX
+  document.addEventListener('turbo:load', () => activate('tab-crear'));
+  document.addEventListener('htmx:afterSettle', () => activate('tab-crear'));
+})();
+</script>
 {% endblock %}

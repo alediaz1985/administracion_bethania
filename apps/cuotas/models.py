@@ -22,10 +22,13 @@ def money(val) -> Decimal:
 # ==========================
 # Catálogos / Estructura Académica
 # ==========================
+from django.db import models
+
 class CicloLectivo(models.Model):
     anio = models.PositiveIntegerField(verbose_name="Año Lectivo", unique=True)
     fecha_inicio = models.DateField(verbose_name="Inicio")
     fecha_fin = models.DateField(verbose_name="Fin")
+    activo = models.BooleanField(default=False)  # <— FALTA EN TU MODELO
 
     class Meta:
         db_table = "ciclos_lectivos"
@@ -35,6 +38,12 @@ class CicloLectivo(models.Model):
 
     def __str__(self):
         return f"Ciclo {self.anio}"
+
+    def save(self, *args, **kwargs):
+        # Si este ciclo se marca activo, desactiva los demás
+        if self.activo:
+            CicloLectivo.objects.exclude(pk=self.pk).update(activo=False)
+        super().save(*args, **kwargs)
 
 
 class Nivel(models.Model):

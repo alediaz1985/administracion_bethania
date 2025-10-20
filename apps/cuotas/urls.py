@@ -14,11 +14,11 @@ urlpatterns = [
     # ========================
     # 📅 CICLOS LECTIVOS
     # ========================
-    path("ciclos/", views.CicloListView.as_view(), name="ciclo_list"),
-    path("ciclos/nuevo/", views.CicloCreateView.as_view(), name="ciclo_create"),
-    path("ciclos/<int:pk>/editar/", views.CicloUpdateView.as_view(), name="ciclo_update"),
-    path("ciclos/<int:ciclo_id>/activar/", views.activar_ciclo, name="ciclo_activar"),
-    path("ciclos/", views.CicloListView.as_view(), name="ciclo_list"),
+
+    path("ciclos/", views.ciclos_list, name="ciclo_list"),             # GET muestra pestañas
+    path("ciclos/crear/", views.ciclo_create, name="ciclo_create"),    # POST del form
+    path("ciclos/<int:pk>/activar/", views.activar_ciclo, name="activar_ciclo"),
+
 
     # ========================
     # 🏫 NIVELES

@@ -1,0 +1,148 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Niveles{% endblock %}
+
+{% block extra_styles %}
+<link rel="stylesheet" href="{% static 'cuotas/css/niveles.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="student-card cuotas-card">
+
+  <!-- Cabecera -->
+  <div class="student-header cuotas-header">
+    <div>
+      <h2>🏫 Niveles</h2>
+      <p class="cuotas-header__subtitle">Administrá los niveles (Inicial, Primario, Secundario, etc.).</p>
+    </div>
+
+    <div class="student-actions">
+      <a href="{% url 'cuotas:nivel_create' %}" class="btn">
+        <i class="fas fa-plus"></i> Nuevo Nivel
+      </a>
+      <a href="javascript:history.back();" class="btn btn-light">Volver</a>
+    </div>
+  </div>
+
+  <!-- Accesos rápidos (opcionales) -->
+  <div class="quick-links" style="margin-bottom: 1rem;">
+    <a href="{% url 'cuotas:nivel_create' %}"><i class="fas fa-plus"></i> Crear nivel</a>
+    <a href="{% url 'cuotas:curso_list' %}"><i class="fas fa-layer-group"></i> Ir a Cursos</a>
+  </div>
+
+  <!-- Buscador -->
+  <form method="get" class="niveles-search">
+    <div class="niveles-search__group">
+      <span class="niveles-search__icon"><i class="fas fa-search"></i></span>
+      <input
+        type="text"
+        id="q"
+        name="q"
+        value="{{ request.GET.q|default_if_none:'' }}"
+        class="niveles-search__input"
+        placeholder="Buscar por nombre de nivel…">
+      {% if request.GET.q %}
+        <a class="niveles-search__clear" href="{% url 'cuotas:nivel_list' %}" title="Limpiar">
+          <i class="fas fa-times"></i>
+        </a>
+      {% endif %}
+      <button class="btn" type="submit" style="padding:.45rem .9rem; white-space:nowrap;">Buscar</button>
+    </div>
+  </form>
+
+  <!-- Mensajes -->
+  {% if messages %}
+    {% for message in messages %}
+      <div class="niveles-alert niveles-alert--{{ message.tags }}">{{ message }}</div>
+    {% endfor %}
+  {% endif %}
+
+  <!-- Grid de features (opcional, de ayuda visual) -->
+  <!--
+  <div class="feature-grid" style="margin-bottom:1rem;">
+    <div class="feature-card">
+      <div class="feature-card__icon"><i class="fas fa-school"></i></div>
+      <h3>Niveles</h3>
+      <p class="feature-card__text">Listado general de niveles activos.</p>
+      <ul class="feature-card__links">
+        <li><a href="{% url 'cuotas:nivel_create' %}">Crear nivel</a></li>
+      </ul>
+      <div class="feature-card__cta">Gestión rápida</div>
+    </div>
+    <div class="feature-card feature-card--highlight">
+      <div class="feature-card__icon"><i class="fas fa-layer-group"></i></div>
+      <h3>Cursos</h3>
+      <p class="feature-card__text">Ir a la administración de cursos.</p>
+      <ul class="feature-card__links">
+        <li><a href="{% url 'cuotas:curso_list' %}">Ver cursos</a></li>
+      </ul>
+      <div class="feature-card__cta">Atajo</div>
+    </div>
+  </div>
+  -->
+
+  <!-- Tabla -->
+  <div class="niveles-table">
+    <div class="niveles-table__wrap">
+      <table class="niveles-table__table" id="tabla-niveles">
+        <thead>
+          <tr>
+            <th>Nombre</th>
+            <th class="text-end">Acciones</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for nivel in object_list %}
+            <tr>
+              <td class="nombre-nivel">{{ nivel.nombre }}</td>
+              <td class="text-end">
+                <a href="{% url 'cuotas:nivel_update' nivel.pk %}" class="btn btn-light" style="padding:.35rem .7rem;">
+                  <i class="fas fa-edit"></i> Editar
+                </a>
+              </td>
+            </tr>
+          {% empty %}
+            <tr>
+              <td colspan="2" class="niveles-empty">
+                No hay niveles cargados.
+                <a href="{% url 'cuotas:nivel_create' %}" class="btn" style="margin-left:.5rem;">
+                  <i class="fas fa-plus"></i> Crear el primero
+                </a>
+              </td>
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- Paginación -->
+  {% if is_paginated %}
+    <div class="niveles-pagination">
+      <ul class="niveles-pagination__list">
+        {% if page_obj.has_previous %}
+          <li><a class="niveles-pagination__link" href="?page=1{% if request.GET.q %}&q={{ request.GET.q }}{% endif %}">&laquo;</a></li>
+          <li><a class="niveles-pagination__link" href="?page={{ page_obj.previous_page_number }}{% if request.GET.q %}&q={{ request.GET.q }}{% endif %}">&lsaquo;</a></li>
+        {% else %}
+          <li class="disabled"><span class="niveles-pagination__link">&laquo;</span></li>
+          <li class="disabled"><span class="niveles-pagination__link">&lsaquo;</span></li>
+        {% endif %}
+
+        <li class="disabled">
+          <span class="niveles-pagination__link">Página {{ page_obj.number }} de {{ paginator.num_pages }}</span>
+        </li>
+
+        {% if page_obj.has_next %}
+          <li><a class="niveles-pagination__link" href="?page={{ page_obj.next_page_number }}{% if request.GET.q %}&q={{ request.GET.q }}{% endif %}">&rsaquo;</a></li>
+          <li><a class="niveles-pagination__link" href="?page={{ paginator.num_pages }}{% if request.GET.q %}&q={{ request.GET.q }}{% endif %}">&raquo;</a></li>
+        {% else %}
+          <li class="disabled"><span class="niveles-pagination__link">&rsaquo;</span></li>
+          <li class="disabled"><span class="niveles-pagination__link">&raquo;</span></li>
+        {% endif %}
+      </ul>
+    </div>
+  {% endif %}
+
+</div>
+{% endblock %}

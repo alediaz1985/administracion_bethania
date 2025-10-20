@@ -32,16 +32,34 @@ class CicloLectivoForm(forms.ModelForm):
 # ─────────────────────────────────────────────────────────
 # Nivel / Curso
 # ─────────────────────────────────────────────────────────
+
+from django import forms
+from .models import Nivel, Curso
+
 class NivelForm(forms.ModelForm):
     class Meta:
         model = Nivel
         fields = ["nombre"]
-
+        widgets = {
+            "nombre": forms.TextInput(attrs={
+                "class": "form-control",
+                "placeholder": "Ej.: Inicial, Primario, Secundario",
+                "autofocus": "autofocus"
+            })
+        }
 
 class CursoForm(forms.ModelForm):
     class Meta:
         model = Curso
-        fields = ["nivel", "nombre", "monto_cuota_override", "monto_inscripcion_override"]
+        fields = ["nombre", "nivel"]  # ajustá si tu Curso tiene más campos
+        widgets = {
+            "nombre": forms.TextInput(attrs={
+                "class": "form-control",
+                "placeholder": "Ej.: 1º A, 2º B, Sala 4, etc."
+            }),
+            "nivel": forms.Select(attrs={"class": "form-select"})
+        }
+
 
 
 # ─────────────────────────────────────────────────────────

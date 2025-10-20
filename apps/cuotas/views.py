@@ -94,31 +94,84 @@ class CicloUpdateView(BaseUpdate):
     success_url = reverse_lazy("cuotas:ciclo_list")
     template_name = "cuotas/ciclo_lectivo_form.html"
 
-# 🔹 Activar un ciclo (desactiva los demás)
-def activar_ciclo(request, ciclo_id):
-    ciclo = get_object_or_404(CicloLectivo, pk=ciclo_id)
-    ciclo.activo = True
-    ciclo.save()  # la lógica del modelo desactiva los demás
-    messages.success(request, f"✅ Ciclo {ciclo.anio} activado correctamente.")
-    return redirect("cuotas:ciclo_list")
 
+
+# apps/cuotas/views.py
+from django.contrib import messages
+from django.shortcuts import render, redirect, get_object_or_404
+from .models import CicloLectivo
+from .forms import CicloLectivoForm
+
+def ciclos_list(request):
+    form = CicloLectivoForm()
+    ciclos = CicloLectivo.objects.order_by('-anio')
+    activo = CicloLectivo.objects.filter(activo=True).first()
+    return render(request, 'cuotas/ciclo_lectivo_list.html', {  # <-- acá
+        'form': form,
+        'ciclos': ciclos,
+        'CUOTAS_CICLO_ACTIVO': activo,
+    })
+
+def ciclo_create(request):
+    if request.method != 'POST':
+        return redirect('cuotas:ciclo_list')
+    form = CicloLectivoForm(request.POST)
+    if form.is_valid():
+        ciclo = form.save(commit=False)
+        if not CicloLectivo.objects.exists():
+            ciclo.activo = True
+        ciclo.save()
+        messages.success(request, f"Ciclo {ciclo.anio} creado correctamente.")
+        return redirect('cuotas:ciclo_list')
+
+    # Si hay errores, re-render al MISMO template
+    ciclos = CicloLectivo.objects.order_by('-anio')
+    activo = CicloLectivo.objects.filter(activo=True).first()
+    return render(request, 'cuotas/ciclo_lectivo_list.html', {  # <-- acá
+        'form': form,
+        'ciclos': ciclos,
+        'CUOTAS_CICLO_ACTIVO': activo,
+    })
+
+
+from django.contrib import messages
+from django.shortcuts import get_object_or_404, redirect
+from .models import CicloLectivo
+
+def activar_ciclo(request, pk):
+    ciclo = get_object_or_404(CicloLectivo, pk=pk)
+    ciclo.activo = True
+    ciclo.save()  # el save() desactiva los otros
+    messages.success(request, f"Ciclo {ciclo.anio} activado correctamente.")
+    return redirect('cuotas:ciclo_lectivo_list')
 
 # ==========================
 # Niveles
 # ==========================
 class NivelListView(BaseList):
     model = Nivel
+    template_name = "cuotas/nivel_list.html"
+
+    def get_queryset(self):
+        qs = super().get_queryset()
+        q = self.request.GET.get("q")
+        if q:
+            qs = qs.filter(nombre__icontains=q.strip())
+        return qs
 
 
 class NivelCreateView(BaseCreate):
     form_class = NivelForm
+    template_name = "cuotas/nivel_form.html"
     success_url = reverse_lazy("cuotas:nivel_list")
 
 
 class NivelUpdateView(BaseUpdate):
     model = Nivel
     form_class = NivelForm
+    template_name = "cuotas/nivel_form.html"
     success_url = reverse_lazy("cuotas:nivel_list")
+
 
 
 # ==========================
@@ -371,9 +424,3 @@ def ciclo_lectivo_list(request):
 
     return render(request, "cuotas/ciclo_lectivo_list.html", {"ciclos": ciclos, "form": form})
 
-def activar_ciclo(request, ciclo_id):
-    ciclo = get_object_or_404(CicloLectivo, pk=ciclo_id)
-    ciclo.activo = True
-    ciclo.save()  # esto desactiva los demás (por la lógica en el modelo)
-    messages.success(request, f"Ciclo {ciclo.anio} activado correctamente.")
-    return redirect("cuotas:ciclos")
