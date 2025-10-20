@@ -13,6 +13,7 @@ urlpatterns = [
     path('', home, name='home'),
     path('autenticacion/', include('apps.autenticacion.urls')),
     # path('cuotas/', include('apps.cuotas.urls')),
+    path("cuotas/", include(("apps.cuotas.urls", "cuotas"), namespace="cuotas")),
     # path('docentes/', include('apps.administracion_docentes.urls')),
     path('alumnos/', include('apps.administracion_alumnos.urls')),
     # path('niveles/', include('apps.niveles.urls')),

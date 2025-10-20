@@ -18,6 +18,7 @@ from .forms import (
 )
 from .services import generar_cuotas_para_inscripcion
 
+from .services import generar_cuotas_para_inscripcion, generar_cuotas_masivo
 
 # ==========================
 # Home de la app
@@ -54,23 +55,52 @@ class BaseUpdate(UpdateView):
         messages.success(self.request, self.success_message)
         return super().form_valid(form)
 
+# ==========================
+# CICLOS LECTIVOS
+# ==========================
+from django.urls import reverse_lazy
+from django.shortcuts import get_object_or_404, redirect
+from django.contrib import messages
+from .models import CicloLectivo
+from .forms import CicloLectivoForm
+from .base import BaseList, BaseCreate, BaseUpdate  # tus vistas genéricas
 
-# ==========================
-# Ciclos
-# ==========================
+# 🔹 Listado de ciclos
 class CicloListView(BaseList):
     model = CicloLectivo
+    template_name = "cuotas/ciclo_lectivo_list.html"
+    context_object_name = "ciclos"
+    ordering = ["-anio"]
 
-
+# 🔹 Crear nuevo ciclo
 class CicloCreateView(BaseCreate):
     form_class = CicloLectivoForm
     success_url = reverse_lazy("cuotas:ciclo_list")
+    template_name = "cuotas/ciclo_lectivo_form.html"
 
+    def form_valid(self, form):
+        ciclo = form.save(commit=False)
+        # Si es el primer ciclo, lo marcamos como activo
+        if not CicloLectivo.objects.exists():
+            ciclo.activo = True
+        ciclo.save()
+        messages.success(self.request, f"Ciclo {ciclo.anio} creado correctamente.")
+        return redirect(self.success_url)
 
+# 🔹 Editar ciclo existente
 class CicloUpdateView(BaseUpdate):
     model = CicloLectivo
     form_class = CicloLectivoForm
     success_url = reverse_lazy("cuotas:ciclo_list")
+    template_name = "cuotas/ciclo_lectivo_form.html"
+
+# 🔹 Activar un ciclo (desactiva los demás)
+def activar_ciclo(request, ciclo_id):
+    ciclo = get_object_or_404(CicloLectivo, pk=ciclo_id)
+    ciclo.activo = True
+    ciclo.save()  # la lógica del modelo desactiva los demás
+    messages.success(request, f"✅ Ciclo {ciclo.anio} activado correctamente.")
+    return redirect("cuotas:ciclo_list")
 
 
 # ==========================
@@ -309,3 +339,41 @@ def preview_total_cuota(request, cuota_id):
         "recargos": str(cuota.monto_recargos),
         "total": str(cuota.total_a_pagar),
     })
+
+
+
+from django.shortcuts import render, redirect, get_object_or_404
+from django.contrib import messages
+from django.urls import reverse
+from django import forms
+from .models import CicloLectivo
+
+class CicloLectivoForm(forms.ModelForm):
+    class Meta:
+        model = CicloLectivo
+        fields = ["anio", "fecha_inicio", "fecha_fin"]
+
+def ciclo_lectivo_list(request):
+    ciclos = CicloLectivo.objects.all().order_by("-anio")
+
+    if request.method == "POST":
+        form = CicloLectivoForm(request.POST)
+        if form.is_valid():
+            ciclo = form.save(commit=False)
+            # Si es el primero, lo marcamos activo automáticamente
+            if not CicloLectivo.objects.exists():
+                ciclo.activo = True
+            ciclo.save()
+            messages.success(request, f"Ciclo {ciclo.anio} creado correctamente.")
+            return redirect("cuotas:ciclos")
+    else:
+        form = CicloLectivoForm()
+
+    return render(request, "cuotas/ciclo_lectivo_list.html", {"ciclos": ciclos, "form": form})
+
+def activar_ciclo(request, ciclo_id):
+    ciclo = get_object_or_404(CicloLectivo, pk=ciclo_id)
+    ciclo.activo = True
+    ciclo.save()  # esto desactiva los demás (por la lógica en el modelo)
+    messages.success(request, f"Ciclo {ciclo.anio} activado correctamente.")
+    return redirect("cuotas:ciclos")
