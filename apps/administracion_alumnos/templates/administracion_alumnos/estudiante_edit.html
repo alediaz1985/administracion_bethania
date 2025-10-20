@@ -14,11 +14,7 @@
 
     <!-- CABECERA -->
     <div class="student-header">
-      {% if estudiante.inscripcion.foto_estudiante %}
-        <img src="{{ estudiante.inscripcion.foto_estudiante.url }}" alt="Foto del Estudiante" class="student-photo">
-      {% else %}
-        <img src="{% static 'administracion_alumnos/img/default-user.png' %}" alt="Sin Foto" class="student-photo">
-      {% endif %}
+      <img src="{{ image_url }}" alt="Foto del Estudiante" class="student-photo">
       <div class="student-info">
         <h2>{{ estudiante.apellidos_estudiante }}, {{ estudiante.nombres_estudiante }}</h2>
         <p><strong>DNI:</strong> {{ estudiante.dni_estudiante }}</p>

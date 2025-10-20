@@ -20,6 +20,7 @@ from .utils import search_files_in_drive, download_file, archivo_existe
 from googleapiclient.http import MediaIoBaseDownload
 from django.shortcuts import render
 from apps.administracion_alumnos.models import Estudiante
+from django.templatetags.static import static 
 
 # ----------------FUNCIONA------------------------------
 def estudiante_lista(request):
@@ -1423,6 +1424,34 @@ def estudiante_edit(request, pk):
         estd_form  = EstadoDocumentacionForm(instance=estado, prefix='estado')
         resp_fs    = ResponsableFormSet(instance=estudiante, prefix='resp')
 
+    # 🧩 FOTO DEL ESTUDIANTE (misma lógica que en ver_datos_estudiante)
+    fotos_path = os.path.join(settings.MEDIA_ROOT, 'documentos', 'fotoPerfilEstudiante')
+
+    foto_campo = None
+    if hasattr(estudiante, 'inscripcion') and estudiante.inscripcion.foto_estudiante:
+        foto_campo = estudiante.inscripcion.foto_estudiante
+
+    foto_id = None
+    if foto_campo:
+        if "id=" in foto_campo:
+            foto_id = foto_campo.split("id=")[-1]
+
+    foto_url = None
+    if foto_id:
+        if os.path.exists(fotos_path):
+            for archivo in os.listdir(fotos_path):
+                if archivo.startswith(foto_id):
+                    foto_url = os.path.join(
+                        settings.MEDIA_URL, 'documentos', 'fotoPerfilEstudiante', archivo
+                    )
+                    break
+
+    # Si no hay imagen encontrada, usar la genérica
+    if not foto_url:
+        foto_url = static('administracion_alumnos/img/default.jpg')
+
+    image_url = foto_url
+
     context = {
         'est_form': est_form,
         'insc_form': insc_form,
@@ -1433,5 +1462,6 @@ def estudiante_edit(request, pk):
         'estd_form': estd_form,
         'resp_fs': resp_fs,
         'estudiante': estudiante,
+        'image_url': image_url,
     }
     return render(request, 'administracion_alumnos/estudiante_edit.html', context)
