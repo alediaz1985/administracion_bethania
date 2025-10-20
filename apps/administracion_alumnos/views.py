@@ -44,28 +44,25 @@ def estudiante_lista(request):
     })
 # ----------------FUNCIONA---------------------------------
 
-def confirmar_aprobacion(request, estudiante_id):
-    try:
-        # Buscar el registro con estado pendiente
-        estado_doc = EstadoDocumentacion.objects.get(estudiante_id=estudiante_id, estado='pendiente')
-    except EstadoDocumentacion.DoesNotExist:
-        # Manejar el caso donde no hay un estado pendiente
-        mensaje_error = "El estudiante ya está aprobado o no tiene un estado pendiente."
-        return render(request, 'administracion_alumnos/error_aprobacion.html', {'mensaje_error': mensaje_error})
-
-    # Obtener los datos del estudiante
+def cambiar_estado_documentacion(request, estudiante_id):
+    estado_doc = get_object_or_404(EstadoDocumentacion, estudiante_id=estudiante_id)
     estudiante = estado_doc.estudiante
 
-    if request.method == 'POST':
-        # Cambiar el estado a 'aprobado' si se confirma
-        estado_doc.estado = 'aprobado'
-        estado_doc.save()
-        return redirect('estudiante_list')  # Cambia según el flujo de tu aplicación
+    # Determinar el nuevo estado
+    if estado_doc.estado.lower() == 'pendiente':
+        nuevo_estado = 'aprobado'
+    else:
+        nuevo_estado = 'pendiente'
 
-    # Renderizar el template de confirmación
-    return render(request, 'administracion_alumnos/confirmar_aprobacion.html', {
-        'estado_doc': estado_doc,
-        'estudiante': estudiante,
+    # Cambiar el estado cuando se confirme
+    if request.method == 'POST':
+        estado_doc.estado = nuevo_estado
+        estado_doc.save()
+        return redirect('estudiante_list')
+
+    # Renderiza solo si se accede directo (no debería pasar normalmente)
+    return render(request, 'administracion_alumnos/ver_datos_estudiante.html', {
+        'estudiante': estudiante
     })
 
 def estudiante_detail(request, pk):

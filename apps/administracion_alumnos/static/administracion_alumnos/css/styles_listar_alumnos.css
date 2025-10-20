@@ -1,29 +1,41 @@
+/* ==========================================================
+   🧩 ESTILOS GENERALES
+========================================================== */
 body {
     font-family: 'Roboto', sans-serif;
     margin: 0;
     padding: 0;
-    background-color: #dfdfdf;  /* ✅ Fondo blanco liso */
-    color: #000000;             /* Texto negro */
+    background-color: #dfdfdf;  /* Fondo gris claro */
+    color: #000;
 }
 
+/* ==========================================================
+   📦 CONTENEDOR PRINCIPAL
+========================================================== */
 .alumnos-container {
     width: 96%;
     padding: 5px 15px;
     float: right;
 }
 
-.alumnos-controls {
-    text-align: right;
+.alumnos {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin: 20px 0;
 }
 
+/* ==========================================================
+   🔽 SCROLL Y TABLAS
+========================================================== */
 .alumnos-scroll-container {
     height: calc(100vh - 216px);
-    overflow-y: auto;  /* Activar scroll vertical */
+    overflow-y: auto;
     border: 1px solid #ccc;
     padding: 10px;
-    box-shadow: 0 4px 25px rgba(0, 0, 0, 0.5);
     background-color: #fff;
     border-radius: 10px;
+    box-shadow: 0 4px 25px rgba(0, 0, 0, 0.5);
 }
 
 .alumnos-table {
@@ -36,11 +48,14 @@ body {
     background-color: #f8fafc;
 }
 
-.alumnos-table th, .alumnos-table td {
+.alumnos-table th,
+.alumnos-table td {
     padding: 12px;
     text-align: left;
     border-bottom: 1px solid #ddd;
     font-size: 13px;
+    word-wrap: break-word;
+    max-width: 200px;
 }
 
 .alumnos-table th {
@@ -53,47 +68,32 @@ body {
     background-color: #f1f1f1;
 }
 
-/* Elimina el subrayado y el color morado de los enlaces */
+/* Enlaces dentro de la tabla */
 .alumnos-table a {
-    text-decoration: none; /* Elimina el subrayado */
-    color: black; /* Cambia el color del texto a negro o el que prefieras */
+    text-decoration: none;
+    color: #000;
 }
 
-/* Resalta el enlace cuando el mouse está sobre él */
 .alumnos-table a:hover {
-    color: blue; /* Cambia el color cuando el mouse está sobre el enlace */
+    color: #0d6efd;
 }
 
-.alumnos-btn:hover {
-    background-color:rgb(68, 123, 46);
-    transform: translateY(-3px); /* Efecto de "levantamiento" al pasar el mouse */
-    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2); /* Sombra más marcada */
-}
-
-/* ------------------------------------------------------- */
-/* Contenedor: botones bien juntos */
-.icon-form {
-    display: inline-block;
-    margin: 0;
-    padding: 0;
-}
-
-/* Botón simple y limpio */
-/* 🔹 Celda que contiene los íconos: alineada a la derecha */
+/* ==========================================================
+   🎛️ CELDAS DE ACCIÓN (Ver / PDF)
+========================================================== */
 td.acciones {
-    text-align: right;       /* ✅ los lleva al borde derecho */
-    white-space: nowrap;     /* evita que se vayan a otra línea */
-    padding-right: 12px;     /* pequeño margen interno */
+    text-align: right;
+    white-space: nowrap;
+    padding-right: 12px;
 }
 
-/* 🔹 Formularios uno al lado del otro */
 .icon-form {
     display: inline-block;
     margin: 0;
     padding: 0;
 }
 
-/* 🔹 Botones minimalistas (solo ícono) */
+/* Botones minimalistas de ícono */
 .icon-btn {
     background: none;
     border: none;
@@ -104,13 +104,12 @@ td.acciones {
     transition: color 0.2s ease, transform 0.2s ease;
 }
 
-/* 🔹 Hover sutil */
 .icon-btn:hover {
     color: #555;
     transform: scale(1.1);
 }
 
-/* 🔹 Diferenciar el ícono PDF (opcional pero elegante) */
+/* Ícono PDF */
 .icon-btn.pdf {
     color: #000;
 }
@@ -119,85 +118,83 @@ td.acciones {
     color: #c00;
 }
 
-/* 🔹 Quitar espacio extra entre botones */
+/* Quitar espacio extra entre botones */
 td.acciones .icon-form + .icon-form {
     margin-left: -2px;
 }
-/* ------------------------------------------------------- */
 
-.alumnos-btn:active {
-    background-color: rgb(39, 70, 27);
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); 
-    transform: translateY(0); 
+/* ==========================================================
+   📑 TABS
+========================================================== */
+.tabs {
+  display: flex;
+  flex-wrap: nowrap;
+  justify-content: flex-start;     /* Alineadas a la izquierda */
+  gap: 6px;
+  border-bottom: 2px solid #b8b8b8; /* Línea inferior gris */
+  margin: 0.5rem 0 0.2rem 0;           /* Separación similar */
+  scrollbar-width: thin;
+  scrollbar-color: #1a2942 #eaeaea;
 }
 
-.alumnos-details-row {
-    background-color: #f9f9f9;
+.tabs::-webkit-scrollbar {
+  height: 6px;
 }
 
-.alumnos-details-table {
-    width: 100%;
-    background-color: #eef;
-    padding: 10px;
-    border-radius: 5px;
-    border-collapse: collapse;
+.tabs::-webkit-scrollbar-thumb {
+  background: #1a2942;
+  border-radius: 10px;
 }
 
-.alumnos-details-table td {
-    padding: 8px;
-    text-align: center;
-    border: 1px solid #ddd;
-    word-wrap: break-word;
+/* Botones */
+.tab-button {
+  width: 180px;                    /* Todas con el mismo ancho */
+  background: #f9f9f9;
+  border: 1px solid #b8b8b8;
+  border-bottom: none;
+  padding: 10px 14px;
+  cursor: pointer;
+  font-weight: 600;
+  border-radius: 8px 8px 0 0;
+  color: #222;
+  transition: all 0.3s ease;
+  white-space: nowrap;
+  font-size: 0.9rem;
+  text-align: center;
 }
 
-.alumnos-cell-header {
-    background-color: #d9e3f0;
-    padding: 5px;
-    font-weight: bold;
-    color: #333;
+.tab-button:hover {
+  background: #efefef;
 }
 
-.alumnos-cell-content {
-    padding: 5px;
-    color: #555;
+.tab-button.active {
+  background: #1a2942;  /* Azul igual al de ver_datos */
+  color: #fff;
+  border-color: #1a2942;
 }
 
-.alumnos-table td {
-    word-wrap: break-word;
-    max-width: 200px; /* Limitar la anchura de las celdas */
-}
-
+/* Contenido de pestañas */
 .tab-content {
-    display: none;
+  display: none;
+  animation: fadeIn 0.25s ease-in-out;
+  border: 1px solid #b8b8b8;
+  border-radius: 0 10px 10px 10px;
+  padding: 1rem 1.5rem;
+  background-color: #fff;
 }
 
 .tab-content.active {
-    display: block;
+  display: block;
 }
 
-.tabs button {
-    padding: 10px 40px;
-    cursor: pointer;
-    background-color: #f1f1f1;
-    border: none;
-    border-bottom: 2px solid transparent;
-    transition: background-color 0.3s;
-    font-size: 13px;
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
 }
 
-.tabs button.active {
-    background-color: #b8b7b7;
-    border-color: #007bff;
-}
-
-.alumnos {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin: 20px 0;
-}
-
-/* Filtro */
+/* ==========================================================
+   🔍 FILTRO
+========================================================== */
 #nivel-filter {
     padding: 8px 14px;
     font-size: 14px;
@@ -214,14 +211,15 @@ td.acciones .icon-form + .icon-form {
     outline: none;
 }
 
-/* Contenedor botones */
+/* ==========================================================
+   🧭 BOTONES DE ACCIÓN (PDF / REFRESH)
+========================================================== */
 .actions {
     display: flex;
     align-items: center;
     gap: 10px;
 }
 
-/* Botones minimalistas */
 .btn-minimal {
     display: flex;
     align-items: center;
@@ -240,13 +238,11 @@ td.acciones .icon-form + .icon-form {
     font-size: 16px;
 }
 
-/* Hover suave */
 .btn-minimal:hover {
     background-color: #f5f5f5;
     border-color: #999;
 }
 
-/* Estados activos */
 .btn-minimal:active {
     background-color: #eaeaea;
 }
@@ -263,131 +259,68 @@ td.acciones .icon-form + .icon-form {
     border-color: #0d6efd;
 }
 
-/* 🔁 Animación de giro */
+/* ==========================================================
+   🔁 ESTADO DE CARGA (botón Refresh)
+========================================================== */
 @keyframes spin {
     from { transform: rotate(0deg); }
     to { transform: rotate(360deg); }
 }
 
-/* 🔹 Estado de carga: ícono girando */
 .btn-minimal.loading i {
     animation: spin 1s linear infinite;
-    color: #0d6efd; /* Azul suave para mostrar que está activo */
+    color: #0d6efd;
 }
 
-/* 🔹 Botón deshabilitado mientras actualiza */
 .btn-minimal.loading {
     opacity: 0.6;
     pointer-events: none;
 }
 
-/* Media queries para pantallas más pequeñas */
+/* ==========================================================
+   📱 MEDIA QUERIES (Responsivo)
+========================================================== */
 @media (max-width: 1366px) {
-
     .alumnos-scroll-container {
         height: calc(100vh - 202px);
     }
 
-    .alumnos-table th, .alumnos-table td {
+    .alumnos-table th,
+    .alumnos-table td {
+        padding: 8px;
         font-size: 12px;
     }
 
-    #nivel-filter {
-        font-size: 10px;
-    }
-
+    #nivel-filter,
     #nivel-filter option {
         font-size: 10px;
-    }
-
-    .alumnos-titulo {
-        font-size: 18px; /* Reduce el tamaño del título */
-    }
-
-    .alumnos-table th, .alumnos-table td {
-        padding: 8px; /* Reduce el padding para las celdas de la tabla */
-        font-size: 0.6875rem;
-    }
-
-    .alumnos-btn {
-        padding: 6px 6px; /* Reduce el tamaño de los botones */
-        font-size: 11px; /* Reduce el tamaño del texto de los botones */
     }
 
     .tabs button {
         font-size: 0.6875rem;
     }
-
-    .alumnos-btn-ver,
-    .alumnos-btn-pdf {
-        font-size: 1rem;
-    }
-
-    .alumnos-btn-ver {
-        padding: 3px 10px;
-    }
-
 }
 
 @media (max-width: 1024px) {
-    .alumnos-titulo {
-        font-size: 18px; /* Se mantiene más pequeño que en 1366px */
-    }
-
-    .alumnos-btn {
-        padding: 5px 5px; /* Un poco más pequeño que en 1366px */
-        font-size: 10px; /* Reduce el texto de los botones */
-    }
-
-    .alumnos-table th, .alumnos-table td {
-        padding: 6px; /* Reduce padding para que encaje mejor en pantallas de 1024px */
-        font-size: 11px; /* Tamaño de letra más pequeño para las celdas */
-    }
-
-    .alumnos-details-table td {
-        padding: 5px; /* Detalles más compactos */
-        font-size: 10px;
+    .alumnos-table th,
+    .alumnos-table td {
+        padding: 6px;
+        font-size: 11px;
     }
 }
 
 @media (max-width: 768px) {
-    .alumnos-titulo {
-        font-size: 16px; /* Más pequeño para pantallas de 768px */
-    }
-
-    .alumnos-btn {
-        padding: 4px 6px; /* Reduce padding y ajusta el botón */
-        font-size: 9px; /* Texto más pequeño en botones */
-    }
-
-    .alumnos-table th, .alumnos-table td {
-        padding: 5px; /* Más ajustado para pantallas pequeñas */
-        font-size: 10px; /* Reduce el texto de las celdas */
-    }
-
-    .alumnos-details-table td {
-        padding: 4px; /* Detalles ajustados */
-        font-size: 9px; /* Letra pequeña */
+    .alumnos-table th,
+    .alumnos-table td {
+        padding: 5px;
+        font-size: 10px;
     }
 }
 
 @media (max-width: 480px) {
-    .alumnos-titulo {
-        font-size: 14px; /* Muy pequeño para pantallas extra pequeñas */
-    }
-
-    .alumnos-btn {
-        padding: 3px 4px; /* Botones compactos */
-        font-size: 8px; /* Texto mínimo en botones */
-    }
-
-    .alumnos-table th, .alumnos-table td {
-        padding: 4px; /* Padding pequeño para caber en pantallas pequeñas */
-        font-size: 8px; /* Texto pequeño en celdas */
-    }
-
-    .alumnos-details-table td {
-        padding: 3px; /* Ajuste compacto en detalles */
-        font-size: 8px; /* Texto muy pequeño para pantallas pequeñas */
+    .alumnos-table th,
+    .alumnos-table td {
+        padding: 4px;
+        font-size: 8px;
     }
 }

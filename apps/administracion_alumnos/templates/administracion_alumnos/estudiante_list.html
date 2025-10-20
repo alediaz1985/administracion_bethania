@@ -1,18 +1,20 @@
 {% extends 'base.html' %}
+{% load static %}
 
 {% block title %}Lista de Alumnos{% endblock %}
 
-{% load static %}
-
 {% block extra_styles %}
-    <link rel="stylesheet" href="../../static/administracion_alumnos/css/styles_listar_alumnos.css">
+<link rel="stylesheet" href="{% static 'administracion_alumnos/css/styles_listar_alumnos.css' %}">
 {% endblock %}
 
 {% block content %}
 
+<!-- 🧩 CONTENEDOR PRINCIPAL -->
 <div class="alumnos-container">
+
+    <!-- 🔹 ENCABEZADO: Filtros y acciones -->
     <div class="alumnos">
-        <!-- 🔹 Filtro a la izquierda -->
+        <!-- 🔸 Filtro de Nivel -->
         <div class="filters">
             <select id="nivel-filter" name="nivel">
                 <option value="">Seleccionar Nivel</option>
@@ -22,8 +24,9 @@
             </select>
         </div>
 
-        <!-- 🔹 Botones a la derecha -->
+        <!-- 🔸 Acciones (Botones PDF y Refrescar) -->
         <div class="actions">
+            <!-- Generar PDF -->
             <form action="{% url 'generar_pdf_lista_alumnos' %}" method="get">
                 <button type="submit" class="btn-minimal" title="Generar PDF">
                     <i class="fas fa-file-pdf"></i>
@@ -31,19 +34,24 @@
                 </button>
             </form>
 
-            <!-- ✅ Botón de actualización -->
+            <!-- Actualizar datos -->
             <button type="button" id="btn-refresh" class="btn-minimal" title="Actualizar datos" onclick="refrescarDatos()">
                 <i class="fas fa-sync-alt"></i>
             </button>
         </div>
     </div>
-    
+
+    <!-- 🔹 Pestañas -->
     <div class="tabs">
         <button class="tab-button active" onclick="showTab('todos')">Todos</button>
         <button class="tab-button" onclick="showTab('pendientes')">Pendientes</button>
         <button class="tab-button" onclick="showTab('aprobados')">Aprobados</button>
     </div>
+
+    <!-- 🔹 Contenedor con scroll para las tablas -->
     <div class="alumnos-scroll-container">
+
+        <!-- ==================== TAB 1: TODOS ==================== -->
         <div class="tab-content active" id="todos">
             <table class="alumnos-table" id="data-table">
                 <thead>
@@ -55,23 +63,24 @@
                         <th>Subnivel</th>
                         <th>Turno</th>
                         <th>Fecha Recepción</th>
-                        <th></th>
-                        <th></th>
+                        <th colspan="2"></th>
                     </tr>
                 </thead>
-                <tbody id="table-body">
+                <tbody class="table-body">
                     {% if estudiantes %}
                         {% for estudiante in estudiantes %}
                             <tr data-nivel="{{ estudiante.inscripcion.nivel_estudiante }}" 
                                 data-turno="{{ estudiante.inscripcion.turno_estudiante }}">
                                 
+                                <!-- CUIL + Botón copiar -->
                                 <td>
                                     <span id="cuil_{{ estudiante.id }}">{{ estudiante.cuil_estudiante }}</span>
-                                    <button onclick="copyToClipboard('cuil_{{ estudiante.id }}')" style="border: none; background: transparent; cursor: pointer;">
+                                    <button onclick="copiarTexto('cuil_{{ estudiante.id }}')" style="border: none; background: transparent; cursor: pointer;">
                                         <i class="fas fa-copy" style="color: #b6b6b6;"></i>
                                     </button>
                                 </td>
 
+                                <!-- Datos principales -->
                                 <td>{{ estudiante.apellidos_estudiante }}</td>
                                 <td>{{ estudiante.nombres_estudiante }}</td>
                                 <td>{{ estudiante.inscripcion.nivel_estudiante }}</td>
@@ -79,6 +88,7 @@
                                 <td>{{ estudiante.inscripcion.turno_estudiante }}</td>
                                 <td>{{ estudiante.inscripcion.fecha_recepcion }}</td>
 
+                                <!-- Acciones -->
                                 <td class="acciones">
                                     <form action="{% url 'ver_datos_estudiante' pk=estudiante.pk %}" method="get" class="icon-form">
                                         <button class="icon-btn" title="Ver datos" type="submit">
@@ -94,13 +104,13 @@
                             </tr>
                         {% endfor %}
                     {% else %}
-                        <tr>
-                            <td colspan="8">No hay alumnos en la base de datos.</td>
-                        </tr>
+                        <tr><td colspan="9">No hay alumnos en la base de datos.</td></tr>
                     {% endif %}
-                <tbody>
+                </tbody>
             </table>
         </div>
+
+        <!-- ==================== TAB 2: PENDIENTES ==================== -->
         <div class="tab-content" id="pendientes">
             <table class="alumnos-table" id="data-table">
                 <thead>
@@ -112,29 +122,25 @@
                         <th>Grado</th>
                         <th>Turno</th>
                         <th>Fecha Recepción</th>
-                        <th></th>
-                        <th></th>
+                        <th colspan="2"></th>
                     </tr>
                 </thead>
-                <tbody id="table-body">
-                    <!-- Filas de datos iniciales -->
+                <tbody class="table-body">
                     {% if estudiantes_pendientes %}
                         {% for estudiante in estudiantes_pendientes %}
-                            <tr data-nivel="{{ estudiante.nivel_estudiante }}" 
-                            data-subnivel="{{ estudiante.subnivel_estudiante }}" 
-                            data-turno="{{ estudiante.turno_estudiante }}">
+                            <tr data-nivel="{{ estudiante.inscripcion.nivel_estudiante }}" 
+                                data-subnivel="{{ estudiante.inscripcion.curso_anio_estudiante }}" 
+                                data-turno="{{ estudiante.inscripcion.turno_estudiante }}">
+                                
+                                <!-- CUIL + Copiar -->
                                 <td>
                                     <span id="datoCuil_{{ estudiante.id }}">{{ estudiante.cuil_estudiante }}</span>
-                                    <button onclick="duplicarAlPortapapeles('datoCuil_{{ estudiante.id }}')" style="border: none; background: transparent; cursor: pointer;">
-                                        <i class="fas fa-copy" style="color: #b6b6b6;"></i> <!-- Icono con un color distinto si querés -->
+                                    <button onclick="copiarTexto('datoCuil_{{ estudiante.id }}')" style="border: none; background: transparent; cursor: pointer;">
+                                        <i class="fas fa-copy" style="color: #b6b6b6;"></i>
                                     </button>
                                 </td>
-                                
-                                <!-- Segundo toast (mensaje flotante alternativo) -->
-                                <div id="avisoCopiado_{{ estudiante.id }}" style="position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); background-color: rgba(0, 128, 0, 0.8); color: white; padding: 10px 20px; border-radius: 5px; font-size: 14px; display: none; opacity: 0; pointer-events: none; z-index: 9999; transition: opacity 0.5s ease;">
-                                    ¡Copiado!
-                                </div>
-                            
+
+                                <!-- Datos -->
                                 <td>{{ estudiante.apellidos_estudiante }}</td>
                                 <td>{{ estudiante.nombres_estudiante }}</td>
                                 <td>{{ estudiante.inscripcion.nivel_estudiante }}</td>
@@ -142,6 +148,7 @@
                                 <td>{{ estudiante.inscripcion.turno_estudiante }}</td>
                                 <td>{{ estudiante.inscripcion.fecha_recepcion }}</td>
 
+                                <!-- Acciones -->
                                 <td class="acciones">
                                     <form action="{% url 'ver_datos_estudiante' pk=estudiante.pk %}" method="get" class="icon-form">
                                         <button class="icon-btn" title="Ver datos" type="submit">
@@ -153,17 +160,17 @@
                                             <i class="fas fa-file-pdf"></i>
                                         </button>
                                     </form>
-                                </td>                              
+                                </td>
                             </tr>
                         {% endfor %}
                     {% else %}
-                        <tr>
-                            <td colspan="5">No hay alumnos en la base de datos.</td>
-                        </tr>
+                        <tr><td colspan="9">No hay alumnos pendientes.</td></tr>
                     {% endif %}
                 </tbody>
             </table>
         </div>
+
+        <!-- ==================== TAB 3: APROBADOS ==================== -->
         <div class="tab-content" id="aprobados">
             <table class="alumnos-table" id="data-table">
                 <thead>
@@ -175,28 +182,25 @@
                         <th>Grado</th>
                         <th>Turno</th>
                         <th>Fecha Recepción</th>
-                        <th></th>
-                        <th></th>
+                        <th colspan="2"></th>
                     </tr>
                 </thead>
-                <tbody id="table-body">
+                <tbody class="table-body">
                     {% if estudiantes_aprobados %}
                         {% for estudiante in estudiantes_aprobados %}
-                            <tr data-nivel="{{ estudiante.nivel_estudiante }}" 
-                            data-subnivel="{{ estudiante.subnivel_estudiante }}" 
-                            data-turno="{{ estudiante.turno_estudiante }}">
+                            <tr data-nivel="{{ estudiante.inscripcion.nivel_estudiante }}" 
+                                data-subnivel="{{ estudiante.inscripcion.curso_anio_estudiante }}" 
+                                data-turno="{{ estudiante.inscripcion.turno_estudiante }}">
+                                
+                                <!-- CUIL + Copiar -->
                                 <td>
                                     <span id="identificadorCuil_{{ estudiante.id }}">{{ estudiante.cuil_estudiante }}</span>
-                                    <button onclick="copiarValorCuil('identificadorCuil_{{ estudiante.id }}')" style="border: none; background: transparent; cursor: pointer;">
-                                        <i class="fas fa-copy" style="color: #b6b6b6;"></i> <!-- Color diferente -->
+                                    <button onclick="copiarTexto('identificadorCuil_{{ estudiante.id }}')" style="border: none; background: transparent; cursor: pointer;">
+                                        <i class="fas fa-copy" style="color: #b6b6b6;"></i>
                                     </button>
                                 </td>
-                                
-                                <!-- Tercer toast (mensaje personalizado) -->
-                                <div id="mensajeCuil_{{ estudiante.id }}" style="position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); background-color: rgba(0, 128, 0, 0.8); color: white; padding: 10px 20px; border-radius: 5px; font-size: 14px; display: none; opacity: 0; pointer-events: none; z-index: 9999; transition: opacity 0.5s ease;">
-                                    ¡Copiado!
-                                </div>
-                            
+
+                                <!-- Datos -->
                                 <td>{{ estudiante.apellidos_estudiante }}</td>
                                 <td>{{ estudiante.nombres_estudiante }}</td>
                                 <td>{{ estudiante.inscripcion.nivel_estudiante }}</td>
@@ -204,184 +208,173 @@
                                 <td>{{ estudiante.inscripcion.turno_estudiante }}</td>
                                 <td>{{ estudiante.inscripcion.fecha_recepcion }}</td>
 
+                                <!-- Acciones -->
                                 <td class="acciones">
-                                <a class="icon-btn" title="Ver datos" href="{% url 'ver_datos_estudiante' pk=estudiante.pk %}">
-                                    <i class="fas fa-search"></i>
-                                </a>
-                                <a class="icon-btn pdf" title="Generar contrato PDF" href="{% url 'generar_contrato' estudiante.pk %}" target="_blank" rel="noopener">
-                                    <i class="fas fa-file-pdf"></i>
-                                </a>
+                                    <a class="icon-btn" title="Ver datos" href="{% url 'ver_datos_estudiante' pk=estudiante.pk %}">
+                                        <i class="fas fa-search"></i>
+                                    </a>
+                                    <a class="icon-btn pdf" title="Generar contrato PDF" href="{% url 'generar_contrato' estudiante.pk %}" target="_blank" rel="noopener">
+                                        <i class="fas fa-file-pdf"></i>
+                                    </a>
                                 </td>
                             </tr>
                         {% endfor %}
                     {% else %}
-                        <tr>
-                            <td colspan="5">No hay alumnos aprobados.</td>
-                        </tr>
+                        <tr><td colspan="9">No hay alumnos aprobados.</td></tr>
                     {% endif %}
                 </tbody>
             </table>
         </div>
     </div>
+
+    <!-- 🔔 Toast minimalista superior -->
+    <div id="toast-general"
+        style="
+            position: fixed;
+            top: 16px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: #111;
+            color: #f9f9f9;
+            font-size: 13px;
+            padding: 8px 14px;
+            border-radius: 4px;
+            opacity: 0;
+            display: none;
+            transition: opacity 0.3s ease, transform 0.3s ease;
+            z-index: 9999;
+            letter-spacing: 0.2px;
+        ">
+    </div>
 </div>
 
+<!-- =====================================================
+📜 SCRIPTS FUNCIONALES
+===================================================== -->
 <script>
-
+/* --------------------------------------------------
+   🔹 Cambiar pestañas
+-------------------------------------------------- */
 function showTab(tabName) {
-    // Ocultar todas las pestañas
-    const tabs = document.querySelectorAll('.tab-content');
-    tabs.forEach(tab => tab.classList.remove('active'));
-    
-    // Mostrar la pestaña seleccionada
-    const activeTab = document.getElementById(tabName);
-    activeTab.classList.add('active');
-    
-    // Cambiar estilo de botones
-    const buttons = document.querySelectorAll('.tab-button');
-    buttons.forEach(button => button.classList.remove('active'));
-    const activeButton = document.querySelector(`.tab-button[onclick="showTab('${tabName}')"]`);
-    activeButton.classList.add('active');
+  document.querySelectorAll('.tab-content').forEach(tab => tab.classList.remove('active'));
+  document.getElementById(tabName).classList.add('active');
+
+  document.querySelectorAll('.tab-button').forEach(btn => btn.classList.remove('active'));
+  document.querySelector(`.tab-button[onclick="showTab('${tabName}')"]`).classList.add('active');
+
+  if (window.__filterTable) window.__filterTable();
 }
 
-document.addEventListener('DOMContentLoaded', function() {
-    let dateElements = document.querySelectorAll('.fecha');
-    dateElements.forEach(function(el) {
-        let dateValue = el.textContent.trim();
-        if (dateValue) {
-            let date = new Date(dateValue);
-            // Verificar si la fecha es válida
-            if (!isNaN(date)) {
-                el.textContent = date.toLocaleDateString('es-AR'); // dd/mm/yyyy
-            } else {
-                el.textContent = ''; // Dejar vacío si la fecha es inválida
-            }
-        } else {
-            el.textContent = ''; // Dejar vacío si no hay valor
-        }
+/* --------------------------------------------------
+   🔹 Formatear fechas (es-AR)
+-------------------------------------------------- */
+document.addEventListener('DOMContentLoaded', () => {
+  document.querySelectorAll('.fecha').forEach(el => {
+    const val = el.textContent.trim();
+    const d = new Date(val);
+    el.textContent = !isNaN(d) ? d.toLocaleDateString('es-AR') : '';
+  });
+});
+
+/* --------------------------------------------------
+   🔹 Filtro por nivel (solo pestaña activa)
+-------------------------------------------------- */
+document.addEventListener('DOMContentLoaded', () => {
+  const nivelFilter = document.getElementById('nivel-filter');
+
+  function getActiveRows() {
+    const active = document.querySelector('.tab-content.active');
+    return active ? active.querySelectorAll('tbody.table-body tr') : [];
+  }
+
+  function filterTable() {
+    const nivel = (nivelFilter.value || '').toLowerCase();
+    getActiveRows().forEach(row => {
+      const rowNivel = (row.getAttribute('data-nivel') || '').toLowerCase();
+      row.style.display = (nivel === "" || rowNivel.includes(nivel)) ? "" : "none";
     });
+  }
+
+  nivelFilter.addEventListener('change', filterTable);
+  window.__filterTable = filterTable;
+  filterTable();
 });
 
-document.addEventListener('DOMContentLoaded', function() {
-    // Filtro
-    const nivelFilter = document.getElementById('nivel-filter');
-    const tableRows = document.querySelectorAll('#table-body tr');
+/* --------------------------------------------------
+   🔹 Toast minimalista superior
+-------------------------------------------------- */
+function showToast(message, type = 'info') {
+  const toast = document.getElementById('toast-general');
+  if (!toast) return;
 
-    // Función para filtrar la tabla según el filtro de nivel
-    nivelFilter.addEventListener('change', filterTable);
+  const color = {
+    info: '#111',
+    ok: '#0b874b',
+    error: '#b61c1c'
+  }[type] || '#111';
 
-    // Función para filtrar la tabla
-    function filterTable() {
-        const nivel = nivelFilter.value.toLowerCase();
+  toast.textContent = message;
+  toast.style.background = color;
+  toast.style.display = 'block';
+  toast.style.transform = 'translateX(-50%) translateY(0)';
+  requestAnimationFrame(() => (toast.style.opacity = '1'));
 
-        tableRows.forEach(function(row) {
-            const rowNivel = row.getAttribute('data-nivel').toLowerCase();
-
-            // Mostrar o ocultar la fila según el filtro de nivel
-            const showRow = (nivel === "" || rowNivel.includes(nivel));
-            row.style.display = showRow ? "" : "none";
-        });
-    }
-
-    // Filtrar cuando cambie el filtro de nivel
-    filterTable();
-});
-
-function copyToClipboard(id) {
-    var copyText = document.getElementById(id);
-    var range = document.createRange();
-    range.selectNode(copyText);
-    window.getSelection().removeAllRanges();
-    window.getSelection().addRange(range);
-    document.execCommand('copy');
-    window.getSelection().removeAllRanges();
-
-    // Mostrar el mensaje flotante
-    var toast = document.getElementById('toast_' + id.split('_')[1]);
-    toast.style.display = 'block'; // Mostrar el toast
-    toast.style.opacity = 1; // Hacerlo visible
-
-    // Desaparecer después de 2 segundos
-    setTimeout(function() {
-      toast.style.opacity = 0; // Hacerlo desaparecer
-      setTimeout(function() {
-        toast.style.display = 'none'; // Ocultarlo completamente después de la animación
-      }, 500); // Esperar el tiempo de la animación
-    }, 2000);
+  clearTimeout(toast.__t);
+  toast.__t = setTimeout(() => {
+    toast.style.opacity = '0';
+    setTimeout(() => (toast.style.display = 'none'), 300);
+  }, 1800);
 }
 
-function duplicarAlPortapapeles(elementoId) {
-    var contenido = document.getElementById(elementoId);
-    var campoTemporal = document.createElement("textarea");
-    campoTemporal.value = contenido.textContent;
-    document.body.appendChild(campoTemporal);
-    campoTemporal.select();
-    document.execCommand("copy");
-    document.body.removeChild(campoTemporal);
+/* --------------------------------------------------
+   🔹 Copiar CUIL
+-------------------------------------------------- */
+function copiarTexto(elementId) {
+  const el = document.getElementById(elementId);
+  if (!el) return;
 
-    // Mostrar el mensaje personalizado
-    var idEstudiante = elementoId.split('_')[1];
-    var aviso = document.getElementById("avisoCopiado_" + idEstudiante);
-    aviso.style.display = "block";
-    aviso.style.opacity = "1";
-
-    setTimeout(function() {
-        aviso.style.opacity = "0";
-        setTimeout(function() {
-            aviso.style.display = "none";
-        }, 500);
-    }, 2000);
+  const txt = el.textContent.trim();
+  navigator.clipboard.writeText(txt).then(() => {
+    showToast('CUIL copiado', 'ok');
+  }).catch(() => {
+    showToast('Error al copiar', 'error');
+  });
 }
 
-function copiarValorCuil(refId) {
-    const valor = document.getElementById(refId);
-    const tempInput = document.createElement("textarea");
-    tempInput.value = valor.textContent;
-    document.body.appendChild(tempInput);
-    tempInput.select();
-    document.execCommand("copy");
-    document.body.removeChild(tempInput);
-
-    // Mostrar mensaje personalizado
-    const estudianteId = refId.split('_')[1];
-    const alerta = document.getElementById("mensajeCuil_" + estudianteId);
-    alerta.style.display = "block";
-    alerta.style.opacity = "1";
-
-    setTimeout(() => {
-        alerta.style.opacity = "0";
-        setTimeout(() => {
-            alerta.style.display = "none";
-        }, 500);
-    }, 2000);
-}
-
+/* --------------------------------------------------
+   🔹 Refrescar datos (con feedback visual)
+-------------------------------------------------- */
 function refrescarDatos() {
-    const btn = document.getElementById('btn-refresh');
-    const icon = btn.querySelector('i');
+  const btn = document.getElementById('btn-refresh');
+  if (!btn) return;
 
-    btn.classList.add('loading');
-    btn.disabled = true;
+  btn.disabled = true;
+  btn.classList.add('loading');
+  showToast('Actualizando datos…', 'info');
 
-    fetch(window.location.href, { cache: "no-store" })
-        .then(response => response.text())
-        .then(html => {
-            const parser = new DOMParser();
-            const doc = parser.parseFromString(html, 'text/html');
-            const newTable = doc.querySelector('.alumnos-scroll-container');
-            document.querySelector('.alumnos-scroll-container').innerHTML = newTable.innerHTML;
+  fetch(window.location.href, { cache: "no-store" })
+    .then(r => r.text())
+    .then(html => {
+      const doc = new DOMParser().parseFromString(html, 'text/html');
+      const newTable = doc.querySelector('.alumnos-scroll-container');
+      const container = document.querySelector('.alumnos-scroll-container');
 
-            mostrarToast("✅ Datos actualizados correctamente");
-        })
-        .catch(error => {
-            console.error('Error al actualizar los datos:', error);
-            mostrarToast("❌ Error al actualizar los datos");
-        })
-        .finally(() => {
-            btn.classList.remove('loading');
-            btn.disabled = false;
-        });
+      if (newTable && container) {
+        container.innerHTML = newTable.innerHTML;
+        if (window.__filterTable) window.__filterTable();
+        showToast('Datos actualizados', 'ok');
+      } else {
+        showToast('No se pudo actualizar', 'error');
+      }
+    })
+    .catch(err => {
+      console.error(err);
+      showToast('Error al actualizar', 'error');
+    })
+    .finally(() => {
+      btn.classList.remove('loading');
+      btn.disabled = false;
+    });
 }
-
 </script>
-
 {% endblock %}

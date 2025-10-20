@@ -91,6 +91,17 @@
   box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
 }
 
+.btn-warning {
+  background: #ffc107;
+  color: #222;
+  border: none;
+}
+
+.btn-warning:hover {
+  background: #e0a800;
+  color: #fff;
+}
+
 /* ============================
    🔹 PESTAÑAS
 ============================ */

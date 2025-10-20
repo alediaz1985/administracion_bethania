@@ -25,11 +25,17 @@
     <a href="{% url 'generar_pdf_estudiante' estudiante_id=estudiante.id %}" class="btn">Generar PDF</a>
     <a href="{% url 'descargar_archivos_alumnos' %}" class="btn">Archivos</a>
     <a href="{% url 'estudiante_edit' pk=estudiante.id %}" class="btn">Editar</a>
-    {% if estudiante.estado_documentacion.estado|lower == 'pendiente' %}
-    <button type="button" class="btn btn-success" id="abrirModalAprobacion">
-      <i class="fas fa-check-circle"></i> Aprobar Doc.
-    </button>
-    {% endif %}
+      {% if estudiante.estado_documentacion.estado|lower == 'pendiente' %}
+        <button type="button" class="btn btn-success" id="abrirModalEstado"
+                data-accion="aprobar" data-color="success" data-nuevo="aprobado">
+          Aprobar Doc.
+        </button>
+      {% elif estudiante.estado_documentacion.estado|lower == 'aprobado' %}
+        <button type="button" class="btn btn-warning" id="abrirModalEstado"
+                data-accion="marcar como pendiente" data-color="warning" data-nuevo="pendiente">
+          Marcar Pendiente
+        </button>
+      {% endif %}
     <a href="{% url 'estudiante_list' %}" class="btn btn-light">Volver</a>
   </div>
 
@@ -204,18 +210,20 @@
 </div>
 
 <!-- MODAL CONFIRMACIÓN -->
-<div id="modalAprobacion" class="modal">
+<div id="modalEstado" class="modal">
   <div class="modal-content">
-    <h3>Confirmar Aprobación</h3>
-    <p>¿Seguro que deseas aprobar la documentación de <strong>{{ estudiante.apellidos_estudiante }}, {{ estudiante.nombres_estudiante }}</strong>?</p>
+    <h3 id="modalTitulo">Confirmar acción</h3>
+    <p id="modalTexto">
+      ¿Seguro que deseas realizar esta acción?
+    </p>
     <div class="modal-actions">
-      <form method="post" action="{% url 'confirmar_aprobacion' estudiante.id %}">
+      <form id="modalForm" method="post" action="">
         {% csrf_token %}
-        <button type="submit" class="btn btn-success">
-          <i class="fas fa-check"></i> Sí, aprobar
+        <button type="submit" id="modalBoton" class="btn">
+          <i class="fas fa-check"></i> Confirmar
         </button>
       </form>
-      <button type="button" class="btn btn-light" id="cerrarModalAprobacion">Cancelar</button>
+      <button type="button" class="btn btn-light" id="cerrarModalEstado">Cancelar</button>
     </div>
   </div>
 </div>
@@ -240,12 +248,29 @@ document.addEventListener("DOMContentLoaded", () => {
   });
 
   // Modal
-  const modal = document.getElementById("modalAprobacion");
-  const abrir = document.getElementById("abrirModalAprobacion");
-  const cerrar = document.getElementById("cerrarModalAprobacion");
+  const modal = document.getElementById("modalEstado");
+  const abrir = document.getElementById("abrirModalEstado");
+  const cerrar = document.getElementById("cerrarModalEstado");
+  const modalTitulo = document.getElementById("modalTitulo");
+  const modalTexto = document.getElementById("modalTexto");
+  const modalBoton = document.getElementById("modalBoton");
+  const modalForm = document.getElementById("modalForm");
 
   if (abrir && modal && cerrar) {
-    abrir.addEventListener("click", () => modal.style.display = "flex");
+    abrir.addEventListener("click", () => {
+      const accion = abrir.dataset.accion;
+      const color = abrir.dataset.color;
+      const nuevo = abrir.dataset.nuevo;
+
+      modalTitulo.textContent = "Confirmar " + accion.charAt(0).toUpperCase() + accion.slice(1);
+      modalTexto.innerHTML = `¿Seguro que deseas <strong>${accion}</strong> la documentación de <strong>{{ estudiante.apellidos_estudiante }}, {{ estudiante.nombres_estudiante }}</strong>?`;
+      modalBoton.className = `btn btn-${color}`;
+      modalBoton.innerHTML = `<i class="fas fa-check"></i> Sí, ${accion}`;
+      modalForm.action = `{% url 'cambiar_estado_documentacion' estudiante.id %}`;
+
+      modal.style.display = "flex";
+    });
+
     cerrar.addEventListener("click", () => modal.style.display = "none");
     window.addEventListener("click", e => {
       if (e.target === modal) modal.style.display = "none";

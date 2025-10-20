@@ -21,7 +21,7 @@ urlpatterns = [
     path('generar-contrato/<int:estudiante_id>/', views.generar_contrato_view, name='generar_contrato'),
     path('descargar_archivos/', views.descargar_todos_archivos, name='descargar_archivos_alumnos'),
     path('lista-fotos-estudiantes/', views.lista_fotos_estudiantes, name='lista_fotos_estudiantes'),
-    path('confirmar_aprobacion/<int:estudiante_id>/', views.confirmar_aprobacion, name='confirmar_aprobacion'),
+    path('cambiar_estado/<int:estudiante_id>/', views.cambiar_estado_documentacion, name='cambiar_estado_documentacion'),
 ]
 
 # Configuración para servir archivos media en desarrollo
