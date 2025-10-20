@@ -1,0 +1,45 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}Cobrar cuota{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+  {% include "cuotas/_messages.html" %}
+
+  <div class="card shadow-sm mb-3">
+    <div class="card-body">
+      <h5 class="card-title">Cobro de cuota</h5>
+      <p class="mb-1"><strong>Estudiante:</strong> {{ cuota.inscripcion.estudiante }}</p>
+      <p class="mb-1"><strong>Ciclo/Curso:</strong> {{ cuota.inscripcion.ciclo }} — {{ cuota.inscripcion.curso }}</p>
+      <p class="mb-1"><strong>Mes:</strong> {{ cuota.mes }}</p>
+      <p class="mb-0"><strong>Total actual:</strong> ${{ cuota.total_a_pagar }}</p>
+    </div>
+  </div>
+
+  <form method="post" class="card shadow-sm">
+    {% csrf_token %}
+    <div class="card-body">
+      {{ form.non_field_errors }}
+      <div class="row g-3">
+        <div class="col-md-4">
+          <label class="form-label">Medio de pago</label>
+          {{ form.medio_pago }}
+        </div>
+        <div class="col-md-4">
+          <label class="form-label">Monto cobrado</label>
+          {{ form.monto_cobrado }}
+        </div>
+        <div class="col-md-4">
+          <label class="form-label">Fecha y hora de pago</label>
+          {{ form.fecha_pago }}
+          <div class="form-text">Usada para calcular recargos/descuentos.</div>
+        </div>
+      </div>
+    </div>
+    <div class="card-footer d-flex gap-2">
+      <button class="btn btn-success">Confirmar cobro</button>
+      <a href="{% url 'cuotas:inscripcion_cuotas' cuota.inscripcion.pk %}" class="btn btn-secondary">Cancelar</a>
+    </div>
+  </form>
+</div>
+{% endblock %}

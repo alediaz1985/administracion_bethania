@@ -1,0 +1,59 @@
+{% extends 'base.html' %}
+{% block title %}Cuotas · Inicio{% endblock %}
+{% block content %}
+<div class="container py-4">
+  <div class="row g-3">
+    <div class="col-12"><h3 class="mb-3">Gestión de Cuotas</h3></div>
+
+    <div class="col-md-3">
+      <div class="card shadow-sm">
+        <div class="card-body">
+          <h5 class="card-title">Catálogos</h5>
+          <ul class="list-unstyled mb-0">
+            <li><a href="{% url 'cuotas:ciclo_list' %}">Ciclos lectivos</a></li>
+            <li><a href="{% url 'cuotas:nivel_list' %}">Niveles</a></li>
+            <li><a href="{% url 'cuotas:curso_list' %}">Cursos</a></li>
+            <li><a href="{% url 'cuotas:tarifa_list' %}">Tarifas por nivel</a></li>
+            <li><a href="{% url 'cuotas:vencimiento_list' %}">Vencimientos</a></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-md-3">
+      <div class="card shadow-sm">
+        <div class="card-body">
+          <h5 class="card-title">Beneficios</h5>
+          <ul class="list-unstyled mb-0">
+            <li><a href="{% url 'cuotas:beneficio_list' %}">Beneficios</a></li>
+            <li><a href="{% url 'cuotas:beneficio_insc_list' %}">Asignados a inscripciones</a></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-md-3">
+      <div class="card shadow-sm">
+        <div class="card-body">
+          <h5 class="card-title">Inscripciones</h5>
+          <ul class="list-unstyled mb-0">
+            <li><a href="{% url 'cuotas:inscripcion_list' %}">Listado de inscripciones</a></li>
+            <li><a href="{% url 'cuotas:inscripcion_create' %}">Nueva inscripción</a></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-md-3">
+      <div class="card shadow-sm">
+        <div class="card-body">
+          <h5 class="card-title">Operación</h5>
+          <p class="mb-2 text-muted">Ingresá al listado de inscripciones para generar cuotas y cobrarlas.</p>
+          <a class="btn btn-primary btn-sm" href="{% url 'cuotas:inscripcion_list' %}">Ir a inscripciones</a>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+{% endblock %}

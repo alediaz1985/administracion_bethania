@@ -1,0 +1,138 @@
+{% extends 'base.html' %}
+{% load static model_extras %}
+
+{% block title %}Listado{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+  {% include "cuotas/_messages.html" %}
+  {% include "cuotas/_menu.html" %}
+
+  {% with mname=object_list.model._meta.model_name %}
+  <div class="d-flex justify-content-between align-items-center my-3">
+    <h3 class="m-0">
+      {% if mname == "ciclolectivo" %}Ciclos lectivos{% endif %}
+      {% if mname == "nivel" %}Niveles{% endif %}
+      {% if mname == "curso" %}Cursos{% endif %}
+      {% if mname == "tarifanivel" %}Tarifas por nivel{% endif %}
+      {% if mname == "vencimientomensual" %}Vencimientos mensuales{% endif %}
+      {% if mname == "beneficio" %}Beneficios{% endif %}
+      {% if mname == "beneficioinscripcion" %}Beneficios por inscripción{% endif %}
+      {% if mname == "inscripcion" %}Inscripciones{% endif %}
+    </h3>
+
+    <div>
+      {% if mname == "ciclolectivo" %}
+        <a class="btn btn-primary btn-sm" href="{% url 'cuotas:ciclo_create' %}">Nuevo ciclo</a>
+      {% elif mname == "nivel" %}
+        <a class="btn btn-primary btn-sm" href="{% url 'cuotas:nivel_create' %}">Nuevo nivel</a>
+      {% elif mname == "curso" %}
+        <a class="btn btn-primary btn-sm" href="{% url 'cuotas:curso_create' %}">Nuevo curso</a>
+      {% elif mname == "tarifanivel" %}
+        <a class="btn btn-primary btn-sm" href="{% url 'cuotas:tarifa_create' %}">Nueva tarifa</a>
+      {% elif mname == "vencimientomensual" %}
+        <a class="btn btn-primary btn-sm" href="{% url 'cuotas:vencimiento_create' %}">Nuevo vencimiento</a>
+      {% elif mname == "beneficio" %}
+        <a class="btn btn-primary btn-sm" href="{% url 'cuotas:beneficio_create' %}">Nuevo beneficio</a>
+      {% elif mname == "beneficioinscripcion" %}
+        <a class="btn btn-primary btn-sm" href="{% url 'cuotas:beneficio_insc_create' %}">Asignar beneficio</a>
+      {% elif mname == "inscripcion" %}
+        <a class="btn btn-success btn-sm" href="{% url 'cuotas:inscripcion_create' %}">Nueva inscripción</a>
+      {% endif %}
+    </div>
+  </div>
+  {% endwith %}
+
+  <div class="table-responsive">
+    <table class="table table-sm table-hover align-middle">
+      <thead class="table-light">
+        <tr>
+          {% if object_list and object_list.model._meta.model_name == "ciclolectivo" %}
+            <th>Año</th><th>Inicio</th><th>Fin</th><th></th>
+          {% elif object_list and object_list.model._meta.model_name == "nivel" %}
+            <th>Nombre</th><th></th>
+          {% elif object_list and object_list.model._meta.model_name == "curso" %}
+            <th>Nivel</th><th>Curso</th><th>Cuota (ovrd)</th><th>Insc (ovrd)</th><th></th>
+          {% elif object_list and object_list.model._meta.model_name == "tarifanivel" %}
+            <th>Ciclo</th><th>Nivel</th><th>Inscripción</th><th>Cuota</th><th></th>
+          {% elif object_list and object_list.model._meta.model_name == "vencimientomensual" %}
+            <th>Ciclo</th><th>Mes</th><th>Hasta día</th><th>% Recargo</th><th></th>
+          {% elif object_list and object_list.model._meta.model_name == "beneficio" %}
+            <th>Nombre</th><th>Tipo</th><th>%</th><th>$ fijo</th><th>Prioridad</th><th>Activo</th><th></th>
+          {% elif object_list and object_list.model._meta.model_name == "beneficioinscripcion" %}
+            <th>Inscripción</th><th>Beneficio</th><th>Desde</th><th>Hasta</th><th>Activo</th><th></th>
+          {% elif object_list and object_list.model._meta.model_name == "inscripcion" %}
+            <th>Estudiante</th><th>Ciclo</th><th>Nivel</th><th>Curso</th><th>Inscripción</th><th>Acciones</th>
+          {% else %}
+            <th>Objeto</th><th></th>
+          {% endif %}
+        </tr>
+      </thead>
+      <tbody>
+        {% for obj in object_list %}
+          <tr>
+            {% if obj|model_name == "ciclolectivo" %}
+              <td>{{ obj.anio }}</td><td>{{ obj.fecha_inicio }}</td><td>{{ obj.fecha_fin }}</td>
+              <td><a class="btn btn-sm btn-outline-primary" href="{% url 'cuotas:ciclo_update' obj.pk %}">Editar</a></td>
+
+            {% elif obj|model_name == "nivel" %}
+              <td>{{ obj.nombre }}</td>
+              <td><a class="btn btn-sm btn-outline-primary" href="{% url 'cuotas:nivel_update' obj.pk %}">Editar</a></td>
+
+            {% elif obj|model_name == "curso" %}
+              <td>{{ obj.nivel }}</td><td>{{ obj.nombre }}</td>
+              <td>{{ obj.monto_cuota_override|default:"-" }}</td>
+              <td>{{ obj.monto_inscripcion_override|default:"-" }}</td>
+              <td><a class="btn btn-sm btn-outline-primary" href="{% url 'cuotas:curso_update' obj.pk %}">Editar</a></td>
+
+            {% elif obj|model_name == "tarifanivel" %}
+              <td>{{ obj.ciclo }}</td><td>{{ obj.nivel }}</td>
+              <td>${{ obj.monto_inscripcion }}</td><td>${{ obj.monto_cuota_mensual }}</td>
+              <td><a class="btn btn-sm btn-outline-primary" href="{% url 'cuotas:tarifa_update' obj.pk %}">Editar</a></td>
+
+            {% elif obj|model_name == "vencimientomensual" %}
+              <td>{{ obj.ciclo }}</td><td>{{ obj.mes }}</td><td>{{ obj.dia_ultimo_sin_recargo }}</td><td>{{ obj.recargo_porcentaje }}%</td>
+              <td><a class="btn btn-sm btn-outline-primary" href="{% url 'cuotas:vencimiento_update' obj.pk %}">Editar</a></td>
+
+            {% elif obj|model_name == "beneficio" %}
+              <td>{{ obj.nombre }}</td><td>{{ obj.get_tipo_display }}</td>
+              <td>{{ obj.porcentaje|default:"-" }}</td><td>{{ obj.monto_fijo|default:"-" }}</td><td>{{ obj.prioridad }}</td><td>{{ obj.activo|yesno:"Sí,No" }}</td>
+              <td><a class="btn btn-sm btn-outline-primary" href="{% url 'cuotas:beneficio_update' obj.pk %}">Editar</a></td>
+
+            {% elif obj|model_name == "beneficioinscripcion" %}
+              <td>{{ obj.inscripcion }}</td><td>{{ obj.beneficio }}</td><td>{{ obj.desde|default:"-" }}</td><td>{{ obj.hasta|default:"-" }}</td><td>{{ obj.activo|yesno:"Sí,No" }}</td>
+              <td><a class="btn btn-sm btn-outline-primary" href="{% url 'cuotas:beneficio_insc_update' obj.pk %}">Editar</a></td>
+
+            {% elif obj|model_name == "inscripcion" %}
+              <td>{{ obj.estudiante }}</td><td>{{ obj.ciclo }}</td><td>{{ obj.nivel }}</td><td>{{ obj.curso }}</td><td>${{ obj.monto_inscripcion }}</td>
+              <td class="text-nowrap">
+                <a class="btn btn-sm btn-outline-secondary" href="{% url 'cuotas:inscripcion_update' obj.pk %}">Editar</a>
+                <a class="btn btn-sm btn-outline-success" href="{% url 'cuotas:inscripcion_cuotas' obj.pk %}">Cuotas</a>
+                <a class="btn btn-sm btn-outline-primary" href="{% url 'cuotas:inscripcion_generar_cuotas' obj.pk %}">Generar cuotas</a>
+              </td>
+            {% else %}
+              <td>{{ obj }}</td><td></td>
+            {% endif %}
+          </tr>
+        {% empty %}
+          <tr><td colspan="8" class="text-center text-muted py-4">Sin registros.</td></tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+
+  {% if is_paginated %}
+    <nav>
+      <ul class="pagination">
+        {% if page_obj.has_previous %}
+          <li class="page-item"><a class="page-link" href="?page={{ page_obj.previous_page_number }}">Anterior</a></li>
+        {% endif %}
+        <li class="page-item disabled"><span class="page-link">Página {{ page_obj.number }} de {{ page_obj.paginator.num_pages }}</span></li>
+        {% if page_obj.has_next %}
+          <li class="page-item"><a class="page-link" href="?page={{ page_obj.next_page_number }}">Siguiente</a></li>
+        {% endif %}
+      </ul>
+    </nav>
+  {% endif %}
+</div>
+{% endblock %}
