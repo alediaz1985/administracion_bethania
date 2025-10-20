@@ -5,7 +5,7 @@ body {
     font-family: 'Roboto', sans-serif;
     margin: 0;
     padding: 0;
-    background-color: #dfdfdf;  /* Fondo gris claro */
+    background-color: #d6dbe1;
     color: #000;
 }
 
@@ -131,8 +131,7 @@ td.acciones .icon-form + .icon-form {
   flex-wrap: nowrap;
   justify-content: flex-start;     /* Alineadas a la izquierda */
   gap: 6px;
-  border-bottom: 2px solid #b8b8b8; /* Línea inferior gris */
-  margin: 0.5rem 0 0.2rem 0;           /* Separación similar */
+  margin: 0.5rem 0 0.1rem 1rem;           /* Separación similar */
   scrollbar-width: thin;
   scrollbar-color: #1a2942 #eaeaea;
 }

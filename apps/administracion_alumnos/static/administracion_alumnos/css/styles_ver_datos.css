@@ -6,6 +6,10 @@
   --secundario: #555;
 }
 
+body {
+    background-color: #d6dbe1;
+}
+
 /* ============================
    CONTENEDOR PRINCIPAL
 ============================ */
@@ -111,7 +115,7 @@
   overflow-x: auto;
   gap: 6px;
   border-bottom: 2px solid var(--borde);
-  margin-bottom: 1.2rem;
+  margin-bottom: 0.3rem;
   scrollbar-width: thin;
   scrollbar-color: var(--azul) #eaeaea;
 }
