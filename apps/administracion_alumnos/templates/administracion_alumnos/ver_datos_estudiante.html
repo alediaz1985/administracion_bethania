@@ -23,7 +23,7 @@
   <!-- BOTONES -->
   <div class="student-actions">
     <a href="{% url 'generar_pdf_estudiante' estudiante_id=estudiante.id %}" class="btn">Generar PDF</a>
-    <a href="{% url 'descargar_archivos_alumnos' %}" class="btn">Archivos</a>
+    <button type="button" id="btnDescargarArchivos" class="btn">Archivos</button>
     <a href="{% url 'estudiante_edit' pk=estudiante.id %}" class="btn">Editar</a>
       {% if estudiante.estado_documentacion.estado|lower == 'pendiente' %}
         <button type="button" class="btn btn-success" id="abrirModalEstado"
@@ -48,6 +48,7 @@
     <button type="button" class="tab-button" data-tab="salud">Salud</button>
     <button type="button" class="tab-button" data-tab="responsables">Responsables</button>
     <button type="button" class="tab-button" data-tab="documentacion">Documentación</button>
+    <button type="button" class="tab-button" data-tab="cuotas">Cuotas</button>
     <button type="button" class="tab-button" data-tab="estado">Estado Doc.</button>
   </div>
 
@@ -196,6 +197,11 @@
     {% endif %}
   </div>
 
+  <!-- ===== CUOTAS ===== -->
+  <div class="tab-content" id="tab-cuotas">
+    <p>Contenido de cuotas próximamente...</p>
+  </div>
+
   <!-- ===== ESTADO DE DOCUMENTACIÓN ===== -->
   <div class="tab-content" id="tab-estado">
     {% if estudiante.estado_documentacion %}
@@ -224,6 +230,17 @@
         </button>
       </form>
       <button type="button" class="btn btn-light" id="cerrarModalEstado">Cancelar</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL DESCARGA -->
+<div id="modalDescarga" class="modal">
+  <div class="modal-content">
+    <h3>📂 Descarga completada</h3>
+    <p id="textoDescarga">Procesando descarga...</p>
+    <div class="modal-actions">
+      <button type="button" class="btn btn-light" id="cerrarModalDescarga">Cerrar</button>
     </div>
   </div>
 </div>
@@ -277,6 +294,42 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   }
 });
+
+// 🔹 Descarga de archivos con AJAX + modal
+const btnDescargar = document.getElementById("btnDescargarArchivos");
+const modalDescarga = document.getElementById("modalDescarga");
+const textoDescarga = document.getElementById("textoDescarga");
+const cerrarModalDescarga = document.getElementById("cerrarModalDescarga");
+
+if (btnDescargar) {
+  btnDescargar.addEventListener("click", async () => {
+    textoDescarga.textContent = "Descargando archivos...";
+    modalDescarga.style.display = "flex";
+
+    try {
+      const response = await fetch("{% url 'descargar_archivos_alumnos' %}", {
+        method: "GET",
+        headers: { "X-Requested-With": "XMLHttpRequest" }
+      });
+
+      const data = await response.json();
+
+      textoDescarga.innerHTML = `
+        ${data.mensaje}<br>
+        <small>${data.descargados.length} descargados</small>
+        ${data.omitidos.length ? `<br><small>${data.omitidos.length} omitidos</small>` : ""}
+      `;
+    } catch (error) {
+      textoDescarga.textContent = "❌ Error al descargar archivos.";
+    }
+  });
+}
+
+if (cerrarModalDescarga) {
+  cerrarModalDescarga.addEventListener("click", () => modalDescarga.style.display = "none");
+  window.addEventListener("click", e => { if (e.target === modalDescarga) modalDescarga.style.display = "none"; });
+}
+
 </script>
 
 {% endblock %}

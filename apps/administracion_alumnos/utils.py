@@ -1,5 +1,8 @@
 import os
 import logging
+from django.conf import settings  # ✅ AGREGAR ESTA LÍNEA
+from google.oauth2 import service_account
+from googleapiclient.discovery import build
 
 logger = logging.getLogger(__name__)
 
@@ -26,3 +29,23 @@ def download_file(service, file_id):
 def archivo_existe(ruta, nombre_archivo):
     """Verifica si un archivo ya existe en una ruta específica."""
     return os.path.exists(os.path.join(ruta, nombre_archivo))
+
+# 🧠 NUEVO: función para crear la conexión con Google Drive
+def get_drive_service():
+    """
+    Autentica y devuelve el servicio de Google Drive.
+    Usa el archivo de credenciales (service account JSON).
+    """
+    cred_path = os.path.join(settings.BASE_DIR, 'credenciales', 'credentials.json')
+
+    if not os.path.exists(cred_path):
+        raise FileNotFoundError(f"No se encontró el archivo de credenciales: {cred_path}")
+
+    SCOPES = ['https://www.googleapis.com/auth/drive']
+
+    creds = service_account.Credentials.from_service_account_file(
+        cred_path, scopes=SCOPES
+    )
+
+    service = build('drive', 'v3', credentials=creds)
+    return service

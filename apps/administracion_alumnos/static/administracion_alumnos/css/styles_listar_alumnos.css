@@ -16,6 +16,7 @@ body {
     width: 96%;
     padding: 5px 15px;
     float: right;
+    margin-bottom: 0.5rem;
 }
 
 .alumnos {
@@ -211,6 +212,55 @@ td.acciones .icon-form + .icon-form {
 }
 
 /* ==========================================================
+   🔍 BUSCADOR
+========================================================== */
+.search-box {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex: 1;
+    position: relative;
+}
+
+.search-box input {
+    width: 420px; /* más ancho, centrado y proporcionado */
+    padding: 10px 42px 10px 14px;
+    border: 1px solid #b8b8b8;
+    border-radius: 10px;
+    background-color: #ffffff;
+    font-size: 14px;
+    color: #1a1a1a;
+    outline: none;
+    transition: all 0.25s ease;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+}
+
+.search-box input::placeholder {
+    color: #777;
+    font-style: italic;
+}
+
+.search-box input:focus {
+    border-color: #1a2942; /* azul institucional */
+    box-shadow: 0 0 6px rgba(26, 41, 66, 0.4);
+}
+
+/* Ícono de búsqueda a la derecha del input */
+.search-box i {
+    position: absolute;
+    right: 14px;
+    color: #1a2942;
+    font-size: 16px;
+    pointer-events: none;
+    transition: transform 0.2s ease, color 0.2s ease;
+}
+
+.search-box input:focus + i {
+    transform: scale(1.1);
+    color: #000;
+}
+
+/* ==========================================================
    🧭 BOTONES DE ACCIÓN (PDF / REFRESH)
 ========================================================== */
 .actions {
@@ -297,6 +347,10 @@ td.acciones .icon-form + .icon-form {
 
     .tabs button {
         font-size: 0.6875rem;
+    }
+
+    .search-box input {
+        font-size: 12px;
     }
 }
 

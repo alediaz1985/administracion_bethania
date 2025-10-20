@@ -21,6 +21,11 @@ from googleapiclient.http import MediaIoBaseDownload
 from django.shortcuts import render
 from apps.administracion_alumnos.models import Estudiante
 from django.templatetags.static import static 
+from django.http import JsonResponse
+from django.conf import settings
+from googleapiclient.http import MediaIoBaseDownload
+from io import FileIO
+import os
 
 # ----------------FUNCIONA------------------------------
 def estudiante_lista(request):
@@ -1220,8 +1225,8 @@ def descargar_archivos_alumnos(request):
         })
 
 
-
-def descargar_todos_archivos(request):
+# Para probar la nueva version, sino hay que borrar
+'''def descargar_todos_archivos(request):
     """
     Descarga todos los archivos desde la carpeta de Google Drive asociada,
     guardándolos con su ID como nombre.
@@ -1278,7 +1283,106 @@ def descargar_todos_archivos(request):
         logger.error(f"Error en la descarga de archivos: {e}")
         return render(request, 'administracion_alumnos/error_descarga.html', {
             'mensaje_error': f"Error en la descarga de archivos: {e}"
+        })'''
+
+def descargar_todos_archivos(request):
+    """
+    Descarga imágenes y PDFs desde sus carpetas respectivas de Google Drive.
+    Retorna un JSON con el resultado para mostrar en una ventana modal.
+    """
+
+    try:
+        service = get_drive_service()
+
+        # 🗂️ Carpetas separadas en Google Drive
+        folder_fotos_id = '1dg5zdw8DjvxM4mprYddLsMWVz5EhatVpkiaI1LTYXIUIt5-rCNwuduzYr4fQbsW60PU8So2H'
+        folder_pdfs_id  = '1pEoKcJ-wxtgfQkCp_dLVwjFUoJAlQ2q1DGutuQXaFKCrC5QWK-NTRbhfVOqNJA4Arp_QT-qi'
+
+        # 📂 Carpetas locales donde se guardan los archivos
+        carpeta_fotos = os.path.join(settings.MEDIA_ROOT, 'documentos', 'fotoPerfilEstudiante')
+        carpeta_pdfs  = os.path.join(settings.MEDIA_ROOT, 'documentos', 'pdfEstudiante')
+        os.makedirs(carpeta_fotos, exist_ok=True)
+        os.makedirs(carpeta_pdfs, exist_ok=True)
+
+        archivos_descargados = []
+        archivos_omitidos = []
+
+        # ---------------------------------------------------------
+        # 🔹 FUNCIÓN AUXILIAR: descarga archivos desde un folder
+        # ---------------------------------------------------------
+        def descargar_desde_folder(folder_id, carpeta_destino):
+            query = f"'{folder_id}' in parents and trashed=false"
+            results = service.files().list(q=query, fields="files(id, name, mimeType)").execute()
+            drive_files = results.get('files', [])
+
+            print(f"\n=== Archivos en carpeta {folder_id} ===")
+            for f in drive_files:
+                print(f"Nombre: {f['name']} | MIME: {f.get('mimeType')}")
+            print("========================================\n")
+
+            for file in drive_files:
+                file_id = file['id']
+                file_name = file['name']
+                mime_type = file.get('mimeType', '').lower()
+                extension = os.path.splitext(file_name)[1].lower()
+
+                # Google Docs exportados como PDF
+                if mime_type == 'application/vnd.google-apps.document':
+                    request_media = service.files().export_media(fileId=file_id, mimeType='application/pdf')
+                    extension = '.pdf'
+
+                # Imágenes o PDFs normales
+                else:
+                    request_media = service.files().get_media(fileId=file_id)
+
+                # Nombre destino
+                nuevo_nombre = f"{file_id}{extension or '.pdf'}"
+                archivo_path = os.path.join(carpeta_destino, nuevo_nombre)
+
+                # Evitar duplicados
+                if os.path.exists(archivo_path):
+                    archivos_omitidos.append(file_name)
+                    continue
+
+                with FileIO(archivo_path, 'wb') as archivo_local:
+                    downloader = MediaIoBaseDownload(archivo_local, request_media)
+                    done = False
+                    while not done:
+                        status, done = downloader.next_chunk()
+
+                archivos_descargados.append(file_name)
+
+        # ---------------------------------------------------------
+        # 📸 Descargar imágenes
+        # ---------------------------------------------------------
+        descargar_desde_folder(folder_fotos_id, carpeta_fotos)
+
+        # ---------------------------------------------------------
+        # 📄 Descargar PDFs
+        # ---------------------------------------------------------
+        descargar_desde_folder(folder_pdfs_id, carpeta_pdfs)
+
+        # ---------------------------------------------------------
+        # 🔚 Resumen
+        # ---------------------------------------------------------
+        mensaje = (
+            f"✅ Se descargaron {len(archivos_descargados)} archivos correctamente."
+            if archivos_descargados else "⚠️ No se descargaron archivos."
+        )
+
+        return JsonResponse({
+            "mensaje": mensaje,
+            "descargados": archivos_descargados,
+            "omitidos": archivos_omitidos
         })
+
+    except Exception as e:
+        return JsonResponse({
+            "mensaje": f"❌ Error al descargar archivos: {e}",
+            "descargados": [],
+            "omitidos": []
+        })
+
 
 from django.shortcuts import render
 from .models import Estudiante

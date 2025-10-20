@@ -325,132 +325,53 @@ body {
     font-size: 0.8125rem;
 }
 
-/* Monitores grandes */
-@media (min-width: 1600px) {
-    .signin-btn a {
-        text-align: center; /* Centra el texto */
-        line-height: 20px; /* Centra el texto verticalmente */
-        font-size: 1rem; /* Definir un tamaño de fuente común */
-    }
-
-    .sidebar-items li a {
-        font-size: 0.875rem; /* Ajusta el tamaño del texto */
-        padding: 10px 15px;
-    }
-
-    .sidebar-items li a span {
-        font-size: 0.875rem;
-    }
-
-    /* Cambiar el texto cuando el mouse pasa por encima */
-    .signin-btn a::before {
-        font-size: 0.875rem; /* Definir un tamaño de fuente común */
-    }
-
-    .signin-btn a:hover::before {
-        font-size: 0.875rem; /* Definir un tamaño de fuente común */
-    }
-
-    .close-btn {
-        font-size: 0.875rem;
-    }
-
-    .footer {
-        height: 50px;
-    }
-
-    .bottom-footer p {
-        font-size: 1rem;
-    }
-
+/* ==========================================================
+   📌 Footer siempre abajo — versión estable y segura
+========================================================== */
+html {
+    height: 100%;
 }
 
+body {
+    min-height: 100vh;       /* ocupa todo el alto visible */
+    display: flex;
+    flex-direction: column;
+}
 
-@media (max-width: 768px) {
-    .sidebar {
-      width: 0;
-      padding-left: 0;
-      padding-right: 0;
-      overflow-x: hidden;
-    }
-  
-    .sidebar.active {
-      width: 70vw; /* ancho mayor para móvil */
-      padding: 35px 15px; /* espacio interno para que no quede pegado */
-    }
-  
-    /* Mostrar íconos y texto en items cuando el sidebar está activo */
-    .sidebar.active .sidebar-items li a i {
-      display: inline-block !important;
-    }
-  
-    .sidebar.active .sidebar-items li a span.text {
-      display: inline-block !important;
-    }
-  }
-  @media (max-width: 768px) {
-    img {
-      max-width: 100% !important;
-      height: auto !important;
-      display: block !important;
-      margin-bottom: 80px !important; /* espacio extra para el footer */
-      position: relative !important;
-      z-index: 1 !important;
-    }
-  
-    .footer {
-      position: fixed;
-      bottom: 0;
-      left: 0;
-      width: 100%;
-      z-index: 10;
-    }
-  
-    /* Asegurar que el main-content no quede detrás del footer */
-    .main-content {
-      padding-bottom: 60px; /* igual que el footer, ajustar si cambia */
-    }
-  }
-  @media (max-width: 768px) {
-    .hero-container {
-      display: flex;
-      flex-direction: column; /* apila verticalmente */
-      align-items: center;
-      padding-bottom: 80px; /* para espacio del footer */
-    }
-  
-    .hero-container img {
-      max-width: 90%;
-      height: auto;
-      margin-bottom: 20px;
-    }
-    .text-container {
-        position: relative;  /* para que el h1 pueda estar bien posicionado */
-        z-index: 10;         /* que esté por encima de la imagen */
-        padding: 10px 15px;  /* un poco de espacio interno */
-    }
-    
-    .text-container h1 {
-        font-size: 1.8rem;
-        margin-bottom: 15px;
-        text-align: center;
-        line-height: 1.2;
-        color: #000;        /* asegurate que el color contraste */
-        position: relative;
-        z-index: 11;        /* más arriba que el contenedor */
-    }
-    
-  
-    .footer {
-      position: fixed;
-      bottom: 0;
-      left: 0;
-      width: 100%;
-      z-index: 10;
-    }
-  
-    .main-content {
-      padding-bottom: 60px; /* para que el contenido no quede debajo del footer */
-    }
-  }
+main.principal {
+    flex: 1 0 auto;          /* ocupa todo el espacio disponible sin encoger */
+}
+
+footer.footer {
+    flex-shrink: 0;          /* evita que se achique */
+    height: auto;            /* deja que la altura sea natural */
+    padding: 10px 0;         /* espacio interno estable */
+}
+
+/* ==========================================================
+   🧩 Unificar escala tipográfica del footer en todas las vistas
+========================================================== */
+footer.footer {
+    font-size: 13px;          /* tamaño fijo */
+    line-height: 1.4;
+    transform: none !important;
+}
+
+footer.footer * {
+    font-size: inherit !important;
+    transform: none !important;
+}
+
+/* Evitar que el contexto de flex o zoom de otras secciones lo afecte */
+body,
+html,
+main,
+.alumnos-container,
+.student-card {
+    transform: none !important;
+    zoom: 1 !important;
+}
+
+/* ----------------------------------------------------- */
+
   
