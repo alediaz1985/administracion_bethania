@@ -131,7 +131,13 @@
     <!-- RESPONSABLES (Inline Formset) -->
     <div class="tab-content" id="tab-responsables">
       {{ resp_fs.management_form }}
+      {{ resp_fs.non_form_errors }}
+
       {% for form in resp_fs.forms %}
+        {% for hidden in form.hidden_fields %}
+          {{ hidden }}
+        {% endfor %}
+
         <h4>{{ form.instance.apellidos }}, {{ form.instance.nombres }}</h4>
         <table class="table-like">
           {{ form.non_field_errors }}
@@ -162,7 +168,6 @@
       {% empty %}
         <p>No hay responsables cargados.</p>
       {% endfor %}
-      {# Si querés un botón "Agregar responsable", dale extra=1 en el formset y/o un formset vacío adicional por JS #}
     </div>
 
     <!-- DOCUMENTACIÓN -->

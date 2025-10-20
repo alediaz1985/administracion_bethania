@@ -1355,28 +1355,41 @@ def _ensure_onetoones(estudiante: Estudiante):
     Documentacion.objects.get_or_create(estudiante=estudiante)
     EstadoDocumentacion.objects.get_or_create(estudiante=estudiante)
 
+
+
+
+
 @transaction.atomic
 def estudiante_edit(request, pk):
+    """
+    Edita Estudiante y TODAS sus OneToOne + responsables (inline formset).
+    - Usa prefixes que coinciden con el template.
+    - Acepta archivos (request.FILES) para cualquier campo File/Image.
+    - Guarda sólo si TODOS los formularios son válidos (transacción atómica).
+    """
     estudiante = get_object_or_404(Estudiante, pk=pk)
+
+    # Aseguramos que existan las OneToOne
     _ensure_onetoones(estudiante)
 
     # Instancias existentes
-    insc = estudiante.inscripcion
-    info = estudiante.info_academica
-    cont = estudiante.contacto
-    salud = estudiante.salud
-    docu = estudiante.documentacion
+    insc   = estudiante.inscripcion
+    info   = estudiante.info_academica
+    cont   = estudiante.contacto
+    salud  = estudiante.salud
+    docu   = estudiante.documentacion
     estado = estudiante.estado_documentacion
 
     if request.method == 'POST':
-        est_form   = EstudianteForm(request.POST, instance=estudiante, prefix='est')
-        insc_form  = InscripcionForm(request.POST, instance=insc,        prefix='insc')
-        info_form  = InformacionAcademicaForm(request.POST, instance=info, prefix='info')
-        cont_form  = ContactoEstudianteForm(request.POST, instance=cont,  prefix='cont')
-        salud_form = SaludEstudianteForm(request.POST, instance=salud,    prefix='salud')
-        docu_form  = DocumentacionForm(request.POST, instance=docu,       prefix='docu')
-        estd_form  = EstadoDocumentacionForm(request.POST, instance=estado, prefix='estado')
-        resp_fs    = ResponsableFormSet(request.POST, instance=estudiante, prefix='resp')
+        # ⬇️ IMPORTANTE: incluir request.FILES en todos (por simplicidad y seguridad)
+        est_form   = EstudianteForm(request.POST, request.FILES, instance=estudiante, prefix='est')
+        insc_form  = InscripcionForm(request.POST, request.FILES, instance=insc,        prefix='insc')
+        info_form  = InformacionAcademicaForm(request.POST, request.FILES, instance=info, prefix='info')
+        cont_form  = ContactoEstudianteForm(request.POST, request.FILES, instance=cont,  prefix='cont')
+        salud_form = SaludEstudianteForm(request.POST, request.FILES, instance=salud,    prefix='salud')
+        docu_form  = DocumentacionForm(request.POST, request.FILES, instance=docu,       prefix='docu')
+        estd_form  = EstadoDocumentacionForm(request.POST, request.FILES, instance=estado, prefix='estado')
+        resp_fs    = ResponsableFormSet(request.POST, request.FILES, instance=estudiante, prefix='resp')
 
         forms_ok = all([
             est_form.is_valid(),
@@ -1398,9 +1411,12 @@ def estudiante_edit(request, pk):
             docu_form.save()
             estd_form.save()
             resp_fs.save()
+            messages.success(request, "Cambios guardados correctamente.")
             return redirect('estudiante_list')
-
+        else:
+            messages.error(request, "Hay errores en el formulario. Revisá los campos resaltados.")
     else:
+        # GET: instanciar con datos actuales
         est_form   = EstudianteForm(instance=estudiante, prefix='est')
         insc_form  = InscripcionForm(instance=insc,        prefix='insc')
         info_form  = InformacionAcademicaForm(instance=info, prefix='info')
