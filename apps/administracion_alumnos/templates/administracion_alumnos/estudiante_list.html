@@ -105,6 +105,15 @@
                                             <i class="fas fa-file-pdf"></i>
                                         </button>
                                     </form>
+                                    <!-- Editar -->
+                                    <a href="{% url 'estudiante_edit' pk=estudiante.pk %}" class="icon-btn edit" title="Editar datos">
+                                        <i class="fas fa-edit"></i>
+                                    </a>
+
+                                    <!-- Eliminar -->
+                                    <a href="{% url 'estudiante_delete' pk=estudiante.pk %}" class="icon-btn delete" title="Eliminar registro">
+                                        <i class="fas fa-trash-alt"></i>
+                                    </a>
                                 </td>
                             </tr>
                         {% endfor %}
@@ -155,16 +164,29 @@
 
                                 <!-- Acciones -->
                                 <td class="acciones">
+                                    <!-- Ver datos -->
                                     <form action="{% url 'ver_datos_estudiante' pk=estudiante.pk %}" method="get" class="icon-form">
                                         <button class="icon-btn" title="Ver datos" type="submit">
                                             <i class="fas fa-search"></i>
                                         </button>
                                     </form>
+
+                                    <!-- Generar PDF -->
                                     <form action="{% url 'generar_contrato' estudiante.pk %}" method="get" class="icon-form">
                                         <button class="icon-btn pdf" title="Generar contrato PDF" type="submit">
                                             <i class="fas fa-file-pdf"></i>
                                         </button>
                                     </form>
+
+                                    <!-- Editar -->
+                                    <a href="{% url 'estudiante_edit' pk=estudiante.pk %}" class="icon-btn edit" title="Editar datos">
+                                        <i class="fas fa-edit"></i>
+                                    </a>
+
+                                    <!-- Eliminar -->
+                                    <a href="{% url 'estudiante_delete' pk=estudiante.pk %}" class="icon-btn delete" title="Eliminar registro">
+                                        <i class="fas fa-trash-alt"></i>
+                                    </a>
                                 </td>
                             </tr>
                         {% endfor %}
@@ -221,6 +243,15 @@
                                     <a class="icon-btn pdf" title="Generar contrato PDF" href="{% url 'generar_contrato' estudiante.pk %}" target="_blank" rel="noopener">
                                         <i class="fas fa-file-pdf"></i>
                                     </a>
+                                    <!-- Editar -->
+                                    <a href="{% url 'estudiante_edit' pk=estudiante.pk %}" class="icon-btn edit" title="Editar datos">
+                                        <i class="fas fa-edit"></i>
+                                    </a>
+
+                                    <!-- Eliminar -->
+                                    <a href="{% url 'estudiante_delete' pk=estudiante.pk %}" class="icon-btn delete" title="Eliminar registro">
+                                        <i class="fas fa-trash-alt"></i>
+                                    </a>
                                 </td>
                             </tr>
                         {% endfor %}
@@ -251,6 +282,19 @@
             letter-spacing: 0.2px;
         ">
     </div>
+
+    <!-- 🔸 MODAL CONFIRMACIÓN ELIMINAR -->
+    <div id="modal-delete" class="modal-overlay" style="display:none;">
+    <div class="modal-content">
+        <h3>¿Eliminar registro?</h3>
+        <p>¿Estás seguro de que querés eliminar este estudiante? Esta acción no se puede deshacer.</p>
+        <div class="modal-actions">
+        <button id="confirm-delete" class="btn-danger">Eliminar</button>
+        <button id="cancel-delete" class="btn-secondary">Cancelar</button>
+        </div>
+    </div>
+    </div>
+
 </div>
 
 <!-- =====================================================
@@ -401,6 +445,150 @@ document.addEventListener('DOMContentLoaded', () => {
         const nombre = row.cells[2]?.textContent.toLowerCase() || "";
         const visible = cuil.includes(query) || apellido.includes(query) || nombre.includes(query);
         row.style.display = visible ? "" : "none";
+      });
+    });
+  });
+});
+
+/* --------------------------------------------------
+   🔹 Confirmar eliminación con modal
+-------------------------------------------------- */
+document.addEventListener('DOMContentLoaded', () => {
+  const modal = document.getElementById('modal-delete');
+  const confirmBtn = document.getElementById('confirm-delete');
+  const cancelBtn = document.getElementById('cancel-delete');
+  let currentDeleteUrl = null;
+  let currentRow = null;
+
+  // Detectar clic en los íconos de eliminar
+  document.querySelectorAll('.icon-btn.delete').forEach(btn => {
+    btn.addEventListener('click', e => {
+      e.preventDefault();
+      currentDeleteUrl = btn.getAttribute('href');
+      currentRow = btn.closest('tr');
+      modal.style.display = 'flex';
+    });
+  });
+
+  // Confirmar eliminación
+  confirmBtn.addEventListener('click', () => {
+    if (!currentDeleteUrl) return;
+
+    fetch(currentDeleteUrl, {
+      method: 'POST',
+      headers: { 'X-CSRFToken': getCSRFToken() },
+    })
+    .then(res => res.json())
+    .then(data => {
+      if (data.success) {
+        currentRow.remove();
+        showToast('Registro eliminado', 'ok');
+      } else {
+        showToast('Error al eliminar', 'error');
+      }
+    })
+    .catch(() => showToast('Error al eliminar', 'error'))
+    .finally(() => {
+      modal.style.display = 'none';
+      currentDeleteUrl = null;
+    });
+  });
+
+  // Cancelar eliminación
+  cancelBtn.addEventListener('click', () => {
+    modal.style.display = 'none';
+    currentDeleteUrl = null;
+  });
+
+  // Función auxiliar para CSRF
+  function getCSRFToken() {
+    const name = 'csrftoken';
+    const cookies = document.cookie.split(';');
+    for (let c of cookies) {
+      c = c.trim();
+      if (c.startsWith(name + '=')) return c.substring(name.length + 1);
+    }
+    return '';
+  }
+});
+
+/* --------------------------------------------------
+   🔹 Ordenar columnas al hacer clic en el encabezado (FIX)
+-------------------------------------------------- */
+document.addEventListener('DOMContentLoaded', () => {
+  const tables = document.querySelectorAll('.alumnos-table');
+
+  tables.forEach(table => {
+    const headers = table.querySelectorAll('thead th');
+
+    headers.forEach((th, index) => {
+      // Evitamos ordenar la columna de acciones (la vacía con colspan)
+      if (th.colSpan > 1) return;
+
+      th.style.cursor = 'pointer';
+      th.dataset.order = 'asc'; // orden inicial
+
+      // Envolver texto del th y añadir contenedor de flecha
+      const label = th.textContent.trim();
+      th.textContent = '';
+      const textSpan = document.createElement('span');
+      textSpan.className = 'th-label';
+      textSpan.textContent = label;
+      const arrow = document.createElement('span');
+      arrow.className = 'sort-arrow';
+      th.appendChild(textSpan);
+      th.appendChild(arrow);
+
+      th.addEventListener('click', () => {
+        const tbody = table.querySelector('tbody');
+        const rows = Array.from(tbody.querySelectorAll('tr'));
+
+        const isDateColumn = /fecha/i.test(label);
+        const direction = th.dataset.order === 'asc' ? 1 : -1;
+
+        // Función robusta para parsear fechas dd/mm/yyyy o yyyy-mm-dd
+        const parseDate = (txt) => {
+          const t = txt.trim();
+          if (!t) return new Date('1970-01-01');
+          // dd/mm/yyyy -> yyyy-mm-dd
+          if (/^\d{1,2}\/\d{1,2}\/\d{2,4}$/.test(t)) {
+            const [d, m, y] = t.split('/');
+            return new Date(`${y.length===2 ? '20'+y : y}-${m.padStart(2,'0')}-${d.padStart(2,'0')}`);
+          }
+          return new Date(t);
+        };
+
+        rows.sort((a, b) => {
+          const aTxt = (a.cells[index]?.innerText || '').trim();
+          const bTxt = (b.cells[index]?.innerText || '').trim();
+
+          if (isDateColumn) {
+            return (parseDate(aTxt) - parseDate(bTxt)) * direction;
+          }
+
+          // numérico (incluye CUIL)
+          const aNum = aTxt.replace(/[^\d.-]/g, '');
+          const bNum = bTxt.replace(/[^\d.-]/g, '');
+          if (aNum !== '' && bNum !== '' && !isNaN(aNum) && !isNaN(bNum)) {
+            return (parseFloat(aNum) - parseFloat(bNum)) * direction;
+          }
+
+          // texto
+          return aTxt.localeCompare(bTxt, 'es', { sensitivity: 'base', numeric: true }) * direction;
+        });
+
+        // Alternar orden
+        th.dataset.order = th.dataset.order === 'asc' ? 'desc' : 'asc';
+
+        // Limpiar flechas de TODOS los th que tengan sort-arrow (evita null)
+        table.querySelectorAll('.sort-arrow').forEach(el => (el.textContent = ''));
+
+        // Poner flecha en el th activo
+        arrow.textContent = th.dataset.order === 'asc' ? '▲' : '▼';
+
+        // Renderizar
+        tbody.innerHTML = '';
+        rows.forEach(r => tbody.appendChild(r));
       });
     });
   });

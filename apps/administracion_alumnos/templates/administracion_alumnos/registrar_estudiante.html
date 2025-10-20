@@ -1,9 +1,132 @@
 {% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Registrar Nuevo Estudiante{% endblock %}
+
+{% block extra_styles %}
+<link rel="stylesheet" href="{% static 'administracion_alumnos/css/styles_registrar_alumno.css' %}">
+{% endblock %}
+
 {% block content %}
-<h2>Registrar Estudiante</h2>
-<form method="post" enctype="multipart/form-data">
+<form method="post">
   {% csrf_token %}
-  {{ form.as_p }}
-  <button type="submit">Guardar</button>
+  <div class="student-card">
+
+    <!-- CABECERA -->
+    <div class="student-header">
+      <img src="{% static 'images/default.jpg' %}" alt="Foto del Estudiante" class="student-photo">
+      <div class="student-info">
+        <h2>Registrar Estudiante</h2>
+        <p>Complete los datos para dar de alta un nuevo alumno en el sistema.</p>
+      </div>
+    </div>
+
+    <!-- BOTONES -->
+    <div class="student-actions">
+      <button type="submit" class="btn">Registrar</button>
+      <a href="{% url 'estudiante_list' %}" class="btn btn-light">Volver</a>
+    </div>
+
+    <!-- PESTAÑAS -->
+    <div class="tabs">
+      <button type="button" class="tab-button active" data-tab="datos">Datos Personales</button>
+      <button type="button" class="tab-button" data-tab="inscripcion">Inscripción</button>
+      <button type="button" class="tab-button" data-tab="academica">Académica</button>
+      <button type="button" class="tab-button" data-tab="contacto">Contacto</button>
+      <button type="button" class="tab-button" data-tab="salud">Salud</button>
+      <button type="button" class="tab-button" data-tab="responsables">Responsables</button>
+      <button type="button" class="tab-button" data-tab="documentacion">Documentación</button>
+      <button type="button" class="tab-button" data-tab="estado">Estado Doc.</button>
+    </div>
+
+    <!-- DATOS PERSONALES -->
+    <div class="tab-content active" id="tab-datos">
+      <table class="table-like">
+        {{ est_form.non_field_errors }}
+        <tr><th>Apellidos</th><td>{{ est_form.apellidos_estudiante }}</td></tr>
+        <tr><th>Nombres</th><td>{{ est_form.nombres_estudiante }}</td></tr>
+        <tr><th>Sexo</th><td>{{ est_form.sexo_estudiante }}</td></tr>
+        <tr><th>Fecha de Nacimiento</th><td>{{ est_form.fecha_nac_estudiante }}</td></tr>
+        <tr><th>Nacionalidad</th><td>{{ est_form.nacionalidad_estudiante }}</td></tr>
+        <tr><th>Religión</th><td>{{ est_form.religion_estudiante }}</td></tr>
+        <tr><th>CUIL</th><td>{{ est_form.cuil_estudiante }}</td></tr>
+        <tr><th>DNI</th><td>{{ est_form.dni_estudiante }}</td></tr>
+      </table>
+    </div>
+
+    <!-- INSCRIPCIÓN -->
+    <div class="tab-content" id="tab-inscripcion">
+      <table class="table-like">
+        {{ insc_form.as_table }}
+      </table>
+    </div>
+
+    <!-- ACADÉMICA -->
+    <div class="tab-content" id="tab-academica">
+      <table class="table-like">
+        {{ info_form.as_table }}
+      </table>
+    </div>
+
+    <!-- CONTACTO -->
+    <div class="tab-content" id="tab-contacto">
+      <table class="table-like">
+        {{ cont_form.as_table }}
+      </table>
+    </div>
+
+    <!-- SALUD -->
+    <div class="tab-content" id="tab-salud">
+      <table class="table-like">
+        {{ salud_form.as_table }}
+      </table>
+    </div>
+
+    <!-- RESPONSABLES -->
+    <div class="tab-content" id="tab-responsables">
+      {{ resp_fs.management_form }}
+      {% for form in resp_fs.forms %}
+        <table class="table-like">
+          {{ form.as_table }}
+        </table>
+        <hr>
+      {% empty %}
+        <p>No hay responsables cargados.</p>
+      {% endfor %}
+    </div>
+
+    <!-- DOCUMENTACIÓN -->
+    <div class="tab-content" id="tab-documentacion">
+      <table class="table-like">
+        {{ docu_form.as_table }}
+      </table>
+    </div>
+
+    <!-- ESTADO -->
+    <div class="tab-content" id="tab-estado">
+      <table class="table-like">
+        {{ estd_form.as_table }}
+      </table>
+    </div>
+
+  </div>
 </form>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+document.addEventListener("DOMContentLoaded", () => {
+  const tabButtons = document.querySelectorAll(".tab-button");
+  const tabContents = document.querySelectorAll(".tab-content");
+  tabButtons.forEach(button => {
+    button.addEventListener("click", () => {
+      const tabId = button.getAttribute("data-tab");
+      tabButtons.forEach(btn => btn.classList.remove("active"));
+      tabContents.forEach(tab => tab.classList.remove("active"));
+      button.classList.add("active");
+      document.getElementById("tab-" + tabId).classList.add("active");
+    });
+  });
+});
+</script>
 {% endblock %}

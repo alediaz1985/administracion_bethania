@@ -131,22 +131,79 @@ def ver_datos_estudiante(request, pk):
         }
     )
 
-from django.shortcuts import render, redirect
-from django.contrib import messages
-from .forms import EstudianteForm
-
 def registrar_estudiante(request):
     if request.method == 'POST':
-        form = EstudianteForm(request.POST, request.FILES)
-        if form.is_valid():
-            form.save()
-            messages.success(request, "Estudiante registrado correctamente.")
-            return redirect('registrar_alumno')  # O a donde quieras redirigir
+        est_form = EstudianteForm(request.POST)
+        insc_form = InscripcionForm(request.POST)
+        info_form = InformacionAcademicaForm(request.POST)
+        cont_form = ContactoEstudianteForm(request.POST)
+        salud_form = SaludEstudianteForm(request.POST)
+        docu_form = DocumentacionForm(request.POST)
+        estd_form = EstadoDocumentacionForm(request.POST)
+        resp_fs = ResponsableFormSet(request.POST)
+
+        if all([
+            est_form.is_valid(), insc_form.is_valid(), info_form.is_valid(),
+            cont_form.is_valid(), salud_form.is_valid(), docu_form.is_valid(),
+            estd_form.is_valid(), resp_fs.is_valid()
+        ]):
+            # Guardar estudiante principal
+            estudiante = est_form.save()
+
+            # Crear cada uno de los OneToOne relacionados
+            inscripcion = insc_form.save(commit=False)
+            inscripcion.estudiante = estudiante
+            inscripcion.save()
+
+            info_acad = info_form.save(commit=False)
+            info_acad.estudiante = estudiante
+            info_acad.save()
+
+            contacto = cont_form.save(commit=False)
+            contacto.estudiante = estudiante
+            contacto.save()
+
+            salud = salud_form.save(commit=False)
+            salud.estudiante = estudiante
+            salud.save()
+
+            docu = docu_form.save(commit=False)
+            docu.estudiante = estudiante
+            docu.save()
+
+            estado = estd_form.save(commit=False)
+            estado.estudiante = estudiante
+            estado.save()
+
+            # Guardar los responsables
+            resp_fs.instance = estudiante
+            resp_fs.save()
+
+            messages.success(request, "✅ Estudiante registrado correctamente.")
+            return redirect('estudiante_list')
         else:
-            messages.error(request, "Por favor corregí los errores del formulario.")
+            messages.error(request, "⚠️ Hay errores en el formulario. Revisá los campos resaltados.")
     else:
-        form = EstudianteForm()
-    return render(request, 'administracion_alumnos/registrar_estudiante.html', {'form': form})
+        est_form = EstudianteForm()
+        insc_form = InscripcionForm()
+        info_form = InformacionAcademicaForm()
+        cont_form = ContactoEstudianteForm()
+        salud_form = SaludEstudianteForm()
+        docu_form = DocumentacionForm()
+        estd_form = EstadoDocumentacionForm()
+        resp_fs = ResponsableFormSet()
+
+    context = {
+        'est_form': est_form,
+        'insc_form': insc_form,
+        'info_form': info_form,
+        'cont_form': cont_form,
+        'salud_form': salud_form,
+        'docu_form': docu_form,
+        'estd_form': estd_form,
+        'resp_fs': resp_fs,
+    }
+    return render(request, 'administracion_alumnos/registrar_estudiante.html', context)
 
 # Función para generar un PDF con todos los campos del estudiante
 def generar_pdf_estudiante_view(request, estudiante_id):
@@ -539,14 +596,13 @@ def estudiante_edit(request, pk):
 
 
 def estudiante_delete(request, pk):
-    # Aquí deberías usar `estudiante`, no `alumno`
     estudiante = get_object_or_404(Estudiante, pk=pk)
-    
+
     if request.method == 'POST':
-        estudiante.delete()  # Asegúrate de usar `estudiante`, no `alumno`
-        return redirect('estudiante_list')
-    
-    return render(request, 'administracion_alumnos/alumno_confirm_delete.html', {'estudiante': estudiante})
+        estudiante.delete()
+        return JsonResponse({'success': True})
+
+    return JsonResponse({'success': False, 'error': 'Método no permitido'})
 
 # ----------------------FUNCIONA--------------------------------
 def estudiante_consultar(request):

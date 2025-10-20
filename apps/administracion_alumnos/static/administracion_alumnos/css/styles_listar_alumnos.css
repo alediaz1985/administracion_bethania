@@ -80,14 +80,17 @@ body {
 }
 
 /* ==========================================================
-   🎛️ CELDAS DE ACCIÓN (Ver / PDF)
+   🎛️ CELDAS DE ACCIÓN (Ver / Editar / PDF / Eliminar)
 ========================================================== */
 td.acciones {
-    text-align: right;
+    text-align: center;
     white-space: nowrap;
-    padding-right: 12px;
+    padding: 0 2px;             /* menos espacio lateral */
+    width: 110px;               /* columna más compacta */
+    vertical-align: middle;
 }
 
+/* Formularios inline */
 .icon-form {
     display: inline-block;
     margin: 0;
@@ -98,30 +101,63 @@ td.acciones {
 .icon-btn {
     background: none;
     border: none;
-    color: #000;
+    color: #1a2942;             /* 🔹 color base azul oscuro */
     font-size: 14px;
     cursor: pointer;
-    padding: 4px 12px;
-    transition: color 0.2s ease, transform 0.2s ease;
+    padding: 3px 4px;           /* íconos más compactos */
+    margin: 0 1.5px;            /* separación visual ajustada */
+    transition: color 0.2s ease, transform 0.15s ease;
 }
 
 .icon-btn:hover {
-    color: #555;
-    transform: scale(1.1);
+    transform: scale(1.12);
 }
 
-/* Ícono PDF */
-.icon-btn.pdf {
-    color: #000;
+.icon-btn i {
+    display: inline-block;
+    width: 16px;                /* ancho uniforme para todos los íconos */
+    text-align: center;
 }
 
-.icon-btn.pdf:hover {
-    color: #c00;
+/* Corrección óptica para íconos con diferente ancho visual */
+.icon-btn.edit i {
+    margin-right: -1px;         /* lápiz parece más angosto */
 }
 
-/* Quitar espacio extra entre botones */
-td.acciones .icon-form + .icon-form {
-    margin-left: -2px;
+.icon-btn.delete i {
+    margin-left: -1px;          /* tacho parece más separado */
+}
+
+/* 🔍 Ver (azul oscuro) */
+.icon-btn.view i {
+    color: #1a2942;
+}
+.icon-btn.view:hover i {
+    color: #1a2942;
+}
+
+/* 📄 PDF (azul oscuro) */
+.icon-btn.pdf i {
+    color: #1a2942;
+}
+.icon-btn.pdf:hover i {
+    color: #1a2942;
+}
+
+/* 🖊️ Editar (amarillo en hover) */
+.icon-btn.edit i {
+    color: #1a2942;
+}
+.icon-btn.edit:hover i {
+    color: #f5b700;
+}
+
+/* 🗑️ Eliminar (rojo en hover) */
+.icon-btn.delete i {
+    color: #1a2942;
+}
+.icon-btn.delete:hover i {
+    color: #d00000;
 }
 
 /* ==========================================================
@@ -193,22 +229,58 @@ td.acciones .icon-form + .icon-form {
 }
 
 /* ==========================================================
-   🔍 FILTRO
+   🔍 FILTRO DE NIVEL — versión limpia y profesional
 ========================================================== */
 #nivel-filter {
-    padding: 8px 14px;
+    appearance: none;               /* quita algunos bordes nativos */
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    padding: 10px 40px 10px 14px;   /* espacio interior */
     font-size: 14px;
-    border: 1px solid #ccc;
-    border-radius: 6px;
-    background-color: #fff;
-    color: #333;
-    transition: border-color 0.2s ease;
+    font-weight: 500;
+    border: 1px solid #d1d5db;      /* borde suave */
+    border-radius: 8px;             /* bordes redondeados */
+    background-color: #ffffff;      /* fondo blanco limpio */
+    color: #1a1a1a;                 /* texto oscuro */
+    transition: all 0.25s ease;
+    cursor: pointer;
+    font-family: 'Poppins', sans-serif;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+    position: relative;
 }
 
+/* Hover y foco */
 #nivel-filter:hover,
 #nivel-filter:focus {
-    border-color: #999;
+    border-color: #1a2942;          /* azul institucional */
+    box-shadow: 0 0 6px rgba(26, 41, 66, 0.25);
     outline: none;
+}
+
+/* Flecha minimalista personalizada */
+#nivel-filter::after {
+    content: "";
+    position: absolute;
+    right: 16px;
+    top: 50%;
+    width: 7px;
+    height: 7px;
+    border-right: 2px solid #1a2942;
+    border-bottom: 2px solid #1a2942;
+    transform: translateY(-50%) rotate(45deg);
+    pointer-events: none;
+}
+
+/* Opciones */
+#nivel-filter option {
+    background: #ffffff;
+    color: #1a1a1a;
+    font-weight: 500;
+}
+
+/* Hover de opción (para navegadores modernos) */
+#nivel-filter option:hover {
+    background: #f4f4f4;
 }
 
 /* ==========================================================
@@ -324,6 +396,95 @@ td.acciones .icon-form + .icon-form {
 .btn-minimal.loading {
     opacity: 0.6;
     pointer-events: none;
+}
+
+/* ==========================================================
+   🪟 MODAL DE CONFIRMACIÓN
+========================================================== */
+.modal-overlay {
+  position: fixed;
+  top: 0; left: 0;
+  width: 100vw; height: 100vh;
+  background: rgba(0,0,0,0.6);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+}
+
+.modal-content {
+  background: #fff;
+  border-radius: 10px;
+  padding: 25px 35px;
+  text-align: center;
+  box-shadow: 0 5px 25px rgba(0,0,0,0.3);
+  width: 90%;
+  max-width: 420px;
+  animation: fadeInScale 0.25s ease-out;
+}
+
+.modal-content h3 {
+  margin-bottom: 10px;
+  font-size: 1.2rem;
+  color: #1a2942;
+}
+
+.modal-content p {
+  font-size: 0.9rem;
+  color: #333;
+  margin-bottom: 20px;
+}
+
+.modal-actions {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+}
+
+.btn-danger {
+  background-color: #d00000;
+  color: #fff;
+  border: none;
+  padding: 8px 18px;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.btn-danger:hover {
+  background-color: #a40000;
+}
+
+.btn-secondary {
+  background-color: #ccc;
+  border: none;
+  padding: 8px 18px;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.btn-secondary:hover {
+  background-color: #b3b3b3;
+}
+
+@keyframes fadeInScale {
+  from { opacity: 0; transform: scale(0.9); }
+  to { opacity: 1; transform: scale(1); }
+}
+
+/* ==========================================================
+   🔽 Flechas de ordenamiento (minimalistas)
+========================================================== */
+.sort-arrow {
+  margin-left: 6px;
+  font-size: 0.75rem;
+  color: #1a2942;
+  transition: transform 0.2s ease;
+}
+
+.alumnos-table th:hover .sort-arrow {
+  transform: scale(1.1);
 }
 
 /* ==========================================================
