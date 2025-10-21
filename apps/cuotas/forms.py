@@ -142,3 +142,116 @@ class GenerarCuotasForm(forms.Form):
         required=True,
         label="Confirmo que deseo generar/actualizar cuotas para todas las inscripciones del ciclo seleccionado."
     )
+
+
+# ─────────────────────────────────────────────────────────
+# Curso (con validaciones y UX mejorada)
+# ─────────────────────────────────────────────────────────
+class CursoForm(forms.ModelForm):
+    # Declaramos explícitamente para controlar validaciones/UX
+    nombre = forms.CharField(
+        label="Nombre del curso",
+        max_length=100,
+        widget=forms.TextInput(attrs={
+            "class": "form-control",
+            "placeholder": "Ej.: 1° A, 2° B, Sala 4, etc.",
+            "autofocus": "autofocus",
+            "autocomplete": "off"
+        }),
+        help_text="Usá un nombre distintivo dentro del nivel (se valida unicidad por nivel)."
+    )
+
+    monto_cuota_override = forms.DecimalField(
+        label="Monto mensual (override)",
+        required=False,
+        min_value=Decimal("0"),
+        decimal_places=2,
+        max_digits=10,
+        widget=forms.NumberInput(attrs={
+            "class": "form-control",
+            "placeholder": "Dejar vacío para usar la tarifa del nivel",
+            "step": "0.01",
+            "inputmode": "decimal"
+        }),
+        help_text="Si lo dejás vacío, se usa la tarifa mensual definida para el nivel."
+    )
+
+    monto_inscripcion_override = forms.DecimalField(
+        label="Inscripción (override)",
+        required=False,
+        min_value=Decimal("0"),
+        decimal_places=2,
+        max_digits=10,
+        widget=forms.NumberInput(attrs={
+            "class": "form-control",
+            "placeholder": "Dejar vacío para usar la tarifa del nivel",
+            "step": "0.01",
+            "inputmode": "decimal"
+        }),
+        help_text="Si lo dejás vacío, se usa la inscripción definida para el nivel."
+    )
+
+    class Meta:
+        model = Curso
+        fields = ["nivel", "nombre", "monto_cuota_override", "monto_inscripcion_override"]
+        widgets = {
+            "nivel": forms.Select(attrs={"class": "form-select"}),
+        }
+        labels = {
+            "nivel": "Nivel",
+        }
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        # Ordena niveles para mejor UX y agrega etiqueta de vacío
+        self.fields["nivel"].queryset = Nivel.objects.order_by("nombre")
+        self.fields["nivel"].empty_label = "— Seleccioná un nivel —"
+
+        # Normaliza valores iniciales (si quisieras formatear, acá es el lugar)
+        # No es estrictamente necesario porque Django ya los muestra correctos.
+
+    # Normalización “suave”: string → None y money() para asegurar dos decimales
+    def _normalize_money_or_none(self, value):
+        if value in ("", None):
+            return None
+        return money(value)
+
+    def clean_nombre(self):
+        nombre = (self.cleaned_data.get("nombre") or "").strip()
+        # Podés ajustar el casing si querés estandarizar
+        # p.ej. nombre = nombre.upper()
+        if not nombre:
+            raise ValidationError("El nombre del curso no puede estar vacío.")
+        return nombre
+
+    def clean_monto_cuota_override(self):
+        value = self.cleaned_data.get("monto_cuota_override")
+        if value in ("", None):
+            return None
+        if value < 0:
+            raise ValidationError("El monto no puede ser negativo.")
+        return self._normalize_money_or_none(value)
+
+    def clean_monto_inscripcion_override(self):
+        value = self.cleaned_data.get("monto_inscripcion_override")
+        if value in ("", None):
+            return None
+        if value < 0:
+            raise ValidationError("El monto no puede ser negativo.")
+        return self._normalize_money_or_none(value)
+
+    def clean(self):
+        data = super().clean()
+        nivel = data.get("nivel")
+        nombre = data.get("nombre")
+
+        # Validación de unicidad a nivel formulario (evita esperar al error de DB)
+        if nivel and nombre:
+            exists = Curso.objects.filter(
+                nivel=nivel,
+                nombre__iexact=nombre
+            ).exclude(pk=getattr(self.instance, "pk", None)).exists()
+            if exists:
+                self.add_error("nombre", "Ya existe un curso con ese nombre en este nivel.")
+
+        return data

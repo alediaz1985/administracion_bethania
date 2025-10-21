@@ -424,3 +424,143 @@ def ciclo_lectivo_list(request):
 
     return render(request, "cuotas/ciclo_lectivo_list.html", {"ciclos": ciclos, "form": form})
 
+
+# apps/cuotas/views/curso_views.py
+from django.contrib import messages
+from django.contrib.messages.views import SuccessMessageMixin
+from django.db import IntegrityError, transaction
+from django.db.models import Q
+from django.http import JsonResponse
+from django.shortcuts import redirect
+from django.urls import reverse_lazy
+from django.views.generic import ListView, CreateView, UpdateView, DeleteView
+
+from .models import Curso, Nivel
+from .forms import CursoForm
+
+
+# ─────────────────────────────────────────────────────────
+# Helpers
+# ─────────────────────────────────────────────────────────
+def _qs_filtrado(request):
+    """
+    Aplica filtros de querystring:
+      - q: busca por nombre del curso y nombre del nivel
+      - nivel: id del nivel
+    """
+    qs = Curso.objects.select_related("nivel").all()
+
+    q = (request.GET.get("q") or "").strip()
+    if q:
+        qs = qs.filter(
+            Q(nombre__icontains=q) |
+            Q(nivel__nombre__icontains=q)
+        )
+
+    nivel_id = request.GET.get("nivel")
+    if nivel_id:
+        qs = qs.filter(nivel_id=nivel_id)
+
+    # El ordenamiento por defecto ya lo define el Meta.ordering del modelo.
+    return qs
+
+
+# ─────────────────────────────────────────────────────────
+# Listado
+# ─────────────────────────────────────────────────────────
+class CursoListView(ListView):
+    model = Curso
+    template_name = "cuotas/curso_list.html"
+    context_object_name = "cursos"
+    paginate_by = 20  # ajustá a gusto
+
+    def get_queryset(self):
+        return _qs_filtrado(self.request)
+
+    def get_context_data(self, **kwargs):
+        ctx = super().get_context_data(**kwargs)
+        ctx["niveles"] = Nivel.objects.order_by("nombre")
+        ctx["nivel_seleccionado"] = self.request.GET.get("nivel") or ""
+        ctx["q"] = self.request.GET.get("q") or ""
+        ctx["total"] = self.get_queryset().count()
+        return ctx
+
+
+# ─────────────────────────────────────────────────────────
+# Mixins para Create/Update con manejo de IntegrityError
+# ─────────────────────────────────────────────────────────
+class CursoBaseEditMixin(SuccessMessageMixin):
+    model = Curso
+    form_class = CursoForm
+    template_name = "cuotas/curso_form.html"
+    success_url = reverse_lazy("cuotas:curso_list")
+    success_message = "Curso guardado correctamente."
+
+    def form_valid(self, form):
+        """
+        Protegemos el guardado ante posibles carreras de escritura que violen
+        unique_together (nivel + nombre), devolviendo un error amigable.
+        """
+        try:
+            with transaction.atomic():
+                return super().form_valid(form)
+        except IntegrityError:
+            form.add_error("nombre", "Ya existe un curso con ese nombre en este nivel.")
+            # No usamos messages acá para que quede asociado al campo
+            return self.form_invalid(form)
+
+
+# ─────────────────────────────────────────────────────────
+# Crear
+# ─────────────────────────────────────────────────────────
+class CursoCreateView(CursoBaseEditMixin, CreateView):
+    # success_message ya definido en mixin
+    pass
+
+
+# ─────────────────────────────────────────────────────────
+# Editar
+# ─────────────────────────────────────────────────────────
+class CursoUpdateView(CursoBaseEditMixin, UpdateView):
+    success_message = "Curso actualizado correctamente."
+
+
+# ─────────────────────────────────────────────────────────
+# Eliminar
+# ─────────────────────────────────────────────────────────
+class CursoDeleteView(DeleteView):
+    model = Curso
+    template_name = "cuotas/curso_confirm_delete.html"
+    success_url = reverse_lazy("cuotas:curso_list")
+
+    def delete(self, request, *args, **kwargs):
+        """
+        Si no se puede borrar por integridad referencial (por ejemplo, Inscripciones
+        que referencian este Curso), mostramos un mensaje y redirigimos.
+        """
+        try:
+            response = super().delete(request, *args, **kwargs)
+            messages.success(request, "Curso eliminado correctamente.")
+            return response
+        except IntegrityError:
+            messages.error(
+                request,
+                "No se puede eliminar el curso porque está en uso (tiene relaciones asociadas)."
+            )
+            return redirect(self.success_url)
+
+
+# ─────────────────────────────────────────────────────────
+# (Opcional) Endpoint JSON para selects dependientes
+#   GET /cuotas/api/cursos?nivel=<id>
+# ─────────────────────────────────────────────────────────
+def cursos_por_nivel_api(request):
+    nivel_id = request.GET.get("nivel")
+    qs = Curso.objects.select_related("nivel")
+    if nivel_id:
+        qs = qs.filter(nivel_id=nivel_id)
+    data = [
+        {"id": c.id, "nombre": c.nombre, "nivel": c.nivel.nombre}
+        for c in qs.order_by("nombre")
+    ]
+    return JsonResponse({"results": data})

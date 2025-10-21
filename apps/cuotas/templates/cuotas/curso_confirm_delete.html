@@ -1,0 +1,37 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Eliminar curso{% endblock %}
+{% block extra_styles %}
+<link rel="stylesheet" href="{% static 'cuotas/css/cursos.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="student-card cuotas-card">
+  <div class="student-header cuotas-header">
+    <div>
+      <h2>Eliminar curso</h2>
+      <p class="cuotas-header__subtitle">Esta acción no se puede deshacer.</p>
+    </div>
+    <div class="student-actions">
+      <a class="btn btn-light" href="{% url 'cuotas:curso_list' %}">Volver al listado</a>
+    </div>
+  </div>
+
+  {% if messages %}
+    {% for message in messages %}
+      <div class="alert {% if message.tags %}alert-{{ message.tags }}{% endif %}">{{ message }}</div>
+    {% endfor %}
+  {% endif %}
+
+  <p>¿Confirmás que querés eliminar el curso <strong>{{ object }}</strong>?</p>
+
+  <form method="post" style="margin-top:1rem;">
+    {% csrf_token %}
+    <div class="student-actions">
+      <button type="submit" class="btn" style="background:#b3261e; border-color:#b3261e;">Sí, eliminar</button>
+      <a class="btn btn-light" href="{% url 'cuotas:curso_list' %}">Cancelar</a>
+    </div>
+  </form>
+</div>
+{% endblock %}

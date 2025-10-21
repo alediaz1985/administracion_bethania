@@ -2,6 +2,12 @@ from django.urls import path
 from django.conf import settings
 from django.conf.urls.static import static
 from . import views
+from django.urls import path
+from .views import (
+    CursoListView, CursoCreateView, CursoUpdateView, CursoDeleteView,
+    cursos_por_nivel_api
+)
+
 
 app_name = "cuotas"
 
@@ -30,9 +36,14 @@ urlpatterns = [
     # ========================
     # 🎓 CURSOS
     # ========================
-    path("cursos/", views.CursoListView.as_view(), name="curso_list"),
-    path("cursos/nuevo/", views.CursoCreateView.as_view(), name="curso_create"),
-    path("cursos/<int:pk>/editar/", views.CursoUpdateView.as_view(), name="curso_update"),
+
+    path("cursos/", CursoListView.as_view(), name="curso_list"),
+    path("cursos/nuevo/", CursoCreateView.as_view(), name="curso_create"),
+    path("cursos/<int:pk>/editar/", CursoUpdateView.as_view(), name="curso_update"),
+    path("cursos/<int:pk>/eliminar/", CursoDeleteView.as_view(), name="curso_delete"),
+
+    # opcional API
+    path("api/cursos", cursos_por_nivel_api, name="api_cursos_por_nivel"),
 
     # ========================
     # 💰 PLANES / TARIFAS

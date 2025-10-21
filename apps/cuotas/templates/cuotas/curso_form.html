@@ -1,0 +1,84 @@
+{% extends "base.html" %}
+{% load static %}
+{% load crispy_forms_tags %}
+
+{% block title %}
+  {% if view.object %}Editar curso{% else %}Nuevo curso{% endif %}
+{% endblock %}
+
+{% block extra_styles %}
+<link rel="stylesheet" href="{% static 'cuotas/css/cursos.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="student-card cuotas-card">
+  <!-- CABECERA -->
+  <div class="student-header cuotas-header">
+    <div>
+      <h2>{% if view.object %}Editar curso{% else %}Nuevo curso{% endif %}</h2>
+      <p class="cuotas-header__subtitle">
+        Completá los datos. Los campos override son opcionales.
+      </p>
+    </div>
+    <div class="student-actions">
+      <a class="btn btn-light" href="{% url 'cuotas:curso_list' %}">Volver al listado</a>
+    </div>
+  </div>
+
+  <!-- MENSAJES -->
+  {% if messages %}
+    {% for message in messages %}
+      <div class="alert {% if message.tags %}alert-{{ message.tags }}{% endif %}">
+        {{ message }}
+      </div>
+    {% endfor %}
+  {% endif %}
+
+  <!-- TABS -->
+  <div class="tabs">
+    <button type="button" class="tab-button active" data-tab="tab-datos">Datos básicos</button>
+    <button type="button" class="tab-button" data-tab="tab-ayuda">Ayuda</button>
+  </div>
+
+  <!-- CONTENIDO TAB DATOS -->
+  <div id="tab-datos" class="tab-content active">
+    <form method="post" novalidate>
+      {% csrf_token %}
+
+      {% if form.non_field_errors %}
+        <div class="alert alert-error">{{ form.non_field_errors }}</div>
+      {% endif %}
+
+      {{ form|crispy }}
+
+      <div class="student-actions" style="margin-top:1rem;">
+        <button class="btn" type="submit">Guardar</button>
+        <a class="btn btn-light" href="{% url 'cuotas:curso_list' %}">Cancelar</a>
+      </div>
+    </form>
+  </div>
+
+  <!-- CONTENIDO TAB AYUDA -->
+  <div id="tab-ayuda" class="tab-content">
+    <p class="form-help">
+      • <strong>Nombre del curso:</strong> se valida la unicidad dentro del mismo nivel.<br>
+      • <strong>Override de montos:</strong> si los dejás vacíos, se usan las tarifas definidas en el nivel.<br>
+      • <strong>Atajo:</strong> podés cambiar de pestaña sin perder datos antes de guardar.<br>
+      • Los campos con <strong>*</strong> son obligatorios.
+    </p>
+  </div>
+</div>
+
+<script>
+  // --- Tabs interactivas sin dependencias ---
+  document.querySelectorAll('.tab-button').forEach(btn=>{
+    btn.addEventListener('click', ()=>{
+      const id = btn.dataset.tab;
+      document.querySelectorAll('.tab-button').forEach(b=>b.classList.remove('active'));
+      document.querySelectorAll('.tab-content').forEach(c=>c.classList.remove('active'));
+      btn.classList.add('active');
+      document.getElementById(id).classList.add('active');
+    });
+  });
+</script>
+{% endblock %}
