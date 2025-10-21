@@ -358,6 +358,7 @@ td.acciones {
     font-size: 14px;
     cursor: pointer;
     transition: all 0.2s ease-in-out;
+    text-decoration: none; /* ❌ sin subrayado */
 }
 
 .btn-minimal i {
@@ -383,6 +384,12 @@ td.acciones {
 .btn-minimal[title="Actualizar datos"]:hover {
     color: #0d6efd;
     border-color: #0d6efd;
+}
+
+/* Hover Registrar */
+.btn-minimal[title="Registrar nuevo estudiante"]:hover {
+    color: #0b874b;            /* Verde profesional */
+    border-color: #0b874b;
 }
 
 /* ==========================================================
@@ -525,6 +532,14 @@ td.acciones {
 
     /* Botones minimalistas de ícono */
     .icon-btn {
+        font-size: 12px;
+    }
+
+    .btn-minimal {
+        font-size: 12px;
+    }
+
+    .search-box input {
         font-size: 12px;
     }
 }
