@@ -234,37 +234,26 @@
    Controla tamaño general
 ============================ */
 @media screen and (max-width: 1366px) and (max-height: 768px) {
-  /* 🔧 Control global del texto (afecta todo el contenido proporcionalmente) */
-  html {
-    font-size: 13px; /* cambiá a 13px o 15px para más chico o más grande */
-  }
-
-  /* 🔹 Tamaño de texto de las pestañas */
-  .tab-button {
-    font-size: 0.8rem; /* ✅ acá controlás SOLO la letra de las pestañas */
+  .student-card .tab-button {
+    font-size: 0.65rem;
     padding: 8px 10px;
   }
 
   .student-card {
     max-width: 1080px;
     padding: 1.5rem;
+    font-size: 0.75rem;
   }
 
-  .student-info h2 {
-    font-size: 1.05rem;
-  }
-
-  .student-info p {
-    font-size: 0.9rem;
-  }
-
+  .student-info h2,
+  .student-info p,
   .tab-content input {
-    font-size: 0.85rem;
+    font-size: 0.75rem;
   }
 
   .btn {
     width: 130px;
-    font-size: 0.85rem;
+    font-size: 0.65rem;
     padding: 0.35rem 0;
   }
 }
