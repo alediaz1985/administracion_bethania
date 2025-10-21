@@ -33,7 +33,6 @@ body {
     height: calc(100vh - 216px);
     overflow-y: auto;
     border: 1px solid #ccc;
-    padding: 10px;
     background-color: #fff;
     border-radius: 10px;
     box-shadow: 0 4px 25px rgba(0, 0, 0, 0.5);
@@ -57,16 +56,24 @@ body {
 .alumnos-table td {
     padding: 12px;
     text-align: left;
-    border-bottom: 1px solid #ddd;
+    border-bottom: 1px solid #bbbbbb;  /* línea horizontal */
+    border-right: 1px solid #bbbbbb;   /* línea vertical entre columnas */
     font-size: 13px;
     word-wrap: break-word;
     max-width: 200px;
 }
 
+/* 🔹 Elimina la línea de la última columna (para no duplicar borde) */
+.alumnos-table th:last-child,
+.alumnos-table td:last-child {
+    border-right: none;
+}
+
 .alumnos-table th {
-    background-color: #eff4f9;
+    background-color: #d6dbe1;
     color: #333;
     font-weight: bold;
+    border: 1px solid #bbbbbb;
 }
 
 .alumnos-table tbody tr:hover {
@@ -172,7 +179,7 @@ td.acciones {
   flex-wrap: nowrap;
   justify-content: flex-start;     /* Alineadas a la izquierda */
   gap: 6px;
-  margin: 0.5rem 0 0.1rem 1rem;           /* Separación similar */
+  margin: 1rem 0 0.1rem 1rem;           /* Separación similar */
   scrollbar-width: thin;
   scrollbar-color: #1a2942 #eaeaea;
 }
@@ -188,11 +195,11 @@ td.acciones {
 
 /* Botones */
 .tab-button {
-  width: 180px;                    /* Todas con el mismo ancho */
+  width: 140px;                    /* Todas con el mismo ancho */
   background: #f9f9f9;
   border: 1px solid #b8b8b8;
   border-bottom: none;
-  padding: 10px 14px;
+  padding: 10px 10px;
   cursor: pointer;
   font-weight: 600;
   border-radius: 8px 8px 0 0;
