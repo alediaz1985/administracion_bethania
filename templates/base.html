@@ -13,7 +13,7 @@
     <!-- Estilos -->
     <link rel="stylesheet" href="{% static 'css/styles_home.css' %}">
     <link rel="stylesheet" href="{% static 'css/base.css' %}">
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@500&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Verdana&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
     {% block extra_styles %}
@@ -37,57 +37,40 @@
     {% if user.is_authenticated %}
     <!-- Mostrar contenido solo si el usuario ha iniciado sesión -->
 
-        <!-- Barra de navegación Lateral -->
-        <div class="barra-lateral">
-            <div id="sidebar" class="sidebar">
-                <ul class="sidebar-items">
-                    <li>
-                        <a href="{% url 'home' %}" onclick="window.location.href=this.href; return false;">
-                            <i class="fas fa-home"></i>
-                            <span class="text">Inicio</span>
-                        </a>
-                    </li>
-                    <li>
-                        <a href="#">
-                            <span class="text">Alumno</span>
-                            <button class="expand-btn">+</button>
-                        </a>
-                        <ul class="subitems">
-                            <li><a href="{% url 'estudiante_list' %}">● Lista de Alumnos</a></li>
-                            <li><a href="{% url 'consultar_alumno' %}">● Consultar Alumnos</a></li>
-                            <li><a href="{% url 'registrar_alumno' %}">● Registrar Alumno</a></li>
-                        </ul>
-                    </li>
-                    <li>
-                        <a href="{% url 'dashboard:panel' %}" onclick="window.location.href=this.href; return false;">
-                            <i class="fas fa-chart-pie"></i>
-                            <span class="text">Dashboard</span>
-                        </a>
-                    </li>
-                    <li>
-                        <a href="#">
-                            <span class="text">Configuración</span>
-                            <button class="expand-btn">+</button>
-                        </a>
-                        <ul class="subitems">
-                            <li><a href="#">● Configurar Usuario</a></li>
-                        </ul>
-                    </li>
-                </ul>
-            </div>
-            <div class="boton-open">
-                <button class="open-btn" onclick="toggleSidebar()">
-                    <i class="fas fa-bars" id="toggle-icon"></i>
-                </button>
-            </div>
-        </div>
-
         <nav class="navbar">
-            <ul class="nav-items">
-                <li class="logo"><img src="{% static 'img/logo1.png' %}" alt="Poseidon"></li>
+            <!-- IZQUIERDA -->
+            <div class="nav-left">
+                <a href="{% url 'home' %}" class="logo-link">
+                    <img src="{% static 'img/logo1.png' %}" alt="Logo" class="nav-logo">
+                    <div class="nav-title">
+                    UEGP N°82<br>
+                    <span class="subtitle">"Hogar de Bethania"</span>
+                    </div>
+                </a>
+            </div>
+
+            <!-- CENTRO -->
+            <ul class="nav-center">
+                <li><a href="{% url 'estudiante_list' %}">Estudiantes</a></li>
+                <li><a href="{% url 'cuotas:home' %}">Cuotas</a></li>
+                <li><a href="{% url 'dashboard:panel' %}">Dashboard</a></li>
             </ul>
-            <div class="signin-btn">
-                <a href="{% url 'cerrar_sesion' %}" id="signin-link"></a>
+
+            <!-- DERECHA -->
+            <div class="nav-right">
+                <div class="user-info">
+                    <i class="fas fa-user user-icon"></i>
+                    <span class="user-name">{{ user.username }}</span>
+                </div>
+                
+                <div class="icon-container">
+                    <a href="#" class="icon-btn" title="Configuración">
+                    <i class="fas fa-cog"></i>
+                    </a>
+                    <a href="{% url 'cerrar_sesion' %}" class="icon-btn" title="Cerrar sesión">
+                    <i class="fas fa-sign-out-alt"></i>
+                    </a>
+                </div>
             </div>
         </nav>
 
@@ -98,11 +81,14 @@
             {% endblock %}
         </main>
 
-        <!-- Pie de página -->
+        <!-- FOOTER -->
         <footer class="footer">
-            <div class="bottom-footer">
-                <p>© <span id="anio-actual"></span> - Sistema de Gestión de Alumnos | UEGP N°82 "Hogar de Bethania" | Versión 1.0.0</p>
-            </div>
+            <p>
+                © <span id="anio-actual"></span> · Sistema de Gestión de Alumnos  
+                <span class="footer-sep">·</span>  
+                Desarrollado por 
+                <span class="team-name">A.A.R.A.F.</span>
+            </p>
         </footer>
 
     {% else %}
@@ -117,6 +103,10 @@
     <script src="https://unpkg.com/lucide@latest"></script>
     <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
 
-    {% block extra_js %}{% endblock %}
+    {% block extra_js %}
+    <script>
+        document.getElementById("anio-actual").textContent = new Date().getFullYear();
+    </script>
+    {% endblock %}
 </body>
 </html>

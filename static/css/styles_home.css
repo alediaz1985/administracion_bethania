@@ -5,8 +5,8 @@ html, body {
 }
 
 .block-content-hero {
-    width: 96%;
-    height: calc(100vh - 90px);  /* Restando los 140px del nav y footer */
+    width: 100%;
+    height: calc(100vh - 105px);  /* Restando los 140px del nav y footer */
     float: right;
 }
 

@@ -13,8 +13,8 @@ body {
    📦 CONTENEDOR PRINCIPAL
 ========================================================== */
 .alumnos-container {
-    width: 96%;
-    padding: 5px 15px;
+    width: 100%;
+    padding: 15px 25px;
     float: right;
     margin-bottom: 0.5rem;
 }
@@ -23,7 +23,7 @@ body {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin: 20px 0;
+    margin: 10px 0;
 }
 
 /* ==========================================================
@@ -49,6 +49,10 @@ body {
     background-color: #f8fafc;
 }
 
+.alumnos-table th {
+    background-color: #000;
+}
+
 .alumnos-table th,
 .alumnos-table td {
     padding: 12px;
@@ -66,7 +70,7 @@ body {
 }
 
 .alumnos-table tbody tr:hover {
-    background-color: #f1f1f1;
+    background-color: #d6dbe1;
 }
 
 /* Enlaces dentro de la tabla */
@@ -245,7 +249,7 @@ td.acciones {
     transition: all 0.25s ease;
     cursor: pointer;
     font-family: 'Poppins', sans-serif;
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+    box-shadow: 0 0 15px rgba(0, 0, 0, 0.35);
     position: relative;
 }
 
@@ -304,7 +308,7 @@ td.acciones {
     color: #1a1a1a;
     outline: none;
     transition: all 0.25s ease;
-    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 0 15px rgba(0, 0, 0, 0.35);
 }
 
 .search-box input::placeholder {
@@ -345,7 +349,8 @@ td.acciones {
     display: flex;
     align-items: center;
     gap: 6px;
-    background: transparent;
+    background: #ffffff;
+    box-shadow: 0 0 15px rgba(0, 0, 0, 0.35);
     color: #1e1e1e;
     border: 1px solid #ccc;
     border-radius: 6px;
@@ -511,6 +516,15 @@ td.acciones {
     }
 
     .search-box input {
+        font-size: 12px;
+    }
+
+    td.acciones {
+        padding: 0 1px;
+    }
+
+    /* Botones minimalistas de ícono */
+    .icon-btn {
         font-size: 12px;
     }
 }

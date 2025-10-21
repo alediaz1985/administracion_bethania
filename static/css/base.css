@@ -1,377 +1,294 @@
+/* =====================================================
+   🎨 RESETEO GENERAL
+===================================================== */
 * {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-    font-family: 'Poppins', sans-serif;
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: 'Inter', sans-serif;
 }
 
-body {
-    background-color: #f4f4f4;
-}
-
-/* Barra Lateral */
-
-.barra-lateral {
-    display: flex;
-    flex-direction: column;
-    width: 4%;
-}
-
-.sidebar {
-    width: 4%; 
-    height: 100vh;
-    background-color: #f9f9f9;
-    color: #ecf0f1;
-    position: fixed;
-    top: 0;
-    left: 0;
-    transition: width 0.3s ease; 
-    z-index: 1001;
-    overflow: hidden; 
-    padding: 35px 0;
-    color: #000;
-}
-
-.sidebar.active {
-    width: 15%;
-}
-
-.sidebar.active .close-btn {
-    display: block;
-    color: #1d1d1d;
-}
-
-.sidebar-items {
-    list-style: none;
-    padding: 30px 0;
-    margin: 0;
-    color: #000;
-    font-size: 2rem;
-}
-
-.sidebar-items li {
-    text-align: start;
-    margin: 5px 5px;
-    position: relative; 
-    color: #000
-}
-
-
-.sidebar-items li a {
-    display: flex; 
-    align-items: center;
-    text-decoration: none;
-    color: #1d1d1d;
-    font-size: 1rem;
-    transition: color 0.3s, background 0.3s;
-    padding: 5px 5px;
-    color: #000
-}
-
-.sidebar-items li a i {
-    padding: 4px 5px;
-}
-
-.sidebar.active .sidebar-items li a i {
-    display: none; 
-}
-
-.sidebar:not(.active) .sidebar-items li a i {
-    margin-right: 10px; 
-    font-size: 1.2rem; /* Barra frontal */
-    display: inline-block;
-    margin: auto
-}
-
-.sidebar-items li a span {
-    padding: 6px;
-    color: #000;
-    font-family: 'Poppins', sans-serif;
-    font-size: 0.6875rem; 
-}
-
-
-.sidebar:not(.active) .sidebar-items li a span.text {
-    display: none;
-}
-
-.sidebar-items li a:active {
-    background-color: rgba(0, 0, 0, 0.9);
-    color: white;
-    border-radius: 5px;
-}
-
-.subitems {
-    display: none; 
-    list-style-type: none;
-    margin: 0;
-    padding-left: 20px;
-}
-
-.subitems li {
-    margin: 5px 0; 
-}
-
-.subitems li a {
-    text-decoration: none;
-    color: black;
-    font-size: 0.6875rem; 
-    padding: 10px 10px; 
-}
-
-.subitems a:hover {
-    color: #ffffff;
-    background-color: #707070;
-    border-radius: 5px;
-}
-
-
-.sidebar:not(.active) .subitems {
-    display: none; 
-}
-
-.expand-btn {
-    background: none;
-    border: none;
-    color: black;
-    cursor: pointer;
-    font-size: 1rem;
-    margin-left: auto;
-    padding: 5px;
-    display: none;
-}
-
-.sidebar.active .expand-btn {
-    display: block; 
-}
-
-.expand-btn:hover {
-    color: #707070;
-}
-
-.subitems.active {
-    display: block; 
-}
-
-.boton-open {
-    display: flex;
-}
-
-.open-btn {
-    background-color: #f9f9f9;
-    border: none;
-    color: black;
-    font-size: 1rem;
-    cursor: pointer;
-    padding: 6px 15px;
-    margin: 6px 0;
-    position: fixed;
-    border-radius: 5px;
-    z-index: 1100;
-    transition: left 0.3s ease, background 0.3s ease; 
-    left: 4%; /* Ajuste de posición inicial */
-}
-
-.open-btn:hover {
-    background-color: rgba(0, 0, 0, 0.5);
-    color: #ffffff;
-}
-
-.main-content {
-    margin-left: 5%; 
-    transition: margin-left 0.3s ease; 
-}
-
-.sidebar.active ~ .main-content {
-    margin-left: 20%; 
-}
-
-.sidebar:not(.active) .sidebar-items li a span.text {
-    display: none; 
-}
-
-.sidebar.active .sidebar-items li a .text {
-    display: inline-block; 
-}
-
-.sidebar-items li a i {
-    color: inherit;
-    transition: color 0.3s ease;
-}
-
-.sidebar-items li a:hover i:not(.fa-home) {
-    color: #000 !important; /* o el color que uses normalmente, así no se pone blanco */
-}
-
-/* Estilos para el navbar */
-.navbar {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    padding: 15px 0;
-    background-color: #f9f9f9;
-    border-bottom: 1px solid #e5e5e5;
-    position: relative;
-    width: 100%;
-    height: 50px; /* Ajusta la altura del navbar */
-    z-index: 1000;
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-}
-
-/* Opciones del menú centradas */
-.nav-items {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    list-style: none;
-    flex-grow: 1;
-    height: 60px;
-}
-
-.nav-items li {
-    margin: 0 25px;
-    position: relative; /* Necesario para posicionar el submenu */
-}
-
-.nav-items li a {
-    text-decoration: none;
-    color: #333;
-    font-size: 12px;
-    font-weight: 500;
-    letter-spacing: 1px;
-    transition: color 0.4s ease, text-shadow 0.4s ease, transform 0.4s ease;
-    padding: 20px 0;
-}
-
-/* Efecto de hover con degradado suave y aumento de tamaño */
-.nav-items li a:hover {
-    color:  rgb(46, 13, 72);
-    text-shadow: none;
-    background: linear-gradient(90deg, rgba(255, 0, 0), rgba(0, 0, 255));
-    -webkit-background-clip: text;
-    background-clip: text;
-    transform: scale(1.1); /* Aumento de tamaño */
-}
-
-/* Logo centrado */
-.logo img {
-    width: 2rem;
-}
-
-/* Estilo del botón de Sign In */
-.signin-btn {
-    position: absolute;
-    right: 50px;
-}
-
-.signin-btn a {
-    width: 100%;
-    text-decoration: none;
-    color: #333;
-    font-weight: 500;
-    padding: 10px 25px;
-    border-radius: 5px;
-    background-color: transparent;
-    transition: background 0.4s ease, color 0.4s ease;
-    position: relative;  /* Necesario para el pseudo-elemento */
-    display: flex; /* Asegura que el texto se comporte como un bloque */
-    font-size: 0.7rem; /* Definir un tamaño de fuente común */
-    width: 150px; /* Establece un ancho fijo para el botón */
-    height: 30px; /* Establece una altura fija para el botón */
-    justify-content: center; /* Centra el texto */
-}
-
-/* Efecto cuando el mouse pasa por encima */
-.signin-btn a:hover {
-    background: linear-gradient(135deg, white, #C62828, #1565C0);
-    color: white;
-}
-
-/* Cambiar el texto cuando el mouse pasa por encima */
-.signin-btn a::before {
-    content: "Cerrar Sesión";
-    display: flex; /* Para que ocupe el espacio */
-    align-items: center; /* Centra verticalmente */
-    justify-content: center; /* Centra horizontalmente */
-    width: 100%; /* Que ocupe todo el ancho del a */
-    height: 100%; /* Que ocupe toda la altura del a */
-    transition: all 0.1s ease;
-    font-size: 0.75rem; /* Definir un tamaño de fuente común */
-}
-
-.signin-btn a:hover::before {
-    content: "Adios!";  /* Cambia el texto */
-    font-size: 0.75rem; /* Definir un tamaño de fuente común */
-}
-
-.footer {
-    background-color: #f9f9f9; /* Fondo blanco claro */
-    color: #333;
-    width: 100%;
-    height: 40px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    box-shadow: 0 -4px 10px rgba(0, 0, 0, 0.1);
-    margin-top: auto;
-}
-
-.bottom-footer {
-    background-color: #f9f9f9;
-    text-align: center;
-}
-
-.bottom-footer p {
-    font-size: 0.8125rem;
-}
-
-/* ==========================================================
-   📌 Footer siempre abajo — versión estable y segura
-========================================================== */
 html {
-    height: 100%;
+  height: 100%;
 }
 
 body {
-    min-height: 100vh;       /* ocupa todo el alto visible */
-    display: flex;
-    flex-direction: column;
+  background-color: #f4f4f4;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
 }
 
+/* =====================================================
+   🌟 NAVBAR SUPERIOR — Centrado Perfecto
+===================================================== */
+.navbar {
+  width: 100%;
+  background-color: #ffffff;
+  display: grid; /* 🧩 volvemos a grid, que permite centrar perfectamente */
+  grid-template-columns: 1fr auto 1fr; /* izquierda - centro - derecha */
+  align-items: center;
+  padding: 10px 70px; /* 🔹 altura visual */
+  border-bottom: 1px solid #c9c9c9;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+  font-family: 'Inter', sans-serif;
+}
+
+.nav-left {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 10px;
+}
+
+/* Contenedor general del logo + texto */
+.logo-link {
+  display: flex;
+  align-items: center;
+  text-decoration: none;
+  color: #181818;
+  transition: opacity 0.3s ease;
+  gap: 16px; /* 🔹 separa el logo del texto */
+}
+
+.logo-link:hover {
+  opacity: 0.85;
+}
+
+.nav-logo {
+  width: 40px;
+  height: auto;
+}
+
+/* 🔹 Título en 2 líneas */
+.nav-title {
+  font-weight: 400;
+  color: #000000; /* azul institucional */
+  font-size: 0.9rem;        /* 🔽 más pequeño */
+  line-height: 1.2;         /* buena separación entre líneas */
+  letter-spacing: 0.3px;
+  display: inline-block;
+}
+
+.nav-title .subtitle {
+  font-weight: 300;
+  color: #000000;
+  font-size: 0.7rem;        /* 🔽 un poco más chico para contraste */
+}
+
+/* --- CENTRO --- */
+.nav-center {
+  list-style: none;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 60px;
+}
+
+.nav-center li a {
+  text-decoration: none;
+  color: #000000;
+  font-weight: 400;
+  font-size: 1.05rem;
+  transition: transform 0.25s cubic-bezier(0.25, 1.5, 0.5, 1), color 0.25s ease;
+  transform-origin: center;
+  display: inline-block;
+}
+
+/* 🚀 Efecto 3D: las letras “salen” del navbar */
+.nav-center li a:hover {
+  color: #1a2942;                  /* Azul oscuro institucional */
+  transform: scale(1.2) translateY(-1px); /* Aumenta y sube un poco */
+  font-weight: 600;
+}
+
+/* --- DERECHA --- */
+.nav-right {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 35px; /* separa usuario de los íconos */
+}
+
+/* --- Bloque de usuario --- */
+.user-info {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.user-icon {
+  font-size: 1rem;
+  color: #1a2942; /* azul institucional */
+}
+
+.user-name {
+  font-size: 0.95rem;
+  color: #181818;
+  font-weight: 500;
+}
+
+.user-info:hover {
+    transform: scale(1.2) translateY(-1px); /* Aumenta y sube un poco */
+}
+
+/* --- Contenedor de íconos --- */
+.icon-container {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.navbar .icon-btn {
+  display: inline-flex;            /* 🔸 inline-flex para no expandir fuera del navbar */
+  align-items: center;
+  justify-content: center;
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  background-color: #d6dbe1;       /* visible todo el tiempo */
+  border: 1px solid #b0b0b0;       /* borde gris */
+  color: #1a2942;
+  text-decoration: none;
+  font-size: 1rem;
+  transition: all 0.25s ease;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05); /* relieve sutil */
+}
+
+/* 🟦 Hover: aumenta y cambia tono */
+.navbar .icon-btn:hover {
+  background-color: #c7ccd3;
+  transform: scale(1.2);
+}
+
+/* =====================================================
+   ⚙️ FOOTER — Minimalista, elegante y con sello del equipo
+===================================================== */
+.footer {
+  background-color: #ffffff;
+  border-top: 1px solid #c9c9c9;
+  color: #6c6c6c;
+  text-align: center;
+  font-family: 'Inter', sans-serif;
+  font-size: 0.8rem;
+  letter-spacing: 0.2px;
+  padding: 10px 0;
+  box-shadow: 0 -4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.footer p {
+  margin: 0;
+  line-height: 1.6;
+}
+
+/* Separador · */
+.footer-sep {
+  color: #b0b0b0;
+  margin: 0 6px;
+}
+
+/* Íconos */
+.footer i {
+  color: #1a2942; /* Azul oscuro institucional */
+  margin: 0 3px;
+  font-size: 0.85rem;
+  vertical-align: middle;
+  transition: transform 0.2s ease, color 0.3s ease;
+}
+
+.footer i:hover {
+  transform: scale(1.3);
+  color: #000000;
+}
+
+/* Nombre del equipo */
+.team-name {
+  font-weight: 600;
+  color: #1a2942;
+  margin-left: 3px;
+  letter-spacing: 0.5px;
+}
+
+/* =====================================================
+   📌 FOOTER SIEMPRE ABAJO
+===================================================== */
 main.principal {
-    flex: 1 0 auto;          /* ocupa todo el espacio disponible sin encoger */
+  flex: 1 0 auto;
 }
 
+/* =====================================================
+   🧩 UNIFICAR ESCALA TIPOGRÁFICA DEL FOOTER
+===================================================== */
 footer.footer {
-    flex-shrink: 0;          /* evita que se achique */
-    height: auto;            /* deja que la altura sea natural */
-    padding: 10px 0;         /* espacio interno estable */
-}
-
-/* ==========================================================
-   🧩 Unificar escala tipográfica del footer en todas las vistas
-========================================================== */
-footer.footer {
-    font-size: 13px;          /* tamaño fijo */
-    line-height: 1.4;
-    transform: none !important;
+  font-size: 13px;
+  line-height: 1.4;
+  transform: none !important;
 }
 
 footer.footer * {
-    font-size: inherit !important;
-    transform: none !important;
+  font-size: inherit !important;
+  transform: none !important;
 }
 
-/* Evitar que el contexto de flex o zoom de otras secciones lo afecte */
+/* =====================================================
+   🚫 EVITAR EFECTOS DE TRANSFORM DE OTRAS SECCIONES
+===================================================== */
 body,
 html,
 main,
 .alumnos-container,
 .student-card {
-    transform: none !important;
-    zoom: 1 !important;
+  transform: none !important;
+  zoom: 1 !important;
 }
 
-/* ----------------------------------------------------- */
+/* =====================================================
+   📱 Ajuste para pantallas de hasta 1366px de ancho
+===================================================== */
+@media (max-width: 1366px) {
 
-  
+    /* 🔹 Enlaces del navbar */
+    .nav-center li a {
+        font-size: 0.85rem;    /* ligeramente más chico */
+        gap: 40px;
+    }
+
+    /* 🔹 Reduce la separación entre enlaces */
+    .nav-center {
+        gap: 45px;
+    }
+
+    /* 🔹 Ajusta también el efecto hover */
+    .nav-center li a:hover {
+        transform: scale(1.2) translateY(-1px); /* Aumenta y sube un poco */
+    }
+
+    /* 🔹 Ajusta logo y título para balancear */
+    .nav-logo {
+        width: 32px;
+    }
+
+    /* 🔹 Título en 2 líneas */
+    .nav-title {
+    font-size: 0.75rem;        /* 🔽 más pequeño */
+    }
+
+    .nav-title .subtitle {
+    font-size: 0.65rem;        /* 🔽 un poco más chico para contraste */
+    }
+
+    .user-icon {
+    font-size: 0.75rem;
+    }
+
+    .user-name {
+    font-size: 0.75rem;
+    }
+
+    .icon-btn {
+    font-size: 1.2rem;
+    }
+}
