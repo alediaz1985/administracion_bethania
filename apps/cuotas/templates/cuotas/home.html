@@ -31,7 +31,7 @@
         <li><a href="{% url 'cuotas:ciclo_list' %}">Ciclos lectivos</a></li>
         <li><a href="{% url 'cuotas:nivel_list' %}">Niveles</a></li>
         <li><a href="{% url 'cuotas:curso_list' %}">Cursos</a></li>
-        <li><a href="{% url 'cuotas:tarifa_list' %}">Tarifas por nivel</a></li>
+        <li><a href="{% url 'cuotas:tarifa_nivel_list' %}">Tarifas por nivel</a></li>
         <li><a href="{% url 'cuotas:vencimiento_list' %}">Vencimientos</a></li>
       </ul>
       <span class="feature-card__cta">Abrir catálogos</span>
@@ -83,14 +83,13 @@
       <a href="{% url 'cuotas:ciclo_list' %}">Ciclos</a>
       <a href="{% url 'cuotas:nivel_list' %}">Niveles</a>
       <a href="{% url 'cuotas:curso_list' %}">Cursos</a>
-      <a href="{% url 'cuotas:tarifa_list' %}">Tarifas</a>
+      <a href="{% url 'cuotas:tarifa_nivel_list' %}">Tarifas por nivel</a>
       <a href="{% url 'cuotas:vencimiento_list' %}">Vencimientos</a>
       <a href="{% url 'cuotas:beneficio_list' %}">Beneficios</a>
       <a href="{% url 'cuotas:beneficio_insc_list' %}">Benef. Asignados</a>
       <a href="{% url 'cuotas:inscripcion_list' %}">Inscripciones</a>
-      <a href="{% url 'cuotas:inscripcion_create' %}">Nueva insc.</a>
+      <a href="{% url 'cuotas:inscripcion_create' %}">Nueva inscripción</a>
       <a href="{% url 'cuotas:inscripcion_list' %}" data-shortcut="i">Inscripciones</a>
-      <a href="{% url 'cuotas:inscripcion_create' %}" data-shortcut="n">Nueva inscripción</a>
     </div>
   </section>
 

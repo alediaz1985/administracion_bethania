@@ -1,0 +1,31 @@
+{% extends "base.html" %}
+{% block title %}Eliminar Tarifa{% endblock %}
+
+{% block content %}
+<div class="student-card cuotas-card">
+  <div class="student-header cuotas-header">
+    <div>
+      <h2>🗑️ Eliminar Tarifa</h2>
+      <p class="cuotas-header__subtitle">Confirmá la eliminación de esta tarifa.</p>
+    </div>
+    <div class="student-actions">
+      <a href="{% url 'cuotas:tarifa_nivel_list' %}" class="btn btn-light">Volver</a>
+    </div>
+  </div>
+
+  <div class="mt-3">
+    <p>¿Seguro que querés eliminar la tarifa correspondiente a:</p>
+    <ul>
+      <li><strong>Ciclo:</strong> {{ object.ciclo }}</li>
+      <li><strong>Nivel:</strong> {{ object.nivel }}</li>
+    </ul>
+    <p>Esta acción no se puede deshacer.</p>
+
+    <form method="post" class="mt-3">
+      {% csrf_token %}
+      <button type="submit" class="btn btn-danger">Eliminar definitivamente</button>
+      <a href="{% url 'cuotas:tarifa_nivel_list' %}" class="btn btn-light">Cancelar</a>
+    </form>
+  </div>
+</div>
+{% endblock %}

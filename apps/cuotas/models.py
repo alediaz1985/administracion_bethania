@@ -113,12 +113,19 @@ class TarifaNivel(models.Model):
 # ==========================
 # Reglas de vencimiento y recargos
 # ==========================
+from datetime import date
+from calendar import monthrange
+from decimal import Decimal, ROUND_HALF_UP
+from django.core.validators import MinValueValidator, MaxValueValidator
+from django.db import models
+from django.db.models import UniqueConstraint, Index
+
 class VencimientoMensual(models.Model):
     """
     Define, por ciclo y mes (1..12), el último día de pago sin recargo y el % de recargo posterior.
     Ej.: mes=3 (marzo), dia_ultimo_sin_recargo=10, recargo_porcentaje=10.00
     """
-    ciclo = models.ForeignKey(CicloLectivo, on_delete=models.CASCADE, related_name="vencimientos")
+    ciclo = models.ForeignKey("CicloLectivo", on_delete=models.CASCADE, related_name="vencimientos")
     mes = models.PositiveSmallIntegerField(validators=[MinValueValidator(1), MaxValueValidator(12)])
     dia_ultimo_sin_recargo = models.PositiveSmallIntegerField(
         validators=[MinValueValidator(1), MaxValueValidator(31)],
@@ -133,11 +140,44 @@ class VencimientoMensual(models.Model):
         db_table = "vencimientos_mensuales"
         verbose_name = "Vencimiento mensual"
         verbose_name_plural = "Vencimientos mensuales"
-        unique_together = [("ciclo", "mes")]
         ordering = ["ciclo__anio", "mes"]
+        constraints = [
+            UniqueConstraint(fields=["ciclo", "mes"], name="uniq_vencimiento_por_ciclo_mes"),
+        ]
+        indexes = [
+            Index(fields=["ciclo", "mes"]),
+        ]
 
     def __str__(self):
         return f"{self.ciclo} - Mes {self.mes} (hasta el {self.dia_ultimo_sin_recargo} sin recargo)"
+
+    # ---------- Helpers de negocio ----------
+    def _ultimo_dia_real_del_mes(self) -> int:
+        y = int(self.ciclo.anio)
+        return monthrange(y, self.mes)[1]
+
+    def fecha_limite_sin_recargo(self) -> date:
+        y = int(self.ciclo.anio)
+        dia_real = min(self.dia_ultimo_sin_recargo, self._ultimo_dia_real_del_mes())
+        return date(y, self.mes, dia_real)
+
+    def aplica_recargo(self, fecha_pago: date) -> bool:
+        return fecha_pago > self.fecha_limite_sin_recargo()
+
+    def porcentaje_aplicable(self, fecha_pago: date) -> Decimal:
+        from decimal import Decimal
+        return self.recargo_porcentaje if self.aplica_recargo(fecha_pago) else Decimal("0.00")
+
+    def calcular_total_con_recargo(self, importe_base: Decimal, fecha_pago: date):
+        p = self.porcentaje_aplicable(fecha_pago)
+        recargo = (importe_base * p / Decimal("100")).quantize(Decimal("0.01"), rounding=ROUND_HALF_UP)
+        total = (importe_base + recargo).quantize(Decimal("0.01"), rounding=ROUND_HALF_UP)
+        return recargo, total
+
+    @classmethod
+    def obtener_regla(cls, ciclo, mes: int) -> "VencimientoMensual":
+        return cls.objects.get(ciclo=ciclo, mes=mes)
+    
 
 
 # ==========================

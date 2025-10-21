@@ -255,3 +255,105 @@ class CursoForm(forms.ModelForm):
                 self.add_error("nombre", "Ya existe un curso con ese nombre en este nivel.")
 
         return data
+
+
+# ─────────────────────────────────────────────────────────
+# Tarifas 
+# ─────────────────────────────────────────────────────────
+from django import forms
+from django.core.exceptions import ValidationError
+from crispy_forms.helper import FormHelper
+from crispy_forms.layout import Layout, Row, Column, Field, Submit, HTML
+from .models import TarifaNivel
+
+class TarifaNivelForm(forms.ModelForm):
+    class Meta:
+        model = TarifaNivel
+        fields = ["ciclo", "nivel", "monto_inscripcion", "monto_cuota_mensual"]
+        widgets = {
+            "ciclo": forms.Select(attrs={"class": "form-select"}),
+            "nivel": forms.Select(attrs={"class": "form-select"}),
+            "monto_inscripcion": forms.NumberInput(attrs={"class": "form-control", "step": "0.01", "min": "0"}),
+            "monto_cuota_mensual": forms.NumberInput(attrs={"class": "form-control", "step": "0.01", "min": "0"}),
+        }
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.helper = FormHelper()
+        self.helper.form_method = "post"
+        self.helper.layout = Layout(
+            Row(
+                Column(Field("ciclo"), css_class="col-md-6"),
+                Column(Field("nivel"), css_class="col-md-6"),
+            ),
+            Row(
+                Column(Field("monto_inscripcion"), css_class="col-md-6"),
+                Column(Field("monto_cuota_mensual"), css_class="col-md-6"),
+            ),
+            HTML('<div class="mt-3"></div>'),
+            Submit("submit", "Guardar", css_class="btn btn-primary"),
+        )
+
+    def clean(self):
+        cleaned = super().clean()
+        ciclo = cleaned.get("ciclo")
+        nivel = cleaned.get("nivel")
+        if ciclo and nivel:
+            qs = TarifaNivel.objects.filter(ciclo=ciclo, nivel=nivel)
+            if self.instance.pk:
+                qs = qs.exclude(pk=self.instance.pk)
+            if qs.exists():
+                raise ValidationError("Ya existe una tarifa para este Ciclo y Nivel.")
+        return cleaned
+
+
+from decimal import Decimal
+from django import forms
+from django.core.validators import MinValueValidator
+from django.utils import timezone
+
+from .models import Cuota
+
+# ─────────────────────────────────────────────────────────
+# Tarifas 
+# ─────────────────────────────────────────────────────────
+
+class CuotaCobroForm(forms.ModelForm):
+    """
+    Form para cobrar una cuota:
+    - Permite elegir la fecha de pago (default: hoy)
+    - Permite ajustar el descuento antes de cobrar (opcional)
+    El recargo/total NO se ingresan: se calculan vía services.
+    """
+    fecha_pago = forms.DateField(
+        required=True,
+        widget=forms.DateInput(attrs={"type": "date"}),
+        initial=timezone.localdate,
+        label="Fecha de pago"
+    )
+
+    # Si querés impedir que el cajero toque el descuento, poné disabled=True o eliminá este campo.
+    descuento = forms.DecimalField(
+        required=False,
+        initial=Decimal("0.00"),
+        validators=[MinValueValidator(Decimal("0.00"))],
+        decimal_places=2,
+        max_digits=12,
+        label="Descuento",
+        help_text="Opcional. Se resta del importe base antes de evaluar recargo."
+    )
+
+    class Meta:
+        model = Cuota
+        fields = ["fecha_pago", "descuento"]
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        # Si la cuota ya tiene un descuento precargado, mostrarlo
+        if self.instance and getattr(self.instance, "descuento", None) is not None:
+            self.fields["descuento"].initial = self.instance.descuento
+
+    def clean(self):
+        cleaned = super().clean()
+        # reglas adicionales si necesitás…
+        return cleaned

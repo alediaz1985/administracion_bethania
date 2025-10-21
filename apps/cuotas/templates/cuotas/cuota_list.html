@@ -1,0 +1,62 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Cuotas de la Inscripción{% endblock %}
+
+{% block content %}
+<div class="student-card cuotas-card">
+  <div class="student-header cuotas-header">
+    <div>
+      <h2>💳 Cuotas del alumno</h2>
+      <p class="cuotas-header__subtitle">
+        {{ inscripcion }} — Ciclo: {{ inscripcion.ciclo.anio }} — Nivel: {{ inscripcion.nivel }}
+      </p>
+    </div>
+  </div>
+
+  <div class="table-responsive" style="margin-top:1rem;">
+    <table class="table">
+      <thead>
+        <tr>
+          <th>Mes</th>
+          <th>Base</th>
+          <th>Descuento</th>
+          <th>Recargo</th>
+          <th>Importe final</th>
+          <th>Fecha corte</th>
+          <th>Pagado</th>
+          <th>Fecha pago</th>
+          <th></th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for c in cuotas %}
+          <tr class="{% if c.pagado %}table-success{% endif %}">
+            <td>{{ c.mes }}</td>
+            <td>${{ c.importe_base }}</td>
+            <td>${{ c.descuento|default:"0.00" }}</td>
+            <td>${{ c.recargo|default:"0.00" }}</td>
+            <td><strong>${{ c.importe_final }}</strong></td>
+            <td>{{ c.fecha_vencimiento|date:"d/m/Y" }}</td>
+            <td>{% if c.pagado %}Sí{% else %}No{% endif %}</td>
+            <td>{% if c.fecha_pago %}{{ c.fecha_pago|date:"d/m/Y" }}{% else %}-{% endif %}</td>
+            <td class="text-end">
+              {% if not c.pagado %}
+                <a class="btn btn-sm btn-primary" href="{% url 'cuota_cobrar' c.id %}">Cobrar</a>
+              {% else %}
+                <span class="badge bg-success">Pagada</span>
+              {% endif %}
+            </td>
+          </tr>
+        {% empty %}
+          <tr><td colspan="9" class="text-center">No hay cuotas generadas.</td></tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+
+  <div style="margin-top:1rem;">
+    <a class="btn btn-light" href="{% url 'estudiante_list' %}">← Volver</a>
+  </div>
+</div>
+{% endblock %}

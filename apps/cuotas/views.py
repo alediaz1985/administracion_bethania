@@ -1,5 +1,13 @@
-from datetime import datetime
+
+# apps/cuotas/views_tarifas.py
 from django.contrib import messages
+from django.contrib.auth.mixins import LoginRequiredMixin
+from django.contrib.messages.views import SuccessMessageMixin
+from django.views.generic import CreateView, UpdateView, DeleteView
+
+from .models import TarifaNivel
+from .forms import TarifaNivelForm
+from datetime import datetime
 from django.db.models import Prefetch
 from django.http import JsonResponse
 from django.shortcuts import get_object_or_404, redirect, render
@@ -60,10 +68,8 @@ class BaseUpdate(UpdateView):
 # ==========================
 from django.urls import reverse_lazy
 from django.shortcuts import get_object_or_404, redirect
-from django.contrib import messages
 from .models import CicloLectivo
 from .forms import CicloLectivoForm
-from .base import BaseList, BaseCreate, BaseUpdate  # tus vistas genéricas
 
 # 🔹 Listado de ciclos
 class CicloListView(BaseList):
@@ -96,8 +102,6 @@ class CicloUpdateView(BaseUpdate):
 
 
 
-# apps/cuotas/views.py
-from django.contrib import messages
 from django.shortcuts import render, redirect, get_object_or_404
 from .models import CicloLectivo
 from .forms import CicloLectivoForm
@@ -134,7 +138,6 @@ def ciclo_create(request):
     })
 
 
-from django.contrib import messages
 from django.shortcuts import get_object_or_404, redirect
 from .models import CicloLectivo
 
@@ -143,7 +146,7 @@ def activar_ciclo(request, pk):
     ciclo.activo = True
     ciclo.save()  # el save() desactiva los otros
     messages.success(request, f"Ciclo {ciclo.anio} activado correctamente.")
-    return redirect('cuotas:ciclo_lectivo_list')
+    return redirect('cuotas:ciclo_list')          # ✅ coincide con urls
 
 # ==========================
 # Niveles
@@ -196,20 +199,82 @@ class CursoUpdateView(BaseUpdate):
 # ==========================
 # Tarifas por nivel
 # ==========================
-class TarifaListView(BaseList):
+from django.db.models import Q
+from django.urls import reverse_lazy
+from django.views.generic import ListView, CreateView, UpdateView, DeleteView
+
+from .models import TarifaNivel
+from .forms import TarifaNivelForm
+
+class TarifaNivelListView(LoginRequiredMixin, ListView):
     model = TarifaNivel
-    queryset = TarifaNivel.objects.select_related("ciclo", "nivel")
+    template_name = "cuotas/tarifa_nivel_list.html"
+    context_object_name = "tarifas"
+    paginate_by = 20
+
+    def get_queryset(self):
+        qs = (
+            TarifaNivel.objects
+            .select_related("ciclo", "nivel")
+            .order_by("ciclo", "nivel")
+        )
+        # Filtros GET: ?ciclo=<id>&nivel=<id>&q=<texto>
+        ciclo_id = self.request.GET.get("ciclo")
+        nivel_id = self.request.GET.get("nivel")
+        q = (self.request.GET.get("q") or "").strip()
+
+        if ciclo_id:
+            qs = qs.filter(ciclo_id=ciclo_id)
+        if nivel_id:
+            qs = qs.filter(nivel_id=nivel_id)
+        if q:
+            qs = qs.filter(
+                Q(nivel__nombre__icontains=q) |
+                Q(ciclo__anio__icontains=q)
+            )
+        return qs
+
+    def get_context_data(self, **kwargs):
+        ctx = super().get_context_data(**kwargs)
+        ctx["f_ciclo"] = self.request.GET.get("ciclo", "")
+        ctx["f_nivel"] = self.request.GET.get("nivel", "")
+        ctx["q"] = self.request.GET.get("q", "")
+        return ctx
 
 
-class TarifaCreateView(BaseCreate):
-    form_class = TarifaNivelForm
-    success_url = reverse_lazy("cuotas:tarifa_list")
-
-
-class TarifaUpdateView(BaseUpdate):
+class TarifaNivelCreateView(LoginRequiredMixin, SuccessMessageMixin, CreateView):
     model = TarifaNivel
     form_class = TarifaNivelForm
-    success_url = reverse_lazy("cuotas:tarifa_list")
+    template_name = "cuotas/tarifa_nivel_form.html"
+    success_url = reverse_lazy("cuotas:tarifa_nivel_list")
+    success_message = "Tarifa creada correctamente."
+
+    def form_invalid(self, form):
+        messages.error(self.request, "Revisá los campos marcados.")
+        return super().form_invalid(form)
+
+
+class TarifaNivelUpdateView(LoginRequiredMixin, SuccessMessageMixin, UpdateView):
+    model = TarifaNivel
+    form_class = TarifaNivelForm
+    template_name = "cuotas/tarifa_nivel_form.html"
+    success_url = reverse_lazy("cuotas:tarifa_nivel_list")
+    success_message = "Tarifa actualizada correctamente."
+
+    def form_invalid(self, form):
+        messages.error(self.request, "Revisá los campos marcados.")
+        return super().form_invalid(form)
+
+
+class TarifaNivelDeleteView(LoginRequiredMixin, DeleteView):
+    model = TarifaNivel
+    template_name = "cuotas/tarifa_nivel_confirm_delete.html"
+    success_url = reverse_lazy("cuotas:tarifa_nivel_list")
+
+    def delete(self, request, *args, **kwargs):
+        messages.success(self.request, "Tarifa eliminada correctamente.")
+        return super().delete(request, *args, **kwargs)
+
 
 
 # ==========================
@@ -396,7 +461,6 @@ def preview_total_cuota(request, cuota_id):
 
 
 from django.shortcuts import render, redirect, get_object_or_404
-from django.contrib import messages
 from django.urls import reverse
 from django import forms
 from .models import CicloLectivo
@@ -424,10 +488,6 @@ def ciclo_lectivo_list(request):
 
     return render(request, "cuotas/ciclo_lectivo_list.html", {"ciclos": ciclos, "form": form})
 
-
-# apps/cuotas/views/curso_views.py
-from django.contrib import messages
-from django.contrib.messages.views import SuccessMessageMixin
 from django.db import IntegrityError, transaction
 from django.db.models import Q
 from django.http import JsonResponse
@@ -564,3 +624,211 @@ def cursos_por_nivel_api(request):
         for c in qs.order_by("nombre")
     ]
     return JsonResponse({"results": data})
+
+
+
+# ─────────────────────────────────────────────────────────
+#  Views de Tarifas 
+#  
+# ─────────────────────────────────────────────────────────
+from django.db.models import Q
+from django.shortcuts import redirect
+from django.urls import reverse_lazy
+from django.views.generic import ListView, CreateView, UpdateView, DeleteView
+
+from .models import TarifaNivel
+from .forms import TarifaNivelForm
+
+class TarifaNivelListView(LoginRequiredMixin, ListView):
+    model = TarifaNivel
+    template_name = "cuotas/tarifa_nivel_list.html"   # ✅ correcto
+    context_object_name = "tarifas"
+    paginate_by = 20
+
+    def get_queryset(self):
+        qs = (
+            TarifaNivel.objects
+            .select_related("ciclo", "nivel")
+            .order_by("ciclo", "nivel")
+        )
+        # Filtros simples por GET ?ciclo= &nivel=
+        ciclo_id = self.request.GET.get("ciclo")
+        nivel_id = self.request.GET.get("nivel")
+        search = self.request.GET.get("q")
+
+        if ciclo_id:
+            qs = qs.filter(ciclo_id=ciclo_id)
+        if nivel_id:
+            qs = qs.filter(nivel_id=nivel_id)
+        if search:
+            qs = qs.filter(
+                Q(ciclo__id__icontains=search) |
+                Q(nivel__nombre__icontains=search)
+            )
+        return qs
+
+    def get_context_data(self, **kwargs):
+        ctx = super().get_context_data(**kwargs)
+        # Pasá los valores actuales para mantener filtros en la UI
+        ctx["f_ciclo"] = self.request.GET.get("ciclo", "")
+        ctx["f_nivel"] = self.request.GET.get("nivel", "")
+        ctx["q"] = self.request.GET.get("q", "")
+        return ctx
+
+
+
+class TarifaNivelCreateView(LoginRequiredMixin, SuccessMessageMixin, CreateView):
+    model = TarifaNivel
+    form_class = TarifaNivelForm
+    template_name = "cuotas/tarifa_nivel_form.html"
+    success_url = reverse_lazy("cuotas:tarifa_nivel_list")
+    success_message = "Tarifa creada correctamente."
+
+    def form_invalid(self, form):
+        messages.error(self.request, "Revisá los campos marcados.")
+        return super().form_invalid(form)
+
+
+class TarifaNivelUpdateView(LoginRequiredMixin, SuccessMessageMixin, UpdateView):
+    model = TarifaNivel
+    form_class = TarifaNivelForm
+    template_name = "cuotas/tarifa_nivel_form.html"
+    success_url = reverse_lazy("cuotas:tarifa_nivel_list")
+    success_message = "Tarifa actualizada correctamente."
+
+    def form_invalid(self, form):
+        messages.error(self.request, "Revisá los campos marcados.")
+        return super().form_invalid(form)
+
+
+class TarifaNivelDeleteView(LoginRequiredMixin, DeleteView):
+    model = TarifaNivel
+    template_name = "cuotas/tarifa_nivel_confirm_delete.html"
+    success_url = reverse_lazy("cuotas:tarifa_nivel_list")
+
+    def delete(self, request, *args, **kwargs):
+        messages.success(self.request, "Tarifa eliminada correctamente.")
+        return super().delete(request, *args, **kwargs)
+
+
+
+from datetime import date
+from django.contrib import messages
+from django.shortcuts import get_object_or_404, render, redirect
+from django.urls import reverse
+from django.utils import timezone
+
+from .models import Inscripcion, Cuota
+from .forms import CuotaCobroForm
+from .services import calcular_importe_con_recargo, aplicar_cobro_a_cuota
+
+
+# ================
+# Listado de cuotas por inscripción
+# ================
+def cuota_list(request, inscripcion_id):
+    """
+    Muestra todas las cuotas de una inscripción (12 meses típicamente),
+    con estado y acciones.
+    """
+    inscripcion = get_object_or_404(
+        Inscripcion.objects.select_related("ciclo", "nivel", "curso"),
+        pk=inscripcion_id
+    )
+    cuotas = (
+        Cuota.objects
+        .filter(inscripcion=inscripcion)
+        .order_by("mes")
+    )
+
+    context = {
+        "inscripcion": inscripcion,
+        "cuotas": cuotas,
+    }
+    return render(request, "cuotas/cuota_list.html", context)
+
+
+# ================
+# Cobrar una cuota
+# ================
+def cuota_cobrar(request, cuota_id):
+    """
+    GET: Muestra form con fecha_pago (+opcional descuento) y una simulación del cálculo.
+    POST: Aplica el cobro (services.aplicar_cobro_a_cuota), actualizando descuento si corresponde.
+    """
+    cuota = get_object_or_404(
+        Cuota.objects.select_related("inscripcion", "inscripcion__ciclo", "inscripcion__nivel"),
+        pk=cuota_id
+    )
+
+    if getattr(cuota, "pagado", False):
+        messages.info(request, "Esta cuota ya está marcada como pagada.")
+        return redirect(reverse("cuotas:cuota_list", args=[cuota.inscripcion_id]))
+
+    if request.method == "POST":
+        form = CuotaCobroForm(request.POST, instance=cuota)
+        if form.is_valid():
+            # Persistimos el descuento editado antes de calcular
+            descuento = form.cleaned_data.get("descuento")
+            if descuento is not None:
+                cuota.descuento = descuento
+                cuota.save(update_fields=["descuento"])
+
+            fecha_pago = form.cleaned_data.get("fecha_pago") or timezone.localdate()
+
+            # Cobro real (calcula recargo/total y marca pagada)
+            datos = aplicar_cobro_a_cuota(cuota_id=cuota.id, fecha_pago=fecha_pago)
+
+            messages.success(
+                request,
+                (
+                    f"✔ Cobro registrado. Cuota mes {datos['mes']:02d} | "
+                    f"Corte: {datos['fecha_corte']:%d/%m/%Y} | "
+                    f"Recargo: {datos['porcentaje']}% → ${datos['recargo']} | "
+                    f"Total pagado: ${datos['total']} | Fecha pago: {datos['fecha_pago']:%d/%m/%Y}"
+                )
+            )
+            return redirect(reverse("cuotas:cuota_list", args=[cuota.inscripcion_id]))
+    else:
+        form = CuotaCobroForm(instance=cuota)
+
+    # ---- Simulación para mostrar en el GET (previa al cobro) ----
+    fecha_simulada = form.initial.get("fecha_pago") or timezone.localdate()
+    base_neta = (cuota.importe_base or 0) - (cuota.descuento or 0)
+    if base_neta < 0:
+        base_neta = 0
+
+    sim = calcular_importe_con_recargo(
+        ciclo=cuota.inscripcion.ciclo,
+        mes=cuota.mes,
+        importe_base=base_neta,
+        fecha_pago=fecha_simulada,
+    )
+
+    context = {
+        "cuota": cuota,
+        "form": form,
+        "sim": sim,                # dict con porcentaje, fecha_corte, aplica_recargo, recargo, total
+        "base_neta": base_neta,    # para mostrar desglose
+    }
+    return render(request, "cuotas/cuota_cobrar.html", context)
+
+class BaseList(ListView):
+    paginate_by = 20
+    template_name = "cuotas/generic_list.html"
+    context_object_name = "object_list"
+
+    def get_context_data(self, **kwargs):
+        ctx = super().get_context_data(**kwargs)
+        if getattr(self, "model", None):
+            model = self.model
+        else:
+            qs = ctx.get("object_list")
+            model = qs.model if qs is not None else None
+
+        if model is not None:
+            ctx["mname"] = model._meta.model_name                 # ej. "beneficio"
+            ctx["mverbose"] = model._meta.verbose_name_plural     # ej. "Beneficios"
+            ctx["mverbose_singular"] = model._meta.verbose_name   # ej. "Beneficio"
+            ctx["app_label"] = model._meta.app_label              # ej. "cuotas"
+        return ctx

@@ -8,6 +8,15 @@ from .views import (
     cursos_por_nivel_api
 )
 
+from django.urls import path
+from .views import (
+    TarifaNivelListView,
+    TarifaNivelCreateView,
+    TarifaNivelUpdateView,
+    TarifaNivelDeleteView,
+)
+
+
 
 app_name = "cuotas"
 
@@ -48,9 +57,12 @@ urlpatterns = [
     # ========================
     # 💰 PLANES / TARIFAS
     # ========================
-    path("tarifas/", views.TarifaListView.as_view(), name="tarifa_list"),
-    path("tarifas/nuevo/", views.TarifaCreateView.as_view(), name="tarifa_create"),
-    path("tarifas/<int:pk>/editar/", views.TarifaUpdateView.as_view(), name="tarifa_update"),
+
+    path("tarifas/", views.TarifaNivelListView.as_view(), name="tarifa_nivel_list"),
+    path("tarifas/nueva/", views.TarifaNivelCreateView.as_view(), name="tarifa_nivel_create"),
+    path("tarifas/<int:pk>/editar/", views.TarifaNivelUpdateView.as_view(), name="tarifa_nivel_update"),
+    path("tarifas/<int:pk>/eliminar/", views.TarifaNivelDeleteView.as_view(), name="tarifa_nivel_delete"),
+
 
     # ========================
     # 🕐 VENCIMIENTOS
@@ -85,7 +97,7 @@ urlpatterns = [
     # ========================
     # 💳 COBRO DE CUOTAS
     # ========================
-    path("cuotas/<int:cuota_id>/cobrar/", views.cobrar_cuota, name="cuota_cobrar"),
+    path("inscripcion/<int:inscripcion_id>/cuotas/", views.cuota_list, name="cuota_list"),
+    path("cuota/<int:cuota_id>/cobrar/", views.cuota_cobrar, name="cuota_cobrar"),
     
-
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

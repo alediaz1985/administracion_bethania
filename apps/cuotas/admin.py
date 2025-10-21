@@ -33,12 +33,6 @@ class CursoAdmin(admin.ModelAdmin):
     search_fields = ("nombre",)
 
 
-@admin.register(TarifaNivel)
-class TarifaNivelAdmin(admin.ModelAdmin):
-    list_display = ("ciclo", "nivel", "monto_inscripcion", "monto_cuota_mensual")
-    list_filter = ("ciclo", "nivel")
-    search_fields = ("nivel__nombre",)
-    autocomplete_fields = ("ciclo", "nivel")  # CicloLectivo y Nivel ya tienen search_fields
 
 
 @admin.register(VencimientoMensual)
@@ -114,3 +108,15 @@ class ComprobantePagoAdmin(admin.ModelAdmin):
 
     def has_delete_permission(self, request, obj=None):
         return False
+
+
+from django.contrib import admin
+from .models import TarifaNivel
+
+@admin.register(TarifaNivel)
+class TarifaNivelAdmin(admin.ModelAdmin):
+    list_display = ("ciclo", "nivel", "monto_inscripcion", "monto_cuota_mensual")
+    list_filter = ("ciclo", "nivel")
+    search_fields = ("nivel__nombre", "ciclo__anio")
+    ordering = ("ciclo", "nivel")
+    autocomplete_fields = ("ciclo", "nivel")
