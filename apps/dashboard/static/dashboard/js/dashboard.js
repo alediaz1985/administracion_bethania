@@ -42,6 +42,14 @@
     const bg3    = getVar('--bg-3');
     const border = getVar('--border');
 
+    // --- Ajustes dinámicos según resolución ---
+    const smallScreen = window.innerWidth <= 1366;
+
+    // Tamaños adaptativos
+    const fontSizeLegend  = smallScreen ? 11 : 13;   // Leyendas inferiores
+    const fontSizeAxis    = smallScreen ? 10 : 12;   // Texto de ejes X/Y
+    const fontSizeTooltip = smallScreen ? 11 : 13;   // Tooltips
+
     // Opciones comunes
     const commonOptions = {
       responsive: true,
@@ -52,17 +60,19 @@
           position: 'bottom',
           labels: {
             color: text2,
-            font: { family: 'Inter', size: 12, weight: 500 },
+            font: { family: 'Inter', size: fontSizeLegend, weight: 500 },
             usePointStyle: true,
             boxWidth: 8
           }
         },
         tooltip: {
           backgroundColor: bg3,
-          borderColor: border,
+          borderColor: "#b6b6b6ff",
           borderWidth: 1,
           titleFont: { family: 'Inter', weight: '600' },
-          bodyFont: { family: 'Inter', size: 12 },
+          titleColor: "#000000",   // ✅ color del título
+          bodyFont: { family: 'Inter', size: fontSizeTooltip },
+          bodyColor: "#000000",    // ✅ color del texto
           padding: 10,
           displayColors: false
         }
@@ -107,7 +117,7 @@
           ...commonOptions,
           scales: {
             x: {
-              ticks: { color: text2, font: { family: 'Inter' } },
+              ticks: { color: text2, font: { family: 'Inter', size: fontSizeAxis } },
               grid: { color: border }
             },
             y: {
@@ -138,7 +148,7 @@
           ...commonOptions,
           scales: {
             x: {
-              ticks: { color: text2, font: { family: 'Inter' } },
+              ticks: { color: text2, font: { family: 'Inter', size: fontSizeAxis - 2 } },
               grid: { color: border }
             },
             y: {

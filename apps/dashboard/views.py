@@ -19,6 +19,7 @@ def panel(request):
     pendientes = EstadoDocumentacion.objects.filter(estado__iexact='Pendiente').count()
     total_con_estado = aprobados + pendientes
     porc_aprobado = round((aprobados / total_con_estado) * 100, 2) if total_con_estado else 0.0
+    porc_pendiente = round((pendientes / total_con_estado) * 100, 2) if total_con_estado else 0.0
 
     # Distribución por nivel (según Inscripcion.nivel_estudiante)
     niveles_qs = (
@@ -72,6 +73,7 @@ def panel(request):
         "aprobados": aprobados,
         "pendientes": pendientes,
         "porc_aprobado": f"{porc_aprobado:.2f}",
+        "porc_pendiente": f"{porc_pendiente:.2f}",
         "fotos_pendientes": fotos_pendientes,
         "contacto_incompleto": contacto_incompleto,
 

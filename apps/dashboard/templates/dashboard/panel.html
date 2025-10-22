@@ -9,95 +9,97 @@
 {% endblock %}
 
 {% block content %}
-<h1 class="titulo-dashboard" data-aos="fade-down">📊 Panel de Control</h1>
+<div class="dashboard-wrapper" data-aos="fade-in">
+  <h1 class="titulo-dashboard" data-aos="fade-down">📊 Panel de Control</h1>
 
-<!-- ============ TARJETAS KPI ============ -->
-<div class="cards-container">
-  <div class="card" data-aos="fade-up">
-    <i data-lucide="users"></i>
-    <div class="kpi-title">Estudiantes</div>
-    <div class="kpi-value">{{ total_estudiantes }}</div>
+  <!-- ============ TARJETAS KPI ============ -->
+  <div class="cards-container">
+    <div class="card" data-aos="fade-up">
+      <i data-lucide="users"></i>
+      <div class="kpi-title">Estudiantes</div>
+      <div class="kpi-value">{{ total_estudiantes }}</div>
+    </div>
+
+    <div class="card" data-aos="fade-up" data-aos-delay="100">
+      <i data-lucide="id-card"></i>
+      <div class="kpi-title">Con Inscripción</div>
+      <div class="kpi-value">{{ total_con_inscripcion }}</div>
+    </div>
+
+    <div class="card" data-aos="fade-up" data-aos-delay="200">
+      <i data-lucide="check-circle-2"></i>
+      <div class="kpi-title">Aprobados</div>
+      <div class="kpi-value">{{ aprobados }} ({{ porc_aprobado }}%)</div>
+    </div>
+
+    <div class="card" data-aos="fade-up" data-aos-delay="300">
+      <i data-lucide="hourglass"></i>
+      <div class="kpi-title">Pendientes</div>
+      <div class="kpi-value">{{ pendientes }} ({{ porc_pendiente }}%)</div>
+    </div>
+
+    <div class="card" data-aos="fade-up" data-aos-delay="400">
+      <i data-lucide="image-off"></i>
+      <div class="kpi-title">Fotos faltantes</div>
+      <div class="kpi-value">{{ fotos_pendientes }}</div>
+    </div>
+
+    <div class="card" data-aos="fade-up" data-aos-delay="500">
+      <i data-lucide="phone-off"></i>
+      <div class="kpi-title">Contacto incompleto</div>
+      <div class="kpi-value">{{ contacto_incompleto }}</div>
+    </div>
   </div>
 
-  <div class="card" data-aos="fade-up" data-aos-delay="100">
-    <i data-lucide="id-card"></i>
-    <div class="kpi-title">Con Inscripción</div>
-    <div class="kpi-value">{{ total_con_inscripcion }}</div>
+  <!-- ============ GRÁFICOS ============ -->
+  <div class="charts-grid">
+    <div class="chart-card" data-aos="zoom-in-up">
+      <div class="chart-title">Estudiantes por Nivel</div>
+      <div class="chart-canvas"><canvas id="chartNiveles"></canvas></div>
+    </div>
+
+    <div class="chart-card" data-aos="zoom-in-up" data-aos-delay="100">
+      <div class="chart-title">Turnos</div>
+      <div class="chart-canvas"><canvas id="chartTurnos"></canvas></div>
+    </div>
+
+    <div class="chart-card" data-aos="zoom-in-up" data-aos-delay="200">
+      <div class="chart-title">Top 5 Ciudades</div>
+      <div class="chart-canvas"><canvas id="chartCiudades"></canvas></div>
+    </div>
   </div>
 
-  <div class="card" data-aos="fade-up" data-aos-delay="200">
-    <i data-lucide="check-circle-2"></i>
-    <div class="kpi-title">Aprobados</div>
-    <div class="kpi-value">{{ aprobados }} ({{ porc_aprobado }}%)</div>
-  </div>
-
-  <div class="card" data-aos="fade-up" data-aos-delay="300">
-    <i data-lucide="hourglass"></i>
-    <div class="kpi-title">Pendientes</div>
-    <div class="kpi-value">{{ pendientes }}</div>
-  </div>
-
-  <div class="card" data-aos="fade-up" data-aos-delay="400">
-    <i data-lucide="image-off"></i>
-    <div class="kpi-title">Fotos faltantes</div>
-    <div class="kpi-value">{{ fotos_pendientes }}</div>
-  </div>
-
-  <div class="card" data-aos="fade-up" data-aos-delay="500">
-    <i data-lucide="phone-off"></i>
-    <div class="kpi-title">Contacto incompleto</div>
-    <div class="kpi-value">{{ contacto_incompleto }}</div>
-  </div>
-</div>
-
-<!-- ============ GRÁFICOS ============ -->
-<div class="charts-grid">
-  <div class="chart-card" data-aos="zoom-in-up">
-    <div class="chart-title">Estudiantes por Nivel</div>
-    <div class="chart-canvas"><canvas id="chartNiveles"></canvas></div>
-  </div>
-
-  <div class="chart-card" data-aos="zoom-in-up" data-aos-delay="100">
-    <div class="chart-title">Turnos</div>
-    <div class="chart-canvas"><canvas id="chartTurnos"></canvas></div>
-  </div>
-
-  <div class="chart-card" data-aos="zoom-in-up" data-aos-delay="200">
-    <div class="chart-title">Top 5 Ciudades</div>
-    <div class="chart-canvas"><canvas id="chartCiudades"></canvas></div>
-  </div>
-</div>
-
-<!-- ============ TABLA ============ -->
-<div class="table-card" data-aos="fade-up" data-aos-delay="300">
-  <div class="table-title">Últimos 10 Estudiantes</div>
-  <div class="table-responsive">
-    <table class="nice-table">
-      <thead>
-        <tr>
-          <th>Apellido/s</th>
-          <th>Nombre/s</th>
-          <th>CUIL</th>
-          <th>Nivel</th>
-          <th>Curso/Año</th>
-          <th>Turno</th>
-        </tr>
-      </thead>
-      <tbody>
-        {% for e in ultimos_estudiantes %}
-        <tr>
-          <td>{{ e.apellidos_estudiante }}</td>
-          <td>{{ e.nombres_estudiante }}</td>
-          <td>{{ e.cuil_estudiante }}</td>
-          <td>{{ e.inscripcion.nivel_estudiante|default:"-" }}</td>
-          <td>{{ e.inscripcion.curso_anio_estudiante|default:"-" }}</td>
-          <td>{{ e.inscripcion.turno_estudiante|default:"-" }}</td>
-        </tr>
-        {% empty %}
-        <tr><td colspan="6" class="empty">No hay estudiantes.</td></tr>
-        {% endfor %}
-      </tbody>
-    </table>
+  <!-- ============ TABLA ============ -->
+  <div class="table-card" data-aos="fade-up" data-aos-delay="300">
+    <div class="table-title">Últimos 10 Estudiantes</div>
+    <div class="table-responsive">
+      <table class="nice-table">
+        <thead>
+          <tr>
+            <th>Apellido/s</th>
+            <th>Nombre/s</th>
+            <th>CUIL</th>
+            <th>Nivel</th>
+            <th>Curso/Año</th>
+            <th>Turno</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for e in ultimos_estudiantes %}
+          <tr>
+            <td>{{ e.apellidos_estudiante }}</td>
+            <td>{{ e.nombres_estudiante }}</td>
+            <td>{{ e.cuil_estudiante }}</td>
+            <td>{{ e.inscripcion.nivel_estudiante|default:"-" }}</td>
+            <td>{{ e.inscripcion.curso_anio_estudiante|default:"-" }}</td>
+            <td>{{ e.inscripcion.turno_estudiante|default:"-" }}</td>
+          </tr>
+          {% empty %}
+          <tr><td colspan="6" class="empty">No hay estudiantes.</td></tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
   </div>
 </div>
 
