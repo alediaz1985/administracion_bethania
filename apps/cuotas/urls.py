@@ -89,16 +89,42 @@ urlpatterns = [
     # ========================
     # 🧾 INSCRIPCIONES
     # ========================
+    # Inscripciones
     path("inscripciones/", views.InscripcionListView.as_view(), name="inscripcion_list"),
     path("inscripciones/nueva/", views.InscripcionCreateView.as_view(), name="inscripcion_create"),
+    path("inscripciones/<int:pk>/", views.InscripcionDetailView.as_view(), name="inscripcion_detail"),
     path("inscripciones/<int:pk>/editar/", views.InscripcionUpdateView.as_view(), name="inscripcion_update"),
-    path("inscripciones/<int:pk>/generar-cuotas/", views.generar_cuotas_view, name="inscripcion_generar_cuotas"),
-    path("inscripciones/<int:pk>/cuotas/", views.cuotas_por_inscripcion, name="inscripcion_cuotas"),
+    path("inscripciones/<int:pk>/eliminar/", views.InscripcionDeleteView.as_view(), name="inscripcion_delete"),
 
-    # ========================
-    # 💳 COBRO DE CUOTAS
-    # ========================
-    path("inscripcion/<int:inscripcion_id>/cuotas/", views.cuota_list, name="cuota_list"),
-    path("cuota/<int:cuota_id>/cobrar/", views.cuota_cobrar, name="cuota_cobrar"),
+    # Cuotas
+    path("cuotas/", views.CuotaListView.as_view(), name="cuota_list"),
+    path("inscripciones/<int:inscripcion_id>/cuotas/", views.CuotaListView.as_view(), name="cuota_list_by_inscripcion"),
+    path("cuotas/<int:pk>/editar/", views.CuotaUpdateView.as_view(), name="cuota_update"),
+    path("cuotas/<int:pk>/eliminar/", views.CuotaDeleteView.as_view(), name="cuota_delete"),
+
+
+     # Beneficio
+    path("beneficios/", views.BeneficioListView.as_view(), name="beneficio_list"),
+    path("beneficios/nuevo/", views.BeneficioCreateView.as_view(), name="beneficio_create"),
+    path("beneficios/<int:pk>/editar/", views.BeneficioUpdateView.as_view(), name="beneficio_update"),
+    path("beneficios/<int:pk>/eliminar/", views.BeneficioDeleteView.as_view(), name="beneficio_delete"),
+
+    # BeneficioInscripcion (general)
+    path("asignaciones/", views.BeneficioInscripcionListView.as_view(), name="beneficioinscripcion_list"),
+    path("asignaciones/nueva/", views.BeneficioInscripcionCreateView.as_view(), name="beneficioinscripcion_create"),
+    path("asignaciones/<int:pk>/editar/", views.BeneficioInscripcionUpdateView.as_view(), name="beneficioinscripcion_update"),
+    path("asignaciones/<int:pk>/eliminar/", views.BeneficioInscripcionDeleteView.as_view(), name="beneficioinscripcion_delete"),
+
+    # Beneficios por inscripción específica (nested)
+    path(
+        "inscripciones/<int:inscripcion_id>/beneficios/",
+        views.BeneficioInscripcionListView.as_view(),
+        name="beneficioinscripcion_list_by_inscripcion",
+    ),
+    path(
+        "inscripciones/<int:inscripcion_id>/beneficios/nuevo/",
+        views.BeneficioInscripcionCreateView.as_view(),
+        name="beneficioinscripcion_create_for_inscripcion",
+    ),
     
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

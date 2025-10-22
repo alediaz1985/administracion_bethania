@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+{% load static %}
+{% block title %}{{ object|default_if_none:'Nuevo' }} Beneficio{% endblock %}
+{% block extra_styles %}<link rel="stylesheet" href="{% static 'cuotas/css/beneficios.css' %}">{% endblock %}
+
+{% block content %}
+<div class="cuotas-card form-card">
+  <h2>{% if object %}Editar{% else %}Nuevo{% endif %} beneficio</h2>
+  <form method="post" novalidate>
+    {% csrf_token %}
+    {{ form.non_field_errors }}
+
+    <div class="form-grid">
+      <div class="form-item">{{ form.nombre.label_tag }} {{ form.nombre }} {{ form.nombre.errors }}</div>
+      <div class="form-item">{{ form.tipo.label_tag }} {{ form.tipo }} {{ form.tipo.errors }}</div>
+      <div class="form-item">{{ form.porcentaje.label_tag }} {{ form.porcentaje }} {{ form.porcentaje.errors }}</div>
+      <div class="form-item">{{ form.monto_fijo.label_tag }} {{ form.monto_fijo }} {{ form.monto_fijo.errors }}</div>
+      <div class="form-item">{{ form.prioridad.label_tag }} {{ form.prioridad }} {{ form.prioridad.errors }}</div>
+      <div class="form-item check">{{ form.activo }} {{ form.activo.label_tag }}</div>
+    </div>
+
+    <div class="form-actions">
+      <a href="{% url 'cuotas:beneficio_list' %}" class="btn btn-light">Cancelar</a>
+      <button type="submit" class="btn">Guardar</button>
+    </div>
+  </form>
+</div>
+{% endblock %}

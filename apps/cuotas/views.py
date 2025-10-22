@@ -888,3 +888,284 @@ class VencimientoUpdateView(SuccessMessageMixin, UpdateView):
             form.add_error("mes", "Ya existe un vencimiento configurado para ese ciclo y mes.")
             messages.error(self.request, "Revisá los campos marcados.")
             return self.form_invalid(form)
+
+
+
+from django.contrib import messages
+from django.contrib.auth.mixins import LoginRequiredMixin
+from django.urls import reverse_lazy
+from django.shortcuts import get_object_or_404
+from django.views.generic import ListView, CreateView, UpdateView, DeleteView
+
+from .models import Beneficio, BeneficioInscripcion, Inscripcion
+from .forms import BeneficioForm, BeneficioInscripcionForm
+
+# ==========================
+# Beneficio (CRUD)
+# ==========================
+class BeneficioListView(LoginRequiredMixin, ListView):
+    model = Beneficio
+    template_name = "cuotas/beneficio_list.html"
+    context_object_name = "beneficios"
+    paginate_by = 20
+
+    def get_queryset(self):
+        qs = super().get_queryset()
+        q = self.request.GET.get("q")
+        if q:
+            qs = qs.filter(nombre__icontains=q)
+        estado = self.request.GET.get("estado")
+        if estado in {"activos", "inactivos"}:
+            qs = qs.filter(activo=(estado == "activos"))
+        return qs
+
+class BeneficioCreateView(LoginRequiredMixin, CreateView):
+    model = Beneficio
+    form_class = BeneficioForm
+    template_name = "cuotas/beneficio_form.html"
+    success_url = reverse_lazy("cuotas:beneficio_list")
+
+    def form_valid(self, form):
+        messages.success(self.request, "Beneficio creado correctamente.")
+        return super().form_valid(form)
+
+class BeneficioUpdateView(LoginRequiredMixin, UpdateView):
+    model = Beneficio
+    form_class = BeneficioForm
+    template_name = "cuotas/beneficio_form.html"
+    success_url = reverse_lazy("cuotas:beneficio_list")
+
+    def form_valid(self, form):
+        messages.success(self.request, "Beneficio actualizado correctamente.")
+        return super().form_valid(form)
+
+class BeneficioDeleteView(LoginRequiredMixin, DeleteView):
+    model = Beneficio
+    template_name = "cuotas/beneficio_confirm_delete.html"
+    success_url = reverse_lazy("cuotas:beneficio_list")
+
+    def delete(self, request, *args, **kwargs):
+        messages.success(self.request, "Beneficio eliminado correctamente.")
+        return super().delete(request, *args, **kwargs)
+
+
+# ==========================
+# BeneficioInscripcion (CRUD)
+# ==========================
+class BeneficioInscripcionListView(LoginRequiredMixin, ListView):
+    model = BeneficioInscripcion
+    template_name = "cuotas/beneficioinscripcion_list.html"
+    context_object_name = "asignaciones"
+    paginate_by = 25
+
+    def get_queryset(self):
+        qs = super().get_queryset().select_related("inscripcion", "beneficio")
+        inscripcion_id = self.kwargs.get("inscripcion_id")
+        if inscripcion_id:
+            qs = qs.filter(inscripcion_id=inscripcion_id)
+        return qs
+
+    def get_context_data(self, **kwargs):
+        ctx = super().get_context_data(**kwargs)
+        inscripcion_id = self.kwargs.get("inscripcion_id")
+        ctx["inscripcion"] = None
+        if inscripcion_id:
+            ctx["inscripcion"] = get_object_or_404(Inscripcion, pk=inscripcion_id)
+        return ctx
+
+class BeneficioInscripcionCreateView(LoginRequiredMixin, CreateView):
+    model = BeneficioInscripcion
+    form_class = BeneficioInscripcionForm
+    template_name = "cuotas/beneficioinscripcion_form.html"
+
+    def get_initial(self):
+        initial = super().get_initial()
+        inscripcion_id = self.kwargs.get("inscripcion_id")
+        if inscripcion_id:
+            initial["inscripcion"] = get_object_or_404(Inscripcion, pk=inscripcion_id)
+        return initial
+
+    def get_success_url(self):
+        inscripcion_id = self.kwargs.get("inscripcion_id")
+        if inscripcion_id:
+            messages.success(self.request, "Beneficio asignado correctamente.")
+            return reverse_lazy("cuotas:beneficioinscripcion_list_by_inscripcion", kwargs={"inscripcion_id": inscripcion_id})
+        messages.success(self.request, "Beneficio asignado correctamente.")
+        return reverse_lazy("cuotas:beneficioinscripcion_list")
+
+class BeneficioInscripcionUpdateView(LoginRequiredMixin, UpdateView):
+    model = BeneficioInscripcion
+    form_class = BeneficioInscripcionForm
+    template_name = "cuotas/beneficioinscripcion_form.html"
+
+    def get_success_url(self):
+        asignacion = self.object
+        messages.success(self.request, "Asignación actualizada correctamente.")
+        return reverse_lazy("cuotas:beneficioinscripcion_list_by_inscripcion", kwargs={"inscripcion_id": asignacion.inscripcion_id})
+
+class BeneficioInscripcionDeleteView(LoginRequiredMixin, DeleteView):
+    model = BeneficioInscripcion
+    template_name = "cuotas/beneficioinscripcion_confirm_delete.html"
+
+    def get_success_url(self):
+        asignacion = self.get_object()
+        messages.success(self.request, "Asignación eliminada correctamente.")
+        return reverse_lazy("cuotas:beneficioinscripcion_list_by_inscripcion", kwargs={"inscripcion_id": asignacion.inscripcion_id})
+    
+
+    
+
+
+
+from decimal import Decimal
+from django.contrib import messages
+from django.contrib.auth.mixins import LoginRequiredMixin
+from django.shortcuts import get_object_or_404
+from django.urls import reverse_lazy
+from django.views.generic import ListView, CreateView, UpdateView, DeleteView, DetailView
+
+from .models import Inscripcion, Cuota
+from .forms import InscripcionForm, CuotaForm
+
+# Intentamos usar tu service si existe
+try:
+    from .services import generar_cuotas_para_inscripcion as _generar_cuotas_service
+except Exception:
+    _generar_cuotas_service = None
+
+
+def _fallback_generar_cuotas(inscripcion: Inscripcion):
+    """Genera 12 cuotas simples sin beneficios ni recargos."""
+    # Evitar duplicados si ya existen
+    if inscripcion.cuotas.exists():
+        return
+    for mes in range(1, 13):
+        monto_base = inscripcion.get_monto_base_cuota()
+        Cuota.objects.create(
+            inscripcion=inscripcion,
+            mes=mes,
+            monto_base=monto_base,
+            monto_descuentos=Decimal("0.00"),
+            monto_recargos=Decimal("0.00"),
+            total_a_pagar=monto_base,
+        )
+
+
+# ==========================
+# Inscripciones
+# ==========================
+class InscripcionListView(LoginRequiredMixin, ListView):
+    model = Inscripcion
+    template_name = "cuotas/inscripcion_list.html"
+    context_object_name = "inscripciones"
+    paginate_by = 25
+
+    def get_queryset(self):
+        qs = super().get_queryset().select_related("estudiante", "ciclo", "nivel", "curso")
+        q = self.request.GET.get("q")
+        if q:
+            qs = qs.filter(estudiante__apellidos_estudiante__icontains=q) | qs.filter(estudiante__nombres_estudiante__icontains=q) | qs.filter(estudiante__dni_estudiante__icontains=q)
+        ciclo_id = self.request.GET.get("ciclo")
+        if ciclo_id:
+            qs = qs.filter(ciclo_id=ciclo_id)
+        nivel_id = self.request.GET.get("nivel")
+        if nivel_id:
+            qs = qs.filter(nivel_id=nivel_id)
+        curso_id = self.request.GET.get("curso")
+        if curso_id:
+            qs = qs.filter(curso_id=curso_id)
+        return qs
+
+
+class InscripcionCreateView(LoginRequiredMixin, CreateView):
+    model = Inscripcion
+    form_class = InscripcionForm
+    template_name = "cuotas/inscripcion_form.html"
+    success_url = reverse_lazy("cuotas:inscripcion_list")
+
+    def form_valid(self, form):
+        # Si no viene monto, usar helper del modelo
+        insc: Inscripcion = form.save(commit=False)
+        if not insc.monto_inscripcion or insc.monto_inscripcion == 0:
+            insc.monto_inscripcion = insc.get_monto_base_inscripcion()
+        insc.save()
+
+        # Generar cuotas
+        if _generar_cuotas_service:
+            _generar_cuotas_service(insc)
+        else:
+            _fallback_generar_cuotas(insc)
+
+        messages.success(self.request, "Inscripción creada y cuotas generadas correctamente.")
+        return super().form_valid(form)
+
+
+class InscripcionUpdateView(LoginRequiredMixin, UpdateView):
+    model = Inscripcion
+    form_class = InscripcionForm
+    template_name = "cuotas/inscripcion_form.html"
+    success_url = reverse_lazy("cuotas:inscripcion_list")
+
+    def form_valid(self, form):
+        messages.success(self.request, "Inscripción actualizada correctamente.")
+        return super().form_valid(form)
+
+
+class InscripcionDeleteView(LoginRequiredMixin, DeleteView):
+    model = Inscripcion
+    template_name = "cuotas/inscripcion_confirm_delete.html"
+    success_url = reverse_lazy("cuotas:inscripcion_list")
+
+    def delete(self, request, *args, **kwargs):
+        messages.success(self.request, "Inscripción eliminada correctamente.")
+        return super().delete(request, *args, **kwargs)
+
+
+class InscripcionDetailView(LoginRequiredMixin, DetailView):
+    model = Inscripcion
+    template_name = "cuotas/inscripcion_detail.html"
+    context_object_name = "inscripcion"
+
+
+# ==========================
+# Cuotas
+# ==========================
+class CuotaListView(LoginRequiredMixin, ListView):
+    model = Cuota
+    template_name = "cuotas/cuota_list.html"
+    context_object_name = "cuotas"
+    paginate_by = 30
+
+    def get_queryset(self):
+        qs = super().get_queryset().select_related("inscripcion", "inscripcion__estudiante", "inscripcion__ciclo", "inscripcion__nivel", "inscripcion__curso")
+        inscripcion_id = self.kwargs.get("inscripcion_id")
+        if inscripcion_id:
+            qs = qs.filter(inscripcion_id=inscripcion_id)
+        pagada = self.request.GET.get("pagada")
+        if pagada == "si":
+            qs = qs.filter(pagada=True)
+        elif pagada == "no":
+            qs = qs.filter(pagada=False)
+        mes = self.request.GET.get("mes")
+        if mes:
+            qs = qs.filter(mes=mes)
+        return qs
+
+
+class CuotaUpdateView(LoginRequiredMixin, UpdateView):
+    model = Cuota
+    form_class = CuotaForm
+    template_name = "cuotas/cuota_form.html"
+
+    def get_success_url(self):
+        messages.success(self.request, "Cuota actualizada correctamente.")
+        return reverse_lazy("cuotas:cuota_list_by_inscripcion", kwargs={"inscripcion_id": self.object.inscripcion_id})
+
+
+class CuotaDeleteView(LoginRequiredMixin, DeleteView):
+    model = Cuota
+    template_name = "cuotas/cuota_confirm_delete.html"
+
+    def get_success_url(self):
+        messages.success(self.request, "Cuota eliminada correctamente.")
+        return reverse_lazy("cuotas:cuota_list_by_inscripcion", kwargs={"inscripcion_id": self.object.inscripcion_id})

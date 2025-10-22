@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+{% load static %}
+{% block title %}Editar cuota{% endblock %}
+{% block extra_styles %}
+<link rel="stylesheet" href="{% static 'cuotas/css/cuotas.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="cuotas-card form-card">
+  <h2>Editar cuota #{{ object.id }} (Mes {{ object.mes }})</h2>
+  <form method="post" novalidate>
+    {% csrf_token %}
+    {{ form.non_field_errors }}
+
+    <div class="form-grid">
+      <div class="form-item">{{ form.monto_base.label_tag }} {{ form.monto_base }} {{ form.monto_base.errors }}</div>
+      <div class="form-item">{{ form.monto_descuentos.label_tag }} {{ form.monto_descuentos }} {{ form.monto_descuentos.errors }}</div>
+      <div class="form-item">{{ form.monto_recargos.label_tag }} {{ form.monto_recargos }} {{ form.monto_recargos.errors }}</div>
+      <div class="form-item">{{ form.total_a_pagar.label_tag }} {{ form.total_a_pagar }} {{ form.total_a_pagar.errors }}</div>
+      <div class="form-item check">{{ form.pagada }} {{ form.pagada.label_tag }}</div>
+      <div class="form-item">{{ form.fecha_pago.label_tag }} {{ form.fecha_pago }} {{ form.fecha_pago.errors }}</div>
+    </div>
+
+    <div class="form-actions">
+      <a href="{% url 'cuotas:cuota_list_by_inscripcion' object.inscripcion_id %}" class="btn btn-light">Cancelar</a>
+      <button type="submit" class="btn">Guardar</button>
+    </div>
+  </form>
+</div>
+{% endblock %}

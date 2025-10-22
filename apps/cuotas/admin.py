@@ -1,3 +1,4 @@
+# apps/cuotas/admin.py
 from django.contrib import admin
 from .models import (
     CicloLectivo, Nivel, Curso, TarifaNivel,
@@ -6,11 +7,12 @@ from .models import (
     ComprobanteDrivePago, ComprobantePago
 )
 
-# 👇 IMPORTANTE: agregar Estudiante (de la app de alumnos)
-from apps.administracion_alumnos.models import Estudiante
+# (Opcional) Si lo necesitás para referencias: no es obligatorio importar Estudiante
+# from apps.administracion_alumnos.models import Estudiante
+
 
 # ===============================
-# 🔍 Admin para modelos usados en autocomplete
+# 🔍 Admin para catálogos / básicos
 # ===============================
 
 @admin.register(CicloLectivo)
@@ -33,6 +35,13 @@ class CursoAdmin(admin.ModelAdmin):
     search_fields = ("nombre",)
 
 
+@admin.register(TarifaNivel)
+class TarifaNivelAdmin(admin.ModelAdmin):
+    list_display = ("ciclo", "nivel", "monto_inscripcion", "monto_cuota_mensual")
+    list_filter = ("ciclo", "nivel")
+    search_fields = ("nivel__nombre", "ciclo__anio")
+    ordering = ("ciclo", "nivel")
+    autocomplete_fields = ("ciclo", "nivel")
 
 
 @admin.register(VencimientoMensual)
@@ -42,18 +51,28 @@ class VencimientoMensualAdmin(admin.ModelAdmin):
     ordering = ("ciclo__anio", "mes")
 
 
+# ===============================
+# 🎟️ Beneficios
+# ===============================
+
 class BeneficioInscripcionInline(admin.TabularInline):
     model = BeneficioInscripcion
     extra = 0
-    autocomplete_fields = ("beneficio",)  # BeneficioAdmin tiene search_fields
+    autocomplete_fields = ("beneficio",)  # BeneficioAdmin define search_fields
 
 
 @admin.register(Beneficio)
 class BeneficioAdmin(admin.ModelAdmin):
-    list_display = ("nombre", "tipo", "porcentaje", "monto_fijo", "prioridad", "activo")
+    list_display = ("id", "nombre", "tipo", "porcentaje", "monto_fijo", "prioridad", "activo")
     list_filter = ("tipo", "activo")
     search_fields = ("nombre",)
+    ordering = ("prioridad", "id")
+    list_editable = ("prioridad", "activo")
 
+
+# ===============================
+# 📝 Inscripción / Cuotas / Pagos
+# ===============================
 
 @admin.register(Inscripcion)
 class InscripcionAdmin(admin.ModelAdmin):
@@ -66,17 +85,20 @@ class InscripcionAdmin(admin.ModelAdmin):
         "estudiante__cuil_estudiante",
     )
     autocomplete_fields = ("estudiante", "ciclo", "nivel", "curso")
-    list_select_related = ("estudiante", "ciclo", "nivel", "curso")  # 🚀 mejora de rendimiento
+    list_select_related = ("estudiante", "ciclo", "nivel", "curso")  # 🚀 performance
     inlines = [BeneficioInscripcionInline]
-
 
 
 @admin.register(Cuota)
 class CuotaAdmin(admin.ModelAdmin):
-    list_display = ("inscripcion", "mes", "monto_base", "monto_descuentos", "monto_recargos", "total_a_pagar", "pagada")
+    list_display = ("inscripcion", "mes", "monto_base", "monto_descuentos",
+                    "monto_recargos", "total_a_pagar", "pagada")
     list_filter = ("inscripcion__ciclo", "inscripcion__nivel", "mes", "pagada")
-    search_fields = ("inscripcion__estudiante__apellidos_estudiante", "inscripcion__estudiante__dni_estudiante")
-    autocomplete_fields = ("inscripcion",)  # InscripcionAdmin ya define search_fields
+    search_fields = (
+        "inscripcion__estudiante__apellidos_estudiante",
+        "inscripcion__estudiante__dni_estudiante",
+    )
+    autocomplete_fields = ("inscripcion",)
 
 
 @admin.register(MedioPago)
@@ -89,15 +111,18 @@ class MedioPagoAdmin(admin.ModelAdmin):
 class PagoAdmin(admin.ModelAdmin):
     list_display = ("cuota", "fecha_pago", "monto_pagado", "medio_pago")
     list_filter = ("medio_pago", "fecha_pago")
-    autocomplete_fields = ("cuota", "medio_pago")  # Ambos tienen search_fields
+    autocomplete_fields = ("cuota", "medio_pago")
 
+
+# ===============================
+# 🧾 Comprobantes
+# ===============================
 
 @admin.register(ComprobanteDrivePago)
 class ComprobanteDrivePagoAdmin(admin.ModelAdmin):
     list_display = ("id", "correo_electronico", "cuil_estudiante", "cuil_responsable_pago")
 
 
-# Solo lectura para la tabla externa
 @admin.register(ComprobantePago)
 class ComprobantePagoAdmin(admin.ModelAdmin):
     list_display = ("email", "marca_temporal", "url_comprobante", "cuil_alumno", "cuil_responsable")
@@ -110,13 +135,14 @@ class ComprobantePagoAdmin(admin.ModelAdmin):
         return False
 
 
-from django.contrib import admin
-from .models import TarifaNivel
+# ===============================
+# 📌 Asignación de beneficios a inscripciones
+# ===============================
 
-@admin.register(TarifaNivel)
-class TarifaNivelAdmin(admin.ModelAdmin):
-    list_display = ("ciclo", "nivel", "monto_inscripcion", "monto_cuota_mensual")
-    list_filter = ("ciclo", "nivel")
-    search_fields = ("nivel__nombre", "ciclo__anio")
-    ordering = ("ciclo", "nivel")
-    autocomplete_fields = ("ciclo", "nivel")
+@admin.register(BeneficioInscripcion)
+class BeneficioInscripcionAdmin(admin.ModelAdmin):
+    list_display = ("id", "inscripcion", "beneficio", "desde", "hasta", "activo")
+    list_filter = ("activo", "beneficio__tipo")
+    search_fields = ("inscripcion__id", "beneficio__nombre")
+    autocomplete_fields = ("inscripcion", "beneficio")
+    ordering = ("-id",)

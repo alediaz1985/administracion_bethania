@@ -1,0 +1,11 @@
+{% extends "base.html" %}
+{% block title %}Eliminar inscripción{% endblock %}
+{% block content %}
+<div class="cuotas-card">
+  <h3>¿Eliminar la inscripción #{{ object.id }} ({{ object.estudiante }}, {{ object.curso }})?</h3>
+  <form method="post">{% csrf_token %}
+    <a href="{% url 'cuotas:inscripcion_list' %}" class="btn btn-light">Cancelar</a>
+    <button type="submit" class="btn btn-danger">Eliminar</button>
+  </form>
+</div>
+{% endblock %}

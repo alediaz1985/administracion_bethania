@@ -1,0 +1,11 @@
+{% extends "base.html" %}
+{% block title %}Eliminar beneficio{% endblock %}
+{% block content %}
+<div class="cuotas-card">
+  <h3>¿Eliminar el beneficio "{{ object }}"?</h3>
+  <form method="post">{% csrf_token %}
+    <a href="{% url 'cuotas:beneficio_list' %}" class="btn btn-light">Cancelar</a>
+    <button type="submit" class="btn btn-danger">Eliminar</button>
+  </form>
+</div>
+{% endblock %}

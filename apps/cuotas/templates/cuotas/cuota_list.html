@@ -1,62 +1,73 @@
 {% extends "base.html" %}
 {% load static %}
-
-{% block title %}Cuotas de la Inscripción{% endblock %}
+{% block title %}Cuotas{% endblock %}
+{% block extra_styles %}
+<link rel="stylesheet" href="{% static 'cuotas/css/cuotas.css' %}">
+{% endblock %}
 
 {% block content %}
-<div class="student-card cuotas-card">
-  <div class="student-header cuotas-header">
+<div class="cuotas-card">
+  <div class="cuotas-header">
     <div>
-      <h2>💳 Cuotas del alumno</h2>
-      <p class="cuotas-header__subtitle">
-        {{ inscripcion }} — Ciclo: {{ inscripcion.ciclo.anio }} — Nivel: {{ inscripcion.nivel }}
-      </p>
+      <h2>💳 Cuotas {% if view.kwargs.inscripcion_id %}de inscripción #{{ view.kwargs.inscripcion_id }}{% endif %}</h2>
+      <p class="cuotas-header__subtitle">Marcá pagadas y ajustá importes si es necesario.</p>
     </div>
   </div>
 
-  <div class="table-responsive" style="margin-top:1rem;">
-    <table class="table">
+  <form method="get" class="filters-row">
+    <select name="pagada">
+      <option value="">Todas</option>
+      <option value="si" {% if request.GET.pagada == 'si' %}selected{% endif %}>Pagadas</option>
+      <option value="no" {% if request.GET.pagada == 'no' %}selected{% endif %}>Pendientes</option>
+    </select>
+    <input type="number" name="mes" min="1" max="12" value="{{ request.GET.mes }}" placeholder="Mes" />
+    <button class="btn btn-light" type="submit">Filtrar</button>
+  </form>
+
+  <div class="table-responsive">
+    <table class="tabla-cuotas">
       <thead>
         <tr>
-          <th>Mes</th>
-          <th>Base</th>
-          <th>Descuento</th>
-          <th>Recargo</th>
-          <th>Importe final</th>
-          <th>Fecha corte</th>
-          <th>Pagado</th>
-          <th>Fecha pago</th>
-          <th></th>
+          <th>#</th><th>Inscripción</th><th>Mes</th><th>Base</th><th>Desc.</th><th>Recargo</th><th>Total</th><th>Pagada</th><th></th>
         </tr>
       </thead>
       <tbody>
         {% for c in cuotas %}
-          <tr class="{% if c.pagado %}table-success{% endif %}">
+          <tr>
+            <td>{{ c.id }}</td>
+            <td>#{{ c.inscripcion_id }}</td>
             <td>{{ c.mes }}</td>
-            <td>${{ c.importe_base }}</td>
-            <td>${{ c.descuento|default:"0.00" }}</td>
-            <td>${{ c.recargo|default:"0.00" }}</td>
-            <td><strong>${{ c.importe_final }}</strong></td>
-            <td>{{ c.fecha_vencimiento|date:"d/m/Y" }}</td>
-            <td>{% if c.pagado %}Sí{% else %}No{% endif %}</td>
-            <td>{% if c.fecha_pago %}{{ c.fecha_pago|date:"d/m/Y" }}{% else %}-{% endif %}</td>
-            <td class="text-end">
-              {% if not c.pagado %}
-                <a class="btn btn-sm btn-primary" href="{% url 'cuota_cobrar' c.id %}">Cobrar</a>
-              {% else %}
-                <span class="badge bg-success">Pagada</span>
-              {% endif %}
+            <td>${{ c.monto_base }}</td>
+            <td>${{ c.monto_descuentos }}</td>
+            <td>${{ c.monto_recargos }}</td>
+            <td><strong>${{ c.total_a_pagar }}</strong></td>
+            <td><span class="pill {{ c.pagada|yesno:'ok,no' }}">{{ c.pagada|yesno:'Sí,No' }}</span></td>
+            <td class="actions">
+              <a class="btn btn-ghost" href="{% url 'cuotas:cuota_update' c.pk %}">Editar</a>
+              <a class="btn btn-danger-ghost" href="{% url 'cuotas:cuota_delete' c.pk %}">Eliminar</a>
             </td>
           </tr>
         {% empty %}
-          <tr><td colspan="9" class="text-center">No hay cuotas generadas.</td></tr>
+          <tr><td colspan="9" class="empty">No hay cuotas para mostrar.</td></tr>
         {% endfor %}
       </tbody>
     </table>
   </div>
 
-  <div style="margin-top:1rem;">
-    <a class="btn btn-light" href="{% url 'estudiante_list' %}">← Volver</a>
-  </div>
+  {% if is_paginated %}
+    <div class="paginacion">
+      {% if page_obj.has_previous %}
+        <a href="?page={{ page_obj.previous_page_number }}" class="btn btn-light">Anterior</a>
+      {% endif %}
+      <span>Página {{ page_obj.number }} de {{ page_obj.paginator.num_pages }}</span>
+      {% if page_obj.has_next %}
+        <a href="?page={{ page_obj.next_page_number }}" class="btn btn-light">Siguiente</a>
+      {% endif %}
+    </div>
+  {% endif %}
 </div>
+{% endblock %}
+
+{% block extra_scripts %}
+<script src="{% static 'cuotas/js/cuotas.js' %}"></script>
 {% endblock %}

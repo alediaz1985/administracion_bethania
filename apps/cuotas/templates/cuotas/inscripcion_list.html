@@ -1,0 +1,69 @@
+{% extends "base.html" %}
+{% load static %}
+{% block title %}Inscripciones{% endblock %}
+{% block extra_styles %}
+<link rel="stylesheet" href="{% static 'cuotas/css/inscripciones.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="cuotas-card">
+  <div class="cuotas-header">
+    <div>
+      <h2>📝 Inscripciones</h2>
+      <p class="cuotas-header__subtitle">Gestioná inscripciones y generá cuotas automáticamente.</p>
+    </div>
+    <div class="student-actions">
+      <a class="btn" href="{% url 'cuotas:inscripcion_create' %}">Nueva inscripción</a>
+    </div>
+  </div>
+
+  <form method="get" class="filters-row">
+    <input type="text" name="q" value="{{ request.GET.q }}" placeholder="Buscar alumno (apellido, nombre o DNI)…" />
+    <button class="btn btn-light" type="submit">Filtrar</button>
+  </form>
+
+  <div class="table-responsive">
+    <table class="tabla-cuotas">
+      <thead>
+        <tr>
+          <th>#</th><th>Alumno</th><th>Ciclo</th><th>Nivel</th><th>Curso</th><th>Inscripción</th><th></th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for i in inscripciones %}
+          <tr data-url="{% url 'cuotas:inscripcion_detail' i.pk %}">
+            <td>{{ i.id }}</td>
+            <td>{{ i.estudiante }}</td>
+            <td>{{ i.ciclo }}</td>
+            <td>{{ i.nivel }}</td>
+            <td>{{ i.curso }}</td>
+            <td>${{ i.monto_inscripcion }}</td>
+            <td class="actions">
+              <a class="btn btn-ghost" href="{% url 'cuotas:inscripcion_update' i.pk %}">Editar</a>
+              <a class="btn btn-danger-ghost" href="{% url 'cuotas:inscripcion_delete' i.pk %}">Eliminar</a>
+            </td>
+          </tr>
+        {% empty %}
+          <tr><td colspan="7" class="empty">No hay inscripciones.</td></tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+
+  {% if is_paginated %}
+    <div class="paginacion">
+      {% if page_obj.has_previous %}
+        <a href="?page={{ page_obj.previous_page_number }}" class="btn btn-light">Anterior</a>
+      {% endif %}
+      <span>Página {{ page_obj.number }} de {{ page_obj.paginator.num_pages }}</span>
+      {% if page_obj.has_next %}
+        <a href="?page={{ page_obj.next_page_number }}" class="btn btn-light">Siguiente</a>
+      {% endif %}
+    </div>
+  {% endif %}
+</div>
+{% endblock %}
+
+{% block extra_scripts %}
+<script src="{% static 'cuotas/js/inscripciones.js' %}"></script>
+{% endblock %}

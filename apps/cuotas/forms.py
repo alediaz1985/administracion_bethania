@@ -125,10 +125,43 @@ class VencimientoMensualForm(forms.ModelForm):
 # ─────────────────────────────────────────────────────────
 # Beneficios
 # ─────────────────────────────────────────────────────────
+from django import forms
+from django.core.exceptions import ValidationError
+from .models import Beneficio, BeneficioInscripcion
+
 class BeneficioForm(forms.ModelForm):
     class Meta:
         model = Beneficio
-        fields = ["nombre", "tipo", "porcentaje", "monto_fijo", "prioridad", "activo"]
+        fields = [
+            "nombre", "tipo", "porcentaje", "monto_fijo", "prioridad", "activo"
+        ]
+        widgets = {
+            "nombre": forms.TextInput(attrs={"class": "form-control", "maxlength": 120}),
+            "tipo": forms.Select(attrs={"class": "form-select"}),
+            "porcentaje": forms.NumberInput(attrs={"class": "form-control", "step": "0.01", "min": "0", "max": "100"}),
+            "monto_fijo": forms.NumberInput(attrs={"class": "form-control", "step": "0.01", "min": "0"}),
+            "prioridad": forms.NumberInput(attrs={"class": "form-control", "min": "0"}),
+            "activo": forms.CheckboxInput(attrs={"class": "form-check-input"}),
+        }
+
+    def clean(self):
+        cleaned = super().clean()
+        porcentaje = cleaned.get("porcentaje")
+        monto_fijo = cleaned.get("monto_fijo")
+
+        # Al menos uno
+        if (porcentaje is None or porcentaje == 0) and (monto_fijo is None or monto_fijo == 0):
+            raise ValidationError("Debés especificar al menos un valor: porcentaje (>0) y/o monto fijo (>0).")
+
+        # Rangos
+        if porcentaje is not None:
+            if porcentaje < 0 or porcentaje > 100:
+                self.add_error("porcentaje", "El porcentaje debe estar entre 0 y 100.")
+        if monto_fijo is not None:
+            if monto_fijo < 0:
+                self.add_error("monto_fijo", "El monto fijo no puede ser negativo.")
+
+        return cleaned
 
 
 class BeneficioInscripcionForm(forms.ModelForm):
@@ -136,31 +169,83 @@ class BeneficioInscripcionForm(forms.ModelForm):
         model = BeneficioInscripcion
         fields = ["inscripcion", "beneficio", "desde", "hasta", "activo"]
         widgets = {
-            "desde": forms.DateInput(attrs={"type": "date"}),
-            "hasta": forms.DateInput(attrs={"type": "date"}),
+            "inscripcion": forms.Select(attrs={"class": "form-select"}),
+            "beneficio": forms.Select(attrs={"class": "form-select"}),
+            "desde": forms.DateInput(attrs={"type": "date", "class": "form-control"}),
+            "hasta": forms.DateInput(attrs={"type": "date", "class": "form-control"}),
+            "activo": forms.CheckboxInput(attrs={"class": "form-check-input"}),
         }
 
+    def clean(self):
+        cleaned = super().clean()
+        desde = cleaned.get("desde")
+        hasta = cleaned.get("hasta")
+        beneficio = cleaned.get("beneficio")
+
+        if desde and hasta and hasta < desde:
+            raise ValidationError("El rango de fechas es inválido: 'hasta' no puede ser anterior a 'desde'.")
+
+        # Beneficio debe estar activo al momento de asignarlo (política sugerida)
+        if beneficio and not beneficio.activo:
+            self.add_error("beneficio", "El beneficio seleccionado está inactivo.")
+
+        return cleaned
 
 # ─────────────────────────────────────────────────────────
 # Inscripción (con propuesta de monto)
 # ─────────────────────────────────────────────────────────
+from django import forms
+from django.core.exceptions import ValidationError
+from .models import Inscripcion, Cuota, TarifaNivel
+
 class InscripcionForm(forms.ModelForm):
-    """Por defecto propone el monto de inscripción vigente."""
     class Meta:
         model = Inscripcion
         fields = ["estudiante", "ciclo", "nivel", "curso", "monto_inscripcion"]
+        widgets = {
+            "estudiante": forms.Select(attrs={"class": "form-select"}),
+            "ciclo": forms.Select(attrs={"class": "form-select"}),
+            "nivel": forms.Select(attrs={"class": "form-select"}),
+            "curso": forms.Select(attrs={"class": "form-select"}),
+            "monto_inscripcion": forms.NumberInput(attrs={"class": "form-control", "step": "0.01", "min": "0"}),
+        }
 
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        # Si existe la instancia, proponé el monto calculado por tu modelo
-        if getattr(self, "instance", None) and self.instance.pk:
-            if hasattr(self.instance, "get_monto_base_inscripcion"):
-                self.fields["monto_inscripcion"].initial = self.instance.get_monto_base_inscripcion()
-        # Opcional: ordená selects para mejor UX
-        self.fields["ciclo"].queryset = CicloLectivo.objects.order_by("-anio")
-        self.fields["nivel"].queryset = Nivel.objects.order_by("nombre")
-        self.fields["curso"].queryset = Curso.objects.select_related("nivel").order_by("nivel__nombre", "nombre")
+    def clean(self):
+        cleaned = super().clean()
+        ciclo = cleaned.get("ciclo")
+        nivel = cleaned.get("nivel")
+        curso = cleaned.get("curso")
+        # Validar existencia de tarifa si no hay override en curso
+        if ciclo and nivel and curso and curso.monto_inscripcion_override is None:
+            try:
+                TarifaNivel.objects.get(ciclo=ciclo, nivel=nivel)
+            except TarifaNivel.DoesNotExist:
+                raise ValidationError("No existe TarifaNivel para ese ciclo y nivel. Definila o poné override en curso.")
+        return cleaned
 
+
+class CuotaForm(forms.ModelForm):
+    class Meta:
+        model = Cuota
+        fields = ["monto_base", "monto_descuentos", "monto_recargos", "total_a_pagar", "pagada", "fecha_pago"]
+        widgets = {
+            "monto_base": forms.NumberInput(attrs={"class": "form-control", "step": "0.01", "min": "0"}),
+            "monto_descuentos": forms.NumberInput(attrs={"class": "form-control", "step": "0.01", "min": "0"}),
+            "monto_recargos": forms.NumberInput(attrs={"class": "form-control", "step": "0.01", "min": "0"}),
+            "total_a_pagar": forms.NumberInput(attrs={"class": "form-control", "step": "0.01", "min": "0"}),
+            "pagada": forms.CheckboxInput(attrs={"class": "form-check-input"}),
+            "fecha_pago": forms.DateTimeInput(attrs={"type": "datetime-local", "class": "form-control"}),
+        }
+
+    def clean(self):
+        cleaned = super().clean()
+        total = cleaned.get("total_a_pagar")
+        base = cleaned.get("monto_base")
+        if total is not None and total < 0:
+            self.add_error("total_a_pagar", "El total no puede ser negativo.")
+        if base is not None and base < 0:
+            self.add_error("monto_base", "El monto base no puede ser negativo.")
+        return cleaned
 
 # ─────────────────────────────────────────────────────────
 # Cobro puntual de cuota
