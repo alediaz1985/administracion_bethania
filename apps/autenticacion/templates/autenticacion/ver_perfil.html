@@ -1,0 +1,31 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Perfil de Usuario{% endblock %}
+
+{% block extra_styles %}
+<link rel="stylesheet" href="{% static 'autenticacion/css/styles_perfil.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="perfil-card">
+  <div class="perfil-header">
+    {% if user.perfil.foto %}
+      <img src="{{ user.perfil.foto.url }}" alt="Foto de perfil" class="perfil-photo">
+    {% else %}
+      <img src="{% static 'autenticacion/images/default-user.jpg' %}" alt="Usuario genérico" class="perfil-photo">
+    {% endif %}
+
+    <div class="perfil-info">
+      <h2>{{ user.first_name }} {{ user.last_name }}</h2>
+      <p><strong>Correo:</strong> {{ user.email }}</p>
+      <p><strong>Usuario:</strong> {{ user.username }}</p>
+    </div>
+  </div>
+
+  <div class="perfil-actions">
+    <a href="{% url 'editar_perfil' %}" class="btn">Editar Perfil</a>
+    <a href="{% url 'cerrar_sesion' %}" class="btn btn-light">Cerrar Sesión</a>
+  </div>
+</div>
+{% endblock %}

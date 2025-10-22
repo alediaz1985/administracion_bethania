@@ -117,23 +117,41 @@ body {
 .user-info {
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 10px;
   cursor: pointer;
-}
-
-.user-icon {
-  font-size: 1rem;
-  color: #1a2942; /* azul institucional */
-}
-
-.user-name {
-  font-size: 0.95rem;
-  color: #181818;
-  font-weight: 500;
+  transition: transform 0.25s cubic-bezier(0.25, 1.5, 0.5, 1);
 }
 
 .user-info:hover {
-    transform: scale(1.2) translateY(-1px); /* Aumenta y sube un poco */
+  transform: scale(1.1) translateY(-1px);
+}
+
+.user-photo {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 2px solid #1a2942; /* dorado institucional */
+}
+
+.user-text {
+  display: flex;
+  flex-direction: column;
+  line-height: 1.1;
+}
+
+.user-text .username {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: #181818;
+}
+
+/* Segunda línea: nombre y apellido */
+.user-text .fullname {
+  font-size: 0.75rem;
+  font-weight: 400;
+  color: #333333;
+  opacity: 0.9;
 }
 
 /* --- Contenedor de íconos --- */

@@ -1,0 +1,88 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Editar Perfil{% endblock %}
+
+{% block extra_styles %}
+<link rel="stylesheet" href="{% static 'autenticacion/css/styles_editar_perfil.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="perfil-editar-card">
+
+  <form method="post" enctype="multipart/form-data" class="perfil-editar-form">
+    {% csrf_token %}
+
+    <div class="perfil-editar-header">
+      <!-- FOTO -->
+      <div class="perfil-editar-foto">
+        <label for="id_foto" class="foto-label">
+            {% if request.user.perfil.foto and request.user.perfil.foto.url %}
+            <img id="previewFoto"
+                src="{{ request.user.perfil.foto.url }}"
+                alt="Foto de perfil"
+                class="perfil-photo">
+            {% else %}
+            <img id="previewFoto"
+                src="{% static 'autenticacion/images/default-user.jpg' %}"
+                alt="Usuario genérico"
+                class="perfil-photo">
+            {% endif %}
+        </label>
+        <!-- input oculto -->
+        <input type="file" name="foto" id="id_foto" accept="image/*" style="display: none;">
+        <p class="foto-texto">Haz clic en la imagen para cambiarla</p>
+      </div>
+
+      <!-- CAMPOS A LA DERECHA -->
+      <div class="perfil-editar-campos">
+        <div class="perfil-row">
+          <div class="campo">
+            <label for="id_first_name">Nombre</label>
+            {{ user_form.first_name }}
+          </div>
+          <div class="campo">
+            <label for="id_last_name">Apellido</label>
+            {{ user_form.last_name }}
+          </div>
+        </div>
+
+        <div class="perfil-row">
+          <div class="campo campo-full">
+            <label for="id_email">Correo electrónico</label>
+            {{ user_form.email }}
+          </div>
+        </div>
+
+        <div class="perfil-row">
+          <div class="campo">
+            <label for="password">Nueva contraseña</label>
+            <input type="password" name="password" placeholder="••••">
+          </div>
+          <div class="campo">
+            <label for="password_confirm">Confirmar contraseña</label>
+            <input type="password" name="password_confirm" placeholder="••••">
+          </div>
+        </div>
+
+        <div class="perfil-actions">
+          <button type="submit" class="btn">Guardar</button>
+          <a href="{% url 'ver_perfil' %}" class="btn btn-light">Volver</a>
+        </div>
+      </div>
+    </div>
+  </form>
+</div>
+
+<!-- PREVIEW FOTO -->
+<script>
+document.getElementById("id_foto").addEventListener("change", function (event) {
+  const file = event.target.files[0];
+  if (file) {
+    const reader = new FileReader();
+    reader.onload = e => document.getElementById("previewFoto").src = e.target.result;
+    reader.readAsDataURL(file);
+  }
+});
+</script>
+{% endblock %}

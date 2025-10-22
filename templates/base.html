@@ -59,16 +59,24 @@
             <!-- DERECHA -->
             <div class="nav-right">
                 <div class="user-info">
-                    <i class="fas fa-user user-icon"></i>
-                    <span class="user-name">{{ user.username }}</span>
+                    {% if user.perfil.foto %}
+                        <img src="{{ user.perfil.foto.url }}" alt="Foto de perfil" class="user-photo">
+                    {% else %}
+                        <img src="{% static 'administracion_alumnos/img/default.jpg' %}" alt="Usuario genérico" class="user-photo">
+                    {% endif %}
+
+                    <div class="user-text">
+                        <span class="username">{{ user.username }}</span>
+                        <span class="fullname">{{ user.first_name }} {{ user.last_name }}</span>
+                    </div>
                 </div>
                 
                 <div class="icon-container">
-                    <a href="#" class="icon-btn" title="Configuración">
-                    <i class="fas fa-cog"></i>
+                    <a href="{% url 'ver_perfil' %}" class="icon-btn" title="Ver mi perfil">
+                        <i class="fas fa-cog"></i>
                     </a>
                     <a href="{% url 'cerrar_sesion' %}" class="icon-btn" title="Cerrar sesión">
-                    <i class="fas fa-sign-out-alt"></i>
+                        <i class="fas fa-sign-out-alt"></i>
                     </a>
                 </div>
             </div>
