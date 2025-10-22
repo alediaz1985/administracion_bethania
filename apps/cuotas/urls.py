@@ -70,6 +70,7 @@ urlpatterns = [
     path("vencimientos/", views.VencimientoListView.as_view(), name="vencimiento_list"),
     path("vencimientos/nuevo/", views.VencimientoCreateView.as_view(), name="vencimiento_create"),
     path("vencimientos/<int:pk>/editar/", views.VencimientoUpdateView.as_view(), name="vencimiento_update"),
+    
 
     # ========================
     # 🎁 BENEFICIOS (DESCUENTOS)

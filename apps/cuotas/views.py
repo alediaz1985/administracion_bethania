@@ -277,24 +277,6 @@ class TarifaNivelDeleteView(LoginRequiredMixin, DeleteView):
 
 
 
-# ==========================
-# Vencimientos
-# ==========================
-class VencimientoListView(BaseList):
-    model = VencimientoMensual
-    queryset = VencimientoMensual.objects.select_related("ciclo")
-
-
-class VencimientoCreateView(BaseCreate):
-    form_class = VencimientoMensualForm
-    success_url = reverse_lazy("cuotas:vencimiento_list")
-
-
-class VencimientoUpdateView(BaseUpdate):
-    model = VencimientoMensual
-    form_class = VencimientoMensualForm
-    success_url = reverse_lazy("cuotas:vencimiento_list")
-
 
 # ==========================
 # Beneficios
@@ -832,3 +814,77 @@ class BaseList(ListView):
             ctx["mverbose_singular"] = model._meta.verbose_name   # ej. "Beneficio"
             ctx["app_label"] = model._meta.app_label              # ej. "cuotas"
         return ctx
+
+
+# ==========================
+# Vencimientos
+# ==========================
+from django.contrib import messages
+from django.contrib.messages.views import SuccessMessageMixin
+from django.db import IntegrityError, transaction, models
+from django.urls import reverse_lazy
+from django.views.generic import ListView, CreateView, UpdateView
+
+from .models import VencimientoMensual
+from .forms import VencimientoMensualForm
+
+
+class VencimientoListView(ListView):
+    model = VencimientoMensual
+    template_name = "cuotas/vencimientos.html"
+    context_object_name = "vencimientos"
+    paginate_by = 20
+
+    def get_queryset(self):
+        qs = (
+            VencimientoMensual.objects
+            .select_related("ciclo")
+            .order_by("-ciclo__anio", "mes")
+        )
+        q = (self.request.GET.get("q") or "").strip()
+        if q:
+            # Permite buscar por año (ej: 2025) o por mes "03"/"3"
+            qs = qs.filter(
+                models.Q(ciclo__anio__icontains=q) |
+                models.Q(mes__icontains=q)
+            )
+        return qs
+
+    def get_context_data(self, **kwargs):
+        ctx = super().get_context_data(**kwargs)
+        ctx["q"] = self.request.GET.get("q", "")
+        return ctx
+
+
+class VencimientoCreateView(SuccessMessageMixin, CreateView):
+    model = VencimientoMensual
+    form_class = VencimientoMensualForm
+    template_name = "cuotas/vencimiento_form.html"
+    success_url = reverse_lazy("cuotas:vencimiento_list")
+    success_message = "Vencimiento creado correctamente."
+
+    def form_valid(self, form):
+        try:
+            with transaction.atomic():
+                return super().form_valid(form)
+        except IntegrityError:
+            form.add_error("mes", "Ya existe un vencimiento configurado para ese ciclo y mes.")
+            messages.error(self.request, "Revisá los campos marcados.")
+            return self.form_invalid(form)
+
+
+class VencimientoUpdateView(SuccessMessageMixin, UpdateView):
+    model = VencimientoMensual
+    form_class = VencimientoMensualForm
+    template_name = "cuotas/vencimiento_form.html"
+    success_url = reverse_lazy("cuotas:vencimiento_list")
+    success_message = "Vencimiento actualizado correctamente."
+
+    def form_valid(self, form):
+        try:
+            with transaction.atomic():
+                return super().form_valid(form)
+        except IntegrityError:
+            form.add_error("mes", "Ya existe un vencimiento configurado para ese ciclo y mes.")
+            messages.error(self.request, "Revisá los campos marcados.")
+            return self.form_invalid(form)

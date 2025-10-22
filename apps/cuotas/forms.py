@@ -61,6 +61,13 @@ class CursoForm(forms.ModelForm):
         }
 
 
+from calendar import monthrange
+from decimal import Decimal
+from django import forms
+from django.core.exceptions import ValidationError
+
+from .models import VencimientoMensual
+
 
 # ─────────────────────────────────────────────────────────
 # Tarifas y Vencimientos
@@ -75,6 +82,44 @@ class VencimientoMensualForm(forms.ModelForm):
     class Meta:
         model = VencimientoMensual
         fields = ["ciclo", "mes", "dia_ultimo_sin_recargo", "recargo_porcentaje"]
+        labels = {
+            "ciclo": "Ciclo lectivo",
+            "mes": "Mes (1-12)",
+            "dia_ultimo_sin_recargo": "Día último sin recargo",
+            "recargo_porcentaje": "Recargo (%)",
+        }
+        widgets = {
+            "ciclo": forms.Select(attrs={"class": "form-control"}),
+            "mes": forms.NumberInput(attrs={"class": "form-control", "min": 1, "max": 12}),
+            "dia_ultimo_sin_recargo": forms.NumberInput(attrs={"class": "form-control", "min": 1, "max": 31}),
+            "recargo_porcentaje": forms.NumberInput(attrs={"class": "form-control", "step": "0.01", "min": 0}),
+        }
+
+    def clean(self):
+        cleaned = super().clean()
+        ciclo = cleaned.get("ciclo")
+        mes = cleaned.get("mes")
+        dia = cleaned.get("dia_ultimo_sin_recargo")
+        if ciclo and mes and dia:
+            try:
+                y = int(ciclo.anio)
+                ultimo = monthrange(y, mes)[1]
+                if dia > ultimo:
+                    raise ValidationError({
+                        "dia_ultimo_sin_recargo": f"Para {y}-{mes:02d} el último día real es {ultimo}."
+                    })
+            except Exception:
+                pass
+        return cleaned
+
+    def clean_recargo_porcentaje(self):
+        p = self.cleaned_data.get("recargo_porcentaje")
+        if p is None:
+            return p
+        if p < Decimal("0"):
+            raise ValidationError("El recargo no puede ser negativo.")
+        return p
+
 
 
 # ─────────────────────────────────────────────────────────
