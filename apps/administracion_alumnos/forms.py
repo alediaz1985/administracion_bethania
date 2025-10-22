@@ -141,6 +141,14 @@ class ResponsableForm(OptionalFieldsMixin, forms.ModelForm):
         }
 
 ResponsableFormSet = inlineformset_factory(
+    Estudiante,
+    Responsable,
+    form=ResponsableForm,
+    extra=0,
+    can_delete=True
+)
+
+ResponsableFormSet = inlineformset_factory(
     parent_model=Estudiante,
     model=Responsable,
     form=ResponsableForm,

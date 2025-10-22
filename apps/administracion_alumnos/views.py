@@ -140,7 +140,7 @@ def registrar_estudiante(request):
         salud_form = SaludEstudianteForm(request.POST)
         docu_form = DocumentacionForm(request.POST)
         estd_form = EstadoDocumentacionForm(request.POST)
-        resp_fs = ResponsableFormSet(request.POST)
+        resp_fs = ResponsableFormSet(request.POST, prefix='responsable')  # ✅ solo una vez
 
         if all([
             est_form.is_valid(), insc_form.is_valid(), info_form.is_valid(),
@@ -150,7 +150,7 @@ def registrar_estudiante(request):
             # Guardar estudiante principal
             estudiante = est_form.save()
 
-            # Crear cada uno de los OneToOne relacionados
+            # Crear relaciones OneToOne
             inscripcion = insc_form.save(commit=False)
             inscripcion.estudiante = estudiante
             inscripcion.save()
@@ -175,13 +175,16 @@ def registrar_estudiante(request):
             estado.estudiante = estudiante
             estado.save()
 
-            # Guardar los responsables
-            resp_fs.instance = estudiante
-            resp_fs.save()
+            # ✅ Guardar responsables correctamente
+            responsables = resp_fs.save(commit=False)
+            for r in responsables:
+                r.estudiante = estudiante
+                r.save()
 
             messages.success(request, "✅ Estudiante registrado correctamente.")
             return redirect('estudiante_list')
         else:
+            print("❌ Errores en los forms:", est_form.errors, resp_fs.errors)
             messages.error(request, "⚠️ Hay errores en el formulario. Revisá los campos resaltados.")
     else:
         est_form = EstudianteForm()
@@ -191,7 +194,7 @@ def registrar_estudiante(request):
         salud_form = SaludEstudianteForm()
         docu_form = DocumentacionForm()
         estd_form = EstadoDocumentacionForm()
-        resp_fs = ResponsableFormSet()
+        resp_fs = ResponsableFormSet(prefix='responsable')  # ✅ igual en el GET
 
     context = {
         'est_form': est_form,
