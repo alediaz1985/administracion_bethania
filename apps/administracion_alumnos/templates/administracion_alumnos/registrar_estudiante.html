@@ -46,7 +46,7 @@
         <tr><th>Apellidos</th><td>{{ est_form.apellidos_estudiante }}</td></tr>
         <tr><th>Nombres</th><td>{{ est_form.nombres_estudiante }}</td></tr>
         <tr><th>Sexo</th><td>{{ est_form.sexo_estudiante }}</td></tr>
-        <tr><th>Fecha de Nacimiento</th><td>{{ est_form.fecha_nac_estudiante }}</td></tr>
+        <tr><th>Fecha de Nacimiento</th><td><input type="date" name="fecha_nac_estudiante" id="fecha_nac_estudiante" value="{{ est_form.instance.fecha_nac_estudiante|date:'Y-m-d' }}" required></td></tr>
         <tr><th>Nacionalidad</th><td>{{ est_form.nacionalidad_estudiante }}</td></tr>
         <tr><th>Religión</th><td>{{ est_form.religion_estudiante }}</td></tr>
         <tr><th>CUIL</th><td>{{ est_form.cuil_estudiante }}</td></tr>
@@ -57,55 +57,182 @@
     <!-- INSCRIPCIÓN -->
     <div class="tab-content" id="tab-inscripcion">
       <table class="table-like">
-        {{ insc_form.as_table }}
+        {{ insc_form.non_field_errors }}
+        <tr><th>Marca Temporal</th><td><input type="date" name="marca_temporal" id="marca_temporal" value="{{ insc_form.instance.marca_temporal|date:'Y-m-d' }}" required></td></tr>
+        <tr><th>Email de Registro</th><td>{{ insc_form.email_registro }}</td></tr>
+        <tr><th>Foto del Estudiante</th><td>{{ insc_form.foto_estudiante }}</td></tr>
+        <tr><th>N° de Legajo</th><td>{{ insc_form.num_legajo_estudiante }}</td></tr>
+        <tr><th>Fecha de Recepción</th><td><input type="date" name="fecha_recepcion" id="fecha_recepcion" value="{{ insc_form.instance.fecha_recepcion|date:'Y-m-d' }}"></td></tr>
+        <tr><th>Salita / Grado / Año</th><td><select name="salita_grado_anio_estudiante" id="salita_grado_anio_estudiante" required><option value="">Seleccionar...</option><optgroup label="Nivel Inicial"><option value="Sala de 3 años" {% if insc_form.instance.salita_grado_anio_estudiante == 'Sala de 3 años' %}selected{% endif %}>Sala de 3 años</option><option value="Sala de 4 años" {% if insc_form.instance.salita_grado_anio_estudiante == 'Sala de 4 años' %}selected{% endif %}>Sala de 4 años</option><option value="Sala de 5 años" {% if insc_form.instance.salita_grado_anio_estudiante == 'Sala de 5 años' %}selected{% endif %}>Sala de 5 años</option></optgroup><optgroup label="Nivel Primario"><option value="1° Grado" {% if insc_form.instance.salita_grado_anio_estudiante == '1° Grado' %}selected{% endif %}>1° Grado</option><option value="2° Grado" {% if insc_form.instance.salita_grado_anio_estudiante == '2° Grado' %}selected{% endif %}>2° Grado</option><option value="3° Grado" {% if insc_form.instance.salita_grado_anio_estudiante == '3° Grado' %}selected{% endif %}>3° Grado</option><option value="4° Grado" {% if insc_form.instance.salita_grado_anio_estudiante == '4° Grado' %}selected{% endif %}>4° Grado</option><option value="5° Grado" {% if insc_form.instance.salita_grado_anio_estudiante == '5° Grado' %}selected{% endif %}>5° Grado</option><option value="6° Grado" {% if insc_form.instance.salita_grado_anio_estudiante == '6° Grado' %}selected{% endif %}>6° Grado</option><option value="7° Grado" {% if insc_form.instance.salita_grado_anio_estudiante == '7° Grado' %}selected{% endif %}>7° Grado</option></optgroup><optgroup label="Nivel Secundario"><option value="1° Año" {% if insc_form.instance.salita_grado_anio_estudiante == '1° Año' %}selected{% endif %}>1° Año</option><option value="2° Año" {% if insc_form.instance.salita_grado_anio_estudiante == '2° Año' %}selected{% endif %}>2° Año</option><option value="3° Año" {% if insc_form.instance.salita_grado_anio_estudiante == '3° Año' %}selected{% endif %}>3° Año</option><option value="4° Año" {% if insc_form.instance.salita_grado_anio_estudiante == '4° Año' %}selected{% endif %}>4° Año</option><option value="5° Año" {% if insc_form.instance.salita_grado_anio_estudiante == '5° Año' %}selected{% endif %}>5° Año</option></optgroup></select></td></tr>
+        <tr><th>Nivel del Estudiante</th><td><select name="nivel_estudiante" id="nivel_estudiante" required><option value="">Seleccionar...</option><option value="Inicial" {% if insc_form.instance.nivel_estudiante == 'Inicial' %}selected{% endif %}>Inicial</option><option value="Primario" {% if insc_form.instance.nivel_estudiante == 'Primario' %}selected{% endif %}>Primario</option><option value="Secundario" {% if insc_form.instance.nivel_estudiante == 'Secundario' %}selected{% endif %}>Secundario</option></select></td></tr>
+        <tr><th>Curso / Año</th><td><select name="curso_anio_estudiante" id="curso_anio_estudiante" required><option value="">Seleccionar...</option><option value="Sala de 3 años" {% if insc_form.instance.curso_anio_estudiante == 'Sala de 3 años' %}selected{% endif %}>Sala de 3 años</option><option value="Sala de 4 años" {% if insc_form.instance.curso_anio_estudiante == 'Sala de 4 años' %}selected{% endif %}>Sala de 4 años</option><option value="Sala de 5 años" {% if insc_form.instance.curso_anio_estudiante == 'Sala de 5 años' %}selected{% endif %}>Sala de 5 años</option><option value="1° Grado" {% if insc_form.instance.curso_anio_estudiante == '1° Grado' %}selected{% endif %}>1° Grado</option><option value="2° Grado" {% if insc_form.instance.curso_anio_estudiante == '2° Grado' %}selected{% endif %}>2° Grado</option><option value="3° Grado" {% if insc_form.instance.curso_anio_estudiante == '3° Grado' %}selected{% endif %}>3° Grado</option><option value="4° Grado" {% if insc_form.instance.curso_anio_estudiante == '4° Grado' %}selected{% endif %}>4° Grado</option><option value="5° Grado" {% if insc_form.instance.curso_anio_estudiante == '5° Grado' %}selected{% endif %}>5° Grado</option><option value="6° Grado" {% if insc_form.instance.curso_anio_estudiante == '6° Grado' %}selected{% endif %}>6° Grado</option><option value="7° Grado" {% if insc_form.instance.curso_anio_estudiante == '7° Grado' %}selected{% endif %}>7° Grado</option><option value="1° Año" {% if insc_form.instance.curso_anio_estudiante == '1° Año' %}selected{% endif %}>1° Año</option><option value="2° Año" {% if insc_form.instance.curso_anio_estudiante == '2° Año' %}selected{% endif %}>2° Año</option><option value="3° Año" {% if insc_form.instance.curso_anio_estudiante == '3° Año' %}selected{% endif %}>3° Año</option><option value="4° Año" {% if insc_form.instance.curso_anio_estudiante == '4° Año' %}selected{% endif %}>4° Año</option><option value="5° Año" {% if insc_form.instance.curso_anio_estudiante == '5° Año' %}selected{% endif %}>5° Año</option></select></td></tr>
+        <tr><th>Turno</th><td>{{ insc_form.turno_estudiante }}</td></tr>
+        <tr><th>Nivel de Enseñanza</th><td><select name="nivel_ensenanza" id="nivel_ensenanza" required><option value="">Seleccionar...</option><option value="Inicial" {% if insc_form.instance.nivel_ensenanza == 'Inicial' %}selected{% endif %}>Inicial</option><option value="Primario" {% if insc_form.instance.nivel_ensenanza == 'Primario' %}selected{% endif %}>Primario</option><option value="Secundario" {% if insc_form.instance.nivel_ensenanza == 'Secundario' %}selected{% endif %}>Secundario</option></select></td></tr>
       </table>
     </div>
 
     <!-- ACADÉMICA -->
     <div class="tab-content" id="tab-academica">
       <table class="table-like">
-        {{ info_form.as_table }}
+        {{ info_form.non_field_errors }}
+        <tr><th>Año cursado</th><td><select name="anio_cursado" id="anio_cursado" required><option value="">Seleccionar...</option><option value="Sala de 3 años" {% if info_form.instance.anio_cursado == 'Sala de 3 años' %}selected{% endif %}>Sala de 3 años</option><option value="Sala de 4 años" {% if info_form.instance.anio_cursado == 'Sala de 4 años' %}selected{% endif %}>Sala de 4 años</option><option value="Sala de 5 años" {% if info_form.instance.anio_cursado == 'Sala de 5 años' %}selected{% endif %}>Sala de 5 años</option><option value="1° Grado" {% if info_form.instance.anio_cursado == '1° Grado' %}selected{% endif %}>1° Grado</option><option value="2° Grado" {% if info_form.instance.anio_cursado == '2° Grado' %}selected{% endif %}>2° Grado</option><option value="3° Grado" {% if info_form.instance.anio_cursado == '3° Grado' %}selected{% endif %}>3° Grado</option><option value="4° Grado" {% if info_form.instance.anio_cursado == '4° Grado' %}selected{% endif %}>4° Grado</option><option value="5° Grado" {% if info_form.instance.anio_cursado == '5° Grado' %}selected{% endif %}>5° Grado</option><option value="6° Grado" {% if info_form.instance.anio_cursado == '6° Grado' %}selected{% endif %}>6° Grado</option><option value="7° Grado" {% if info_form.instance.anio_cursado == '7° Grado' %}selected{% endif %}>7° Grado</option><option value="1° Año" {% if info_form.instance.anio_cursado == '1° Año' %}selected{% endif %}>1° Año</option><option value="2° Año" {% if info_form.instance.anio_cursado == '2° Año' %}selected{% endif %}>2° Año</option><option value="3° Año" {% if info_form.instance.anio_cursado == '3° Año' %}selected{% endif %}>3° Año</option><option value="4° Año" {% if info_form.instance.anio_cursado == '4° Año' %}selected{% endif %}>4° Año</option><option value="5° Año" {% if info_form.instance.anio_cursado == '5° Año' %}selected{% endif %}>5° Año</option></select></td></tr>
+        <tr><th>Dónde cursó</th><td><input type="text" name="donde_cursado" id="donde_cursado" value="{{ info_form.instance.donde_cursado|default_if_none:'' }}" placeholder=""></td></tr>
+        <tr><th>Asignaturas pendientes</th><td><input type="text" name="asignaturas_pendientes" id="asignaturas_pendientes" value="{{ info_form.instance.asignaturas_pendientes|default_if_none:'' }}" placeholder=""></td></tr>
+        <tr><th>Indica cuáles asignaturas</th><td><input type="text" name="indica_asig_pendientes" id="indica_asig_pendientes" value="{{ info_form.instance.indica_asig_pendientes|default_if_none:'' }}" placeholder=""></td></tr>
+        <tr><th>¿Tiene hermanos en la institución?</th><td><input type="text" name="tiene_hermanos_institucion" id="tiene_hermanos_institucion" value="{{ info_form.instance.tiene_hermanos_institucion|default_if_none:'' }}" placeholder=""></td></tr>
+        <tr><th>¿Cuántos hermanos?</th><td><input type="text" name="cuantos_hermanos" id="cuantos_hermanos" value="{{ info_form.instance.cuantos_hermanos|default_if_none:'' }}" placeholder=""></td></tr>
+        <tr><th>¿Cómo conoció la institución?</th><td><input type="text" name="como_conociste_institucion" id="como_conociste_institucion" value="{{ info_form.instance.como_conociste_institucion|default_if_none:'' }}" placeholder=""></td></tr>
+        <tr><th>¿Quién eligió la institución?</th><td><input type="text" name="eligio_institucion" id="eligio_institucion" value="{{ info_form.instance.eligio_institucion|default_if_none:'' }}" placeholder=""></td></tr>
       </table>
     </div>
 
     <!-- CONTACTO -->
     <div class="tab-content" id="tab-contacto">
       <table class="table-like">
-        {{ cont_form.as_table }}
+        {{ cont_form.non_field_errors }}
+        <tr><th>Ciudad</th><td><input type="text" name="ciudad_estudiante" id="ciudad_estudiante" value="{{ cont_form.instance.ciudad_estudiante|default_if_none:'' }}" placeholder="" required></td></tr>
+        <tr><th>Provincia</th><td><input type="text" name="provincia_estudiante" id="provincia_estudiante" value="{{ cont_form.instance.provincia_estudiante|default_if_none:'' }}" placeholder="" required></td></tr>
+        <tr><th>Barrio</th><td><input type="text" name="barrio_estudiante" id="barrio_estudiante" value="{{ cont_form.instance.barrio_estudiante|default_if_none:'' }}" placeholder="" required></td></tr>
+        <tr><th>Calle</th><td><input type="text" name="calle_estudiante" id="calle_estudiante" value="{{ cont_form.instance.calle_estudiante|default_if_none:'' }}" placeholder="" required></td></tr>
+        <tr><th>N°, Mza o PC</th><td><input type="text" name="n_mz_pc_estudiante" id="n_mz_pc_estudiante" value="{{ cont_form.instance.n_mz_pc_estudiante|default_if_none:'' }}" placeholder="" required></td></tr>
+        <tr><th>Código Postal</th><td><input type="text" name="codigo_postal_estudiante" id="codigo_postal_estudiante" value="{{ cont_form.instance.codigo_postal_estudiante|default_if_none:'' }}" placeholder="" required></td></tr>
+        <tr><th>Email</th><td><input type="email" name="email_estudiante" id="email_estudiante" value="{{ cont_form.instance.email_estudiante|default_if_none:'' }}" placeholder="" required></td></tr>
+        <tr><th>Teléfono Fijo</th><td><input type="text" name="tel_fijo_estudiante" id="tel_fijo_estudiante" value="{{ cont_form.instance.tel_fijo_estudiante|default_if_none:'' }}" placeholder=""></td></tr>
+        <tr><th>Teléfono Celular</th><td><input type="text" name="tel_cel_estudiante" id="tel_cel_estudiante" value="{{ cont_form.instance.tel_cel_estudiante|default_if_none:'' }}" placeholder="" required></td></tr>
+        <tr><th>Teléfono de Emergencia</th><td><input type="text" name="tel_emergencia_estudiante" id="tel_emergencia_estudiante" value="{{ cont_form.instance.tel_emergencia_estudiante|default_if_none:'' }}" placeholder="" required></td></tr>
+        <tr><th>Parentesco (Emergencia)</th><td><input type="text" name="parentesco_estudiante" id="parentesco_estudiante" value="{{ cont_form.instance.parentesco_estudiante|default_if_none:'' }}" placeholder="" required></td></tr>
       </table>
     </div>
 
     <!-- SALUD -->
     <div class="tab-content" id="tab-salud">
       <table class="table-like">
-        {{ salud_form.as_table }}
+        {{ salud_form.non_field_errors }}
+        <tr><th>Peso</th><td><input type="text" name="peso_estudiante" id="peso_estudiante" value="{{ salud_form.instance.peso_estudiante|default_if_none:'' }}" placeholder="" required></td></tr>
+        <tr><th>Talla</th><td><input type="text" name="talla_estudiante" id="talla_estudiante" value="{{ salud_form.instance.talla_estudiante|default_if_none:'' }}" placeholder="" required></td></tr>
+        <tr><th>Obra Social</th><td><input type="text" name="obra_social_estudiante" id="obra_social_estudiante" value="{{ salud_form.instance.obra_social_estudiante|default_if_none:'' }}" placeholder="" required></td></tr>
+        <tr><th>Cuál Obra Social</th><td><input type="text" name="cual_osocial_estudiante" id="cual_osocial_estudiante" value="{{ salud_form.instance.cual_osocial_estudiante|default_if_none:'' }}" placeholder=""></td></tr>
+        <tr><th>¿Tiene Problema Neurológico?</th><td><input type="text" name="problema_neurologico_estudiante" id="problema_neurologico_estudiante" value="{{ salud_form.instance.problema_neurologico_estudiante|default_if_none:'' }}" placeholder=""></td></tr>
+        <tr><th>Cuál Problema Neurológico</th><td><input type="text" name="cual_prob_neurologico_estudiante" id="cual_prob_neurologico_estudiante" value="{{ salud_form.instance.cual_prob_neurologico_estudiante|default_if_none:'' }}" placeholder=""></td></tr>
+        <tr><th>¿Tiene Problema Físico?</th><td><input type="text" name="problema_fisico_estudiante" id="problema_fisico_estudiante" value="{{ salud_form.instance.problema_fisico_estudiante|default_if_none:'' }}" placeholder=""></td></tr>
+        <tr><th>¿Posee Certificado Médico?</th><td><input type="text" name="certificado_medico_estudiante" id="certificado_medico_estudiante" value="{{ salud_form.instance.certificado_medico_estudiante|default_if_none:'' }}" placeholder=""></td></tr>
+        <tr><th>¿Tiene Problema de Aprendizaje?</th><td><input type="text" name="problema_aprendizaje_estudiante" id="problema_aprendizaje_estudiante" value="{{ salud_form.instance.problema_aprendizaje_estudiante|default_if_none:'' }}" placeholder=""></td></tr>
+        <tr><th>Cuál Problema de Aprendizaje</th><td><input type="text" name="cual_aprendizaje_estudiante" id="cual_aprendizaje_estudiante" value="{{ salud_form.instance.cual_aprendizaje_estudiante|default_if_none:'' }}" placeholder=""></td></tr>
+        <tr><th>Atención Médica</th><td><input type="text" name="atencion_medica_estudiante" id="atencion_medica_estudiante" value="{{ salud_form.instance.atencion_medica_estudiante|default_if_none:'' }}" placeholder=""></td></tr>
+        <tr><th>Alergia</th><td><input type="text" name="alergia_estudiante" id="alergia_estudiante" value="{{ salud_form.instance.alergia_estudiante|default_if_none:'' }}" placeholder=""></td></tr>
       </table>
     </div>
 
     <!-- RESPONSABLES -->
     <div class="tab-content" id="tab-responsables">
       {{ resp_fs.management_form }}
-      {% for form in resp_fs.forms %}
-        <table class="table-like">
-          {{ form.as_table }}
+
+      <div id="responsables-container">
+        {% for form in resp_fs.forms %}
+          <table class="table-like responsable-form">
+            {{ form.non_field_errors }}
+            <tr><th>DNI</th><td><input type="text" name="{{ form.prefix }}-dni" value="{{ form.instance.dni|default_if_none:'' }}" required></td></tr>
+            <tr><th>Apellidos</th><td><input type="text" name="{{ form.prefix }}-apellidos" value="{{ form.instance.apellidos|default_if_none:'' }}" required></td></tr>
+            <tr><th>Nombres</th><td><input type="text" name="{{ form.prefix }}-nombres" value="{{ form.instance.nombres|default_if_none:'' }}" required></td></tr>
+            <tr><th>Nacionalidad</th><td><input type="text" name="{{ form.prefix }}-nacionalidad" value="{{ form.instance.nacionalidad|default_if_none:'' }}" required></td></tr>
+            <tr><th>Fecha de Nacimiento</th><td><input type="date" name="{{ form.prefix }}-fecha_nac" value="{{ form.instance.fecha_nac|date:'Y-m-d' }}" required></td></tr>
+            <tr><th>Estado Civil</th><td><input type="text" name="{{ form.prefix }}-estado_civil" value="{{ form.instance.estado_civil|default_if_none:'' }}" required></td></tr>
+            <tr><th>CUIL</th><td><input type="text" name="{{ form.prefix }}-cuil" value="{{ form.instance.cuil|default_if_none:'' }}" required></td></tr>
+            <tr><th>Nivel de Instrucción</th><td>
+              <select name="{{ form.prefix }}-nivel_instruccion" required>
+                <option value="">Seleccionar...</option>
+                <option value="Primario" {% if form.instance.nivel_instruccion == 'Primario' %}selected{% endif %}>Primario</option>
+                <option value="Secundario" {% if form.instance.nivel_instruccion == 'Secundario' %}selected{% endif %}>Secundario</option>
+                <option value="Terciario" {% if form.instance.nivel_instruccion == 'Terciario' %}selected{% endif %}>Terciario</option>
+              </select>
+            </td></tr>
+            <tr><th>Calle</th><td><input type="text" name="{{ form.prefix }}-calle" value="{{ form.instance.calle|default_if_none:'' }}" required></td></tr>
+            <tr><th>N°, Mza o PC</th><td><input type="text" name="{{ form.prefix }}-n_mz_pc" value="{{ form.instance.n_mz_pc|default_if_none:'' }}" required></td></tr>
+            <tr><th>Barrio</th><td><input type="text" name="{{ form.prefix }}-barrio" value="{{ form.instance.barrio|default_if_none:'' }}" required></td></tr>
+            <tr><th>Ciudad</th><td><input type="text" name="{{ form.prefix }}-ciudad" value="{{ form.instance.ciudad|default_if_none:'' }}" required></td></tr>
+            <tr><th>Código Postal</th><td><input type="text" name="{{ form.prefix }}-codigo_postal" value="{{ form.instance.codigo_postal|default_if_none:'' }}" required></td></tr>
+            <tr><th>Provincia</th><td><input type="text" name="{{ form.prefix }}-provincia" value="{{ form.instance.provincia|default_if_none:'' }}" required></td></tr>
+            <tr><th>Email</th><td><input type="email" name="{{ form.prefix }}-email" value="{{ form.instance.email|default_if_none:'' }}" required></td></tr>
+            <tr><th>Religión</th><td><input type="text" name="{{ form.prefix }}-religion" value="{{ form.instance.religion|default_if_none:'' }}"></td></tr>
+            <tr><th>Teléfono Fijo</th><td><input type="text" name="{{ form.prefix }}-tel_fijo" value="{{ form.instance.tel_fijo|default_if_none:'' }}"></td></tr>
+            <tr><th>Teléfono Celular</th><td><input type="text" name="{{ form.prefix }}-tel_cel" value="{{ form.instance.tel_cel|default_if_none:'' }}" required></td></tr>
+            <tr><th>Ocupación</th><td><input type="text" name="{{ form.prefix }}-ocupacion" value="{{ form.instance.ocupacion|default_if_none:'' }}" required></td></tr>
+            <tr><th>Teléfono Laboral</th><td><input type="text" name="{{ form.prefix }}-tel_laboral" value="{{ form.instance.tel_laboral|default_if_none:'' }}"></td></tr>
+            <tr><th>Horario de Trabajo</th><td><input type="text" name="{{ form.prefix }}-horario_trabajo" value="{{ form.instance.horario_trabajo|default_if_none:'' }}"></td></tr>
+          </table>
+          <button type="button" class="btn-eliminar-resp">🗑️ Eliminar</button>
+          <hr>
+        {% endfor %}
+      </div>
+
+      <button type="button" id="add-responsable-btn" class="btn-agregar">➕ Agregar Responsable</button>
+
+      <!-- Template oculto -->
+      <template id="empty-form-template">
+        <table class="table-like responsable-form">
+          <tr><th>DNI</th><td><input type="text" name="__prefix__-dni" required></td></tr>
+          <tr><th>Apellidos</th><td><input type="text" name="__prefix__-apellidos" required></td></tr>
+          <tr><th>Nombres</th><td><input type="text" name="__prefix__-nombres" required></td></tr>
+          <tr><th>Nacionalidad</th><td><input type="text" name="__prefix__-nacionalidad" required></td></tr>
+          <tr><th>Fecha de Nacimiento</th><td><input type="date" name="__prefix__-fecha_nac" required></td></tr>
+          <tr><th>Estado Civil</th><td><input type="text" name="__prefix__-estado_civil" required></td></tr>
+          <tr><th>CUIL</th><td><input type="text" name="__prefix__-cuil" required></td></tr>
+          <tr><th>Nivel de Instrucción</th><td>
+            <select name="__prefix__-nivel_instruccion" required>
+              <option value="">Seleccionar...</option>
+              <option value="Primario">Primario</option>
+              <option value="Secundario">Secundario</option>
+              <option value="Terciario">Terciario</option>
+            </select>
+          </td></tr>
+          <tr><th>Calle</th><td><input type="text" name="__prefix__-calle" required></td></tr>
+          <tr><th>N°, Mza o PC</th><td><input type="text" name="__prefix__-n_mz_pc" required></td></tr>
+          <tr><th>Barrio</th><td><input type="text" name="__prefix__-barrio" required></td></tr>
+          <tr><th>Ciudad</th><td><input type="text" name="__prefix__-ciudad" required></td></tr>
+          <tr><th>Código Postal</th><td><input type="text" name="__prefix__-codigo_postal" required></td></tr>
+          <tr><th>Provincia</th><td><input type="text" name="__prefix__-provincia" required></td></tr>
+          <tr><th>Email</th><td><input type="email" name="__prefix__-email" required></td></tr>
+          <tr><th>Religión</th><td><input type="text" name="__prefix__-religion"></td></tr>
+          <tr><th>Teléfono Fijo</th><td><input type="text" name="__prefix__-tel_fijo"></td></tr>
+          <tr><th>Teléfono Celular</th><td><input type="text" name="__prefix__-tel_cel" required></td></tr>
+          <tr><th>Ocupación</th><td><input type="text" name="__prefix__-ocupacion" required></td></tr>
+          <tr><th>Teléfono Laboral</th><td><input type="text" name="__prefix__-tel_laboral"></td></tr>
+          <tr><th>Horario de Trabajo</th><td><input type="text" name="__prefix__-horario_trabajo"></td></tr>
         </table>
+        <button type="button" class="btn-eliminar-resp">🗑️ Eliminar</button>
         <hr>
-      {% empty %}
-        <p>No hay responsables cargados.</p>
-      {% endfor %}
+      </template>
     </div>
 
     <!-- DOCUMENTACIÓN -->
     <div class="tab-content" id="tab-documentacion">
       <table class="table-like">
-        {{ docu_form.as_table }}
+        {{ docu_form.non_field_errors }}
+        <tr><th>Fecha de Contrato</th><td><input type="date" name="fecha_contrato" id="fecha_contrato" value="{{ docu_form.instance.fecha_contrato|date:'Y-m-d' }}" placeholder="" required></td></tr>
+        <tr><th>Ciudad a los días</th><td><input type="date" name="ciudad_a_los_dias" id="ciudad_a_los_dias" value="{{ docu_form.instance.ciudad_a_los_dias|date:'Y-m-d' }}" placeholder="" required></td></tr>
+        <tr><th>Señores 1</th><td><input type="text" name="senores1" id="senores1" value="{{ docu_form.instance.senores1|default_if_none:'' }}" placeholder="" required></td></tr>
+        <tr><th>DNI Señores 1</th><td><input type="text" name="dni_senores1" id="dni_senores1" value="{{ docu_form.instance.dni_senores1|default_if_none:'' }}" placeholder="" required></td></tr>
+        <tr><th>Señores 2</th><td><input type="text" name="senores2" id="senores2" value="{{ docu_form.instance.senores2|default_if_none:'' }}" placeholder=""></td></tr>
+        <tr><th>DNI Señores 2</th><td><input type="text" name="dni_senores2" id="dni_senores2" value="{{ docu_form.instance.dni_senores2|default_if_none:'' }}" placeholder=""></td></tr>
+        <tr><th>Domicilios Señores</th><td><input type="text" name="domicilios_senores" id="domicilios_senores" value="{{ docu_form.instance.domicilios_senores|default_if_none:'' }}" placeholder="" required></td></tr>
+        <tr><th>Domicilio Especial Electrónico</th><td><input type="text" name="domicilio_especial_electronico" id="domicilio_especial_electronico" value="{{ docu_form.instance.domicilio_especial_electronico|default_if_none:'' }}" placeholder="" required></td></tr>
+        <tr><th>Actúan en Nombre del Estudiante</th><td><input type="text" name="actuan_nombres_estudiante" id="actuan_nombres_estudiante" value="{{ docu_form.instance.actuan_nombres_estudiante|default_if_none:'' }}" placeholder="" required></td></tr>
+        <tr><th>DNI Actúan</th><td><input type="text" name="dni_acutan_estudiante" id="dni_acutan_estudiante" value="{{ docu_form.instance.dni_acutan_estudiante|default_if_none:'' }}" placeholder="" required></td></tr>
+        <tr><th>Domicilio Actúan</th><td><input type="text" name="domicilio_actuan_estudiante" id="domicilio_actuan_estudiante" value="{{ docu_form.instance.domicilio_actuan_estudiante|default_if_none:'' }}" placeholder="" required></td></tr>
+        <tr><th>Responsable de Pago</th><td><input type="text" name="responsable_pago" id="responsable_pago" value="{{ docu_form.instance.responsable_pago|default_if_none:'' }}" placeholder="" required></td></tr>
+        <tr><th>DNI Responsable de Pago</th><td><input type="text" name="dni_responsable_pago" id="dni_responsable_pago" value="{{ docu_form.instance.dni_responsable_pago|default_if_none:'' }}" placeholder="" required></td></tr>
+        <tr><th>Manifiesta Responsable</th><td><input type="text" name="manifiesta_responsable" id="manifiesta_responsable" value="{{ docu_form.instance.manifiesta_responsable|default_if_none:'' }}" placeholder=""></td></tr>
+        <tr><th>Autoriza Facturación a</th><td><input type="text" name="autoriza_facturacion_a" id="autoriza_facturacion_a" value="{{ docu_form.instance.autoriza_facturacion_a|default_if_none:'' }}" placeholder=""></td></tr>
+        <tr><th>Autoriza Imagen</th><td><select name="autoriza_imagen" id="autoriza_imagen"><option value="">Seleccionar...</option><option value="Si, autorizo" {% if docu_form.instance.autoriza_imagen == 'Si, autorizo' %}selected{% endif %}>Si, autorizo</option><option value="No, autorizo" {% if docu_form.instance.autoriza_imagen == 'No, autorizo' %}selected{% endif %}>No, autorizo</option></select></td></tr>
       </table>
     </div>
 
     <!-- ESTADO -->
     <div class="tab-content" id="tab-estado">
       <table class="table-like">
-        {{ estd_form.as_table }}
+        {{ estd_form.non_field_errors }}
+        <tr><th>Estado</th><td>{{ estd_form.estado }}</td></tr>
+        <tr><th>Fecha de Actualización</th><td><input type="datetime-local" name="fecha_actualizacion" id="fecha_actualizacion" value="{{ estd_form.instance.fecha_actualizacion|date:'Y-m-d\\TH:i' }}" readonly></td></tr>
       </table>
     </div>
 
@@ -128,5 +255,39 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   });
 });
+
+  document.addEventListener('DOMContentLoaded', () => {
+    const container = document.getElementById('responsables-container');
+    const addBtn = document.getElementById('add-responsable-btn');
+    const template = document.getElementById('empty-form-template').innerHTML;
+    const totalForms = document.querySelector('#id_' + '{{ resp_fs.prefix }}' + '-TOTAL_FORMS');
+    const maxForms = 3;
+
+    // ➕ Agregar responsable
+    addBtn.addEventListener('click', () => {
+      const count = parseInt(totalForms.value);
+      if (count >= maxForms) {
+        alert('Solo se pueden agregar hasta 3 responsables.');
+        return;
+      }
+      const newForm = template.replace(/__prefix__/g, count);
+      container.insertAdjacentHTML('beforeend', newForm);
+      totalForms.value = count + 1;
+      if (parseInt(totalForms.value) >= maxForms) addBtn.style.display = 'none';
+    });
+
+    // 🗑️ Eliminar responsable
+    container.addEventListener('click', e => {
+      if (e.target.classList.contains('btn-eliminar-resp')) {
+        e.target.closest('.responsable-form').nextElementSibling?.remove(); // borra <hr>
+        e.target.closest('.responsable-form').remove();
+        totalForms.value = parseInt(totalForms.value) - 1;
+        addBtn.style.display = 'inline-block';
+      }
+    });
+
+    if (parseInt(totalForms.value) >= maxForms) addBtn.style.display = 'none';
+  });
+
 </script>
 {% endblock %}
