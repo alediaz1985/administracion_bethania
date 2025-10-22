@@ -5,6 +5,8 @@ from django.contrib.auth.decorators import login_required, user_passes_test
 from django.contrib import messages
 from .forms import LoginForm, RegisterForm, PerfilUsuarioForm, PerfilForm
 from .models import Perfil
+from django.conf import settings
+import os
 
 # --- Iniciar sesión ---
 def login_view(request):
@@ -49,15 +51,15 @@ def logout_view(request):
 @login_required
 def editar_perfil(request):
     # Crear el perfil si no existe (por si el usuario es viejo)
-    Perfil.objects.get_or_create(user=request.user)
+    perfil, created = Perfil.objects.get_or_create(user=request.user)
 
     user = request.user
     user_form = PerfilUsuarioForm(instance=user)
-    perfil_form = PerfilForm(instance=user.perfil)
+    perfil_form = PerfilForm(instance=perfil)
 
     if request.method == 'POST':
         user_form = PerfilUsuarioForm(request.POST, instance=user)
-        perfil_form = PerfilForm(request.POST, request.FILES, instance=user.perfil)
+        perfil_form = PerfilForm(request.POST, request.FILES, instance=perfil)
         new_password = request.POST.get('password')
         confirm_password = request.POST.get('password_confirm')
 
@@ -73,7 +75,32 @@ def editar_perfil(request):
                     return redirect('editar_perfil')
 
             user.save()
-            perfil_form.save()
+
+            # 🔹 Guardar la foto de perfil en /static/autenticacion/images/usuarios/
+            nueva_foto = request.FILES.get('foto')
+            if nueva_foto:
+                # Carpeta destino
+                destino = os.path.join(
+                    settings.BASE_DIR,
+                    'apps', 'autenticacion', 'static', 'autenticacion', 'images', 'usuarios'
+                )
+                os.makedirs(destino, exist_ok=True)
+
+                # Nombre de archivo: username + extensión
+                extension = nueva_foto.name.split('.')[-1]
+                nombre_archivo = f"{user.username}.{extension}"
+                ruta_archivo = os.path.join(destino, nombre_archivo)
+
+                # Guardar físicamente
+                with open(ruta_archivo, 'wb+') as f:
+                    for chunk in nueva_foto.chunks():
+                        f.write(chunk)
+
+                # Guardar en el modelo el nombre del archivo
+                perfil.foto = nombre_archivo
+                perfil.save()
+            else:
+                perfil_form.save()  # si no sube nueva foto, guardar los demás campos
 
             messages.success(request, 'Perfil actualizado correctamente.')
 

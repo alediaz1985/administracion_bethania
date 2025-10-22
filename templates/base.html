@@ -60,7 +60,7 @@
             <div class="nav-right">
                 <div class="user-info">
                     {% if user.perfil.foto %}
-                        <img src="{{ user.perfil.foto.url }}" alt="Foto de perfil" class="user-photo">
+                        <img src="{{ request.user.perfil.foto_url }}" alt="Foto de perfil" class="user-photo">
                     {% else %}
                         <img src="{% static 'administracion_alumnos/img/default.jpg' %}" alt="Usuario genérico" class="user-photo">
                     {% endif %}

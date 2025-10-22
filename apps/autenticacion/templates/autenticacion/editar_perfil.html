@@ -17,17 +17,17 @@
       <!-- FOTO -->
       <div class="perfil-editar-foto">
         <label for="id_foto" class="foto-label">
-            {% if request.user.perfil.foto and request.user.perfil.foto.url %}
+          {% if request.user.perfil.foto %}
             <img id="previewFoto"
-                src="{{ request.user.perfil.foto.url }}"
+                src="{{ request.user.perfil.foto_url }}"
                 alt="Foto de perfil"
                 class="perfil-photo">
-            {% else %}
+          {% else %}
             <img id="previewFoto"
                 src="{% static 'autenticacion/images/default-user.jpg' %}"
                 alt="Usuario genérico"
                 class="perfil-photo">
-            {% endif %}
+          {% endif %}
         </label>
         <!-- input oculto -->
         <input type="file" name="foto" id="id_foto" accept="image/*" style="display: none;">

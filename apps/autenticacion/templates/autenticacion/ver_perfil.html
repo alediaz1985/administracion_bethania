@@ -11,7 +11,7 @@
 <div class="perfil-card">
   <div class="perfil-header">
     {% if user.perfil.foto %}
-      <img src="{{ user.perfil.foto.url }}" alt="Foto de perfil" class="perfil-photo">
+      <img src="{{ request.user.perfil.foto_url }}" alt="Foto de perfil" class="perfil-photo">
     {% else %}
       <img src="{% static 'autenticacion/images/default-user.jpg' %}" alt="Usuario genérico" class="perfil-photo">
     {% endif %}
