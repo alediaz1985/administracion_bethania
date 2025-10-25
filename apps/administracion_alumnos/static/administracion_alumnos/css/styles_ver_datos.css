@@ -28,13 +28,54 @@ body {
 ============================ */
 .student-header {
   display: flex;
-  align-items: center;
-  gap: 1.5rem;
+  align-items: flex-start; /* ✅ Alinea todos los elementos arriba (h2) */
+  justify-content: space-between;
   border-bottom: 1px solid var(--borde);
   padding-bottom: 1.5rem;
   margin-bottom: 1.5rem;
+  position: relative;
 }
 
+.student-info {
+  flex: 1;
+  margin-left: 1rem;
+}
+
+/* 🔹 Contenedor del botón/mensaje */
+.student-inscripcion {
+  position: absolute;
+  right: 0; /* ✅ Pegado al borde derecho */
+  top: 0;   /* ✅ A la misma altura del nombre */
+  text-align: right;
+}
+
+.btn-inscribir {
+  background: #2a7b2e;
+  color: #fff;
+  border: none;
+  padding: 0.5rem 1.2rem;
+  font-size: 0.8rem;
+  border-radius: 6px;
+  transition: all 0.25s ease;
+  white-space: nowrap;
+}
+
+.btn-inscribir:hover {
+  background: #239126;
+}
+
+.inscripcion-estado {
+  background: #f0fff0;
+  color: #2b7a2b;
+  border: 1px solid #b5e0b5;
+  padding: 0.4rem 0.8rem;
+  border-radius: 6px;
+  font-size: 0.8rem;
+  font-weight: 500;
+  white-space: nowrap;
+}
+
+/* 🔹 Ajustes de foto e info */
 .student-photo {
   width: 90px;
   height: 90px;

@@ -1,0 +1,66 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Montos por Nivel{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+
+  <div class="d-flex justify-content-between align-items-center mb-3">
+    <h2>💰 Montos por Nivel</h2>
+    <button class="btn btn-primary" id="btnAdd">➕ Nuevo Monto</button>
+  </div>
+
+  <div id="tabla-montos">
+    {% include 'administracion/monto_nivel/_tabla.html' %}
+  </div>
+
+</div>
+
+<!-- Modal -->
+<div id="modalMonto" class="modal fade" tabindex="-1"></div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+  function loadModal(url) {
+    fetch(url)
+      .then(r => r.json())
+      .then(data => {
+        const modalDiv = document.getElementById("modalMonto");
+        modalDiv.innerHTML = data.html_form;
+
+        const modal = new bootstrap.Modal(modalDiv);
+        modal.show();
+
+        const form = modalDiv.querySelector("form");
+        form.addEventListener("submit", function (e) {
+          e.preventDefault();
+          fetch(url, { method: "POST", body: new FormData(this) })
+            .then(r => r.json())
+            .then(data => {
+              if (data.form_is_valid) {
+                document.getElementById("tabla-montos").innerHTML = data.html_list;
+                modal.hide();
+              } else {
+                modalDiv.innerHTML = data.html_form;
+              }
+            });
+        });
+      });
+  }
+
+  // Crear
+  document.getElementById("btnAdd").addEventListener("click", () => {
+    loadModal("{% url 'crear_monto' %}");
+  });
+
+  // Editar / Eliminar
+  document.addEventListener("click", e => {
+    const editBtn = e.target.closest(".js-edit");
+    const delBtn = e.target.closest(".js-delete");
+    if (editBtn) loadModal(editBtn.dataset.url);
+    if (delBtn) loadModal(delBtn.dataset.url);
+  });
+</script>
+{% endblock %}

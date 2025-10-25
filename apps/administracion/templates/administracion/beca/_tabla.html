@@ -1,0 +1,37 @@
+<table class="table table-bordered align-middle">
+  <thead>
+    <tr>
+      <th>Nombre</th>
+      <th>Tipo</th>
+      <th>Valor</th>
+      <th>Descripción</th>
+      <th>Activa</th>
+      <th class="text-center">Acciones</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for beca in becas %}
+    <tr>
+      <td>{{ beca.nombre }}</td>
+      <td>{{ beca.tipo }}</td>
+      <td>
+        {% if beca.tipo == "Porcentaje" %}
+          {{ beca.valor }}%
+        {% else %}
+          ${{ beca.valor }}
+        {% endif %}
+      </td>
+      <td>{{ beca.descripcion|default:"-" }}</td>
+      <td>{{ beca.activa|yesno:"Sí,No" }}</td>
+      <td class="text-center">
+        <button class="btn btn-sm btn-outline-primary js-edit"
+                data-url="{% url 'editar_beca' beca.id %}">✏️</button>
+        <button class="btn btn-sm btn-outline-danger js-delete"
+                data-url="{% url 'eliminar_beca' beca.id %}">🗑️</button>
+      </td>
+    </tr>
+    {% empty %}
+    <tr><td colspan="6" class="text-center text-muted">No hay becas registradas.</td></tr>
+    {% endfor %}
+  </tbody>
+</table>

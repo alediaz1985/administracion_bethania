@@ -1,0 +1,12 @@
+{% extends 'base.html' %}
+{% block title %}Inscripción administrativa{% endblock %}
+{% block content %}
+<div class="alumnos-container">
+  <h2>Inscripción administrativa</h2>
+  <p>Estudiante: <strong>{{ estudiante.apellidos_estudiante }}, {{ estudiante.nombres_estudiante }}</strong></p>
+
+  <p>Aquí luego colocaremos el formulario para seleccionar ciclo, nivel, subnivel y turno.</p>
+
+  <a href="{% url 'ver_datos_estudiante' estudiante.id %}" class="btn btn-light">Volver a la ficha</a>
+</div>
+{% endblock %}

@@ -12,11 +12,27 @@
 
   <!-- CABECERA -->
   <div class="student-header">
+    <!-- Foto -->
     <img src="{{ image_url }}" alt="Foto del Estudiante" class="student-photo">
+
+    <!-- Información -->
     <div class="student-info">
       <h2>{{ estudiante.apellidos_estudiante }}, {{ estudiante.nombres_estudiante }}</h2>
       <p><strong>DNI:</strong> {{ estudiante.dni_estudiante }}</p>
       <p><strong>CUIL:</strong> {{ estudiante.cuil_estudiante }}</p>
+    </div>
+
+    <!-- Botón / Mensaje Inscripción -->
+    <div class="student-inscripcion">
+      {% if estudiante.inscripciones_admin.exists %}
+        <div class="inscripcion-estado">
+          ✅ Alumno inscripto en el ciclo {{ estudiante.inscripciones_admin.last.ciclo.anio }}
+        </div>
+      {% else %}
+        <a href="{% url 'administracion:inscribir_estudiante' estudiante.id %}" class="btn btn-inscribir">
+          ➕ Inscribir Alumno
+        </a>
+      {% endif %}
     </div>
   </div>
 

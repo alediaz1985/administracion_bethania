@@ -1,0 +1,35 @@
+<table class="table table-bordered table-striped align-middle">
+  <thead class="table-light">
+    <tr>
+      <th>Año</th>
+      <th>Inicio</th>
+      <th>Fin</th>
+      <th>Activo</th>
+      <th class="text-center">Acciones</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for ciclo in ciclos %}
+      <tr>
+        <td>{{ ciclo.anio }}</td>
+        <td>{{ ciclo.fecha_inicio }}</td>
+        <td>{{ ciclo.fecha_fin }}</td>
+        <td>
+          {% if ciclo.activo %}
+            <span class="badge bg-success">Activo</span>
+          {% else %}
+            <span class="badge bg-secondary">Inactivo</span>
+          {% endif %}
+        </td>
+        <td class="text-center">
+          <button class="btn btn-sm btn-outline-primary js-edit"
+                  data-url="{% url 'editar_ciclo' ciclo.id %}">✏️</button>
+          <button class="btn btn-sm btn-outline-danger js-delete"
+                  data-url="{% url 'eliminar_ciclo' ciclo.id %}">🗑️</button>
+        </td>
+      </tr>
+    {% empty %}
+      <tr><td colspan="5" class="text-center text-muted">No hay ciclos registrados.</td></tr>
+    {% endfor %}
+  </tbody>
+</table>

@@ -13,8 +13,9 @@ urlpatterns = [
     path('', home, name='home'),
     path('autenticacion/', include('apps.autenticacion.urls')),
     path('alumnos/', include('apps.administracion_alumnos.urls')),
-    # path('documentos/', include('apps.documentos.urls')),
     path('dashboard/', include('apps.dashboard.urls')),
+    path('administracion/', include(('apps.administracion.urls', 'administracion'), namespace='administracion')),
+    # path('documentos/', include('apps.documentos.urls')),
     # path('trigger-error/', views.trigger_error),
     # path('forbidden/', views.forbidden_view, name='forbidden'),  # Ruta para la vista de acceso denegado
 ]

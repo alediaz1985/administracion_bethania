@@ -1,0 +1,64 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Becas y Beneficios{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+  <div class="d-flex justify-content-between align-items-center mb-3">
+    <h2>🎓 Becas y Beneficios</h2>
+    <button class="btn btn-primary" id="btnAddBeca">➕ Nueva Beca</button>
+  </div>
+
+  <div id="tabla-becas">
+    {% include 'administracion/beca/_tabla.html' %}
+  </div>
+</div>
+
+<!-- Modal Bootstrap -->
+<div id="modalBeca" class="modal fade" tabindex="-1" aria-hidden="true"></div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+  function loadModal(url) {
+    fetch(url)
+      .then(r => r.json())
+      .then(data => {
+        const modalDiv = document.getElementById("modalBeca");
+        modalDiv.innerHTML = data.html_form;
+
+        const modal = new bootstrap.Modal(modalDiv);
+        modal.show();
+
+        const form = modalDiv.querySelector("form");
+        form.addEventListener("submit", function (e) {
+          e.preventDefault();
+          fetch(url, { method: "POST", body: new FormData(this) })
+            .then(r => r.json())
+            .then(data => {
+              if (data.form_is_valid) {
+                document.getElementById("tabla-becas").innerHTML = data.html_list;
+                modal.hide();
+              } else {
+                modalDiv.innerHTML = data.html_form; // vuelve a mostrar con errores
+              }
+            });
+        });
+      });
+  }
+
+  // Crear
+  document.getElementById("btnAddBeca").addEventListener("click", () => {
+    loadModal("{% url 'crear_beca' %}");
+  });
+
+  // Editar / Eliminar (delegación)
+  document.addEventListener("click", (e) => {
+    const editBtn = e.target.closest(".js-edit");
+    if (editBtn) loadModal(editBtn.dataset.url);
+    const delBtn = e.target.closest(".js-delete");
+    if (delBtn) loadModal(delBtn.dataset.url);
+  });
+</script>
+{% endblock %}

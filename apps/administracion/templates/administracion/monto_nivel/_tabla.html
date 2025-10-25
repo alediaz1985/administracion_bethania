@@ -1,0 +1,41 @@
+<table class="table table-bordered align-middle">
+  <thead>
+    <tr>
+      <th>Ciclo</th>
+      <th>Nivel</th>
+      <th>Inscripción ($)</th>
+      <th>Cuota ($)</th>
+      <th>Desde</th>
+      <th>Hasta</th>
+      <th>Activo</th>
+      <th class="text-center">Acciones</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for m in montos %}
+    <tr>
+      <td>{{ m.ciclo.anio }}</td>
+      <td>{{ m.nivel.nombre }}</td>
+      <td>{{ m.monto_inscripcion }}</td>
+      <td>{{ m.monto_cuota }}</td>
+      <td>{{ m.fecha_vigencia_desde }}</td>
+      <td>{{ m.fecha_vigencia_hasta|default:"-" }}</td>
+      <td>
+        {% if m.activo %}
+          <span class="text-success">✔</span>
+        {% else %}
+          <span class="text-muted">✖</span>
+        {% endif %}
+      </td>
+      <td class="text-center">
+        <button class="btn btn-sm btn-outline-primary js-edit"
+                data-url="{% url 'editar_monto' m.id %}">✏️</button>
+        <button class="btn btn-sm btn-outline-danger js-delete"
+                data-url="{% url 'eliminar_monto' m.id %}">🗑️</button>
+      </td>
+    </tr>
+    {% empty %}
+    <tr><td colspan="8" class="text-center text-muted">No hay montos registrados.</td></tr>
+    {% endfor %}
+  </tbody>
+</table>

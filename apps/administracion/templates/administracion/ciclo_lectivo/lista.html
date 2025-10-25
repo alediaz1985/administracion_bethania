@@ -1,0 +1,69 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Ciclos Lectivos{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+  <div class="d-flex justify-content-between align-items-center mb-3">
+    <h2>📅 Ciclos Lectivos</h2>
+    <button class="btn btn-primary" id="btnAdd">➕ Nuevo Ciclo</button>
+  </div>
+
+  <div id="tabla-ciclos">
+    {% include 'administracion/ciclo_lectivo/_tabla.html' %}
+  </div>
+</div>
+
+<!-- Modal -->
+<div id="modalCiclo" class="modal fade" tabindex="-1"></div>
+
+{% endblock %}
+
+{% block extra_js %}
+<script>
+  // ✅ Función para abrir el modal y cargar el formulario por AJAX
+  function loadModal(url) {
+    fetch(url)
+      .then(r => r.json())
+      .then(data => {
+        const modalDiv = document.getElementById("modalCiclo");
+        modalDiv.innerHTML = data.html_form;
+
+        // Mostrar modal con Bootstrap 5
+        const modal = new bootstrap.Modal(modalDiv);
+        modal.show();
+
+        const form = modalDiv.querySelector("form");
+        form.addEventListener("submit", function (e) {
+          e.preventDefault();
+          fetch(url, { method: "POST", body: new FormData(this) })
+            .then(r => r.json())
+            .then(data => {
+              if (data.form_is_valid) {
+                document.getElementById("tabla-ciclos").innerHTML = data.html_list;
+                modal.hide();
+              } else {
+                modalDiv.innerHTML = data.html_form; // re-render con errores
+              }
+            });
+        });
+      });
+  }
+
+  // Botón “Nuevo Ciclo”
+  document.getElementById("btnAdd").addEventListener("click", () => {
+    loadModal("{% url 'crear_ciclo' %}");
+  });
+
+  // Delegación para Editar / Eliminar
+  document.addEventListener("click", (e) => {
+    const editBtn = e.target.closest(".js-edit");
+    if (editBtn) loadModal(editBtn.dataset.url);
+
+    const delBtn = e.target.closest(".js-delete");
+    if (delBtn) loadModal(delBtn.dataset.url);
+  });
+</script>
+{% endblock %}
+

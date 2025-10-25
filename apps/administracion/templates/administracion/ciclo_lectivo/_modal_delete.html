@@ -1,0 +1,18 @@
+<div class="modal-dialog">
+  <div class="modal-content">
+    <form method="post">
+      {% csrf_token %}
+      <div class="modal-header bg-danger text-white">
+        <h5 class="modal-title">Eliminar Ciclo</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+      </div>
+      <div class="modal-body">
+        <p>¿Estás seguro de eliminar el ciclo <strong>{{ ciclo.anio }}</strong>?</p>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+        <button type="submit" class="btn btn-danger">Eliminar</button>
+      </div>
+    </form>
+  </div>
+</div>

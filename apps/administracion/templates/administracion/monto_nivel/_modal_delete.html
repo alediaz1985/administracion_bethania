@@ -1,0 +1,23 @@
+<div class="modal-dialog">
+  <div class="modal-content">
+    <form method="post">
+      {% csrf_token %}
+      <div class="modal-header bg-danger text-white">
+        <h5 class="modal-title">Eliminar Monto</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+      </div>
+      <div class="modal-body">
+        <p>¿Seguro que querés eliminar este monto?</p>
+        <ul>
+          <li><strong>Ciclo:</strong> {{ monto.ciclo.anio }}</li>
+          <li><strong>Nivel:</strong> {{ monto.nivel.nombre }}</li>
+          <li><strong>Cuota:</strong> ${{ monto.monto_cuota }}</li>
+        </ul>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+        <button type="submit" class="btn btn-danger">Eliminar</button>
+      </div>
+    </form>
+  </div>
+</div>
