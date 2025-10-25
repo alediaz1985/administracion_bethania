@@ -179,3 +179,95 @@ def fmt_bool(v):
     if s in ("si", "sí", "true", "1"): return "Sí"
     if s in ("no", "false", "0"): return "No"
     return str(v)
+
+
+
+# ====== Google Drive helpers para “descargar con cache local” ======
+import re
+from pathlib import Path
+import io
+from googleapiclient.http import MediaIoBaseDownload
+
+# 1) Extraer ID desde cualquier URL de Drive
+def extract_drive_id(url: str) -> str | None:
+    if not url:
+        return None
+    m = re.search(r'/file/d/([a-zA-Z0-9_-]+)', url)
+    if m:
+        return m.group(1)
+    m = re.search(r'[?&]id=([a-zA-Z0-9_-]+)', url)
+    if m:
+        return m.group(1)
+    return None
+
+# 2) Seleccionar credenciales desde settings si existen
+def get_drive_service():
+    """
+    Reemplaza a tu get_drive_service anterior si querés unificar.
+    Toma primero GOOGLE_CREDENTIALS_ALUMNOS, luego GOOGLE_CREDENTIALS,
+    y por último BASE_DIR/credenciales/credentials.json
+    """
+    cred_path = (
+        getattr(settings, "GOOGLE_CREDENTIALS_ALUMNOS", None)
+        or getattr(settings, "GOOGLE_CREDENTIALS", None)
+        or os.path.join(settings.BASE_DIR, "credenciales", "credentials.json")
+    )
+    cred_path = os.path.join(settings.BASE_DIR, cred_path) if not os.path.isabs(cred_path) else cred_path
+
+    if not os.path.exists(cred_path):
+        raise FileNotFoundError(f"No se encontró el archivo de credenciales: {cred_path}")
+
+    SCOPES = ['https://www.googleapis.com/auth/drive']
+    creds = service_account.Credentials.from_service_account_file(cred_path, scopes=SCOPES)
+    return build('drive', 'v3', credentials=creds)
+
+# 3) Descargar/exportar por ID a una ruta destino
+def drive_download_to_path(service, file_id: str, dest_path: Path) -> Path:
+    """
+    Si es un Google Doc lo exporta a PDF; si es archivo normal lo descarga como está.
+    Devuelve la ruta final escrita.
+    """
+    meta = service.files().get(fileId=file_id, fields="id,name,mimeType").execute()
+    mime = (meta.get("mimeType") or "").lower()
+    name = meta.get("name") or f"{file_id}.pdf"
+
+    # Elegir extensión final
+    if mime == "application/vnd.google-apps.document":
+        req = service.files().export_media(fileId=file_id, mimeType="application/pdf")
+        dest_path = dest_path.with_suffix(".pdf")
+    else:
+        req = service.files().get_media(fileId=file_id)
+        ext = os.path.splitext(name)[1] or ".pdf"
+        dest_path = dest_path.with_suffix(ext.lower())
+
+    dest_path.parent.mkdir(parents=True, exist_ok=True)
+    with io.FileIO(dest_path, "wb") as fh:
+        downloader = MediaIoBaseDownload(fh, req)
+        done = False
+        while not done:
+            status, done = downloader.next_chunk()
+    return dest_path
+
+# 4) Asegurar copia local desde una URL de Drive (con refresh)
+def ensure_local_copy_from_drive(url: str, subfolder: str = "pdfEstudiante", refresh: bool = False) -> Path:
+    """
+    Garantiza tener el archivo local en MEDIA_ROOT/documentos/<subfolder>/<file_id>.<ext>
+    - url: la URL de Drive almacenada en tu campo (p. ej. certificado_medico_estudiante)
+    - refresh=True fuerza re-descarga
+    """
+    file_id = extract_drive_id(url)
+    if not file_id:
+        raise ValueError("URL de Drive inválida, no se pudo extraer el ID.")
+
+    base_dir = Path(settings.MEDIA_ROOT) / "documentos" / subfolder
+    # si ya hay cache, la usamos (aun sin saber la extensión exacta)
+    candidatos = list(base_dir.glob(f"{file_id}.*")) or [base_dir / file_id]
+    local_path = candidatos[0]
+
+    if local_path.exists() and not refresh:
+        return local_path  # cache hit
+
+    service = get_drive_service()
+    # siempre escribir (si no existe, o si pediste refresh)
+    final_path = drive_download_to_path(service, file_id, base_dir / file_id)
+    return final_path

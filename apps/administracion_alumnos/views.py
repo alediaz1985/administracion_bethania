@@ -1604,6 +1604,115 @@ def descargar_todos_archivos(request):
         })
 
 
+
+# views.py
+from django.contrib.auth.decorators import login_required
+from django.http import FileResponse, Http404
+from pathlib import Path
+from .utils import ensure_local_copy_from_drive  # importa desde tu utils.py
+from .models import Estudiante  # ajustá import
+
+@login_required
+def descargar_certificado_medico(request, estudiante_id: int):
+    est = Estudiante.objects.select_related("salud").get(pk=estudiante_id)
+    url = getattr(est.salud, "certificado_medico_estudiante", "") or ""
+    if not url:
+        raise Http404("No hay certificado cargado.")
+
+    refresh = request.GET.get("refresh") == "1"
+    # si es URL http (Drive), garantizo copia local; si fuese una ruta local, la sirvo tal cual
+    if url.startswith("http"):
+        local_path: Path = ensure_local_copy_from_drive(url, subfolder="pdfEstudiante", refresh=refresh)
+    else:
+        local_path = Path(url) if Path(url).is_absolute() else Path(settings.MEDIA_ROOT) / url
+        if not local_path.exists():
+            raise Http404("El archivo no existe en el servidor.")
+
+    return FileResponse(open(local_path, "rb"), as_attachment=True, filename=local_path.name)
+
+
+
+# apps/administracion_alumnos/views.py
+from pathlib import Path
+import io, os, mimetypes
+from django.conf import settings
+from django.contrib.auth.decorators import login_required
+from django.views.decorators.clickjacking import xframe_options_exempt
+from django.http import FileResponse, Http404, HttpResponse
+from django.http import FileResponse, Http404, HttpResponse
+from django.shortcuts import get_object_or_404
+from googleapiclient.http import MediaIoBaseDownload
+from .models import Estudiante
+from .utils import extract_drive_id, get_drive_service  # ya los tenés en utils
+
+@xframe_options_exempt 
+@login_required
+def ver_certificado_medico(request, estudiante_id: int):
+    """
+    Muestra el certificado en el navegador (inline) dentro de un <iframe> del modal.
+    1) Si existe local en MEDIA_ROOT/documentos/pdfEstudiante/<id>.* => lo sirve inline.
+    2) Si no, lo obtiene de Drive y lo devuelve inline (PDF si es Google Doc).
+       (No fuerza descarga).
+    """
+    est = get_object_or_404(Estudiante.objects.select_related("salud"), pk=estudiante_id)
+    ref = getattr(est.salud, "certificado_medico_estudiante", "") or ""
+    if not ref:
+        raise Http404("No hay certificado cargado.")
+
+    # --- Caso LOCAL (cuando el campo es ruta o ya cacheaste con el mismo ID)
+    def serve_local(path: Path):
+        if not path.exists():
+            raise Http404("El archivo local no existe.")
+        # detectar content-type para que el navegador lo renderice
+        ctype, _ = mimetypes.guess_type(path.name)
+        resp = FileResponse(open(path, "rb"), content_type=ctype or "application/pdf")
+        # inline = mostrar en navegador
+        resp["Content-Disposition"] = f'inline; filename="{path.name}"'
+        return resp
+
+    # Si es una ruta (no http)
+    if not ref.startswith("http"):
+        local_path = Path(ref) if Path(ref).is_absolute() else Path(settings.MEDIA_ROOT) / ref
+        return serve_local(local_path)
+
+    # --- Caso URL de Drive
+    file_id = extract_drive_id(ref)
+    if not file_id:
+        raise Http404("URL de Drive inválida.")
+
+    base_dir = Path(settings.MEDIA_ROOT) / "documentos" / "pdfEstudiante"
+    # ¿tenemos copia local previa?
+    candidatos = list(base_dir.glob(f"{file_id}.*"))
+    if candidatos:
+        return serve_local(candidatos[0])
+
+    # No hay copia local → traer desde Drive y mostrar inline
+    service = get_drive_service()
+    meta = service.files().get(fileId=file_id, fields="id,name,mimeType").execute()
+    mime = (meta.get("mimeType") or "").lower()
+    name = meta.get("name") or f"{file_id}.pdf"
+
+    # Si es Google Doc → exportar a PDF
+    if mime == "application/vnd.google-apps.document":
+        req = service.files().export_media(fileId=file_id, mimeType="application/pdf")
+        content_type = "application/pdf"
+        filename = f"{file_id}.pdf"
+    else:
+        req = service.files().get_media(fileId=file_id)
+        content_type = mimetypes.guess_type(name)[0] or "application/octet-stream"
+        filename = name
+
+    buf = io.BytesIO()
+    downloader = MediaIoBaseDownload(buf, req)
+    done = False
+    while not done:
+        status, done = downloader.next_chunk()
+    buf.seek(0)
+
+    resp = HttpResponse(buf.read(), content_type=content_type)
+    resp["Content-Disposition"] = f'inline; filename="{filename}"'
+    return resp
+
 from django.shortcuts import render
 from .models import Estudiante
 import os

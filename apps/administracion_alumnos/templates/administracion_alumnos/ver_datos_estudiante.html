@@ -136,7 +136,26 @@
       <tr><th>Problema Neurológico</th><td>{{ estudiante.salud.problema_neurologico_estudiante }}</td></tr>
       <tr><th>Cuál</th><td>{{ estudiante.salud.cual_prob_neurologico_estudiante }}</td></tr>
       <tr><th>Problema Físico</th><td>{{ estudiante.salud.problema_fisico_estudiante }}</td></tr>
-      <tr><th>Certificado Médico</th><td>{{ estudiante.salud.certificado_medico_estudiante }}</td></tr>
+      <tr>
+    <th>Certificado Médico</th>
+    <td>
+      {% if estudiante.salud.certificado_medico_estudiante %}
+        <button type="button"
+                class="btn btn-sm btn-primary"
+                data-view-url="{% url 'ver_certificado_medico' estudiante.id %}"
+                id="btn-ver-certificado">
+          <i class="bi bi-file-earmark-pdf"></i> Ver certificado
+        </button>
+
+        <small class="text-muted ms-2 d-block d-md-inline text-break">
+          {{ estudiante.salud.certificado_medico_estudiante }}
+        </small>
+      {% else %}
+        <span class="text-muted">Sin certificado cargado</span>
+      {% endif %}
+    </td>
+  </tr>
+
       <tr><th>Problema de Aprendizaje</th><td>{{ estudiante.salud.problema_aprendizaje_estudiante }}</td></tr>
       <tr><th>Cuál</th><td>{{ estudiante.salud.cual_aprendizaje_estudiante }}</td></tr>
       <tr><th>Atención Médica</th><td>{{ estudiante.salud.atencion_medica_estudiante }}</td></tr>
@@ -245,6 +264,32 @@
   </div>
 </div>
 
+{# Modal visor de documentos #}
+<div class="modal fade" id="visorCertificadoModal" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content visor-modal">
+      <div class="modal-header">
+        <h5 class="modal-title">Certificado médico</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+      </div>
+      <div class="modal-body p-0">
+        <div id="visor-loading" class="p-3">Cargando…</div>
+        <iframe id="visor-frame" src="" style="display:none; border:0;"></iframe>
+      </div>
+      <div class="modal-footer justify-content-between">
+        <div class="d-flex gap-2">
+          <button id="visor-print" type="button" class="btn btn-outline-primary">Imprimir</button>
+          <a id="visor-open-tab" href="#" target="_blank" class="btn btn-outline-secondary">Abrir en nueva pestaña</a>
+        </div>
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+
+
 {% endblock %}
 
 {% block extra_js %}
@@ -331,5 +376,114 @@ if (cerrarModalDescarga) {
 }
 
 </script>
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+  const btn = document.getElementById('btn-ver-certificado');
+  if (!btn) return;
+
+  const modalEl = document.getElementById('visorCertificadoModal');
+  const iframe  = document.getElementById('visor-frame');
+  const loading = document.getElementById('visor-loading');
+  const openTab = document.getElementById('visor-open-tab');
+  const closeBtn = modalEl.querySelector('[data-bs-dismiss="modal"]');
+
+  // Detectar si hay Bootstrap
+  const hasBootstrap = !!(window.bootstrap && typeof window.bootstrap.Modal === 'function');
+  let bsInstance = null;
+
+  function resetViewer() {
+    iframe.style.display = 'none';
+    loading.style.display = 'block';
+    // liberar recurso anterior
+    iframe.src = '';
+  }
+
+  function fillViewer(url) {
+    openTab.href = url;
+    iframe.onload = () => {
+      loading.style.display = 'none';
+      iframe.style.display = 'block';
+    };
+    iframe.src = url;
+  }
+
+  function openModal() {
+    if (hasBootstrap) {
+      if (!bsInstance) bsInstance = new bootstrap.Modal(modalEl);
+      bsInstance.show();
+    } else {
+      modalEl.classList.add('show');
+      modalEl.style.display = 'block';
+      modalEl.removeAttribute('aria-hidden');
+      // evitar scroll de fondo
+      document.body.classList.add('modal-open');
+    }
+  }
+
+  function closeModal() {
+    // limpiar iframe SIEMPRE
+    iframe.src = '';
+
+    if (hasBootstrap && bsInstance) {
+      bsInstance.hide();
+    } else {
+      modalEl.classList.remove('show');
+      modalEl.style.display = 'none';
+      modalEl.setAttribute('aria-hidden', 'true');
+      document.body.classList.remove('modal-open');
+    }
+  }
+
+  // Click del botón principal
+  btn.addEventListener('click', () => {
+    const url = btn.getAttribute('data-view-url');
+    if (!url) return;
+    resetViewer();
+    fillViewer(url);
+    openModal();
+  });
+
+  // Cerrar con botón X (sin {once:true})
+  if (closeBtn) {
+    closeBtn.addEventListener('click', (e) => {
+      e.preventDefault();
+      closeModal();
+    });
+  }
+
+  // Cerrar clickeando fuera del diálogo (fallback)
+  modalEl.addEventListener('click', (e) => {
+    if (hasBootstrap) return; // Bootstrap ya lo maneja
+    // Clic en backdrop: el target es el contenedor .modal (no .modal-dialog)
+    if (e.target === modalEl) closeModal();
+  });
+
+  // Cerrar con ESC
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape') {
+      // Solo si el modal está visible
+      const visible = modalEl.classList.contains('show') || modalEl.style.display === 'block';
+      if (visible) closeModal();
+    }
+  });
+});
+
+
+</script>
+<script>
+
+document.getElementById('visor-print')?.addEventListener('click', () => {
+  const iframe = document.getElementById('visor-frame');
+  const openTab = document.getElementById('visor-open-tab');
+  try {
+    iframe.contentWindow.focus();
+    iframe.contentWindow.print();
+  } catch (e) {
+    if (openTab && openTab.href) window.open(openTab.href, '_blank');
+  }
+});</script>
+
+
+
 
 {% endblock %}

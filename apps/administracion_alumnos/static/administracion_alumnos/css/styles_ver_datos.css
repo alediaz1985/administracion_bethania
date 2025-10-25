@@ -354,3 +354,45 @@ body {
 }
 
 
+/* === Visor de Certificado Médico === */
+
+/* === VISOR CERTIFICADO (forzar ancho/alto grandes y centrado) === */
+
+/* Ancho: usamos la variable oficial de Bootstrap 5 para el modal */
+#visorCertificadoModal {
+  --bs-modal-width: 95vw;   /* ocupa el 95% del ancho de pantalla */
+}
+
+/* Centrado horizontal + separación del viewport */
+#visorCertificadoModal .modal-dialog {
+  margin: 1.25rem auto;
+}
+
+/* Alto: que el contenido ocupe la mayor parte de la pantalla */
+#visorCertificadoModal .modal-content {
+  height: 90vh;             /* 90% del alto de la pantalla */
+  display: flex;
+  flex-direction: column;
+}
+
+#visorCertificadoModal .modal-body {
+  flex: 1 1 auto;           /* que la body se estire */
+  padding: 0;               /* ya tenemos la toolbar del visor */
+  overflow: hidden;         /* sin scroll dobles */
+}
+
+#visorCertificadoModal #visor-loading {
+  text-align: center;
+}
+
+#visorCertificadoModal #visor-frame {
+  width: 100%;
+  height: 100%;             /* el iframe llena toda la body */
+  display: block;
+}
+
+/* Mobile: que no rompa */
+@media (max-width: 768px) {
+  #visorCertificadoModal { --bs-modal-width: 98vw; }
+  #visorCertificadoModal .modal-content { height: 85vh; }
+}

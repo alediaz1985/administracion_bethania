@@ -22,6 +22,8 @@ urlpatterns = [
     path('descargar_archivos/', views.descargar_todos_archivos, name='descargar_archivos_alumnos'),
     path('lista-fotos-estudiantes/', views.lista_fotos_estudiantes, name='lista_fotos_estudiantes'),
     path('cambiar_estado/<int:estudiante_id>/', views.cambiar_estado_documentacion, name='cambiar_estado_documentacion'),
+    path('estudiantes/<int:estudiante_id>/descargar/certificado/', views.descargar_certificado_medico, name='descargar_certificado_medico'),
+    path('estudiantes/<int:estudiante_id>/ver/certificado/', views.ver_certificado_medico, name='ver_certificado_medico'),
 ]
 
 # Configuración para servir archivos media en desarrollo
