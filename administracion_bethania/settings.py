@@ -27,12 +27,9 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'crispy_forms',
     'crispy_bootstrap4', 
-    # 'apps.administracion',
+    'apps.administracion',
     'apps.autenticacion',
-    'apps.cuotas',
-    # 'apps.administracion_docentes',
     'apps.administracion_alumnos',
-    # 'apps.niveles',
     # 'apps.documentos',
     'apps.dashboard',
 ]

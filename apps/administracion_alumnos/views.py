@@ -27,7 +27,6 @@ from googleapiclient.http import MediaIoBaseDownload
 from io import FileIO
 import os
 
-from apps.cuotas.services import generar_cuotas_para_inscripcion, generar_cuotas_masivo
 
 
 # ----------------FUNCIONA------------------------------
