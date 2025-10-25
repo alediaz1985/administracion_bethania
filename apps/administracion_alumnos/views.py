@@ -6,7 +6,6 @@ from django.http import HttpResponse, FileResponse
 from .forms import EstudianteForm
 from django.contrib import messages
 from reportlab.lib.pagesizes import A4
-from reportlab.lib.units import inch
 from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
 from reportlab.platypus import Image, Paragraph, SimpleDocTemplate, Spacer, Table, TableStyle
 from reportlab.lib import colors
@@ -22,11 +21,22 @@ from django.shortcuts import render
 from apps.administracion_alumnos.models import Estudiante
 from django.templatetags.static import static 
 from django.http import JsonResponse
-from django.conf import settings
+
 from googleapiclient.http import MediaIoBaseDownload
 from io import FileIO
-import os
 
+from django.contrib.auth.decorators import login_required
+
+from reportlab.lib.units import cm, inch
+
+from .models import (
+    Estudiante, Inscripcion, InformacionAcademica, ContactoEstudiante,
+    SaludEstudiante, Responsable, Documentacion, EstadoDocumentacion
+)
+from .utils import (
+    get_institucion, get_logo_path, logo_flowable, foto_estudiante_flowable,
+    styleset, table_style_base, table_style_header, fmt, fmt_bool
+)
 
 
 # ----------------FUNCIONA------------------------------
@@ -208,22 +218,175 @@ def registrar_estudiante(request):
     return render(request, 'administracion_alumnos/registrar_estudiante.html', context)
 
 # Función para generar un PDF con todos los campos del estudiante
+# ============================================================
+# 1) PDF: FICHA DEL ESTUDIANTE (detalle)
+# ============================================================
+@login_required
 def generar_pdf_estudiante_view(request, estudiante_id):
-    estudiante = get_object_or_404(Estudiante, pk=estudiante_id)
-    datos_institucion = {
-        "Nombre": "U.E.G.P. N°82",
-        "Dirección": "Urquiza 768 / 846 Presidencia Roque Sáenz Peña.",
-        "Teléfono": "0364-4423041 / 0364-4436798",
-        "Email": "contacto@hdebethania.edu.ar"
-    }
-    logo_path = os.path.join(settings.BASE_DIR, 'static', 'img', 'logo.png')
-    pdf_path = generar_pdf_estudiante(estudiante, datos_institucion, logo_path)
+    e = get_object_or_404(Estudiante, pk=estudiante_id)
+    insc   = getattr(e, "inscripcion", None)
+    info   = getattr(e, "info_academica", None)
+    cont   = getattr(e, "contacto", None)
+    salud  = getattr(e, "salud", None)
+    docu   = getattr(e, "documentacion", None)
+    estado = getattr(e, "estado_documentacion", None)
+    resp_qs = list(e.responsables.all().order_by("apellidos", "nombres"))
 
-    # Incluir el CUIL, fecha y hora en el nombre del archivo
-    fecha_hora_actual = datetime.now().strftime("%Y-%m-%d_%H-%M")
-    filename = f"Ficha del Estudiante - {estudiante.cuil_estudiante} - {fecha_hora_actual}.pdf"
+    buffer = BytesIO()
+    doc = SimpleDocTemplate(
+        buffer, pagesize=A4,
+        rightMargin=20, leftMargin=20, topMargin=20, bottomMargin=20,
+        title="Ficha del Estudiante", author="Hogar de Bethania",
+        subject="Ficha del estudiante - Datos integrados",
+        creator="SEIS - || Gestión de Datos ||",
+    )
+    styles = styleset()
+    elements = []
 
-    return FileResponse(open(pdf_path, 'rb'), as_attachment=True, filename=filename)
+    # Encabezado: logo + datos institución + foto 4x4
+    di = get_institucion()
+    logo = logo_flowable(styles)
+    info_institucion = [
+        Paragraph(fmt(di["Nombre"]), styles['Heading3']),
+        Paragraph(fmt(di["Dirección"]), styles['Normal']),
+        Paragraph(f"Teléfono: {fmt(di['Teléfono'])}", styles['Normal']),
+        Paragraph(f"Email: {fmt(di['Email'])}", styles['Normal']),
+    ]
+    foto = foto_estudiante_flowable(getattr(insc, "foto_estudiante", None), styles)
+
+    head = Table([[logo, info_institucion, foto]], colWidths=[3*cm, 11*cm, 4*cm])
+    head.setStyle(table_style_base())
+    elements.append(head)
+    elements.append(Spacer(1, 0.25 * inch))
+    elements.append(Paragraph("Ficha del Estudiante", styles['Heading2']))
+
+    # Bloque: Datos personales
+    dp = [
+        ["Apellidos", fmt(e.apellidos_estudiante)],
+        ["Nombres", fmt(e.nombres_estudiante)],
+        ["Sexo", fmt(e.sexo_estudiante)],
+        ["Fecha de nacimiento", fmt(e.fecha_nac_estudiante)],
+        ["Nacionalidad", fmt(e.nacionalidad_estudiante)],
+        ["Religión", fmt(e.religion_estudiante)],
+        ["CUIL", fmt(e.cuil_estudiante)],
+        ["DNI", fmt(e.dni_estudiante)],
+    ]
+    t = Table([["Campo", "Valor"]] + dp, colWidths=[6.5*cm, 9.5*cm]); t.setStyle(table_style_base()); t.setStyle(table_style_header())
+    elements.append(t); elements.append(Spacer(1, 0.2 * inch))
+
+    # Bloque: Inscripción
+    data_ins = [["—", "Sin inscripción"]] if not insc else [
+        ["Marca temporal", fmt(insc.marca_temporal)],
+        ["Email registro", fmt(insc.email_registro)],
+        ["N° Legajo", fmt(insc.num_legajo_estudiante)],
+        ["Fecha recepción", fmt(insc.fecha_recepcion)],
+        ["Salita/Grado/Año", fmt(insc.salita_grado_anio_estudiante)],
+        ["Nivel", fmt(insc.nivel_estudiante)],
+        ["Curso/Año", fmt(insc.curso_anio_estudiante)],
+        ["Turno", fmt(insc.turno_estudiante)],
+        ["Nivel de enseñanza", fmt(insc.nivel_ensenanza)],
+    ]
+    t = Table([["Campo", "Valor"]] + data_ins, colWidths=[6.5*cm, 9.5*cm]); t.setStyle(table_style_base()); t.setStyle(table_style_header())
+    elements.append(Paragraph("Inscripción", styles['Heading3'])); elements.append(t); elements.append(Spacer(1, 0.2 * inch))
+
+    # Bloque: Contacto / domicilio
+    data_cto = [["—", "Sin contacto"]] if not cont else [
+        ["Ciudad", fmt(cont.ciudad_estudiante)],
+        ["Provincia", fmt(cont.provincia_estudiante)],
+        ["Barrio", fmt(cont.barrio_estudiante)],
+        ["Calle", fmt(cont.calle_estudiante)],
+        ["N°/MZ/PC", fmt(cont.n_mz_pc_estudiante)],
+        ["Código postal", fmt(cont.codigo_postal_estudiante)],
+        ["Email", fmt(cont.email_estudiante)],
+        ["Tel. fijo", fmt(cont.tel_fijo_estudiante)],
+        ["Tel. celular", fmt(cont.tel_cel_estudiante)],
+        ["Tel. emergencia", fmt(cont.tel_emergencia_estudiante)],
+        ["Parentesco contacto", fmt(cont.parentesco_estudiante)],
+    ]
+    t = Table([["Campo", "Valor"]] + data_cto, colWidths=[6.5*cm, 9.5*cm]); t.setStyle(table_style_base()); t.setStyle(table_style_header())
+    elements.append(Paragraph("Contacto y domicilio", styles['Heading3'])); elements.append(t); elements.append(Spacer(1, 0.2 * inch))
+
+    # Bloque: Salud
+    data_salud = [["—", "Sin datos"]] if not salud else [
+        ["Peso", fmt(salud.peso_estudiante)],
+        ["Talla", fmt(salud.talla_estudiante)],
+        ["Obra social", fmt(salud.obra_social_estudiante)],
+        ["Cuál obra social", fmt(salud.cual_osocial_estudiante)],
+        ["Problema neurológico", fmt_bool(salud.problema_neurologico_estudiante)],
+        ["Cuál problema neurológico", fmt(salud.cual_prob_neurologico_estudiante)],
+        ["Problema actividad física", fmt_bool(salud.problema_fisico_estudiante)],
+        ["Certificado médico", fmt_bool(salud.certificado_medico_estudiante)],
+        ["Problema aprendizaje", fmt_bool(salud.problema_aprendizaje_estudiante)],
+        ["Cuál problema aprendizaje", fmt(salud.cual_aprendizaje_estudiante)],
+        ["Atención médica", fmt(salud.atencion_medica_estudiante)],
+        ["Alergias", fmt(salud.alergia_estudiante)],
+    ]
+    t = Table([["Campo", "Valor"]] + data_salud, colWidths=[6.5*cm, 9.5*cm]); t.setStyle(table_style_base()); t.setStyle(table_style_header())
+    elements.append(Paragraph("Salud", styles['Heading3'])); elements.append(t); elements.append(Spacer(1, 0.2 * inch))
+
+    # Bloque: Responsables (resumen)
+    elements.append(Paragraph("Responsables", styles['Heading3']))
+    if resp_qs:
+        data_resp = [["DNI", "Apellidos", "Nombres", "Email", "Tel. cel.", "Ocupación"]]
+        for r in resp_qs:
+            data_resp.append([fmt(r.dni), fmt(r.apellidos), fmt(r.nombres), fmt(r.email), fmt(r.tel_cel), fmt(r.ocupacion)])
+        t = Table(data_resp, colWidths=[3*cm, 3.5*cm, 3.5*cm, 3.5*cm, 3*cm, 3*cm])
+        t.setStyle(table_style_base()); t.setStyle(table_style_header())
+        elements.append(t)
+    else:
+        elements.append(Paragraph("Sin responsables cargados.", styles['Normal']))
+    elements.append(Spacer(1, 0.2 * inch))
+
+    # Bloque: Información académica
+    data_acad = [["—", "Sin información académica"]] if not info else [
+        ["Año cursado", fmt(info.anio_cursado)],
+        ["Dónde cursado", fmt(info.donde_cursado)],
+        ["Asignaturas pendientes", fmt(info.asignaturas_pendientes)],
+        ["Detalle de pendientes", fmt(info.indica_asig_pendientes)],
+        ["Tiene hermanos en la institución", fmt(info.tiene_hermanos_institucion)],
+        ["Cuántos hermanos", fmt(info.cuantos_hermanos)],
+        ["Cómo conoció la institución", fmt(info.como_conociste_institucion)],
+        ["Quién eligió la institución", fmt(info.eligio_institucion)],
+    ]
+    t = Table([["Campo", "Valor"]] + data_acad, colWidths=[6.5*cm, 9.5*cm]); t.setStyle(table_style_base()); t.setStyle(table_style_header())
+    elements.append(Paragraph("Información académica", styles['Heading3'])); elements.append(t); elements.append(Spacer(1, 0.2 * inch))
+
+    # Bloque: Documentación / Contrato
+    data_doc = [["—", "Sin documentación"]] if not docu else [
+        ["Fecha contrato", fmt(docu.fecha_contrato)],
+        ["Ciudad a los días", fmt(docu.ciudad_a_los_dias)],
+        ["Señores 1", fmt(docu.senores1)], ["DNI Señores 1", fmt(docu.dni_senores1)],
+        ["Señores 2", fmt(docu.senores2)], ["DNI Señores 2", fmt(docu.dni_senores2)],
+        ["Domicilios Señores", fmt(docu.domicilios_senores)],
+        ["Domicilio especial electrónico", fmt(docu.domicilio_especial_electronico)],
+        ["Actúan por", fmt(docu.actuan_nombres_estudiante)],
+        ["DNI estudiante actuado", fmt(docu.dni_acutan_estudiante)],
+        ["Domicilio estudiante actuado", fmt(docu.domicilio_actuan_estudiante)],
+        ["Responsable de pago", fmt(docu.responsable_pago)],
+        ["DNI responsable de pago", fmt(docu.dni_responsable_pago)],
+        ["Manifiesta responsable", fmt(docu.manifiesta_responsable)],
+        ["Autoriza facturación a", fmt(docu.autoriza_facturacion_a)],
+        ["Autoriza imagen", fmt(docu.autoriza_imagen)],
+    ]
+    t = Table([["Campo", "Valor"]] + data_doc, colWidths=[6.5*cm, 9.5*cm]); t.setStyle(table_style_base()); t.setStyle(table_style_header())
+    elements.append(Paragraph("Documentación / Contrato", styles['Heading3'])); elements.append(t); elements.append(Spacer(1, 0.2 * inch))
+
+    # Bloque: Estado documentación
+    data_est = [["—", "Sin estado"]] if not estado else [
+        ["Estado", fmt(estado.estado)],
+        ["Última actualización", estado.fecha_actualizacion.strftime("%d/%m/%Y %H:%M") if estado.fecha_actualizacion else ""],
+    ]
+    t = Table([["Campo", "Valor"]] + data_est, colWidths=[6.5*cm, 9.5*cm]); t.setStyle(table_style_base()); t.setStyle(table_style_header())
+    elements.append(Paragraph("Estado de documentación", styles['Heading3'])); elements.append(t)
+
+    # Build y respuesta
+    doc.build(elements)
+    pdf = buffer.getvalue(); buffer.close()
+    filename = f"Ficha_{fmt(e.cuil_estudiante)}_{datetime.now().strftime('%Y-%m-%d_%H-%M')}.pdf"
+    resp = HttpResponse(content_type='application/pdf')
+    resp['Content-Disposition'] = f'attachment; filename="{filename}"'
+    resp.write(pdf)
+    return resp
 
 def generar_pdf_estudiante(estudiante, datos_institucion, logo_path):
     
@@ -505,64 +668,60 @@ def generar_pdf_estudiante(estudiante, datos_institucion, logo_path):
     doc.build(elements)
     return pdf_path
 
+# ============================================================
+# 2) PDF: LISTA DE ESTUDIANTES (compacto)
+# ============================================================
+@login_required
 def generar_pdf_lista_estudiantes_view(request):
-    # Configuración del PDF
-    response = HttpResponse(content_type='application/pdf')
-    response['Content-Disposition'] = 'attachment; filename="lista_estudiantes.pdf"'
-
     buffer = BytesIO()
-    doc = SimpleDocTemplate(buffer, pagesize=A4, rightMargin=20, leftMargin=20, topMargin=15, bottomMargin=30)
-
-    styles = getSampleStyleSheet()
+    doc = SimpleDocTemplate(
+        buffer, pagesize=A4,
+        rightMargin=20, leftMargin=20, topMargin=15, bottomMargin=30,
+        title="Lista de Estudiantes", author="Hogar de Bethania",
+        subject="Listado de estudiantes", creator="SEIS - || Gestión de Datos ||",
+    )
+    styles = styleset()
     elements = []
 
-    # Agregar el logo de la institución
-    logo_path = os.path.join(settings.BASE_DIR, 'static', 'img', 'logo.png')
-    try:
-        if os.path.exists(logo_path):
-            logo = Image(logo_path, 1 * inch, 1 * inch)
-            elements.append(logo)
-    except FileNotFoundError:
-        elements.append(Paragraph("Logo no disponible", styles['Normal']))
-
-    # Título del PDF
+    # Encabezado
+    elements.append(logo_flowable(styles))
     elements.append(Paragraph("Lista de Estudiantes", styles['Title']))
+    elements.append(Spacer(1, 0.15 * inch))
 
-    # Obtener los datos de los estudiantes
-    estudiantes = Estudiante.objects.all().order_by('nivel_estudiante', 'apellidos_estudiante')
+    # Datos
+    qs = Estudiante.objects.select_related('inscripcion', 'contacto').order_by('apellidos_estudiante', 'nombres_estudiante')
 
-    # Encabezados de la tabla
-    data = [["CUIL", "Apellido/s", "Nombre/s", "Nivel", "Teléfono"]]
-
-    # Filas de datos
-    for estudiante in estudiantes:
+    data = [["CUIL", "Apellido/s", "Nombre/s", "Nivel", "Curso/Año", "Turno", "Teléfono"]]
+    for e in qs:
+        insc = getattr(e, "inscripcion", None)
+        cont = getattr(e, "contacto", None)
         data.append([
-            estudiante.cuil_estudiante,
-            estudiante.apellidos_estudiante,
-            estudiante.nombres_estudiante,
-            estudiante.nivel_estudiante,
-            estudiante.tel_cel_estudiante
+            fmt(e.cuil_estudiante),
+            fmt(e.apellidos_estudiante),
+            fmt(e.nombres_estudiante),
+            fmt(insc.nivel_estudiante if insc else ""),
+            fmt(insc.curso_anio_estudiante if insc else ""),
+            fmt(insc.turno_estudiante if insc else ""),
+            fmt(cont.tel_cel_estudiante if cont else ""),
         ])
 
-    # Configuración de la tabla
-    tabla = Table(data, colWidths=[1.5 * inch, 1.5 * inch, 1.5 * inch, 1 * inch, 1.5 * inch])
-    tabla.setStyle(TableStyle([
-        ('BACKGROUND', (0, 0), (-1, 0), colors.grey),  # Color de encabezado
-        ('TEXTCOLOR', (0, 0), (-1, 0), colors.whitesmoke),  # Color del texto del encabezado
-        ('ALIGN', (0, 0), (-1, -1), 'LEFT'),  # Alineación de texto
-        ('FONTNAME', (0, 0), (-1, 0), 'Helvetica-Bold'),  # Fuente del encabezado
-        ('FONTSIZE', (0, 0), (-1, -1), 9),  # Tamaño de la fuente
-        ('GRID', (0, 0), (-1, -1), 0.5, colors.black),  # Líneas de la tabla
-        ('BACKGROUND', (0, 1), (-1, -1), colors.beige),  # Fondo de las celdas
-    ]))
-    elements.append(tabla)
+    t = Table(
+        data,
+        colWidths=[3.1*cm, 3.5*cm, 3.5*cm, 2.4*cm, 2.6*cm, 2.2*cm, 3.0*cm]
+    )
+    t.setStyle(table_style_base()); t.setStyle(table_style_header())
+    elements.append(t)
 
-    # Generar el PDF
+    # Build
     doc.build(elements)
-    pdf = buffer.getvalue()
-    buffer.close()
-    response.write(pdf)
-    return response
+    pdf = buffer.getvalue(); buffer.close()
+    filename = f"lista_estudiantes_{datetime.now().strftime('%Y-%m-%d_%H-%M')}.pdf"
+    resp = HttpResponse(content_type='application/pdf')
+    resp['Content-Disposition'] = f'attachment; filename="{filename}"'
+    resp.write(pdf)
+    return resp
+
+
 
 def estudiante_edit(request, pk):
     estudiante = get_object_or_404(Estudiante, pk=pk)
@@ -861,15 +1020,36 @@ def _map_datos_contrato(estudiante: Estudiante) -> dict:
         'nombres_responsable2': nombres_responsable2,
     }
 
-# -------------------------
-# View principal
-# -------------------------
+
+
+# views.py
+import os
+from io import BytesIO
+from datetime import datetime
+from django.http import FileResponse
+from django.shortcuts import get_object_or_404
+from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer, Table, TableStyle, Image
+from reportlab.lib.pagesizes import A4
+from reportlab.lib.units import inch
+from reportlab.lib import colors
+from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
+from reportlab.lib.enums import TA_JUSTIFY, TA_CENTER
+
+from .models import Estudiante
+from .utils import get_institucion, logo_flowable  # ✅ helpers que leen del .env
+
 def generar_contrato_view(request, estudiante_id):
     estudiante = get_object_or_404(Estudiante, pk=estudiante_id)
-    data = _map_datos_contrato(estudiante)
+    data = _map_datos_contrato(estudiante)  # ✅ tu función existente
 
     ahora = datetime.now()
-    mes_es = _mes_en_espanol(ahora)
+    mes_es = _mes_en_espanol(ahora)         # ✅ tu helper existente
+
+    # ====== .env: institución y representante ======
+    inst = get_institucion()  # {Nombre, Dirección, Teléfono, Email} con fallback
+    ciclo_lectivo = os.getenv("INSTITUCION_CICLO_LECTIVO", "2025").strip()
+    rep_nombre = os.getenv("INSTITUCION_REPRESENTANTE_NOMBRE", "Moreno, Rodolfo Jonatan").strip()
+    rep_dni    = os.getenv("INSTITUCION_REPRESENTANTE_DNI", "27.482.233").strip()
 
     # Nombre de archivo
     filename = f"Contrato_{data['cuil_estudiante'] or estudiante_id}_{ahora.strftime('%Y-%m-%d_%H-%M')}.pdf"
@@ -883,26 +1063,17 @@ def generar_contrato_view(request, estudiante_id):
         leftMargin=25,
         topMargin=10,
         bottomMargin=10,
-        title="Contrato de Enseñanza Educativa",
-        author="Hogar de Bethania",
+        title=f"Contrato de Enseñanza Educativa {ciclo_lectivo}",
+        author=inst["Nombre"] or "Institución",
         subject="Contrato personalizado para el estudiante",
-        creator="Hogar de Bethania - Sistema de Gestión Educativa",
+        creator=f"{inst['Nombre'] or 'Institución'} - Sistema de Gestión Educativa",
     )
 
     styles = getSampleStyleSheet()
     elements = []
 
-    # Logo (si existe)
-    logo_path = _find_logo()
-    if logo_path and os.path.exists(logo_path):
-        try:
-            logo = Image(logo_path)
-            logo.drawHeight = 0.5 * inch
-            logo.drawWidth = 0.5 * inch
-            logo.hAlign = 'CENTER'
-            elements.append(logo)
-        except Exception:
-            pass
+    # Logo desde .env (o fallback a static/img/logo.png)
+    elements.append(logo_flowable(styles))
 
     # Título
     custom_title_style = ParagraphStyle(
@@ -917,14 +1088,19 @@ def generar_contrato_view(request, estudiante_id):
         spaceAfter=8,
     )
     elements.append(Spacer(1, 0.3 * inch))
-    elements.append(Paragraph("CONTRATO DE ENSEÑANZA EDUCATIVA CICLO LECTIVO 2025", custom_title_style))
+    elements.append(Paragraph(f"CONTRATO DE ENSEÑANZA EDUCATIVA CICLO LECTIVO {ciclo_lectivo}", custom_title_style))
     elements.append(Spacer(1, 0.2 * inch))
 
-    # Nivel
+    # Encabezado de institución (tomado del .env)
+    encabezado = f"{inst['Nombre']} — {inst['Dirección']} — Tel: {inst['Teléfono']} — {inst['Email']}"
+    elements.append(Paragraph(encabezado, styles['Normal']))
+    elements.append(Spacer(1, 0.1 * inch))
+
+    # Nivel (de tu mapeo)
     elements.append(Paragraph(data['nivel_texto'], styles['Normal']))
     elements.append(Spacer(1, 0.1 * inch))
 
-    # Cuerpo contrato
+    # Cuerpo contrato (inyectando datos del .env)
     contrato_style = ParagraphStyle(
         'ContratoStyle',
         fontName='Times-Roman',
@@ -936,8 +1112,7 @@ def generar_contrato_view(request, estudiante_id):
 
     contrato_texto = f"""
         En la ciudad de Presidencia Roque Sáenz Peña, Provincia del Chaco, a los {ahora.day} días del mes de {mes_es} del año {ahora.year},
-        entre la UNIDAD EDUCATIVA DE GESTIÓN PRIVADA N° 82 “HOGAR DE BETHANIA”, con domicilio legal en URQUIZA N° 768 localidad
-        de Presidencia Roque Sáenz Peña, provincia del Chaco, representada en este acto por el Sr. Moreno, Rodolfo Jonatan, D.N.I. N° 27.482.233
+        entre la {inst['Nombre']}, con domicilio legal en {inst['Dirección']}, representada en este acto por {rep_nombre}, D.N.I. N° {rep_dni}
         en su carácter de Representante Legal, en adelante denominada LA INSTITUCIÓN, por una parte; y por la otra, los
         señores(1) {data['senores1']} D.N.I.: {data['dni_senores1']} y (2) {data['senores2']} D.N.I.: {data['dni_senores2']} con domicilio en {data['domicilios_senores']} y domicilio especial
         electrónico {data['domicilio_especial_electronico']} actúan en su propio nombre y en representación del estudiante, menor de edad, {data['actuan_nombres_estudiante']} D.N.I. N° {data['dni_acutan_estudiante']}, domiciliado
@@ -947,7 +1122,7 @@ def generar_contrato_view(request, estudiante_id):
         promover la formación integral del estudiante, capacitándolo para que a partir de la apropiación de los distintos saberes, y de una línea de
         principios y valores cristianos que se desprenden de la Biblia, logre construir su propio proyecto de vida.- <br/>
         SEGUNDA: LOS RESPONSABLES y el estudiante1, al solicitar la inscripción del menor (reserva de vacante), eligen libremente dentro
-        de las opciones que ofrece el medio, contratar los servicios educativos de LA INSTITUCIÓN durante el ciclo lectivo 2025 con arreglo a
+        de las opciones que ofrece el medio, contratar los servicios educativos de LA INSTITUCIÓN durante el ciclo lectivo {ciclo_lectivo} con arreglo a
         las condiciones y lineamientos establecidos en el presente Contrato. En consecuencia, declaran haber leído, aceptado y adherido al Ideario
         Institucional (I.I), el Proyecto Educativo, Reglamento Interno (R.I.) y Acuerdo de Convivencia (A.C.), asumiendo como propios los
         objetivos educativos, la identidad cristiana y los principios morales de LA INSTITUCIÓN.- <br/>
@@ -1135,22 +1310,6 @@ def generar_contrato_view(request, estudiante_id):
             ACLARACIÓN: {(_str(data['apellidos_responsable2']) + ' ' + _str(data['nombres_responsable2'])).strip()}<br/>
             FECHA: ____________________________
             """, firma_style),
-        ],
-        [
-            Paragraph(f"""
-            FIRMA DEL RESPONSABLE PARENTAL 1:<br/><br/><br/>
-            ____________________________<br/>
-            DNI: {data['dni_senores1']}<br/>
-            ACLARACIÓN: {(_str(data['apellidos_responsable1']) + ' ' + _str(data['nombres_responsable1'])).strip()}<br/>
-            FECHA: ____________________________
-            """, firma_style),
-            Paragraph(f"""
-            FIRMA DEL RESPONSABLE PARENTAL 2:<br/><br/><br/>
-            ____________________________<br/>
-            DNI: {data['dni_senores2']}<br/>
-            ACLARACIÓN: {(_str(data['apellidos_responsable2']) + ' ' + _str(data['nombres_responsable2'])).strip()}<br/>
-            FECHA: ____________________________
-            """, firma_style),
         ]
     ]
 
@@ -1164,10 +1323,11 @@ def generar_contrato_view(request, estudiante_id):
     elements.append(firma_tabla)
 
     elements.append(Spacer(1, 0.5 * inch))
-    elements.append(Paragraph("""
+    elements.append(Paragraph(f"""
         FIRMA DE REPRESENTANTE DE LA INSTITUCIÓN:<br/><br/>
         ____________________________<br/>
-        ACLARACIÓN: Moreno, Rodolfo Jonatan<br/>
+        ACLARACIÓN: {rep_nombre}<br/>
+        DNI: {rep_dni}<br/>
         FECHA: ____________________________
     """, firma_style))
 
@@ -1175,7 +1335,6 @@ def generar_contrato_view(request, estudiante_id):
     doc.build(elements)
     buffer.seek(0)
     return FileResponse(buffer, as_attachment=True, filename=filename)
-
 
 
 from django.shortcuts import render
