@@ -7,6 +7,7 @@ from .forms import LoginForm, RegisterForm, PerfilUsuarioForm, PerfilForm
 from .models import Perfil
 from django.conf import settings
 import os
+from apps.administracion.utils import actualizar_cuotas_vencidas
 
 # --- Iniciar sesión ---
 def login_view(request):
@@ -18,6 +19,10 @@ def login_view(request):
             user = authenticate(request, username=username, password=password)
             if user is not None:
                 login(request, user)
+
+                # ✅ Al iniciar sesión, actualizamos cuotas vencidas
+                actualizar_cuotas_vencidas()
+
                 return redirect('home')
             else:
                 return render(request, 'autenticacion/iniciar_sesion.html', {

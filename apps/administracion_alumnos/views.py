@@ -38,6 +38,8 @@ from .utils import (
     styleset, table_style_base, table_style_header, fmt, fmt_bool
 )
 
+from apps.administracion.models import Cuota
+
 
 # ----------------FUNCIONA------------------------------
 def estudiante_lista(request):
@@ -95,48 +97,49 @@ from .models import Estudiante
 def ver_datos_estudiante(request, pk):
     """
     Muestra los datos completos de un estudiante,
-    incluyendo su foto desde la inscripción (si existe).
+    incluyendo su foto y las cuotas asociadas (si existen).
     """
-    # Ruta base donde se almacenan las fotos localmente
     fotos_path = os.path.join(settings.MEDIA_ROOT, 'documentos', 'fotoPerfilEstudiante')
 
-    # Obtener el estudiante según su ID (pk)
+    # 🔹 Obtener el estudiante
     estudiante = get_object_or_404(Estudiante, pk=pk)
 
-    # Obtener la foto desde la inscripción (si existe)
+    # 🔹 Obtener la foto desde la inscripción (si existe)
     foto_campo = None
     if hasattr(estudiante, 'inscripcion') and estudiante.inscripcion.foto_estudiante:
         foto_campo = estudiante.inscripcion.foto_estudiante
 
-    # Buscar la foto del estudiante basada en el enlace o ID de Google Drive
+    # 🔹 Buscar ID de Google Drive
     foto_id = None
-    if foto_campo:
-        if "id=" in foto_campo:
-            foto_id = foto_campo.split("id=")[-1]
+    if foto_campo and "id=" in foto_campo:
+        foto_id = foto_campo.split("id=")[-1]
 
-    # Inicializar la URL de la foto
+    # 🔹 Resolver URL de la foto (local o default)
     foto_url = None
-    if foto_id:
-        # Buscar archivo local que comience con el ID
-        if os.path.exists(fotos_path):
-            for archivo in os.listdir(fotos_path):
-                if archivo.startswith(foto_id):
-                    foto_url = os.path.join(
-                        settings.MEDIA_URL, 'documentos', 'fotoPerfilEstudiante', archivo
-                    )
-                    break
+    if foto_id and os.path.exists(fotos_path):
+        for archivo in os.listdir(fotos_path):
+            if archivo.startswith(foto_id):
+                foto_url = os.path.join(
+                    settings.MEDIA_URL, 'documentos', 'fotoPerfilEstudiante', archivo
+                )
+                break
 
-    # Si no se encuentra la foto, usar una imagen por defecto
     if not foto_url:
         foto_url = os.path.join(settings.STATIC_URL, 'images/default.jpg')
 
-    # Renderizar la vista con todos los datos
+    # 🔹 Obtener todas las cuotas relacionadas al estudiante
+    cuotas = Cuota.objects.filter(
+        inscripcion__estudiante=estudiante
+    ).select_related('inscripcion', 'inscripcion__nivel', 'inscripcion__ciclo').order_by('anio', 'mes')
+
+    # 🔹 Renderizar vista
     return render(
         request,
         'administracion_alumnos/ver_datos_estudiante.html',
         {
             'estudiante': estudiante,
-            'image_url': foto_url
+            'image_url': foto_url,
+            'cuotas': cuotas,  # ✅ enviamos las cuotas al template
         }
     )
 

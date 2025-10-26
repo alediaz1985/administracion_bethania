@@ -29,8 +29,8 @@
           ✅ Alumno inscripto en el ciclo {{ estudiante.inscripciones_admin.last.ciclo.anio }}
         </div>
       {% else %}
-        <a href="{% url 'administracion:inscribir_estudiante' estudiante.id %}" class="btn btn-inscribir">
-          ➕ Inscribir Alumno
+        <a href="{% url 'administracion:inscribir_estudiante' estudiante.id %}" class="btn-inscribir">
+          Inscribir Estudiante
         </a>
       {% endif %}
     </div>
@@ -234,7 +234,63 @@
 
   <!-- ===== CUOTAS ===== -->
   <div class="tab-content" id="tab-cuotas">
-    <p>Contenido de cuotas próximamente...</p>
+    {% if cuotas %}
+    <table>
+      <thead>
+        <tr>
+          <th>Mes</th>
+          <th>Año</th>
+          <th>Monto</th>
+          <th>Estado</th>
+          <th>Vencimiento</th>
+          <th>Pago</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for cuota in cuotas %}
+        <tr>
+          <td>{{ cuota.mes }}</td>
+          <td>{{ cuota.anio }}</td>
+          <td>${{ cuota.monto_final }}</td>
+          <td>
+            {% if cuota.estado == 'Pagada' %}
+              <span style="color:green; font-weight:bold;">Pagada</span>
+            {% elif cuota.estado == 'Vencida' %}
+              <span style="color:red; font-weight:bold;">Vencida</span>
+            {% else %}
+              <span style="color:orange; font-weight:bold;">Pendiente</span>
+            {% endif %}
+          </td>
+          <td>{{ cuota.fecha_vencimiento|date:"d/m/Y" }}</td>
+          <td>
+            {% if cuota.estado == 'Pagada' %}
+              <button type="button"
+                      class="btn btn-warning btn-deshacer-pago"
+                      data-cuota-id="{{ cuota.id }}"
+                      data-estudiante="{{ estudiante.apellidos_estudiante }}, {{ estudiante.nombres_estudiante }}"
+                      title="Deshacer Pago">
+                <i class="fas fa-rotate-left"></i>
+              </button>
+            {% else %}
+              <button type="button"
+                      class="btn btn-light btn-registrar-pago"
+                      data-cuota-id="{{ cuota.id }}"
+                      data-monto="{{ cuota.monto_final }}"
+                      data-mes="{{ cuota.mes }}"
+                      data-anio="{{ cuota.anio }}"
+                      data-estudiante="{{ estudiante.apellidos_estudiante }}, {{ estudiante.nombres_estudiante }}"
+                      title="Registrar Pago">
+                <i class="fas fa-cash-register"></i>
+              </button>
+            {% endif %}
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+    {% else %}
+      <p>No hay cuotas registradas.</p>
+    {% endif %}
   </div>
 
   <!-- ===== ESTADO DE DOCUMENTACIÓN ===== -->
@@ -303,7 +359,51 @@
   </div>
 </div>
 
+<!-- MODAL REGISTRAR PAGO -->
+<div id="modalPago" class="modal">
+  <div class="modal-content" style="max-width: 450px;">
+    <h3>💳 Registrar Pago</h3>
+    <form id="formRegistrarPago" method="post" action="{% url 'administracion:registrar_pago' 0 %}">
+      {% csrf_token %}
+      <p><strong>Estudiante:</strong> <span id="pagoEstudiante"></span></p>
+      <p><strong>Cuota:</strong> <span id="pagoMes"></span> / <span id="pagoAnio"></span></p>
+      <p><strong>Monto:</strong> $<span id="pagoMonto"></span></p>
 
+      <label for="metodo_pago">Método de pago:</label>
+      <select name="metodo_pago" id="metodo_pago" required>
+        <option value="">Seleccionar...</option>
+        <option value="Efectivo">Efectivo</option>
+        <option value="Transferencia">Transferencia</option>
+        <option value="Tarjeta">Tarjeta</option>
+        <option value="Otro">Otro</option>
+      </select>
+
+      <label for="observaciones">Observaciones (opcional):</label>
+      <textarea name="observaciones" id="observaciones" rows="3"></textarea>
+
+      <div class="modal-actions" style="margin-top: 1rem;">
+        <button type="submit" class="btn btn-success">💰 Confirmar</button>
+        <button type="button" class="btn btn-light" id="cerrarModalPago">Cancelar</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- MODAL DESHACER PAGO -->
+<div id="modalDeshacerPago" class="modal">
+  <div class="modal-content" style="max-width: 420px;">
+    <h3>⚠️ Deshacer Pago</h3>
+    <p id="textoDeshacerPago">¿Seguro que querés deshacer este pago?</p>
+
+    <form id="formDeshacerPago" method="post" action="{% url 'administracion:deshacer_pago' 0 %}">
+      {% csrf_token %}
+      <div class="modal-actions">
+        <button type="submit" class="btn btn-danger">Sí, deshacer pago</button>
+        <button type="button" class="btn btn-light" id="cerrarModalDeshacerPago">Cancelar</button>
+      </div>
+    </form>
+  </div>
+</div>
 
 
 {% endblock %}
@@ -499,7 +599,75 @@ document.getElementById('visor-print')?.addEventListener('click', () => {
   }
 });</script>
 
+<script>
+document.addEventListener("DOMContentLoaded", () => {
+  const modalPago = document.getElementById("modalPago");
+  const formPago = document.getElementById("formRegistrarPago");
+  const cerrarModalPago = document.getElementById("cerrarModalPago");
 
+  // Campos dinámicos
+  const pagoEstudiante = document.getElementById("pagoEstudiante");
+  const pagoMes = document.getElementById("pagoMes");
+  const pagoAnio = document.getElementById("pagoAnio");
+  const pagoMonto = document.getElementById("pagoMonto");
+
+  // Abrir modal
+  document.querySelectorAll(".btn-registrar-pago").forEach(btn => {
+    btn.addEventListener("click", () => {
+      const cuotaId = btn.dataset.cuotaId;
+      const monto = btn.dataset.monto;
+      const mes = btn.dataset.mes;
+      const anio = btn.dataset.anio;
+      const estudiante = btn.dataset.estudiante;
+
+      pagoEstudiante.textContent = estudiante;
+      pagoMes.textContent = mes;
+      pagoAnio.textContent = anio;
+      pagoMonto.textContent = monto;
+
+      // Actualizamos la URL del form dinámicamente
+      const url = "{% url 'administracion:registrar_pago' 0 %}".replace("0", cuotaId);
+      formPago.action = url;
+
+      modalPago.style.display = "flex";
+    });
+  });
+
+  // Cerrar modal
+  if (cerrarModalPago) {
+    cerrarModalPago.addEventListener("click", () => modalPago.style.display = "none");
+    window.addEventListener("click", e => { if (e.target === modalPago) modalPago.style.display = "none"; });
+  }
+});
+</script>
+<script>
+document.addEventListener("DOMContentLoaded", () => {
+  const modalDeshacer = document.getElementById("modalDeshacerPago");
+  const formDeshacer = document.getElementById("formDeshacerPago");
+  const cerrarModalDeshacer = document.getElementById("cerrarModalDeshacerPago");
+  const textoDeshacer = document.getElementById("textoDeshacerPago");
+
+  document.querySelectorAll(".btn-deshacer-pago").forEach(btn => {
+    btn.addEventListener("click", () => {
+      const cuotaId = btn.dataset.cuotaId;
+      const estudiante = btn.dataset.estudiante;
+      textoDeshacer.innerHTML = `¿Seguro que querés <strong>deshacer el pago</strong> de <strong>${estudiante}</strong>?`;
+
+      // Actualiza la URL dinámica
+      const url = "{% url 'administracion:deshacer_pago' 0 %}".replace("0", cuotaId);
+      formDeshacer.action = url;
+
+      modalDeshacer.style.display = "flex";
+    });
+  });
+
+  // Cerrar modal
+  if (cerrarModalDeshacer) {
+    cerrarModalDeshacer.addEventListener("click", () => modalDeshacer.style.display = "none");
+    window.addEventListener("click", e => { if (e.target === modalDeshacer) modalDeshacer.style.display = "none"; });
+  }
+});
+</script>
 
 
 {% endblock %}

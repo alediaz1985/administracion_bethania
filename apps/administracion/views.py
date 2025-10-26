@@ -1,9 +1,13 @@
 from django.shortcuts import render, get_object_or_404, redirect
 from django.http import HttpResponse, FileResponse, JsonResponse
 from django.template.loader import render_to_string
-from apps.administracion.models import CicloLectivo, MontoNivel, Beca
-from apps.administracion_alumnos.models import Estudiante
+from apps.administracion.models import CicloLectivo, Nivel, Subnivel, MontoNivel, Beca, InscripcionAdministrativa, Cuota, Pago
+from apps.administracion_alumnos.models import Estudiante, EstadoDocumentacion
 from .forms import CicloLectivoForm, MontoNivelForm, BecaForm
+from django.contrib import messages
+from datetime import date
+from django.db import models
+from django.utils import timezone
 
 def home(request):
     return render(request, 'home.html')
@@ -107,17 +111,46 @@ def crear_monto(request):
                 anterior.fecha_vigencia_hasta = nuevo_monto.fecha_vigencia_desde
                 anterior.save()
 
+            # Guardamos el nuevo monto
             nuevo_monto.save()
+
+            # ✅ Actualizar cuotas pendientes desde la nueva vigencia
+            inscripciones = InscripcionAdministrativa.objects.filter(
+                ciclo=nuevo_monto.ciclo,
+                nivel=nuevo_monto.nivel,
+                activo=True
+            )
+
+            for ins in inscripciones:
+                cuotas_restantes = ins.cuotas.filter(
+                    estado='Pendiente',
+                    mes__gte=nuevo_monto.fecha_vigencia_desde.month
+                )
+                for cuota in cuotas_restantes:
+                    cuota.monto_original = nuevo_monto.monto_cuota
+                    cuota.monto_final = nuevo_monto.monto_cuota - cuota.monto_descuento
+                    cuota.save()
+
+            # 🔹 Respuesta normal del modal
             data['form_is_valid'] = True
-            montos = MontoNivel.objects.select_related('ciclo', 'nivel').order_by('-ciclo__anio', 'nivel__nombre', '-fecha_vigencia_desde')
-            data['html_list'] = render_to_string('administracion/monto_nivel/_tabla.html', {'montos': montos})
+            montos = MontoNivel.objects.select_related('ciclo', 'nivel').order_by(
+                '-ciclo__anio', 'nivel__nombre', '-fecha_vigencia_desde'
+            )
+            data['html_list'] = render_to_string(
+                'administracion/monto_nivel/_tabla.html',
+                {'montos': montos}
+            )
         else:
             data['form_is_valid'] = False
     else:
         form = MontoNivelForm()
 
     context = {'form': form}
-    data['html_form'] = render_to_string('administracion/monto_nivel/_modal_form.html', context, request=request)
+    data['html_form'] = render_to_string(
+        'administracion/monto_nivel/_modal_form.html',
+        context,
+        request=request
+    )
     return JsonResponse(data)
 
 
@@ -216,20 +249,177 @@ def eliminar_beca(request, pk):
         data['html_form'] = render_to_string('administracion/beca/_modal_delete.html', context, request=request)
     return JsonResponse(data)
 
+# ============================================================
+# 🎓 INSCRIPCION
+# ============================================================
 
 def inscribir_estudiante(request, estudiante_id):
     estudiante = get_object_or_404(Estudiante, id=estudiante_id)
-    return render(request, 'administracion/inscripcion/inscribir_estudiante.html', {
-        'estudiante': estudiante
-    })
+    estado_doc = getattr(estudiante, 'estado_documentacion', None)
 
-def lista_inscripciones_admin(request):
-    return render(request, 'administracion/inscripcion/lista_inscripciones_admin.html')
+    # Verifica si puede inscribirse
+    estado_actual = (estado_doc.estado.strip().lower() if estado_doc and estado_doc.estado else None)
+    puede_inscribir = estado_actual == 'aprobado'
 
+    # Datos para selects
+    ciclos = CicloLectivo.objects.filter(activo=True)
+    niveles = Nivel.objects.all()
+    subniveles = Subnivel.objects.all()
+    becas = Beca.objects.filter(activa=True)
 
-def lista_cuotas(request):
-    return render(request, 'administracion/secciones/lista_cuotas.html')
+    # 📩 Si envía el formulario (POST)
+    if request.method == 'POST' and puede_inscribir:
+        ciclo_id = request.POST.get('ciclo')
+        nivel_id = request.POST.get('nivel')
+        subnivel_id = request.POST.get('subnivel')
+        turno = request.POST.get('turno')
+        beca_id = request.POST.get('beca') or None
+        observaciones = request.POST.get('observaciones', '')
 
-def lista_pagos(request):
-    return render(request, 'administracion/secciones/lista_pagos.html')
+        # Evita duplicados (ya inscripto en ese ciclo)
+        if InscripcionAdministrativa.objects.filter(estudiante=estudiante, ciclo_id=ciclo_id).exists():
+            messages.warning(request, "⚠️ Este estudiante ya está inscripto en el ciclo seleccionado.")
+        else:
+            # Busca el monto correspondiente al nivel y ciclo
+            monto_registro = (
+                MontoNivel.objects
+                .filter(ciclo_id=ciclo_id, nivel_id=nivel_id, activo=True)
+                .order_by('-fecha_vigencia_desde')
+                .first()
+            )
+
+            if not monto_registro:
+                messages.error(request, "❌ No se encontró un monto definido para este nivel y ciclo.")
+            else:
+                monto_inscripcion = monto_registro.monto_inscripcion
+
+                # Crea la inscripción administrativa
+                inscripcion = InscripcionAdministrativa.objects.create(
+                    estudiante=estudiante,
+                    ciclo_id=ciclo_id,
+                    nivel_id=nivel_id,
+                    subnivel_id=subnivel_id,
+                    turno=turno,
+                    monto_inscripcion=monto_inscripcion,
+                    beca_id=beca_id,
+                    observaciones=observaciones,
+                    activo=True,
+                )
+
+                # ==============================
+                # 📆 Crear automáticamente las 10 cuotas (Marzo a Diciembre)
+                # ==============================
+                anio_ciclo = inscripcion.ciclo.anio
+                for mes in range(3, 13):  # marzo → diciembre
+                    fecha_cuota = date(anio_ciclo, mes, 16)
+
+                    # Buscar el monto vigente para ese mes
+                    monto_vigente = (
+                        MontoNivel.objects
+                        .filter(
+                            ciclo=inscripcion.ciclo,
+                            nivel=inscripcion.nivel,
+                            fecha_vigencia_desde__lte=fecha_cuota
+                        )
+                        .filter(
+                            models.Q(fecha_vigencia_hasta__gte=fecha_cuota) |
+                            models.Q(fecha_vigencia_hasta__isnull=True)
+                        )
+                        .order_by('-fecha_vigencia_desde')
+                        .first()
+                    )
+
+                    if monto_vigente:
+                        monto_original = monto_vigente.monto_cuota
+                    else:
+                        # Si no hay monto exacto para esa fecha, tomar el último del año
+                        ultimo_monto = (
+                            MontoNivel.objects
+                            .filter(ciclo=inscripcion.ciclo, nivel=inscripcion.nivel)
+                            .order_by('-fecha_vigencia_desde')
+                            .first()
+                        )
+                        monto_original = ultimo_monto.monto_cuota if ultimo_monto else 0
+
+                    # Calcular descuento por beca si aplica
+                    monto_descuento = 0
+                    if inscripcion.beca:
+                        if inscripcion.beca.tipo == 'Porcentaje':
+                            monto_descuento = monto_original * (inscripcion.beca.valor / 100)
+                        else:
+                            monto_descuento = inscripcion.beca.valor
+
+                    monto_final = max(monto_original - monto_descuento, 0)
+
+                    # Crear la cuota
+                    Cuota.objects.create(
+                        inscripcion=inscripcion,
+                        mes=mes,
+                        anio=anio_ciclo,
+                        monto_original=monto_original,
+                        monto_descuento=monto_descuento,
+                        monto_final=monto_final,
+                        fecha_vencimiento=fecha_cuota,
+                        estado='Pendiente'
+                    )
+
+                # ✅ Mensaje final y redirección
+                messages.success(request, f"✅ Inscripción y cuotas generadas correctamente ({inscripcion.nivel.nombre} - {anio_ciclo}).")
+                return redirect('ver_datos_estudiante', pk=estudiante.id)
+
+    context = {
+        'estudiante': estudiante,
+        'estado_doc': estado_doc,
+        'puede_inscribir': puede_inscribir,
+        'ciclos': ciclos,
+        'niveles': niveles,
+        'subniveles': subniveles,
+        'becas': becas,
+    }
+    return render(request, 'administracion/inscripcion/inscribir_estudiante.html', context)
+
+def registrar_pago(request, cuota_id):
+    cuota = get_object_or_404(Cuota, pk=cuota_id)
+
+    if request.method == 'POST':
+        metodo = request.POST.get('metodo_pago')
+        observaciones = request.POST.get('observaciones', '')
+
+        pago = Pago.objects.create(
+            metodo_pago=metodo,
+            monto_total=cuota.monto_final,
+            observaciones=observaciones,
+            fecha_pago=timezone.now()
+        )
+        pago.cuotas_pagadas.add(cuota)
+
+        cuota.estado = 'Pagada'
+        cuota.fecha_pago = timezone.now().date()
+        cuota.save()
+
+        if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
+            return JsonResponse({'success': True})
+
+        return redirect('ver_datos_estudiante', pk=cuota.inscripcion.estudiante.id)
+    
+def deshacer_pago(request, cuota_id):
+    cuota = get_object_or_404(Cuota, pk=cuota_id)
+
+    if request.method == 'POST':
+        # Buscar el pago asociado a esta cuota
+        pago = Pago.objects.filter(cuotas_pagadas=cuota).first()
+        if pago:
+            # Si el pago solo tiene esta cuota → eliminarlo
+            if pago.cuotas_pagadas.count() == 1:
+                pago.delete()
+            else:
+                # Si compartía pago con otras cuotas, solo se quita la relación
+                pago.cuotas_pagadas.remove(cuota)
+
+        # Revertir el estado de la cuota
+        cuota.estado = 'Pendiente'
+        cuota.fecha_pago = None
+        cuota.save()
+
+        return redirect('ver_datos_estudiante', pk=cuota.inscripcion.estudiante.id)
 

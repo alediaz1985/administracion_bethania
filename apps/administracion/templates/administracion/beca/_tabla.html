@@ -25,9 +25,9 @@
       <td>{{ beca.activa|yesno:"Sí,No" }}</td>
       <td class="text-center">
         <button class="btn btn-sm btn-outline-primary js-edit"
-                data-url="{% url 'editar_beca' beca.id %}">✏️</button>
+                data-url="{% url 'administracion:editar_beca' beca.id %}">✏️</button>
         <button class="btn btn-sm btn-outline-danger js-delete"
-                data-url="{% url 'eliminar_beca' beca.id %}">🗑️</button>
+                data-url="{% url 'administracion:eliminar_beca' beca.id %}">🗑️</button>
       </td>
     </tr>
     {% empty %}

@@ -23,9 +23,9 @@
         </td>
         <td class="text-center">
           <button class="btn btn-sm btn-outline-primary js-edit"
-                  data-url="{% url 'editar_ciclo' ciclo.id %}">✏️</button>
+                  data-url="{% url 'administracion:editar_ciclo' ciclo.id %}">✏️</button>
           <button class="btn btn-sm btn-outline-danger js-delete"
-                  data-url="{% url 'eliminar_ciclo' ciclo.id %}">🗑️</button>
+                  data-url="{% url 'administracion:eliminar_ciclo' ciclo.id %}">🗑️</button>
         </td>
       </tr>
     {% empty %}

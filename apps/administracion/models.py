@@ -1,5 +1,7 @@
 from django.db import models
 from django.utils import timezone
+from datetime import date
+from decimal import Decimal
 
 # ============================================================
 # 🗓️ CICLO LECTIVO (Un registro por año)
@@ -155,6 +157,21 @@ class Cuota(models.Model):
 
     def __str__(self):
         return f"{self.inscripcion.estudiante} - {self.mes}/{self.anio} (${self.monto_final})"
+    
+    def aplicar_interes(self):
+        """
+        Si la cuota está pendiente y venció (día actual > fecha_vencimiento),
+        aplica un recargo del 10% y cambia su estado a 'Vencida'.
+        """
+        hoy = date.today()
+        if self.estado == 'Pendiente' and hoy > self.fecha_vencimiento:
+            dias_vencida = (hoy - self.fecha_vencimiento).days
+            if dias_vencida > 0:
+                interes = Decimal(self.monto_final) * Decimal('0.10')  # +10%
+                self.monto_interes = interes
+                self.monto_final = Decimal(self.monto_original) - Decimal(self.monto_descuento) + interes
+                self.estado = 'Vencida'
+                self.save()
 
 
 # ============================================================

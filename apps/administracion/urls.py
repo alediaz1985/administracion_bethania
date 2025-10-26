@@ -27,7 +27,7 @@ urlpatterns = [
 
     
     path('inscribir/<int:estudiante_id>/', views.inscribir_estudiante, name='inscribir_estudiante'),
-    path('administracion/inscripciones/', views.lista_inscripciones_admin, name='lista_inscripciones_admin'),
-    path('administracion/cuotas/', views.lista_cuotas, name='lista_cuotas'),
-    path('administracion/pagos/', views.lista_pagos, name='lista_pagos'),
+    path('pago/registrar/<int:cuota_id>/', views.registrar_pago, name='registrar_pago'),
+    path('pago/deshacer/<int:cuota_id>/', views.deshacer_pago, name='deshacer_pago'),
+
 ]

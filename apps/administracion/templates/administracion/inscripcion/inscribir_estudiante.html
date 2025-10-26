@@ -1,12 +1,131 @@
 {% extends 'base.html' %}
-{% block title %}Inscripción administrativa{% endblock %}
+{% load static %}
+
+{% block title %}Inscripción Administrativa{% endblock %}
+
 {% block content %}
-<div class="alumnos-container">
-  <h2>Inscripción administrativa</h2>
-  <p>Estudiante: <strong>{{ estudiante.apellidos_estudiante }}, {{ estudiante.nombres_estudiante }}</strong></p>
+<div class="student-card">
 
-  <p>Aquí luego colocaremos el formulario para seleccionar ciclo, nivel, subnivel y turno.</p>
+  <!-- 🔹 Cabecera -->
+  <div class="inscripcion-header">
+    <h2>Inscripción Administrativa</h2>
+    <p class="subtitle">Verificación de datos del estudiante antes de registrar la inscripción.</p>
+  </div>
 
-  <a href="{% url 'ver_datos_estudiante' estudiante.id %}" class="btn btn-light">Volver a la ficha</a>
+  <!-- 🧍 Datos del Estudiante -->
+  <div class="datos-estudiante">
+    <h3>Datos del Estudiante</h3>
+    <table class="tabla-datos">
+      <tr><th>Apellidos:</th><td>{{ estudiante.apellidos_estudiante }}</td></tr>
+      <tr><th>Nombres:</th><td>{{ estudiante.nombres_estudiante }}</td></tr>
+      <tr><th>CUIL:</th><td>{{ estudiante.cuil_estudiante }}</td></tr>
+
+      {% if estudiante.inscripcion %}
+        <tr><th>Nivel:</th><td>{{ estudiante.inscripcion.nivel_estudiante }}</td></tr>
+        <tr><th>Curso / Año:</th><td>{{ estudiante.inscripcion.curso_anio_estudiante }}</td></tr>
+        <tr><th>Turno:</th><td>{{ estudiante.inscripcion.turno_estudiante }}</td></tr>
+      {% else %}
+        <tr>
+          <td colspan="2" class="no-inscripcion">
+            ⚠️ Este estudiante aún no posee datos académicos registrados.
+          </td>
+        </tr>
+      {% endif %}
+    </table>
+  </div>
+
+  <!-- 🧾 Estado de documentación -->
+  <div class="estado-doc">
+    {% if estado_doc %}
+      {% if estado_doc.estado|lower == 'aprobado' %}
+        <p class="estado-aprobado">✅ Documentación aprobada — el estudiante puede ser inscripto.</p>
+      {% else %}
+        <p class="estado-pendiente">⚠️ Documentación pendiente — no puede inscribirse aún.</p>
+      {% endif %}
+    {% else %}
+      <p class="estado-pendiente">⚠️ No se encontró información de documentación.</p>
+    {% endif %}
+  </div>
+
+  <!-- 📋 Formulario de Inscripción -->
+  {% if puede_inscribir %}
+  <div class="form-inscripcion">
+    <h3>Registrar Inscripción</h3>
+    <form method="post">
+      {% csrf_token %}
+
+      <table class="tabla-datos">
+        <tr>
+          <th>Ciclo Lectivo:</th>
+          <td>
+            <select name="ciclo" required>
+              <option value="">Seleccione...</option>
+              {% for ciclo in ciclos %}
+                <option value="{{ ciclo.id }}">{{ ciclo.anio }}</option>
+              {% endfor %}
+            </select>
+          </td>
+        </tr>
+        <tr>
+          <th>Nivel:</th>
+          <td>
+            <select name="nivel" required>
+              <option value="">Seleccione...</option>
+              {% for nivel in niveles %}
+                <option value="{{ nivel.id }}">{{ nivel.nombre }}</option>
+              {% endfor %}
+            </select>
+          </td>
+        </tr>
+        <tr>
+          <th>Subnivel:</th>
+          <td>
+            <select name="subnivel" required>
+              <option value="">Seleccione...</option>
+              {% for subnivel in subniveles %}
+                <option value="{{ subnivel.id }}">{{ subnivel.nombre }}</option>
+              {% endfor %}
+            </select>
+          </td>
+        </tr>
+        <tr>
+          <th>Turno:</th>
+          <td>
+            <select name="turno" required>
+              <option value="">Seleccione...</option>
+              <option value="Mañana">Mañana</option>
+              <option value="Tarde">Tarde</option>
+            </select>
+          </td>
+        </tr>
+        <tr>
+          <th>Beca (opcional):</th>
+          <td>
+            <select name="beca">
+              <option value="">Sin beca</option>
+              {% for beca in becas %}
+                <option value="{{ beca.id }}">{{ beca.nombre }} - {{ beca.tipo }} {{ beca.valor }}</option>
+              {% endfor %}
+            </select>
+          </td>
+        </tr>
+        <tr>
+          <th>Observaciones:</th>
+          <td><textarea name="observaciones" rows="3"></textarea></td>
+        </tr>
+      </table>
+
+      <div class="student-actions">
+        <button type="submit" class="btn-inscribir">💾 Guardar Inscripción</button>
+      </div>
+    </form>
+  </div>
+  {% endif %}
+
+  <!-- 🔘 Volver -->
+  <div class="student-actions">
+    <a href="{% url 'ver_datos_estudiante' estudiante.id %}" class="btn-light">Volver a la ficha</a>
+  </div>
+
 </div>
 {% endblock %}

@@ -29,9 +29,9 @@
       </td>
       <td class="text-center">
         <button class="btn btn-sm btn-outline-primary js-edit"
-                data-url="{% url 'editar_monto' m.id %}">✏️</button>
+                data-url="{% url 'administracion:editar_monto' m.id %}">✏️</button>
         <button class="btn btn-sm btn-outline-danger js-delete"
-                data-url="{% url 'eliminar_monto' m.id %}">🗑️</button>
+                data-url="{% url 'administracion:eliminar_monto' m.id %}">🗑️</button>
       </td>
     </tr>
     {% empty %}

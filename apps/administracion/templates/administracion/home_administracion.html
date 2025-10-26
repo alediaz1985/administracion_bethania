@@ -51,45 +51,7 @@
         </div>
       </div>
     </div>
-
-    <!-- 🧾 Inscripciones -->
-    <div class="col-md-4">
-      <div class="card shadow-sm border-0 h-100">
-        <div class="card-body text-center">
-          <i class="fas fa-user-plus fa-3x text-info mb-3"></i>
-          <h5 class="card-title fw-bold">Inscripciones</h5>
-          <p class="card-text text-muted">Incorpore estudiantes al ciclo lectivo actual.</p>
-          <a href="{% url 'administracion:lista_inscripciones_admin' %}" class="btn btn-outline-info btn-sm">Ir a Inscripciones</a>
-        </div>
-      </div>
-    </div>
-
-    <!-- 📆 Cuotas -->
-    <div class="col-md-4">
-      <div class="card shadow-sm border-0 h-100">
-        <div class="card-body text-center">
-          <i class="fas fa-receipt fa-3x text-danger mb-3"></i>
-          <h5 class="card-title fw-bold">Cuotas</h5>
-          <p class="card-text text-muted">Controle cuotas pagadas, pendientes o vencidas.</p>
-          <a href="{% url 'administracion:lista_cuotas' %}" class="btn btn-outline-danger btn-sm">Ir a Cuotas</a>
-        </div>
-      </div>
-    </div>
-
-    <!-- 💳 Pagos -->
-    <div class="col-md-4">
-      <div class="card shadow-sm border-0 h-100">
-        <div class="card-body text-center">
-          <i class="fas fa-cash-register fa-3x text-secondary mb-3"></i>
-          <h5 class="card-title fw-bold">Pagos</h5>
-          <p class="card-text text-muted">Registre o consulte los pagos realizados.</p>
-          <a href="{% url 'administracion:lista_pagos' %}" class="btn btn-outline-secondary btn-sm">Ir a Pagos</a>
-        </div>
-      </div>
-    </div>
-
   </div>
-
 </div>
 
 {% endblock %}
