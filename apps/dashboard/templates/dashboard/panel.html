@@ -12,43 +12,55 @@
 <div class="dashboard-wrapper" data-aos="fade-in">
   <h1 class="titulo-dashboard" data-aos="fade-down">📊 Panel de Control</h1>
 
-  <!-- ============ TARJETAS KPI ============ -->
+  <!-- ============ TARJETAS KPI (clicables) ============ -->
   <div class="cards-container">
-    <div class="card" data-aos="fade-up">
-      <i data-lucide="users"></i>
-      <div class="kpi-title">Estudiantes</div>
-      <div class="kpi-value">{{ total_estudiantes }}</div>
-    </div>
+    <a class="card-link" href="{% url 'dashboard:lista_estudiantes' %}">
+      <div class="card" data-aos="fade-up">
+        <i data-lucide="users"></i>
+        <div class="kpi-title">Estudiantes</div>
+        <div class="kpi-value">{{ total_estudiantes }}</div>
+      </div>
+    </a>
 
-    <div class="card" data-aos="fade-up" data-aos-delay="100">
-      <i data-lucide="id-card"></i>
-      <div class="kpi-title">Con Inscripción</div>
-      <div class="kpi-value">{{ total_con_inscripcion }}</div>
-    </div>
+    <a class="card-link" href="{% url 'dashboard:lista_inscripciones' %}">
+      <div class="card" data-aos="fade-up" data-aos-delay="100">
+        <i data-lucide="id-card"></i>
+        <div class="kpi-title">Con Inscripción</div>
+        <div class="kpi-value">{{ total_con_inscripcion }}</div>
+      </div>
+    </a>
 
-    <div class="card" data-aos="fade-up" data-aos-delay="200">
-      <i data-lucide="check-circle-2"></i>
-      <div class="kpi-title">Aprobados</div>
-      <div class="kpi-value">{{ aprobados }} ({{ porc_aprobado }}%)</div>
-    </div>
+    <a class="card-link" href="{% url 'dashboard:lista_estudiantes' %}?f=doc:aprobado">
+      <div class="card" data-aos="fade-up" data-aos-delay="200">
+        <i data-lucide="check-circle-2"></i>
+        <div class="kpi-title">Aprobados</div>
+        <div class="kpi-value">{{ aprobados }} ({{ porc_aprobado }}%)</div>
+      </div>
+    </a>
 
-    <div class="card" data-aos="fade-up" data-aos-delay="300">
-      <i data-lucide="hourglass"></i>
-      <div class="kpi-title">Pendientes</div>
-      <div class="kpi-value">{{ pendientes }} ({{ porc_pendiente }}%)</div>
-    </div>
+    <a class="card-link" href="{% url 'dashboard:lista_estudiantes' %}?f=doc:pendiente">
+      <div class="card" data-aos="fade-up" data-aos-delay="300">
+        <i data-lucide="hourglass"></i>
+        <div class="kpi-title">Pendientes</div>
+        <div class="kpi-value">{{ pendientes }} ({{ porc_pendiente }}%)</div>
+      </div>
+    </a>
 
-    <div class="card" data-aos="fade-up" data-aos-delay="400">
-      <i data-lucide="image-off"></i>
-      <div class="kpi-title">Fotos faltantes</div>
-      <div class="kpi-value">{{ fotos_pendientes }}</div>
-    </div>
+    <a class="card-link" href="{% url 'dashboard:lista_inscripciones' %}?fotos=pendientes">
+      <div class="card" data-aos="fade-up" data-aos-delay="400">
+        <i data-lucide="image-off"></i>
+        <div class="kpi-title">Fotos faltantes</div>
+        <div class="kpi-value">{{ fotos_pendientes }}</div>
+      </div>
+    </a>
 
-    <div class="card" data-aos="fade-up" data-aos-delay="500">
-      <i data-lucide="phone-off"></i>
-      <div class="kpi-title">Contacto incompleto</div>
-      <div class="kpi-value">{{ contacto_incompleto }}</div>
-    </div>
+    <a class="card-link" href="{% url 'dashboard:lista_contactos' %}?incompletos=1">
+      <div class="card" data-aos="fade-up" data-aos-delay="500">
+        <i data-lucide="phone-off"></i>
+        <div class="kpi-title">Contacto incompleto</div>
+        <div class="kpi-value">{{ contacto_incompleto }}</div>
+      </div>
+    </a>
   </div>
 
   <!-- ============ GRÁFICOS ============ -->
@@ -79,23 +91,24 @@
             <th>Apellido/s</th>
             <th>Nombre/s</th>
             <th>CUIL</th>
-            <th>Nivel</th>
-            <th>Curso/Año</th>
-            <th>Turno</th>
+            <th style="width:1%"></th>
           </tr>
         </thead>
         <tbody>
           {% for e in ultimos_estudiantes %}
           <tr>
-            <td>{{ e.apellidos_estudiante }}</td>
-            <td>{{ e.nombres_estudiante }}</td>
-            <td>{{ e.cuil_estudiante }}</td>
-            <td>{{ e.inscripcion.nivel_estudiante|default:"-" }}</td>
-            <td>{{ e.inscripcion.curso_anio_estudiante|default:"-" }}</td>
-            <td>{{ e.inscripcion.turno_estudiante|default:"-" }}</td>
+            <td>{% firstof e.apellidos_estudiante e.apellidos e.last_name "—" %}</td>
+            <td>{% firstof e.nombres_estudiante e.nombres e.first_name "—" %}</td>
+            <td>{% firstof e.cuil_estudiante e.documento "—" %}</td>
+            <td>
+              <a class="btn btn-sm btn-outline-primary"
+                 href="{% url 'dashboard:lista_estudiantes' %}?q={% firstof e.cuil_estudiante e.documento e.id %}">
+                 Ver en listado
+              </a>
+            </td>
           </tr>
           {% empty %}
-          <tr><td colspan="6" class="empty">No hay estudiantes.</td></tr>
+          <tr><td colspan="4" class="empty">No hay estudiantes.</td></tr>
           {% endfor %}
         </tbody>
       </table>
@@ -114,11 +127,8 @@
 {% endblock %}
 
 {% block extra_js %}
-<!-- Librerías (CDN) -->
-<script src="https://cdn.jsdelivr.net/npm/chart.js@4" defer></script>
-<script src="https://unpkg.com/lucide@latest" defer></script>
-<script src="https://unpkg.com/aos@2.3.1/dist/aos.js" defer></script>
-
-<!-- Tu JS -->
-<script src="{% static 'dashboard/js/dashboard.js' %}" defer></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4"></script>
+<script src="https://unpkg.com/lucide@latest"></script>
+<script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+<script src="{% static 'dashboard/js/dashboard.js' %}"></script>
 {% endblock %}
