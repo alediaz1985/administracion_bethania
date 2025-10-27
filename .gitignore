@@ -51,8 +51,8 @@ htmlcov/
 # Archivos estáticos y media
 # (NO ignores static/ de fuentes)
 # =========================
-staticfiles/         # generado por collectstatic
-media/               # subidas de usuarios (no versionar)
+staticfiles/
+media/
 
 # =========================
 # Node/Front (si aplica)
