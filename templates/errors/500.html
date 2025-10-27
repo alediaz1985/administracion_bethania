@@ -1,0 +1,14 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Error interno del servidor{% endblock %}
+
+{% block content %}
+<div class="d-flex flex-column align-items-center justify-content-center text-center" style="min-height: 80vh;">
+  <img src="{% static 'img/error_500.svg' %}" alt="500" style="max-width:200px; margin-bottom: 1rem;">
+  <h1 class="display-3 text-warning fw-bold mb-2">500</h1>
+  <h4 class="text-muted mb-3">Ocurrió un error inesperado 😔</h4>
+  <p>Estamos trabajando para solucionarlo. Por favor, intentá más tarde.</p>
+  <a href="/" class="btn btn-primary mt-3 px-4">Volver al panel principal</a>
+</div>
+{% endblock %}

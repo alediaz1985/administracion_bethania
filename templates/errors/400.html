@@ -1,0 +1,14 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Solicitud incorrecta{% endblock %}
+
+{% block content %}
+<div class="d-flex flex-column align-items-center justify-content-center text-center" style="min-height: 80vh;">
+  <img src="{% static 'img/error_400.svg' %}" alt="400" style="max-width:200px; margin-bottom: 1rem;">
+  <h1 class="display-3 text-secondary fw-bold mb-2">400</h1>
+  <h4 class="text-muted mb-3">Solicitud incorrecta</h4>
+  <p>El servidor no pudo procesar la solicitud debido a un error de formato o parámetros inválidos.</p>
+  <a href="/" class="btn btn-primary mt-3 px-4">Volver al panel principal</a>
+</div>
+{% endblock %}

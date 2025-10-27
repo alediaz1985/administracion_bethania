@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Acceso denegado{% endblock %}
+
+{% block content %}
+<div class="d-flex flex-column align-items-center justify-content-center text-center" style="min-height: 80vh;">
+  <img src="{% static 'img/error_403.svg' %}" alt="403" style="max-width:200px; margin-bottom: 1rem;">
+  <h1 class="display-3 text-danger fw-bold mb-2">403</h1>
+  <h4 class="text-muted mb-3">Acceso no autorizado</h4>
+
+  {% if usuario %}
+    <p>Hola <strong>{{ usuario.username }}</strong>, no tenés permisos para acceder a esta sección.</p>
+  {% else %}
+    <p>No tenés permisos para acceder a esta sección.</p>
+  {% endif %}
+
+  <a href="/" class="btn btn-primary mt-3 px-4">Volver al panel principal</a>
+</div>
+{% endblock %}

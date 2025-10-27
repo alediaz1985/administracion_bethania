@@ -1,0 +1,14 @@
+{% extends "base.html" %}
+{% block title %}Probar páginas de error{% endblock %}
+{% block content %}
+<div class="container py-5">
+  <h2>Probar páginas de error</h2>
+  <ul class="mt-3">
+    <li><a href="/no-existe" target="_blank">404 — URL inexistente</a></li>
+    <li><a href="{% url 'force_400' %}" target="_blank">400 — Solicitud incorrecta</a></li>
+    <li><a href="{% url 'force_403' %}" target="_blank">403 — Acceso prohibido</a></li>
+    <li><a href="{% url 'force_500' %}" target="_blank">500 — Error interno</a></li>
+  </ul>
+  <p class="text-muted mt-3">Recordá que esto funciona con <code>DEBUG = False</code>.</p>
+</div>
+{% endblock %}

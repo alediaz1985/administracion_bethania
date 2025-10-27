@@ -1,0 +1,14 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Página no encontrada{% endblock %}
+
+{% block content %}
+<div class="d-flex flex-column align-items-center justify-content-center text-center" style="min-height: 80vh;">
+  <img src="{% static 'img/error_404.svg' %}" alt="404" style="max-width:200px; margin-bottom: 1rem;">
+  <h1 class="display-3 text-primary fw-bold mb-2">404</h1>
+  <h4 class="text-muted mb-3">Ups... no encontramos esa página 😅</h4>
+  <p>Es posible que el enlace esté roto o que la página haya sido movida.</p>
+  <a href="/" class="btn btn-primary mt-3 px-4">Volver al panel principal</a>
+</div>
+{% endblock %}
