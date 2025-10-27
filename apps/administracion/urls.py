@@ -24,7 +24,8 @@ urlpatterns = [
     path('administracion/becas/crear/', views.crear_beca, name='crear_beca'),
     path('administracion/becas/<int:pk>/editar/', views.editar_beca, name='editar_beca'),
     path('administracion/becas/<int:pk>/eliminar/', views.eliminar_beca, name='eliminar_beca'),
-
+    path('becas/estudiantes/', views.estudiantes_becas_activas, name='estudiantes_becas_activas'),
+    path('becas/asignar/', views.asignar_beca_general, name='asignar_beca_general'),
     
     path('inscribir/<int:estudiante_id>/', views.inscribir_estudiante, name='inscribir_estudiante'),
     path('pago/registrar/<int:cuota_id>/', views.registrar_pago, name='registrar_pago'),

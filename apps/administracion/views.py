@@ -271,6 +271,113 @@ def eliminar_beca(request, pk):
         data['html_form'] = render_to_string('administracion/beca/_modal_delete.html', context, request=request)
     return JsonResponse(data)
 
+
+def estudiantes_becas_activas(request):
+    """
+    Muestra todos los estudiantes que tienen una beca asignada,
+    permite cambiar o quitar la beca, y actualiza las cuotas pendientes.
+    """
+    # 🔹 Traemos todas las inscripciones con beca (activa o inactiva)
+    inscripciones = (
+        InscripcionAdministrativa.objects
+        .select_related('estudiante', 'beca', 'nivel', 'ciclo')
+        .filter(beca__isnull=False)
+        .order_by('-ciclo__anio', 'nivel__nombre', 'estudiante__apellidos_estudiante')
+    )
+
+    # 🔹 Todas las becas disponibles (para edición)
+    becas = Beca.objects.all().order_by('nombre')
+
+    # --- POST: si se está actualizando una beca ---
+    if request.method == 'POST':
+        inscripcion_id = request.POST.get('inscripcion_id')
+        nueva_beca_id = request.POST.get('nueva_beca') or None
+        accion = request.POST.get('accion')
+
+        inscripcion = get_object_or_404(InscripcionAdministrativa, pk=inscripcion_id)
+
+        # === Eliminar / Inactivar beca ===
+        if accion == 'quitar':
+            inscripcion.beca = None
+            inscripcion.save()
+
+            # 🔄 Recalcular cuotas pendientes sin descuento
+            cuotas_pendientes = inscripcion.cuotas.filter(estado='Pendiente')
+            for cuota in cuotas_pendientes:
+                cuota.monto_descuento = 0
+                cuota.monto_final = cuota.monto_original
+                cuota.save()
+
+            messages.success(request, f"❌ Se quitó la beca de {inscripcion.estudiante}.")
+            return redirect('administracion:estudiantes_becas_activas')
+
+        # === Cambiar por otra beca ===
+        elif accion == 'cambiar' and nueva_beca_id:
+            nueva_beca = get_object_or_404(Beca, pk=nueva_beca_id)
+            inscripcion.beca = nueva_beca
+            inscripcion.save()
+
+            # 🔄 Recalcular descuentos de cuotas pendientes
+            cuotas_pendientes = inscripcion.cuotas.filter(estado='Pendiente')
+            for cuota in cuotas_pendientes:
+                if nueva_beca.tipo == 'Porcentaje':
+                    cuota.monto_descuento = cuota.monto_original * (nueva_beca.valor / 100)
+                else:
+                    cuota.monto_descuento = nueva_beca.valor
+                cuota.monto_final = max(cuota.monto_original - cuota.monto_descuento, 0)
+                cuota.save()
+
+            messages.success(request, f"🔁 Se actualizó la beca de {inscripcion.estudiante} a {nueva_beca.nombre}.")
+            return redirect('administracion:estudiantes_becas_activas')
+
+    context = {
+        'inscripciones': inscripciones,
+        'becas': becas,
+    }
+    return render(request, 'administracion/beca/estudiantes_activas.html', context)
+
+def asignar_beca_general(request):
+    # 🔹 Traemos todas las inscripciones activas sin beca asignada
+    inscripciones = (
+        InscripcionAdministrativa.objects
+        .select_related('estudiante', 'nivel', 'ciclo')
+        .filter(beca__isnull=True, activo=True)
+        .order_by('-ciclo__anio', 'nivel__nombre', 'estudiante__apellidos_estudiante')
+    )
+
+    becas = Beca.objects.filter(activa=True).order_by('nombre')
+
+    if request.method == 'POST':
+        inscripcion_id = request.POST.get('inscripcion_id')
+        beca_id = request.POST.get('beca_id')
+
+        inscripcion = get_object_or_404(InscripcionAdministrativa, pk=inscripcion_id)
+        beca = get_object_or_404(Beca, pk=beca_id)
+
+        # Asignar la beca
+        inscripcion.beca = beca
+        inscripcion.save()
+
+        # 🔄 Recalcular cuotas pendientes
+        cuotas_pendientes = inscripcion.cuotas.filter(estado='Pendiente')
+        for cuota in cuotas_pendientes:
+            if beca.tipo == 'Porcentaje':
+                cuota.monto_descuento = cuota.monto_original * (beca.valor / 100)
+            else:
+                cuota.monto_descuento = beca.valor
+            cuota.monto_final = max(cuota.monto_original - cuota.monto_descuento, 0)
+            cuota.save()
+
+        messages.success(request, f"✅ Se asignó la beca {beca.nombre} a {inscripcion.estudiante}.")
+        return redirect('administracion:estudiantes_becas_activas')
+
+    context = {
+        'inscripciones': inscripciones,
+        'becas': becas,
+    }
+    return render(request, 'administracion/beca/asignar_beca_general.html', context)
+
+
 # ============================================================
 # 🎓 INSCRIPCION
 # ============================================================

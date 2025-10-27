@@ -7,7 +7,15 @@
 <div class="container mt-4">
   <div class="d-flex justify-content-between align-items-center mb-3">
     <h2>🎓 Becas y Beneficios</h2>
-    <button class="btn btn-primary" id="btnAddBeca">➕ Nueva Beca</button>
+
+    <div class="d-flex gap-2">
+      <a href="{% url 'administracion:estudiantes_becas_activas' %}" class="btn btn-success">
+        👥 Ver Estudiantes con Becas
+      </a>
+      <button class="btn btn-primary" id="btnAddBeca">
+        ➕ Nueva Beca
+      </button>
+    </div>
   </div>
 
   <div id="tabla-becas">
