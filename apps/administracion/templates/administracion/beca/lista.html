@@ -28,23 +28,35 @@
         const modalDiv = document.getElementById("modalBeca");
         modalDiv.innerHTML = data.html_form;
 
+        // Crear instancia de modal
         const modal = new bootstrap.Modal(modalDiv);
         modal.show();
 
+        // Función para manejar el envío del form
+        function handleSubmit(form) {
+          form.addEventListener("submit", function (e) {
+            e.preventDefault();
+            fetch(url, { method: "POST", body: new FormData(form) })
+              .then(r => r.json())
+              .then(data => {
+                if (data.form_is_valid) {
+                  document.getElementById("tabla-becas").innerHTML = data.html_list;
+                  modal.hide(); // ✅ Solo se cierra si es válido
+                } else {
+                  // 🔁 Reemplazamos solo el contenido del modal, no lo destruimos
+                  modalDiv.innerHTML = data.html_form;
+
+                  // ✅ Volvemos a vincular el nuevo form (porque se recreó)
+                  const newForm = modalDiv.querySelector("form");
+                  handleSubmit(newForm);
+                }
+              });
+          });
+        }
+
+        // Asignar el primer form al cargar
         const form = modalDiv.querySelector("form");
-        form.addEventListener("submit", function (e) {
-          e.preventDefault();
-          fetch(url, { method: "POST", body: new FormData(this) })
-            .then(r => r.json())
-            .then(data => {
-              if (data.form_is_valid) {
-                document.getElementById("tabla-becas").innerHTML = data.html_list;
-                modal.hide();
-              } else {
-                modalDiv.innerHTML = data.html_form; // vuelve a mostrar con errores
-              }
-            });
-        });
+        if (form) handleSubmit(form);
       });
   }
 
@@ -57,6 +69,7 @@
   document.addEventListener("click", (e) => {
     const editBtn = e.target.closest(".js-edit");
     if (editBtn) loadModal(editBtn.dataset.url);
+
     const delBtn = e.target.closest(".js-delete");
     if (delBtn) loadModal(delBtn.dataset.url);
   });

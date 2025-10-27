@@ -33,20 +33,29 @@
         const modal = new bootstrap.Modal(modalDiv);
         modal.show();
 
+        // Función para manejar el envío del form (se reutiliza al re-renderizar)
+        function handleSubmit(form) {
+          form.addEventListener("submit", function (e) {
+            e.preventDefault();
+            fetch(url, { method: "POST", body: new FormData(form) })
+              .then(r => r.json())
+              .then(data => {
+                if (data.form_is_valid) {
+                  document.getElementById("tabla-montos").innerHTML = data.html_list;
+                  modal.hide(); // ✅ sólo si se guardó correctamente
+                } else {
+                  // 🔁 Reemplazamos el contenido del modal (errores) y volvemos a vincular evento
+                  modalDiv.innerHTML = data.html_form;
+                  const newForm = modalDiv.querySelector("form");
+                  if (newForm) handleSubmit(newForm);
+                }
+              });
+          });
+        }
+
+        // Asignamos la primera vez
         const form = modalDiv.querySelector("form");
-        form.addEventListener("submit", function (e) {
-          e.preventDefault();
-          fetch(url, { method: "POST", body: new FormData(this) })
-            .then(r => r.json())
-            .then(data => {
-              if (data.form_is_valid) {
-                document.getElementById("tabla-montos").innerHTML = data.html_list;
-                modal.hide();
-              } else {
-                modalDiv.innerHTML = data.html_form;
-              }
-            });
-        });
+        if (form) handleSubmit(form);
       });
   }
 

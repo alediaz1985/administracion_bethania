@@ -16,16 +16,13 @@ def home_administracion(request):
     return render(request, 'administracion/home_administracion.html')
 
 # ==============================
-# 🗓️ LISTAR CICLOS
+# 🗓️ CICLOS
 # ==============================
 def lista_ciclos(request):
     ciclos = CicloLectivo.objects.all().order_by('-anio')
     return render(request, 'administracion/ciclo_lectivo/lista.html', {'ciclos': ciclos})
 
 
-# ==============================
-# ➕ CREAR CICLO (AJAX Modal)
-# ==============================
 def crear_ciclo(request):
     data = {}
     if request.method == 'POST':
@@ -45,9 +42,6 @@ def crear_ciclo(request):
     return JsonResponse(data)
 
 
-# ==============================
-# ✏️ EDITAR CICLO (AJAX Modal)
-# ==============================
 def editar_ciclo(request, pk):
     ciclo = get_object_or_404(CicloLectivo, pk=pk)
     data = {}
@@ -68,9 +62,6 @@ def editar_ciclo(request, pk):
     return JsonResponse(data)
 
 
-# ==============================
-# 🗑️ ELIMINAR CICLO (AJAX Modal)
-# ==============================
 def eliminar_ciclo(request, pk):
     ciclo = get_object_or_404(CicloLectivo, pk=pk)
     data = {}
@@ -94,12 +85,16 @@ def lista_montos(request):
 
 def crear_monto(request):
     data = {}
+
     if request.method == 'POST':
+        # 🔹 Siempre crear un form NUEVO con los datos del POST actual
         form = MontoNivelForm(request.POST)
+
         if form.is_valid():
+            # ✅ Guardar el nuevo monto correctamente
             nuevo_monto = form.save(commit=False)
 
-            # 🔹 Si hay un monto activo anterior, lo cerramos
+            # Si hay un monto activo anterior, lo cerramos
             anterior = MontoNivel.objects.filter(
                 ciclo=nuevo_monto.ciclo,
                 nivel=nuevo_monto.nivel,
@@ -111,10 +106,10 @@ def crear_monto(request):
                 anterior.fecha_vigencia_hasta = nuevo_monto.fecha_vigencia_desde
                 anterior.save()
 
-            # Guardamos el nuevo monto
+            # Guardar el nuevo monto
             nuevo_monto.save()
 
-            # ✅ Actualizar cuotas pendientes desde la nueva vigencia
+            # Actualizar cuotas pendientes desde la nueva vigencia
             inscripciones = InscripcionAdministrativa.objects.filter(
                 ciclo=nuevo_monto.ciclo,
                 nivel=nuevo_monto.nivel,
@@ -131,7 +126,7 @@ def crear_monto(request):
                     cuota.monto_final = nuevo_monto.monto_cuota - cuota.monto_descuento
                     cuota.save()
 
-            # 🔹 Respuesta normal del modal
+            # --- ✅ Respuesta exitosa ---
             data['form_is_valid'] = True
             montos = MontoNivel.objects.select_related('ciclo', 'nivel').order_by(
                 '-ciclo__anio', 'nivel__nombre', '-fecha_vigencia_desde'
@@ -140,17 +135,25 @@ def crear_monto(request):
                 'administracion/monto_nivel/_tabla.html',
                 {'montos': montos}
             )
-        else:
-            data['form_is_valid'] = False
-    else:
-        form = MontoNivelForm()
 
-    context = {'form': form}
-    data['html_form'] = render_to_string(
-        'administracion/monto_nivel/_modal_form.html',
-        context,
-        request=request
-    )
+        else:
+            # --- ⚠️ Si hay errores, re-renderizamos el form con los mensajes ---
+            data['form_is_valid'] = False
+            data['html_form'] = render_to_string(
+                'administracion/monto_nivel/_modal_form.html',
+                {'form': form},
+                request=request
+            )
+
+    else:
+        # --- GET inicial (abrir modal vacío) ---
+        form = MontoNivelForm()
+        data['html_form'] = render_to_string(
+            'administracion/monto_nivel/_modal_form.html',
+            {'form': form},
+            request=request
+        )
+
     return JsonResponse(data)
 
 
@@ -199,6 +202,7 @@ def lista_becas(request):
 
 def crear_beca(request):
     data = {}
+
     if request.method == 'POST':
         form = BecaForm(request.POST)
         if form.is_valid():
@@ -208,17 +212,27 @@ def crear_beca(request):
             data['html_list'] = render_to_string('administracion/beca/_tabla.html', {'becas': becas})
         else:
             data['form_is_valid'] = False
+            # 👇 Renderizamos de nuevo el mismo form con errores
+            data['html_form'] = render_to_string(
+                'administracion/beca/_modal_form.html',
+                {'form': form},
+                request=request
+            )
     else:
         form = BecaForm()
+        data['html_form'] = render_to_string(
+            'administracion/beca/_modal_form.html',
+            {'form': form},
+            request=request
+        )
 
-    context = {'form': form}
-    data['html_form'] = render_to_string('administracion/beca/_modal_form.html', context, request=request)
     return JsonResponse(data)
 
 
 def editar_beca(request, pk):
     beca = get_object_or_404(Beca, pk=pk)
     data = {}
+
     if request.method == 'POST':
         form = BecaForm(request.POST, instance=beca)
         if form.is_valid():
@@ -228,11 +242,19 @@ def editar_beca(request, pk):
             data['html_list'] = render_to_string('administracion/beca/_tabla.html', {'becas': becas})
         else:
             data['form_is_valid'] = False
+            data['html_form'] = render_to_string(
+                'administracion/beca/_modal_form.html',
+                {'form': form},
+                request=request
+            )
     else:
         form = BecaForm(instance=beca)
+        data['html_form'] = render_to_string(
+            'administracion/beca/_modal_form.html',
+            {'form': form},
+            request=request
+        )
 
-    context = {'form': form}
-    data['html_form'] = render_to_string('administracion/beca/_modal_form.html', context, request=request)
     return JsonResponse(data)
 
 

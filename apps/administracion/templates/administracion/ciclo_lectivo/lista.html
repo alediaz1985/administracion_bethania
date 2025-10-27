@@ -22,7 +22,6 @@
 
 {% block extra_js %}
 <script>
-  // ✅ Función para abrir el modal y cargar el formulario por AJAX
   function loadModal(url) {
     fetch(url)
       .then(r => r.json())
@@ -30,24 +29,33 @@
         const modalDiv = document.getElementById("modalCiclo");
         modalDiv.innerHTML = data.html_form;
 
-        // Mostrar modal con Bootstrap 5
         const modal = new bootstrap.Modal(modalDiv);
         modal.show();
 
+        // 🧩 Función recursiva: vuelve a vincular el evento submit si hay errores
+        function handleSubmit(form) {
+          form.addEventListener("submit", function (e) {
+            e.preventDefault();
+            fetch(url, { method: "POST", body: new FormData(form) })
+              .then(r => r.json())
+              .then(data => {
+                if (data.form_is_valid) {
+                  // ✅ Guardado correcto: actualiza tabla y cierra modal
+                  document.getElementById("tabla-ciclos").innerHTML = data.html_list;
+                  modal.hide();
+                } else {
+                  // ⚠️ Hay errores: re-renderizamos el form y volvemos a vincular submit
+                  modalDiv.innerHTML = data.html_form;
+                  const newForm = modalDiv.querySelector("form");
+                  if (newForm) handleSubmit(newForm);
+                }
+              });
+          });
+        }
+
+        // Primera vinculación
         const form = modalDiv.querySelector("form");
-        form.addEventListener("submit", function (e) {
-          e.preventDefault();
-          fetch(url, { method: "POST", body: new FormData(this) })
-            .then(r => r.json())
-            .then(data => {
-              if (data.form_is_valid) {
-                document.getElementById("tabla-ciclos").innerHTML = data.html_list;
-                modal.hide();
-              } else {
-                modalDiv.innerHTML = data.html_form; // re-render con errores
-              }
-            });
-        });
+        if (form) handleSubmit(form);
       });
   }
 
@@ -59,11 +67,9 @@
   // Delegación para Editar / Eliminar
   document.addEventListener("click", (e) => {
     const editBtn = e.target.closest(".js-edit");
-    if (editBtn) loadModal(editBtn.dataset.url);
-
     const delBtn = e.target.closest(".js-delete");
+    if (editBtn) loadModal(editBtn.dataset.url);
     if (delBtn) loadModal(delBtn.dataset.url);
   });
 </script>
 {% endblock %}
-
