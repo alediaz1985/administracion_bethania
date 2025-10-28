@@ -102,6 +102,54 @@ body {
   color: var(--secundario);
 }
 
+/* 🔘 Botón eliminar inscripción */
+.btn-eliminar {
+  background-color: #c0392b;
+  color: #fff;
+  border: none;
+  padding: 0.45rem 0.9rem;
+  border-radius: 8px;
+  cursor: pointer;
+  font-family: 'Inter', sans-serif;
+  font-weight: 500;
+  font-size: 0.85rem;
+  transition: background 0.2s ease, transform 0.1s ease;
+  margin-top: 0.4rem;
+}
+
+.btn-eliminar:hover {
+  background-color: #a93226;
+  transform: scale(1.03);
+}
+
+/* Modal genérico (ya usás este formato, pero aseguremos compatibilidad) */
+.modal {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.45);
+  justify-content: center;
+  align-items: center;
+  z-index: 999;
+}
+
+.modal-content {
+  background: #fff;
+  padding: 1.5rem;
+  border-radius: 10px;
+  width: 90%;
+  max-width: 400px;
+  box-shadow: 0 6px 20px rgba(0,0,0,0.2);
+  text-align: center;
+}
+
+.modal-actions {
+  margin-top: 1rem;
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
 /* ============================
    BOTONES
 ============================ */
@@ -151,6 +199,18 @@ body {
 
 .btn-warning:hover {
   background: #e0a800;
+  color: #fff;
+}
+
+/* --- Botón verde (Aprobar Doc.) --- */
+.btn-success {
+  background: #28a745;           /* verde institucional original */
+  color: #fff;
+  border: none;
+}
+
+.btn-success:hover {
+  background: #218838;           /* un poco más oscuro en hover */
   color: #fff;
 }
 
@@ -292,105 +352,491 @@ body {
   border: 1px solid #f0c3c3;
 }
 
-/* ============================
-   MODAL DE CONFIRMACIÓN
-============================ */
-.modal {
-  display: none;
-  position: fixed;
-  z-index: 1000;
-  left: 0; top: 0;
-  width: 100%; height: 100%;
-  background-color: rgba(0,0,0,0.5);
-  align-items: center;
-  justify-content: center;
-  backdrop-filter: blur(3px);
-}
-
-.modal-content {
-  background: #fff;
-  border-radius: 10px;
-  padding: 2rem;
-  max-width: 450px;
-  width: 90%;
-  text-align: center;
-  box-shadow: 0 5px 20px rgba(0,0,0,0.2);
-  animation: fadeInModal 0.25s ease-in-out;
-}
-
-.modal-content h3 {
-  color: var(--azul);
-  margin-bottom: 1rem;
-}
-
-.modal-actions {
-  display: flex;
-  justify-content: center;
-  gap: 1rem;
-  margin-top: 1.5rem;
-}
-
-@keyframes fadeInModal {
-  from { opacity: 0; transform: translateY(-10px); }
-  to { opacity: 1; transform: translateY(0); }
-}
-
-/* Botón verde para aprobar */
-.btn-success {
-  background: #28a745;
-  color: #fff;
-  border: none;
-}
-
-.btn-success:hover {
-  background: #218838;
-}
+/* ==========================================================
+   🪟 MODALES INSTITUCIONALES — Estilo avanzado Bethania
+========================================================== */
 
 .modal {
   display: none;
   position: fixed;
   inset: 0;
-  background: rgba(0, 0, 0, 0.4);
+  background: rgba(0, 0, 0, 0.55);
+  backdrop-filter: blur(5px);
+  z-index: 1050;
   justify-content: center;
   align-items: center;
-  z-index: 1000;
+  animation: fadeInBackdrop 0.4s ease;
 }
 
+@keyframes fadeInBackdrop {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+/* --- Caja principal --- */
 .modal-content {
-  background: #fff;
-  padding: 25px 30px;
-  border-radius: 10px;
+  background: linear-gradient(180deg, #ffffff 0%, #f9f9f9 100%);
+  border-radius: 14px;
+  padding: 2rem 2.3rem;
+  width: 90%;
+  max-width: 460px;
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.35);
   text-align: center;
-  width: 350px;
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
-  animation: fadeIn 0.3s ease;
+  position: relative;
+  border: 1px solid rgba(0, 0, 0, 0.05);
+  animation: modalZoomIn 0.35s cubic-bezier(0.24, 1.25, 0.32, 1);
+  transform-origin: center;
 }
 
-@keyframes fadeIn {
-  from { opacity: 0; transform: scale(0.95); }
+@keyframes modalZoomIn {
+  from { opacity: 0; transform: scale(0.8); }
   to { opacity: 1; transform: scale(1); }
 }
 
-.btn-light i,
-.btn-warning i {
-  font-size: 1rem;
+/* --- Cabecera --- */
+.modal-content h3 {
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: var(--azul);
+  margin-bottom: 1rem;
+  letter-spacing: 0.3px;
 }
 
-.btn-light,
-.btn-warning {
-  padding: 5px 10px;
-  border-radius: 6px;
+.modal-content p {
+  color: var(--texto);
+  font-size: 0.95rem;
+  line-height: 1.5;
 }
 
-.btn-light:hover {
-  background-color: #f0f0f0;
+/* --- Línea decorativa superior --- */
+.modal-content::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  height: 5px;
+  width: 100%;
+  border-radius: 14px 14px 0 0;
 }
 
-.btn-warning:hover {
-  background-color: #d39e00;
-  color: white;
+/* --- Contenedor de botones --- */
+.modal-actions {
+  display: flex;
+  justify-content: center;
+  gap: 0.9rem;
+  margin-top: 1.8rem;
 }
 
+/* --- Botones --- */
+.modal .btn {
+  border-radius: 8px;
+  font-size: 0.75rem;
+  padding: 0.55rem 1.25rem;
+  font-weight: 500;
+  transition: all 0.25s ease;
+  cursor: pointer;
+  text-decoration: none;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+}
+
+/* Botón neutro */
+.modal .btn-light {
+  background: #f6f6f6;
+  color: #333;
+  border: 1px solid #ccc;
+}
+.modal .btn-light:hover {
+  background: #e9e9e9;
+  transform: translateY(-1px);
+}
+
+/* Verde confirmación */
+.modal .btn-success {
+  background: linear-gradient(135deg, #2ca44c, #1e7435);
+  color: #fff;
+  border: none;
+}
+.modal .btn-success:hover {
+  filter: brightness(1.1);
+  transform: translateY(-1px);
+}
+
+/* Rojo advertencia */
+.modal .btn-danger {
+  background: linear-gradient(135deg, #d00000, #a30000);
+  color: #fff;
+  border: none;
+}
+.modal .btn-danger:hover {
+  filter: brightness(1.1);
+  transform: translateY(-1px);
+}
+
+/* Azul institucional */
+.modal .btn-primary {
+  background: linear-gradient(135deg, var(--azul), var(--azul-medio));
+  color: #fff;
+  border: none;
+}
+.modal .btn-primary:hover {
+  filter: brightness(1.1);
+  transform: translateY(-1px);
+}
+
+/* Dorado informativo */
+.modal .btn-gold {
+  background: linear-gradient(135deg, #b38f00, #8a7000);
+  color: #fff;
+  border: none;
+}
+.modal .btn-gold:hover {
+  filter: brightness(1.1);
+  transform: translateY(-1px);
+}
+
+/* ==========================================================
+   🔹 MODALES INDIVIDUALES — Colores distintivos
+========================================================== */
+
+/* --- Confirmación --- */
+#modalEstado .modal-content::before {
+  background: var(--azul);
+}
+#modalEstado .modal-content h3 {
+  color: var(--azul);
+}
+
+/* --- Descarga completada --- */
+#modalDescarga .modal-content::before {
+  background: var(--dorado);
+}
+#modalDescarga .modal-content h3 {
+  color: var(--dorado);
+}
+
+/* --- Registrar pago --- */
+#modalPago .modal-content::before {
+  background: var(--verde);
+}
+#modalPago .modal-content h3 {
+  color: var(--verde);
+}
+
+/* Campos de formulario */
+#modalPago select,
+#modalPago textarea {
+  width: 100%;
+  border: 1px solid #bbb;
+  border-radius: 8px;
+  padding: 7px 9px;
+  font-size: 0.9rem;
+  color: var(--texto);
+  background: #fff;
+  transition: all 0.2s ease;
+}
+#modalPago select:focus,
+#modalPago textarea:focus {
+  border-color: var(--verde);
+  box-shadow: 0 0 0 3px rgba(38, 124, 46, 0.2);
+  outline: none;
+}
+#modalPago label {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--azul);
+  display: block;
+  margin-top: 0.7rem;
+  margin-bottom: 0.3rem;
+}
+#modalPago textarea {
+  resize: none;
+}
+
+/* --- Deshacer pago --- */
+#modalDeshacerPago .modal-content::before {
+  background: var(--rojo);
+}
+#modalDeshacerPago .modal-content h3 {
+  color: var(--rojo);
+}
+
+/* --- Visor certificado (Bootstrap modal) --- */
+#visorCertificadoModal .modal-header {
+  background: var(--azul);
+  color: #fff;
+  border-bottom: 1px solid #1e2d4d;
+}
+#visorCertificadoModal .modal-title {
+  font-weight: 600;
+}
+#visorCertificadoModal .btn-close::before {
+  color: #fff;
+}
+
+/* ==========================================================
+   ✨ Animación de cierre
+========================================================== */
+.modal.hide {
+  animation: fadeOutModal 0.25s ease forwards;
+}
+
+@keyframes fadeOutModal {
+  from { opacity: 1; transform: scale(1); }
+  to { opacity: 0; transform: scale(0.95); }
+}
+
+/* ==========================================================
+   💳 PESTAÑA CUOTAS — Estilo institucional Bethania
+========================================================== */
+
+#tab-cuotas {
+  margin-top: 1rem;
+}
+
+#tab-cuotas table {
+  width: 100%;
+  border-collapse: collapse;
+  background: #fff;
+  border-radius: 10px;
+  overflow: hidden;
+  border: 1px solid var(--borde);
+  box-shadow: 0 4px 25px rgba(0, 0, 0, 0.35);
+  table-layout: fixed;
+}
+
+/* --- Encabezado --- */
+#tab-cuotas thead {
+  background: #d6dbe1;
+}
+
+#tab-cuotas th,
+#tab-cuotas td {
+  font-size: 13px;
+  color: #222;
+  padding: 12px;
+  border-bottom: 1px solid #bbb;
+  border-right: 1px solid #bbb;
+  vertical-align: middle;
+  text-align: center; /* ✅ Todo centrado */
+  word-wrap: break-word;
+}
+
+#tab-cuotas th:last-child,
+#tab-cuotas td:last-child {
+  border-right: none;
+}
+
+/* --- Proporciones equilibradas --- */
+#tab-cuotas th:nth-child(1),
+#tab-cuotas td:nth-child(1) { width: 10%; } /* Mes */
+#tab-cuotas th:nth-child(2),
+#tab-cuotas td:nth-child(2) { width: 12%; } /* Año */
+#tab-cuotas th:nth-child(3),
+#tab-cuotas td:nth-child(3) { width: 18%; } /* Monto */
+#tab-cuotas th:nth-child(4),
+#tab-cuotas td:nth-child(4) { width: 18%; } /* Estado */
+#tab-cuotas th:nth-child(5),
+#tab-cuotas td:nth-child(5) { width: 22%; } /* Vencimiento */
+#tab-cuotas th:nth-child(6),
+#tab-cuotas td:nth-child(6) { width: 10%; } /* Pago */
+
+#tab-cuotas tbody tr:nth-child(even) {
+  background-color: #fafafa;
+}
+
+#tab-cuotas tbody tr:hover {
+  background-color: #eef1f6;
+  transition: background 0.2s ease;
+}
+
+/* --- Estados visuales --- */
+#tab-cuotas td span {
+  display: inline-block;
+  padding: 3px 10px;
+  border-radius: 5px;
+  font-weight: 600;
+  font-size: 0.8rem;
+}
+
+#tab-cuotas td span[style*="green"] {
+  background: #e3f6e3;
+  color: var(--verde) !important;
+}
+
+#tab-cuotas td span[style*="red"] {
+  background: #ffe5e5;
+  color: var(--rojo) !important;
+}
+
+#tab-cuotas td span[style*="orange"] {
+  background: #fff4e5;
+  color: var(--dorado) !important;
+}
+
+/* --- Botón de acción (negro minimalista) --- */
+#tab-cuotas .btn {
+  background: none;
+  border: none;
+  outline: none;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 4px;
+  transition: transform 0.2s ease;
+}
+
+#tab-cuotas .btn i {
+  color: var(--azul);
+  font-size: 1.1rem;
+  transition: color 0.2s ease, transform 0.2s ease;
+}
+
+/* Hover elegante y consistente */
+#tab-cuotas .btn:hover i {
+  color: var(--dorado);
+  transform: scale(1.15);
+}
+
+/* Sin fondo ni borde al hacer foco */
+#tab-cuotas .btn:focus {
+  outline: none;
+  box-shadow: none;
+}
+
+/* --- Mensaje sin datos --- */
+#tab-cuotas p {
+  text-align: center;
+  color: var(--texto);
+  font-style: italic;
+  padding: 1.5rem 0;
+  background: #fafafa;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+}
+
+/* ==========================================================
+   🎯 Centrado del botón dentro de la columna Pago
+========================================================== */
+
+/* Celdas de la columna Pago */
+#tab-cuotas td:last-child {
+  text-align: center;
+  vertical-align: middle;
+}
+
+/* Asegura que el botón esté perfectamente centrado */
+#tab-cuotas td:last-child .btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto; /* ✅ centra horizontalmente */
+  width: 32px;
+  height: 32px;
+}
+
+/* Ícono del botón */
+#tab-cuotas td:last-child .btn i {
+  color: var(--azul);
+  font-size: 1.1rem;
+  transition: color 0.2s ease, transform 0.2s ease;
+}
+
+/* Hover minimalista dorado */
+#tab-cuotas td:last-child .btn:hover i {
+  color: var(--dorado);
+  transform: scale(1.15);
+}
+
+/* ==========================================================
+   💳 BOTÓN DESHACER PAGO — Ícono X negro minimalista
+========================================================== */
+
+.btn-deshacer-pago {
+  background: none !important;
+  border: none !important;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  transition: transform 0.25s ease;
+}
+
+.btn-deshacer-pago i {
+  font-size: 1.1rem;
+  color: var(--azul);
+  transition: color 0.25s ease, transform 0.25s ease;
+}
+
+/* Hover dorado elegante */
+.btn-deshacer-pago:hover i {
+  color: var(--dorado);
+  transform: scale(1.15);
+}
+
+/* Limpieza de foco */
+.btn-deshacer-pago:focus {
+  outline: none;
+  box-shadow: none;
+}
+
+/* =====================================================
+   🔔 MENSAJES FLOTANTES — estilo minimalista del sistema
+===================================================== */
+#toast-container {
+  position: fixed;
+  top: 4.5rem;
+  right: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+  z-index: 9999;
+}
+
+/* --- Cuerpo del mensaje --- */
+.toast-message {
+  background: #fff;
+  border-left: 4px solid var(--azul);
+  color: var(--texto);
+  font-family: 'Inter', sans-serif;
+  font-size: 0.9rem;
+  font-weight: 500;
+  padding: 0.7rem 1rem;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+  opacity: 0;
+  transform: translateY(-10px);
+  animation: fadeInSlide 0.4s ease forwards;
+}
+
+/* ✅ Éxito */
+.toast-message.success {
+  border-left-color: #2e7d32;
+}
+
+/* ⚠️ Advertencia */
+.toast-message.warning {
+  border-left-color: #b38f00;
+}
+
+/* ❌ Error */
+.toast-message.error {
+  border-left-color: #c62828;
+}
+
+/* Animaciones suaves */
+@keyframes fadeInSlide {
+  from { opacity: 0; transform: translateY(-10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes fadeOut {
+  from { opacity: 1; transform: translateY(0); }
+  to { opacity: 0; transform: translateY(-10px); }
+}
 
 /* ============================
    📱 MEDIA QUERY

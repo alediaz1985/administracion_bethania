@@ -78,7 +78,7 @@ def cambiar_estado_documentacion(request, estudiante_id):
     if request.method == 'POST':
         estado_doc.estado = nuevo_estado
         estado_doc.save()
-        return redirect('estudiante_list')
+        return redirect('ver_datos_estudiante', pk=estudiante.id)
 
     # Renderiza solo si se accede directo (no debería pasar normalmente)
     return render(request, 'administracion_alumnos/ver_datos_estudiante.html', {

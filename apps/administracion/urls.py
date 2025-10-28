@@ -32,6 +32,7 @@ urlpatterns = [
 
     # 🎓 Inscripción
     path('inscribir/<int:estudiante_id>/', views.inscribir_estudiante, name='inscribir_estudiante'),
+    path('eliminar-inscripcion/<int:inscripcion_id>/', views.eliminar_inscripcion, name='eliminar_inscripcion'),
     path('pago/registrar/<int:cuota_id>/', views.registrar_pago, name='registrar_pago'),
     path('pago/deshacer/<int:cuota_id>/', views.deshacer_pago, name='deshacer_pago'),
 

@@ -22,6 +22,41 @@
     </a>
   </div>
 
+  <!-- 🔹 FILTROS -->
+  <div class="filtros-container mb-3">
+    <div class="filtros-row">
+
+      <!-- Ciclo -->
+      <div class="filtro">
+        <label for="ciclo">Ciclo</label>
+        <select id="ciclo" class="form-select form-select-sm">
+          <option value="">Todos</option>
+          {% for c in ciclos %}
+            <option value="{{ c.anio }}">{{ c.anio }}</option>
+          {% endfor %}
+        </select>
+      </div>
+
+      <!-- Nivel -->
+      <div class="filtro">
+        <label for="nivel">Nivel</label>
+        <select id="nivel" class="form-select form-select-sm">
+          <option value="">Todos</option>
+          {% for n in niveles %}
+            <option value="{{ n.nombre }}">{{ n.nombre }}</option>
+          {% endfor %}
+        </select>
+      </div>
+
+      <!-- Buscador -->
+      <div class="filtro filtro-buscar">
+        <label for="buscar">Buscar</label>
+        <input type="text" id="buscar" class="form-control form-control-sm"
+               placeholder="Nombre o Apellido">
+      </div>
+    </div>
+  </div>
+
   <!-- 🔹 MENSAJES -->
   {% if messages %}
     {% for msg in messages %}
@@ -77,3 +112,58 @@
   {% endif %}
 </div>
 {% endblock %}
+
+{% block extra_js %}
+<script>
+// ============================================================
+// 🎯 FILTROS DINÁMICOS (Ciclo, Nivel, Buscar) — con soporte de tildes
+// ============================================================
+document.addEventListener("DOMContentLoaded", () => {
+  const ciclo = document.getElementById("ciclo");
+  const nivel = document.getElementById("nivel");
+  const buscar = document.getElementById("buscar");
+  const filas = document.querySelectorAll(".asignar-table tbody tr");
+
+  // 🔹 Función para limpiar texto: minúsculas + sin tildes
+  function limpiarTexto(texto) {
+    return texto
+      .toLowerCase()
+      .normalize("NFD")                // separa letras y acentos
+      .replace(/[\u0300-\u036f]/g, ""); // elimina los acentos
+  }
+
+  // --- Aplicar filtros ---
+  function aplicarFiltros() {
+    const cicloVal = limpiarTexto(ciclo.value.trim());
+    const nivelVal = limpiarTexto(nivel.value.trim());
+    const query = limpiarTexto(buscar.value.trim());
+
+    filas.forEach(fila => {
+      const textoFila = limpiarTexto(fila.innerText);
+      const cicloCelda = limpiarTexto(fila.children[1]?.innerText || "");
+      const nivelCelda = limpiarTexto(fila.children[2]?.innerText || "");
+
+      const coincideCiclo = !cicloVal || cicloCelda.includes(cicloVal);
+      const coincideNivel = !nivelVal || nivelCelda.includes(nivelVal);
+      const coincideBusqueda = !query || textoFila.includes(query);
+
+      fila.style.display = (coincideCiclo && coincideNivel && coincideBusqueda) ? "" : "none";
+    });
+  }
+
+  // --- Eventos ---
+  ciclo.addEventListener("change", aplicarFiltros);
+  nivel.addEventListener("change", aplicarFiltros);
+  buscar.addEventListener("input", aplicarFiltros);
+
+  // --- Ciclo actual seleccionado por defecto ---
+  const currentYear = new Date().getFullYear().toString();
+  const currentOption = Array.from(ciclo.options).find(opt => opt.text.trim() === currentYear);
+  if (currentOption && !ciclo.value) {
+    ciclo.value = currentOption.value;
+    aplicarFiltros();
+  }
+});
+</script>
+{% endblock %}
+

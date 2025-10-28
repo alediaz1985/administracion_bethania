@@ -9,6 +9,8 @@ from datetime import date
 from django.db import models
 from django.utils import timezone
 from django.db.models import Q
+from django.db import transaction
+from django.contrib.auth.decorators import login_required
 
 def home(request):
     return render(request, 'home.html')
@@ -408,6 +410,10 @@ def asignar_beca_general(request):
 
     becas = Beca.objects.filter(activa=True).order_by('nombre')
 
+    # 🔹 Agregamos ciclos y niveles para los filtros
+    ciclos = CicloLectivo.objects.order_by('-anio')
+    niveles = Nivel.objects.order_by('nombre')
+
     if request.method == 'POST':
         inscripcion_id = request.POST.get('inscripcion_id')
         beca_id = request.POST.get('beca_id')
@@ -432,9 +438,12 @@ def asignar_beca_general(request):
         messages.success(request, f"✅ Se asignó la beca {beca.nombre} a {inscripcion.estudiante}.")
         return redirect('administracion:estudiantes_becas_activas')
 
+    # 👇 Enviamos ciclos y niveles al contexto
     context = {
         'inscripciones': inscripciones,
         'becas': becas,
+        'ciclos': ciclos,
+        'niveles': niveles,
     }
     return render(request, 'administracion/beca/asignar_beca_general.html', context)
 
@@ -488,11 +497,11 @@ def inscribir_estudiante(request, estudiante_id):
     estudiante = get_object_or_404(Estudiante, id=estudiante_id)
     estado_doc = getattr(estudiante, 'estado_documentacion', None)
 
-    # Verifica si puede inscribirse
+    # --- Verifica si puede inscribirse ---
     estado_actual = (estado_doc.estado.strip().lower() if estado_doc and estado_doc.estado else None)
     puede_inscribir = estado_actual == 'aprobado'
 
-    # Datos para selects
+    # --- Datos para selects ---
     ciclos = CicloLectivo.objects.filter(activo=True)
     niveles = Nivel.objects.all()
     subniveles = Subnivel.objects.all()
@@ -507,7 +516,35 @@ def inscribir_estudiante(request, estudiante_id):
         beca_id = request.POST.get('beca') or None
         observaciones = request.POST.get('observaciones', '')
 
-        # Evita duplicados (ya inscripto en ese ciclo)
+        nivel = Nivel.objects.filter(id=nivel_id).first()
+        subnivel = Subnivel.objects.filter(id=subnivel_id).first()
+
+        # =====================================================
+        # 🧩 VALIDACIÓN NIVEL - SUBNIVEL
+        # =====================================================
+        if nivel and subnivel:
+            validaciones = {
+                'Inicial': ['Sala de 3 años', 'Sala de 4 años', 'Sala de 5 años'],
+                'Primario': [
+                    '1er Grado', '2do Grado', '3er Grado', '4to Grado',
+                    '5to Grado', '6to Grado', '7mo Grado'
+                ],
+                'Secundario': [
+                    '1er Año', '2do Año', '3er Año', '4to Año', '5to Año'
+                ]
+            }
+
+            subniveles_validos = validaciones.get(nivel.nombre.strip(), [])
+            if subnivel.nombre not in subniveles_validos:
+                messages.error(
+                    request,
+                    f"❌ El subnivel '{subnivel.nombre}' no corresponde al nivel '{nivel.nombre}'."
+                )
+                return redirect('administracion:inscribir_estudiante', estudiante_id=estudiante.id)
+
+        # =====================================================
+        # 🚫 Evita duplicados
+        # =====================================================
         if InscripcionAdministrativa.objects.filter(estudiante=estudiante, ciclo_id=ciclo_id).exists():
             messages.warning(request, "⚠️ Este estudiante ya está inscripto en el ciclo seleccionado.")
         else:
@@ -537,14 +574,14 @@ def inscribir_estudiante(request, estudiante_id):
                     activo=True,
                 )
 
-                # ==============================
-                # 📆 Crear automáticamente las 10 cuotas (Marzo a Diciembre)
-                # ==============================
+                # =====================================================
+                # 📆 Crear automáticamente las 10 cuotas (Marzo-Dic)
+                # =====================================================
                 anio_ciclo = inscripcion.ciclo.anio
                 for mes in range(3, 13):  # marzo → diciembre
                     fecha_cuota = date(anio_ciclo, mes, 16)
 
-                    # Buscar el monto vigente para ese mes
+                    # Buscar monto vigente
                     monto_vigente = (
                         MontoNivel.objects
                         .filter(
@@ -560,19 +597,15 @@ def inscribir_estudiante(request, estudiante_id):
                         .first()
                     )
 
-                    if monto_vigente:
-                        monto_original = monto_vigente.monto_cuota
-                    else:
-                        # Si no hay monto exacto para esa fecha, tomar el último del año
-                        ultimo_monto = (
-                            MontoNivel.objects
-                            .filter(ciclo=inscripcion.ciclo, nivel=inscripcion.nivel)
-                            .order_by('-fecha_vigencia_desde')
-                            .first()
-                        )
-                        monto_original = ultimo_monto.monto_cuota if ultimo_monto else 0
+                    monto_original = (
+                        monto_vigente.monto_cuota if monto_vigente else
+                        MontoNivel.objects
+                        .filter(ciclo=inscripcion.ciclo, nivel=inscripcion.nivel)
+                        .order_by('-fecha_vigencia_desde')
+                        .first().monto_cuota
+                    )
 
-                    # Calcular descuento por beca si aplica
+                    # Calcular descuento si hay beca
                     monto_descuento = 0
                     if inscripcion.beca:
                         if inscripcion.beca.tipo == 'Porcentaje':
@@ -582,7 +615,7 @@ def inscribir_estudiante(request, estudiante_id):
 
                     monto_final = max(monto_original - monto_descuento, 0)
 
-                    # Crear la cuota
+                    # Crear cuota
                     Cuota.objects.create(
                         inscripcion=inscripcion,
                         mes=mes,
@@ -608,6 +641,30 @@ def inscribir_estudiante(request, estudiante_id):
         'becas': becas,
     }
     return render(request, 'administracion/inscripcion/inscribir_estudiante.html', context)
+
+@login_required
+def eliminar_inscripcion(request, inscripcion_id):
+    inscripcion = get_object_or_404(InscripcionAdministrativa, id=inscripcion_id)
+
+    # 🔒 Seguridad: solo permitir método POST (evita borrado accidental por URL)
+    if request.method == "POST":
+        try:
+            with transaction.atomic():
+                # Elimina cuotas asociadas primero
+                Cuota.objects.filter(inscripcion=inscripcion).delete()
+                inscripcion.delete()
+
+            messages.success(request, "🗑️ Inscripción eliminada correctamente.")
+        except Exception as e:
+            messages.error(request, f"❌ Error al eliminar la inscripción: {e}")
+
+        # Redirige al detalle del estudiante
+        return redirect('ver_datos_estudiante', pk=inscripcion.estudiante.id)
+
+    # Si entra por GET (no debería), redirige
+    messages.warning(request, "⚠️ Debe confirmar la eliminación desde el formulario.")
+    return redirect('ver_datos_estudiante', pk=inscripcion.estudiante.id)
+
 
 def registrar_pago(request, cuota_id):
     cuota = get_object_or_404(Cuota, pk=cuota_id)

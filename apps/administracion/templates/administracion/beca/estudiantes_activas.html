@@ -17,7 +17,7 @@
     <div class="estudiantes-botones">
       <a href="{% url 'administracion:lista_becas' %}" class="btn-volver">Volver</a>
       <a href="{% url 'administracion:asignar_beca_general' %}" class="btn-asignar-general">
-        Asignar Beca a Estudiante
+        Asignar Becas
       </a>
     </div>
   </div>
@@ -195,14 +195,22 @@ document.addEventListener("DOMContentLoaded", () => {
   const searchInput = document.getElementById("q");
   const filas = document.querySelectorAll(".estudiantes-table tbody tr");
 
+  // 🔹 Función para limpiar texto (minúsculas + sin tildes)
+  function limpiarTexto(texto) {
+    return texto
+      .toLowerCase()
+      .normalize("NFD")
+      .replace(/[\u0300-\u036f]/g, "");
+  }
+
   function aplicarFiltros() {
     const cicloVal = ciclo.value.trim();
     const nivelVal = nivel.value.trim();
     const becaVal = beca.value.trim();
-    const query = searchInput.value.trim().toLowerCase();
+    const query = limpiarTexto(searchInput.value.trim());
 
     filas.forEach(fila => {
-      const textoFila = fila.innerText.toLowerCase();
+      const textoFila = limpiarTexto(fila.innerText);
 
       // verificamos que las celdas coincidan con los filtros
       const cicloCelda = fila.children[1]?.innerText.trim();
@@ -251,6 +259,6 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   }
 });
-
 </script>
 {% endblock %}
+

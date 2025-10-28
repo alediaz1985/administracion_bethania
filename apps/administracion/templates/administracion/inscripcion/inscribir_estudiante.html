@@ -3,6 +3,10 @@
 
 {% block title %}Inscripción Administrativa{% endblock %}
 
+{% block extra_styles %}
+<link rel="stylesheet" href="{% static 'administracion/css/inscribir/styles_inscripcion_adm.css' %}">
+{% endblock %}
+
 {% block content %}
 <div class="student-card">
 
@@ -12,35 +16,75 @@
     <p class="subtitle">Verificación de datos del estudiante antes de registrar la inscripción.</p>
   </div>
 
+  <!-- 🔔 Mensajes del sistema -->
+  {% if messages %}
+    <div class="mensajes-sistema">
+      {% for message in messages %}
+        <div class="mensaje {{ message.tags }}">
+          {{ message }}
+        </div>
+      {% endfor %}
+    </div>
+  {% endif %}
+
   <!-- 🧍 Datos del Estudiante -->
   <div class="datos-estudiante">
     <h3>Datos del Estudiante</h3>
-    <table class="tabla-datos">
-      <tr><th>Apellidos:</th><td>{{ estudiante.apellidos_estudiante }}</td></tr>
-      <tr><th>Nombres:</th><td>{{ estudiante.nombres_estudiante }}</td></tr>
-      <tr><th>CUIL:</th><td>{{ estudiante.cuil_estudiante }}</td></tr>
+    <div class="grid-datos">
+      <div class="campo">
+        <span class="label">Apellidos:</span>
+        <span class="valor">{{ estudiante.apellidos_estudiante }}</span>
+      </div>
+      <div class="campo">
+        <span class="label">Nivel:</span>
+        {% if estudiante.inscripcion %}
+          <span class="valor">{{ estudiante.inscripcion.nivel_estudiante }}</span>
+        {% else %}
+          <span class="valor">—</span>
+        {% endif %}
+      </div>
 
-      {% if estudiante.inscripcion %}
-        <tr><th>Nivel:</th><td>{{ estudiante.inscripcion.nivel_estudiante }}</td></tr>
-        <tr><th>Curso / Año:</th><td>{{ estudiante.inscripcion.curso_anio_estudiante }}</td></tr>
-        <tr><th>Turno:</th><td>{{ estudiante.inscripcion.turno_estudiante }}</td></tr>
-      {% else %}
-        <tr>
-          <td colspan="2" class="no-inscripcion">
-            ⚠️ Este estudiante aún no posee datos académicos registrados.
-          </td>
-        </tr>
-      {% endif %}
-    </table>
+      <div class="campo">
+        <span class="label">Nombres:</span>
+        <span class="valor">{{ estudiante.nombres_estudiante }}</span>
+      </div>
+      <div class="campo">
+        <span class="label">Curso / Año:</span>
+        {% if estudiante.inscripcion %}
+          <span class="valor">{{ estudiante.inscripcion.curso_anio_estudiante }}</span>
+        {% else %}
+          <span class="valor">—</span>
+        {% endif %}
+      </div>
+
+      <div class="campo">
+        <span class="label">CUIL:</span>
+        <span class="valor">{{ estudiante.cuil_estudiante }}</span>
+      </div>
+      <div class="campo">
+        <span class="label">Turno:</span>
+        {% if estudiante.inscripcion %}
+          <span class="valor">{{ estudiante.inscripcion.turno_estudiante }}</span>
+        {% else %}
+          <span class="valor">—</span>
+        {% endif %}
+      </div>
+    </div>
+
+    {% if not estudiante.inscripcion %}
+    <p class="no-inscripcion">
+      ⚠️ Este estudiante aún no posee datos académicos registrados.
+    </p>
+    {% endif %}
   </div>
 
   <!-- 🧾 Estado de documentación -->
   <div class="estado-doc">
     {% if estado_doc %}
       {% if estado_doc.estado|lower == 'aprobado' %}
-        <p class="estado-aprobado">✅ Documentación aprobada — el estudiante puede ser inscripto.</p>
+        <p class="estado-aprobado">✅ Documentación aprobada — El estudiante puede ser inscripto.</p>
       {% else %}
-        <p class="estado-pendiente">⚠️ Documentación pendiente — no puede inscribirse aún.</p>
+        <p class="estado-pendiente">⚠️ Documentación pendiente — No puede inscribirse aún.</p>
       {% endif %}
     {% else %}
       <p class="estado-pendiente">⚠️ No se encontró información de documentación.</p>
@@ -116,7 +160,7 @@
       </table>
 
       <div class="student-actions">
-        <button type="submit" class="btn-inscribir">💾 Guardar Inscripción</button>
+        <button type="submit" class="btn-inscribir">Inscribir</button>
       </div>
     </form>
   </div>
@@ -124,7 +168,7 @@
 
   <!-- 🔘 Volver -->
   <div class="student-actions">
-    <a href="{% url 'ver_datos_estudiante' estudiante.id %}" class="btn-light">Volver a la ficha</a>
+    <a href="{% url 'ver_datos_estudiante' estudiante.id %}" class="btn-light">Volver</a>
   </div>
 
 </div>

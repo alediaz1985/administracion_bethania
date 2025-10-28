@@ -433,22 +433,35 @@ function refrescarDatos() {
 
 /* --------------------------------------------------
    🔹 Buscador por CUIL o Nombre (todas las pestañas)
+   — Ignora tildes, mayúsculas y minúsculas
 -------------------------------------------------- */
 document.addEventListener('DOMContentLoaded', () => {
   const searchInput = document.getElementById('search-input');
-
   if (!searchInput) return;
 
+  // 🔹 Función para limpiar texto (minúsculas + sin tildes)
+  function limpiarTexto(texto) {
+    return texto
+      .toLowerCase()
+      .normalize("NFD")                // separa letras y acentos
+      .replace(/[\u0300-\u036f]/g, ""); // elimina los acentos
+  }
+
   searchInput.addEventListener('input', () => {
-    const query = searchInput.value.trim().toLowerCase();
+    const query = limpiarTexto(searchInput.value.trim());
 
     // Recorremos TODAS las pestañas
     document.querySelectorAll('.tab-content').forEach(tab => {
       tab.querySelectorAll('tbody.table-body tr').forEach(row => {
-        const cuil = row.cells[0]?.textContent.toLowerCase() || "";
-        const apellido = row.cells[1]?.textContent.toLowerCase() || "";
-        const nombre = row.cells[2]?.textContent.toLowerCase() || "";
-        const visible = cuil.includes(query) || apellido.includes(query) || nombre.includes(query);
+        const cuil = limpiarTexto(row.cells[0]?.textContent || "");
+        const apellido = limpiarTexto(row.cells[1]?.textContent || "");
+        const nombre = limpiarTexto(row.cells[2]?.textContent || "");
+
+        const visible =
+          cuil.includes(query) ||
+          apellido.includes(query) ||
+          nombre.includes(query);
+
         row.style.display = visible ? "" : "none";
       });
     });

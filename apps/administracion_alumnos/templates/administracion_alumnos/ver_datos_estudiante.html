@@ -10,6 +10,15 @@
 {% block content %}
 <div class="student-card">
 
+  <!-- 🔔 Contenedor de notificaciones flotantes -->
+  <div id="toast-container">
+    {% if messages %}
+      {% for message in messages %}
+        <div class="toast-message {{ message.tags }}">{{ message }}</div>
+      {% endfor %}
+    {% endif %}
+  </div>
+
   <!-- CABECERA -->
   <div class="student-header">
     <!-- Foto -->
@@ -28,6 +37,14 @@
         <div class="inscripcion-estado">
           ✅ Alumno inscripto en el ciclo {{ estudiante.inscripciones_admin.last.ciclo.anio }}
         </div>
+        <!-- 🔘 Botón que abre el modal -->
+        <button type="button"
+                class="btn-eliminar"
+                id="abrirModalEliminar"
+                data-inscripcion-id="{{ estudiante.inscripciones_admin.last.id }}"
+                data-estudiante="{{ estudiante.apellidos_estudiante }}, {{ estudiante.nombres_estudiante }}">
+          Eliminar inscripción
+        </button>
       {% else %}
         <a href="{% url 'administracion:inscribir_estudiante' estudiante.id %}" class="btn-inscribir">
           Inscribir Estudiante
@@ -269,7 +286,7 @@
                       data-cuota-id="{{ cuota.id }}"
                       data-estudiante="{{ estudiante.apellidos_estudiante }}, {{ estudiante.nombres_estudiante }}"
                       title="Deshacer Pago">
-                <i class="fas fa-rotate-left"></i>
+                <i class="fas fa-times"></i>
               </button>
             {% else %}
               <button type="button"
@@ -382,7 +399,7 @@
       <textarea name="observaciones" id="observaciones" rows="3"></textarea>
 
       <div class="modal-actions" style="margin-top: 1rem;">
-        <button type="submit" class="btn btn-success">💰 Confirmar</button>
+        <button type="submit" class="btn btn-success">Confirmar</button>
         <button type="button" class="btn btn-light" id="cerrarModalPago">Cancelar</button>
       </div>
     </form>
@@ -404,7 +421,21 @@
     </form>
   </div>
 </div>
+<!-- MODAL ELIMINAR INSCRIPCIÓN -->
+<div id="modalEliminarInscripcion" class="modal">
+  <div class="modal-content" style="max-width: 430px;">
+    <h3>⚠️ Eliminar Inscripción</h3>
+    <p id="textoEliminarInscripcion">¿Seguro que deseas eliminar esta inscripción?</p>
 
+    <form id="formEliminarInscripcion" method="post" action="">
+      {% csrf_token %}
+      <div class="modal-actions">
+        <button type="submit" class="btn btn-danger">Sí, eliminar</button>
+        <button type="button" class="btn btn-light" id="cerrarModalEliminar">Cancelar</button>
+      </div>
+    </form>
+  </div>
+</div>
 
 {% endblock %}
 
@@ -668,6 +699,52 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 });
 </script>
+<script>
+document.addEventListener("DOMContentLoaded", () => {
+  const modalEliminar = document.getElementById("modalEliminarInscripcion");
+  const formEliminar = document.getElementById("formEliminarInscripcion");
+  const textoEliminar = document.getElementById("textoEliminarInscripcion");
+  const btnAbrirEliminar = document.getElementById("abrirModalEliminar");
+  const btnCerrarEliminar = document.getElementById("cerrarModalEliminar");
 
+  if (btnAbrirEliminar) {
+    btnAbrirEliminar.addEventListener("click", () => {
+      const inscripcionId = btnAbrirEliminar.dataset.inscripcionId;
+      const estudiante = btnAbrirEliminar.dataset.estudiante;
+
+      textoEliminar.innerHTML = `¿Seguro que querés <strong>eliminar la inscripción</strong> de <strong>${estudiante}</strong>?<br><small>Se eliminarán también todas las cuotas asociadas.</small>`;
+      
+      const url = "{% url 'administracion:eliminar_inscripcion' 0 %}".replace("0", inscripcionId);
+      formEliminar.action = url;
+
+      modalEliminar.style.display = "flex";
+    });
+  }
+
+  if (btnCerrarEliminar) {
+    btnCerrarEliminar.addEventListener("click", () => modalEliminar.style.display = "none");
+    window.addEventListener("click", e => {
+      if (e.target === modalEliminar) modalEliminar.style.display = "none";
+    });
+  }
+});
+</script>
+<script>
+document.addEventListener("DOMContentLoaded", () => {
+  const toasts = document.querySelectorAll(".toast-message");
+  toasts.forEach((toast, index) => {
+    // Pequeño retraso si hay varios
+    const delay = index * 200;
+    setTimeout(() => {
+      toast.style.opacity = "1";
+      // Desvanecer después de 4s
+      setTimeout(() => {
+        toast.style.animation = "fadeOut 0.4s ease forwards";
+        setTimeout(() => toast.remove(), 400);
+      }, 4000);
+    }, delay);
+  });
+});
+</script>
 
 {% endblock %}
