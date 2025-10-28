@@ -6,21 +6,34 @@ class CicloLectivoForm(forms.ModelForm):
     class Meta:
         model = CicloLectivo
         fields = ['anio', 'fecha_inicio', 'fecha_fin', 'activo']
+        labels = {
+            'anio': 'Año',
+            'fecha_inicio': 'Fecha de inicio',
+            'fecha_fin': 'Fecha de fin',
+            'activo': 'Activo',
+        }
         widgets = {
-            'anio': forms.NumberInput(attrs={'class': 'form-control', 'placeholder': 'Año'}),
-            'fecha_inicio': forms.DateInput(attrs={'class': 'form-control', 'type': 'date'}),
-            'fecha_fin': forms.DateInput(attrs={'class': 'form-control', 'type': 'date'}),
+            'anio': forms.NumberInput(attrs={
+                'class': 'form-control',
+                'placeholder': 'Año'
+            }),
+            'fecha_inicio': forms.DateInput(
+                format='%Y-%m-%d',
+                attrs={'class': 'form-control', 'type': 'date'}
+            ),
+            'fecha_fin': forms.DateInput(
+                format='%Y-%m-%d',
+                attrs={'class': 'form-control', 'type': 'date'}
+            ),
             'activo': forms.CheckboxInput(attrs={'class': 'form-check-input'}),
         }
 
-    def clean_anio(self):
-        anio = self.cleaned_data.get('anio')
-        qs = CicloLectivo.objects.filter(anio=anio)
-        if self.instance.pk:
-            qs = qs.exclude(pk=self.instance.pk)
-        if qs.exists():
-            raise forms.ValidationError(f"El ciclo {anio} ya existe.")
-        return anio
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        # ✅ Mostrar correctamente las fechas al editar
+        for field in ['fecha_inicio', 'fecha_fin']:
+            if self.instance.pk and getattr(self.instance, field):
+                self.fields[field].initial = getattr(self.instance, field).strftime('%Y-%m-%d')
 
     def clean(self):
         cleaned_data = super().clean()
@@ -28,11 +41,19 @@ class CicloLectivoForm(forms.ModelForm):
         fecha_inicio = cleaned_data.get('fecha_inicio')
         fecha_fin = cleaned_data.get('fecha_fin')
 
-        # 1️⃣ Validar orden cronológico
+        # 1️⃣ Verificar duplicado de ciclo
+        if anio:
+            qs = CicloLectivo.objects.filter(anio=anio)
+            if self.instance.pk:
+                qs = qs.exclude(pk=self.instance.pk)
+            if qs.exists():
+                raise forms.ValidationError(f"El ciclo {anio} ya existe. Corrígelo antes de continuar.")
+
+        # 2️⃣ Verificar orden cronológico
         if fecha_inicio and fecha_fin and fecha_inicio >= fecha_fin:
             raise forms.ValidationError("La fecha de inicio debe ser anterior a la fecha de fin.")
 
-        # 2️⃣ Validar que las fechas pertenezcan al mismo año del ciclo
+        # 3️⃣ Verificar coherencia con el año del ciclo
         if anio:
             if fecha_inicio and fecha_inicio.year != anio:
                 self.add_error('fecha_inicio', f"La fecha de inicio debe ser del año {anio}.")

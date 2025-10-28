@@ -3,21 +3,41 @@
 
 {% block title %}Ciclos Lectivos{% endblock %}
 
-{% block content %}
-<div class="container mt-4">
-  <div class="d-flex justify-content-between align-items-center mb-3">
-    <h2>📅 Ciclos Lectivos</h2>
-    <button class="btn btn-primary" id="btnAdd">➕ Nuevo Ciclo</button>
-  </div>
+{% block extra_styles %}
+<link rel="stylesheet" href="{% static 'administracion/css/ciclo_lectivo/styles_ciclos_lectivos.css' %}">
+{% endblock %}
 
-  <div id="tabla-ciclos">
+{% block content %}
+<div class="ciclos-container">
+
+    <!-- 🔹 CABECERA -->
+    <div class="ciclos-header">
+      <div class="ciclos-titulo">
+        <h2>Ciclos Lectivos</h2>
+        <p class="subtitulo">Gestione los ciclos activos del sistema</p>
+      </div>
+
+      <div class="ciclos-botones">
+        <!-- 🔸 Botón Volver -->
+        <a href="{% url 'administracion:home_administracion' %}" class="btn-volver">
+          Volver
+        </a>
+
+        <!-- 🔸 Botón Nuevo Ciclo -->
+        <button class="btn-nuevo" id="btnAdd">
+          Nuevo Ciclo
+        </button>
+      </div>
+    </div>
+
+  <!-- 🔹 TABLA -->
+  <div id="tabla-ciclos" class="tabla-container">
     {% include 'administracion/ciclo_lectivo/_tabla.html' %}
   </div>
 </div>
 
-<!-- Modal -->
+<!-- 🔹 MODAL -->
 <div id="modalCiclo" class="modal fade" tabindex="-1"></div>
-
 {% endblock %}
 
 {% block extra_js %}
@@ -32,7 +52,6 @@
         const modal = new bootstrap.Modal(modalDiv);
         modal.show();
 
-        // 🧩 Función recursiva: vuelve a vincular el evento submit si hay errores
         function handleSubmit(form) {
           form.addEventListener("submit", function (e) {
             e.preventDefault();
@@ -40,11 +59,9 @@
               .then(r => r.json())
               .then(data => {
                 if (data.form_is_valid) {
-                  // ✅ Guardado correcto: actualiza tabla y cierra modal
                   document.getElementById("tabla-ciclos").innerHTML = data.html_list;
                   modal.hide();
                 } else {
-                  // ⚠️ Hay errores: re-renderizamos el form y volvemos a vincular submit
                   modalDiv.innerHTML = data.html_form;
                   const newForm = modalDiv.querySelector("form");
                   if (newForm) handleSubmit(newForm);
@@ -53,18 +70,15 @@
           });
         }
 
-        // Primera vinculación
         const form = modalDiv.querySelector("form");
         if (form) handleSubmit(form);
       });
   }
 
-  // Botón “Nuevo Ciclo”
   document.getElementById("btnAdd").addEventListener("click", () => {
     loadModal("{% url 'administracion:crear_ciclo' %}");
   });
 
-  // Delegación para Editar / Eliminar
   document.addEventListener("click", (e) => {
     const editBtn = e.target.closest(".js-edit");
     const delBtn = e.target.closest(".js-delete");

@@ -253,16 +253,30 @@ footer.footer * {
 }
 
 /* =====================================================
-   🚫 EVITAR EFECTOS DE TRANSFORM DE OTRAS SECCIONES
+   🩵 CORRECCIÓN PARA MODALES BOOTSTRAP
 ===================================================== */
-body,
-html,
-main,
-.alumnos-container,
-.student-card {
-  transform: none !important;
-  zoom: 1 !important;
+.modal {
+  position: fixed !important;
+  top: 0;
+  left: 0;
+  z-index: 1055 !important;
+  display: none;
 }
+
+.modal.show {
+  display: block;
+}
+
+.modal-backdrop {
+  position: fixed !important;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background-color: rgba(0,0,0,0.5);
+  z-index: 1050 !important;
+}
+
 
 /* =====================================================
    📱 Ajuste para pantallas de hasta 1366px de ancho

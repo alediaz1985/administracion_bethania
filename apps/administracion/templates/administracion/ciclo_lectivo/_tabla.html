@@ -1,5 +1,5 @@
-<table class="table table-bordered table-striped align-middle">
-  <thead class="table-light">
+<table class="ciclos-table">
+  <thead>
     <tr>
       <th>Año</th>
       <th>Inicio</th>
@@ -21,15 +21,25 @@
             <span class="badge bg-secondary">Inactivo</span>
           {% endif %}
         </td>
-        <td class="text-center">
-          <button class="btn btn-sm btn-outline-primary js-edit"
-                  data-url="{% url 'administracion:editar_ciclo' ciclo.id %}">✏️</button>
-          <button class="btn btn-sm btn-outline-danger js-delete"
-                  data-url="{% url 'administracion:eliminar_ciclo' ciclo.id %}">🗑️</button>
+
+        <td class="acciones">
+          <button class="icon-btn edit js-edit"
+                  data-url="{% url 'administracion:editar_ciclo' ciclo.id %}"
+                  title="Editar ciclo">
+            <i class="fas fa-edit"></i>
+          </button>
+
+          <button class="icon-btn delete js-delete"
+                  data-url="{% url 'administracion:eliminar_ciclo' ciclo.id %}"
+                  title="Eliminar ciclo">
+            <i class="fas fa-trash-alt"></i>
+          </button>
         </td>
       </tr>
     {% empty %}
-      <tr><td colspan="5" class="text-center text-muted">No hay ciclos registrados.</td></tr>
+      <tr>
+        <td colspan="5" class="text-center text-muted">No hay ciclos registrados.</td>
+      </tr>
     {% endfor %}
   </tbody>
 </table>

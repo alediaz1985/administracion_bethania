@@ -8,7 +8,7 @@ from django.core.exceptions import ValidationError
 # 🗓️ CICLO LECTIVO (Un registro por año)
 # ============================================================
 class CicloLectivo(models.Model):
-    anio = models.PositiveIntegerField(unique=True)
+    anio = models.PositiveIntegerField()
     fecha_inicio = models.DateField()
     fecha_fin = models.DateField()
     activo = models.BooleanField(default=True)
@@ -19,22 +19,6 @@ class CicloLectivo(models.Model):
 
     def __str__(self):
         return str(self.anio)
-    
-    def clean(self):
-        errors = {}
-
-        # Orden cronológico
-        if self.fecha_inicio and self.fecha_fin and self.fecha_inicio >= self.fecha_fin:
-            errors['fecha_inicio'] = "La fecha de inicio debe ser anterior a la fecha de fin."
-
-        # 🔒 Fechas dentro del año del ciclo
-        if self.fecha_inicio and self.fecha_inicio.year != self.anio:
-            errors['fecha_inicio'] = f"La fecha de inicio debe ser del año {self.anio}."
-        if self.fecha_fin and self.fecha_fin.year != self.anio:
-            errors['fecha_fin'] = f"La fecha de fin debe ser del año {self.anio}."
-
-        if errors:
-            raise ValidationError(errors)
 
 
 # ============================================================

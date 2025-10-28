@@ -3,55 +3,55 @@
 
 {% block title %}Administración del Sistema{% endblock %}
 
+{% block extra_styles %}
+<link rel="stylesheet" href="{% static 'administracion/css/styles_home_administracion.css' %}">
+{% endblock %}
+
 {% block content %}
 
-<div class="container mt-4">
+<div class="admin-container">
 
-  <!-- 🔹 Título principal -->
-  <div class="text-center mb-5">
-    <h1 class="fw-bold text-primary">Panel de Administración</h1>
-    <p class="text-muted">Gestione ciclos lectivos, montos, becas, inscripciones y pagos.</p>
-  </div>
+  <!-- 🔹 TÍTULO -->
+  <header class="admin-header" data-aos="fade-down">
+    <h1>Panel de Administración</h1>
+    <p>Gestione ciclos lectivos, montos y becas.</p>
+  </header>
 
-  <!-- 🔹 Tarjetas principales -->
-  <div class="row g-4">
+  <!-- 🔹 TARJETAS -->
+  <section class="admin-cards" data-aos="fade-up">
 
     <!-- 🗓️ Ciclos Lectivos -->
-    <div class="col-md-4">
-      <div class="card shadow-sm border-0 h-100">
-        <div class="card-body text-center">
-          <i class="fas fa-calendar-alt fa-3x text-primary mb-3"></i>
-          <h5 class="card-title fw-bold">Ciclos Lectivos</h5>
-          <p class="card-text text-muted">Cree, edite o gestione los ciclos activos del sistema.</p>
-          <a href="{% url 'administracion:lista_ciclos' %}" class="btn btn-outline-primary btn-sm">Ir a Ciclos</a>
-        </div>
+    <div class="admin-card">
+      <div class="icon-wrapper azul-oscuro">
+        <i class="fas fa-calendar-alt"></i>
       </div>
+      <h3>Ciclos Lectivos</h3>
+      <p>Cree, edite o gestione los ciclos activos del sistema.</p>
+      <a href="{% url 'administracion:lista_ciclos' %}" class="btn">Ir a Ciclos</a>
     </div>
 
     <!-- 💰 Montos por Nivel -->
-    <div class="col-md-4">
-      <div class="card shadow-sm border-0 h-100">
-        <div class="card-body text-center">
-          <i class="fas fa-money-check-alt fa-3x text-success mb-3"></i>
-          <h5 class="card-title fw-bold">Montos por Nivel</h5>
-          <p class="card-text text-muted">Actualice los valores de inscripción y cuota por nivel.</p>
-          <a href="{% url 'administracion:lista_montos' %}" class="btn btn-outline-success btn-sm">Ir a Montos</a>
-        </div>
+    <div class="admin-card">
+      <div class="icon-wrapper azul-medio">
+        <i class="fas fa-money-check-alt"></i>
       </div>
+      <h3>Montos por Nivel</h3>
+      <p>Actualice los valores de inscripción y cuota por nivel.</p>
+      <a href="{% url 'administracion:lista_montos' %}" class="btn btn-medio">Ir a Montos</a>
     </div>
 
     <!-- 🎓 Becas -->
-    <div class="col-md-4">
-      <div class="card shadow-sm border-0 h-100">
-        <div class="card-body text-center">
-          <i class="fas fa-award fa-3x text-warning mb-3"></i>
-          <h5 class="card-title fw-bold">Becas y Beneficios</h5>
-          <p class="card-text text-muted">Gestione descuentos o beneficios especiales.</p>
-          <a href="{% url 'administracion:lista_becas' %}" class="btn btn-outline-warning btn-sm">Ir a Becas</a>
-        </div>
+    <div class="admin-card">
+      <div class="icon-wrapper azul-claro">
+        <i class="fas fa-award"></i>
       </div>
+      <h3>Becas y Beneficios</h3>
+      <p>Gestione descuentos o beneficios especiales para los Estudiantes.</p>
+      <a href="{% url 'administracion:lista_becas' %}" class="btn btn-claro">Ir a Becas</a>
     </div>
-  </div>
+
+  </section>
+
 </div>
 
 {% endblock %}

@@ -1,17 +1,24 @@
-<div class="modal-dialog">
-  <div class="modal-content">
+<div class="modal-dialog modal-dialog-centered">
+  <div class="modal-content modal-delete">
     <form method="post">
       {% csrf_token %}
-      <div class="modal-header bg-danger text-white">
+      
+      <!-- 🔹 CABECERA -->
+      <div class="modal-header">
         <h5 class="modal-title">Eliminar Ciclo</h5>
-        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
       </div>
+
+      <!-- 🔹 CUERPO -->
       <div class="modal-body">
         <p>¿Estás seguro de eliminar el ciclo <strong>{{ ciclo.anio }}</strong>?</p>
+        <p class="text-danger subtitulo-alerta">Esta acción no se puede deshacer.</p>
       </div>
+
+      <!-- 🔹 PIE -->
       <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
-        <button type="submit" class="btn btn-danger">Eliminar</button>
+        <button type="button" class="btn-cancelar" data-bs-dismiss="modal">Cancelar</button>
+        <button type="submit" class="btn-eliminar">Eliminar</button>
       </div>
     </form>
   </div>
