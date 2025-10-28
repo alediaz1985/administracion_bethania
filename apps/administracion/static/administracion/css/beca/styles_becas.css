@@ -1,6 +1,6 @@
 /* ==========================================================
-   🎨 ESTILOS GENERALES — Ciclos Lectivos
-   Basado en la paleta institucional del sistema
+   🎓 ESTILOS GENERALES — Becas y Beneficios
+   Basado en el diseño institucional del sistema
    Autor: Alexis Sandoval — UEGP N°82 “Hogar de Bethania”
 ========================================================== */
 
@@ -13,6 +13,7 @@
   --borde: #b8b8b8;
   --texto: #222;
   --secundario: #555;
+  --verde: #267c2e;
 }
 
 body {
@@ -21,9 +22,9 @@ body {
 }
 
 /* ==========================================================
-   🗂️ CONTENEDOR PRINCIPAL
+   📦 CONTENEDOR PRINCIPAL
 ========================================================== */
-.ciclos-container {
+.becas-container {
   max-width: 1180px;
   margin: 2rem auto;
   background: #fff;
@@ -35,7 +36,7 @@ body {
 /* ==========================================================
    🔹 CABECERA
 ========================================================== */
-.ciclos-header {
+.becas-header {
   display: flex;
   justify-content: space-between;
   align-items: flex-end;
@@ -44,53 +45,47 @@ body {
   margin-bottom: 1.5rem;
 }
 
-.ciclos-header .ciclos-titulo h2 {
+.becas-header .becas-titulo h2 {
   color: var(--azul);
   font-weight: 600;
-  margin: 0 0 6px 0; /* 🔹 margen inferior de 6px */
+  margin: 0 0 6px 0;
   font-size: 1.2rem;
 }
 
-.ciclos-header .subtitulo {
+.becas-header .subtitulo {
   color: var(--secundario);
   font-size: 0.85rem;
-  margin: 0; /* aseguramos que no agregue extra */
+  margin: 0;
 }
 
 /* ==========================================================
-   🔹 BOTONES DE ACCIÓN (Volver / Nuevo Ciclo)
+   🔹 BOTONES DE ACCIÓN (Volver, Ver Estudiantes, Nueva Beca)
 ========================================================== */
 
-.ciclos-botones {
+.becas-botones {
   display: flex;
   align-items: center;
   gap: 0.6rem;
 }
 
-/* 🎯 Estilo base compartido */
-.btn-volver,
-.btn-nuevo {
+/* --- BOTÓN VOLVER --- */
+.btn-volver {
   display: inline-flex;
   align-items: center;
   justify-content: center;
   gap: 6px;
-  padding: 0.55rem 1.2rem;       /* 🔹 mismo padding */
+  padding: 0.55rem 1.2rem;
   font-size: 0.85rem;
   font-weight: 500;
   letter-spacing: 0.3px;
   border-radius: 6px;
   cursor: pointer;
   transition: all 0.25s ease;
-  min-width: 120px;               /* 🔹 ancho visual uniforme */
-  text-align: center;
-}
-
-/* 🔙 Volver */
-.btn-volver {
+  min-width: 110px;
+  text-decoration: none;
   background: transparent;
   color: var(--azul);
   border: 1px solid var(--azul);
-  text-decoration: none;
 }
 
 .btn-volver:hover {
@@ -100,11 +95,36 @@ body {
   box-shadow: 0 3px 8px rgba(0, 0, 0, 0.15);
 }
 
-/* ➕ Nuevo Ciclo */
+/* --- BOTÓN VER ESTUDIANTES --- */
+.btn-ver-estudiantes {
+  background: #267c2e;
+  color: #fff;
+  border: 1px solid #267c2e;
+  border-radius: 6px;
+  padding: 0.55rem 1.2rem;
+  font-size: 0.85rem;
+  font-weight: 500;
+  transition: all 0.25s ease;
+  text-decoration: none;
+}
+
+.btn-ver-estudiantes:hover {
+  background: #1d5e23;
+  transform: translateY(-1px);
+  box-shadow: 0 3px 8px rgba(0, 0, 0, 0.15);
+}
+
+/* --- BOTÓN NUEVA BECA --- */
 .btn-nuevo {
   background: var(--azul);
   color: #fff;
-  border: 1px solid var(--azul); /* para igual grosor al volver */
+  border: 1px solid var(--azul);
+  border-radius: 6px;
+  padding: 0.55rem 1.2rem;
+  font-size: 0.85rem;
+  font-weight: 500;
+  transition: all 0.25s ease;
+  cursor: pointer;
 }
 
 .btn-nuevo:hover {
@@ -114,10 +134,50 @@ body {
 }
 
 /* ==========================================================
-   📋 TABLA DE CICLOS LECTIVOS — Estilo igual a “Lista de Alumnos”
+   🎯 FILTRO — Mostrar solo activos
 ========================================================== */
 
-.ciclos-table {
+.becas-filtro {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  background: var(--gris-claro);
+  border: 1px solid var(--borde);
+  border-radius: 8px;
+  padding: 0.6rem 1rem;
+  margin-bottom: 1.5rem;
+}
+
+.becas-filtro .filtro-activos {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-size: 0.9rem;
+  color: var(--texto);
+  font-weight: 500;
+}
+
+.becas-filtro input[type="checkbox"] {
+  width: 17px;
+  height: 17px;
+  accent-color: var(--azul);
+  cursor: pointer;
+  transition: transform 0.15s ease;
+}
+
+.becas-filtro input[type="checkbox"]:hover {
+  transform: scale(1.1);
+}
+
+.becas-filtro label {
+  cursor: pointer;
+  user-select: none;
+}
+
+/* ==========================================================
+   📋 TABLA DE BECAS
+========================================================== */
+.becas-table {
   width: 100%;
   border-collapse: collapse;
   background: #fff;
@@ -127,13 +187,13 @@ body {
   box-shadow: 0 4px 25px rgba(0, 0, 0, 0.35);
 }
 
-/* 🔹 Encabezado */
-.ciclos-table thead {
+/* Encabezado */
+.becas-table thead {
   background-color: #d6dbe1;
 }
 
-.ciclos-table th {
-  color: #1a2942;
+.becas-table th {
+  color: var(--azul);
   font-weight: 600;
   font-size: 13px;
   padding: 12px;
@@ -142,14 +202,13 @@ body {
   border-right: 1px solid #bbbbbb;
 }
 
-/* Quita borde de última columna */
-.ciclos-table th:last-child,
-.ciclos-table td:last-child {
+.becas-table th:last-child,
+.becas-table td:last-child {
   border-right: none;
 }
 
-/* 🔹 Celdas */
-.ciclos-table td {
+/* Celdas */
+.becas-table td {
   font-size: 13px;
   color: #222;
   padding: 12px;
@@ -158,12 +217,11 @@ body {
   word-wrap: break-word;
 }
 
-/* 🔹 Alternar y hover */
-.ciclos-table tbody tr:nth-child(even) {
+.becas-table tbody tr:nth-child(even) {
   background-color: #fafafa;
 }
 
-.ciclos-table tbody tr:hover {
+.becas-table tbody tr:hover {
   background-color: #d6dbe1;
   transition: background 0.2s ease;
 }
@@ -171,7 +229,6 @@ body {
 /* ==========================================================
    🎯 ICONOS DE ACCIÓN
 ========================================================== */
-
 td.acciones {
   text-align: center;
   white-space: nowrap;
@@ -183,7 +240,7 @@ td.acciones {
 .icon-btn {
   background: none;
   border: none;
-  color: #1a2942;
+  color: var(--azul);
   font-size: 14px;
   cursor: pointer;
   padding: 3px 4px;
@@ -195,24 +252,10 @@ td.acciones {
   transform: scale(1.12);
 }
 
-.icon-btn i {
-  display: inline-block;
-  width: 16px;
-  text-align: center;
-}
-
-/* 🖊️ Editar (hover amarillo) */
-.icon-btn.edit i {
-  color: #1a2942;
-}
 .icon-btn.edit:hover i {
   color: #f5b700;
 }
 
-/* 🗑️ Eliminar (hover rojo) */
-.icon-btn.delete i {
-  color: #1a2942;
-}
 .icon-btn.delete:hover i {
   color: #d00000;
 }
@@ -220,7 +263,6 @@ td.acciones {
 /* ==========================================================
    🏷️ BADGES DE ESTADO
 ========================================================== */
-
 .badge {
   padding: 0.4rem 0.6rem;
   border-radius: 5px;
@@ -242,7 +284,7 @@ td.acciones {
 }
 
 /* ==========================================================
-   🪟 MODAL — Centrado + estilo institucional (Bootstrap compatible)
+   🪟 MODAL BASE — Centrado + fondo difuminado
 ========================================================== */
 .modal {
   backdrop-filter: blur(3px);
@@ -280,103 +322,9 @@ td.acciones {
   overflow: hidden;
 }
 
-/* --- CABECERA --- */
-.modal-header {
-  background: var(--azul);
-  color: #fff;
-  border-bottom: none;
-  padding: 1rem 1.2rem;
-  border-radius: 10px 10px 0 0;
-  justify-content: center;   /* 🔹 centra el contenido */
-  text-align: center;        /* 🔹 asegura alineación del texto */
-}
-
-.modal-title {
-  font-weight: 600;
-  font-size: 1rem;
-  margin: 0;
-}
-
-/* --- CUERPO --- */
-.modal-body {
-  padding: 1.5rem;
-  background: #fff;
-}
-
-.modal-body input,
-.modal-body select {
-  width: 100%;
-  border: 1px solid var(--borde);
-  border-radius: 6px;
-  padding: 8px;
-  font-size: 0.9rem;
-  color: var(--texto);
-}
-
-.modal-body input:focus,
-.modal-body select:focus {
-  border-color: var(--azul);
-  box-shadow: 0 0 0 2px rgba(26, 41, 66, 0.15);
-  outline: none;
-}
-
-/* --- PIE --- */
-.modal-footer {
-  background: #f9f9f9;
-  border-top: 1px solid #ddd;
-  padding: 1rem;
-  display: flex;
-  justify-content: flex-end;
-  gap: 0.6rem;
-  border-radius: 0 0 10px 10px;
-}
-
-/* --- BOTONES --- */
-.modal-footer .btn-primary {
-  background: var(--azul);
-  color: #fff;
-  border: none;
-  border-radius: 6px;
-  padding: 0.45rem 1rem;
-  font-size: 0.85rem;
-  font-weight: 500;
-  transition: all 0.25s ease;
-}
-
-.modal-footer .btn-primary:hover {
-  background: var(--azul-medio);
-  transform: translateY(-1px);
-}
-
-.modal-footer .btn-light {
-  background: #f3f3f3;
-  border: 1px solid #ccc;
-  color: #333;
-  border-radius: 6px;
-  padding: 0.45rem 1rem;
-  font-size: 0.85rem;
-}
-
-.modal-footer .btn-light:hover {
-  background: #eaeaea;
-}
-
-/* --- ANIMACIÓN --- */
-@keyframes modalSlideIn {
-  from {
-    opacity: 0;
-    transform: translateY(-20px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
 /* ==========================================================
-   🪟 FORMULARIO MODAL — Estilo general del sistema
+   🧾 FORMULARIO MODAL — Alta / Edición de Beca
 ========================================================== */
-
 .form-modal {
   border-radius: 10px;
   overflow: hidden;
@@ -393,19 +341,20 @@ td.acciones {
   border-bottom: none;
   border-radius: 10px 10px 0 0;
   display: flex;
-  justify-content: center; /* centra contenido */
+  justify-content: center;
   align-items: center;
-  position: relative;      /* para ubicar el botón */
+  position: relative;
 }
 
 .form-modal .modal-header .modal-title {
-  margin: 0 auto;          /* centra dentro del flex */
+  margin: 0 auto;
   text-align: center;
   font-weight: 600;
   font-size: 1rem;
   font-family: 'Inter', sans-serif;
 }
 
+/* --- BOTÓN CERRAR --- */
 .form-modal .btn-close {
   position: absolute;
   right: 1rem;
@@ -414,13 +363,13 @@ td.acciones {
   background: transparent !important;
   border: none;
   opacity: 0.9;
-  filter: none !important;
   cursor: pointer;
+  filter: none !important;
 }
 
 .form-modal .btn-close::before {
   content: '✕';
-  color: #fff;            /* blanco sobre el fondo azul */
+  color: #fff;
   font-size: 1.2rem;
   font-weight: 600;
   line-height: 1;
@@ -431,7 +380,7 @@ td.acciones {
   transform: translateY(-50%) scale(1.1);
 }
 
-/* ❌ Oculta el SVG de Bootstrap para que no se vea el cuadrado negro */
+/* ❌ Oculta el ícono SVG de Bootstrap (cuadro negro) */
 .form-modal .btn-close > svg,
 .form-modal .btn-close::after {
   display: none !important;
@@ -476,6 +425,24 @@ td.acciones {
   font-size: 0.88rem;
   display: block;
   margin-bottom: 5px;
+}
+
+/* --- CHECKBOX (campo “Activa”) --- */
+.form-modal input[type="checkbox"] {
+  width: auto;
+  display: inline-block;
+  margin-right: 6px;
+  transform: translateY(1px);
+  cursor: pointer;
+  accent-color: var(--azul);
+}
+
+.form-modal label[for*="activa"] {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  margin-bottom: 0.5rem;
+  font-weight: 500;
 }
 
 /* --- PIE --- */
@@ -525,37 +492,15 @@ td.acciones {
 }
 
 /* --- ANIMACIÓN --- */
-.form-modal .modal-dialog {
-  animation: fadeInModal 0.25s ease-in-out;
-}
-
-@keyframes fadeInModal {
+@keyframes modalSlideIn {
   from {
     opacity: 0;
-    transform: translateY(-10px);
+    transform: translateY(-20px);
   }
   to {
     opacity: 1;
     transform: translateY(0);
   }
-}
-
-/* Corrige los checkboxes (como "Activo") */
-.form-modal input[type="checkbox"] {
-  width: auto;
-  display: inline-block;
-  margin-right: 6px;
-  transform: translateY(1px);
-  cursor: pointer;
-  accent-color: var(--azul); /* 🎨 color institucional */
-}
-
-.form-modal label[for*="activo"] {
-  display: inline-flex;
-  align-items: center;
-  gap: 4px;
-  margin-bottom: 0.5rem;
-  font-weight: 500;
 }
 
 /* ==========================================================
@@ -572,7 +517,7 @@ td.acciones {
 
 /* --- CABECERA --- */
 .modal-delete .modal-header {
-  background: #d00000; /* 🔴 rojo institucional */
+  background: #d00000;
   color: #fff;
   padding: 1rem 1.25rem;
   border-bottom: none;
@@ -605,8 +550,8 @@ td.acciones {
 }
 
 .modal-delete .btn-close::before {
-  content: '✕'; /* símbolo visible */
-  color: #fff;  /* blanco para fondo rojo */
+  content: '✕';
+  color: #fff;
   font-size: 1.1rem;
   font-weight: 600;
   line-height: 1;
@@ -615,6 +560,37 @@ td.acciones {
 .modal-delete .btn-close:hover {
   opacity: 1;
   transform: translateY(-50%) scale(1.1);
+}
+
+.form-modal .btn-close {
+  position: absolute;
+  right: 1rem;
+  top: 50%;
+  transform: translateY(-50%);
+  background: transparent !important;
+  border: none;
+  opacity: 0.9;
+  filter: none !important;
+  cursor: pointer;
+}
+
+.form-modal .btn-close::before {
+  content: '✕';
+  color: #fff;            /* blanco sobre el fondo azul */
+  font-size: 1.2rem;
+  font-weight: 600;
+  line-height: 1;
+}
+
+.form-modal .btn-close:hover {
+  opacity: 1;
+  transform: translateY(-50%) scale(1.1);
+}
+
+/* ❌ Oculta el SVG de Bootstrap para que no se vea el cuadrado negro */
+.form-modal .btn-close > svg,
+.form-modal .btn-close::after {
+  display: none !important;
 }
 
 /* --- CUERPO --- */
@@ -637,6 +613,24 @@ td.acciones {
   margin-top: 0.3rem;
 }
 
+/* --- LISTA DE DETALLES (Ciclo, Nivel, Cuota) --- */
+.modal-delete .modal-body ul {
+  list-style: none;              /* ❌ elimina los puntos de lista */
+  padding: 0;                    /* elimina sangrías */
+  margin: 1rem 0;                /* separa la lista del texto superior e inferior */
+}
+
+.modal-delete .modal-body li {
+  margin-bottom: 0.6rem;         /* 🧩 más espacio entre cada ítem */
+  color: var(--texto);
+  font-size: 0.92rem;
+}
+
+.modal-delete .modal-body li strong {
+  color: var(--azul);            /* resalta el título de cada dato (Ciclo, Nivel, Cuota) */
+  font-weight: 600;
+}
+
 /* --- PIE --- */
 .modal-delete .modal-footer {
   background: #f9f9f9;
@@ -648,22 +642,6 @@ td.acciones {
   gap: 0.7rem;
 }
 
-/* Botón cancelar (gris claro) */
-.btn-cancelar {
-  background: #f3f3f3;
-  color: #333;
-  border: 1px solid #ccc;
-  border-radius: 6px;
-  padding: 0.45rem 1rem;
-  font-size: 0.9rem;
-  cursor: pointer;
-  transition: all 0.25s ease;
-}
-.btn-cancelar:hover {
-  background: #e9e9e9;
-}
-
-/* Botón eliminar (rojo fuerte) */
 .btn-eliminar {
   background: #d00000;
   color: #fff;
@@ -683,50 +661,8 @@ td.acciones {
 }
 
 /* ==========================================================
-   🔧 FIX BOTÓN DE CERRAR EN MODALES
+   ⚠️ ERRORES Y VALIDACIONES (Formulario Modal)
 ========================================================== */
-
-/* Aplica a todas las variantes (form-modal, modal-delete, etc.) */
-.btn-close {
-  position: absolute;
-  right: 1rem;
-  top: 50%;
-  transform: translateY(-50%);
-  width: 1rem;
-  height: 1rem;
-  background: transparent;
-  border: none;
-  opacity: 0.9;
-  transition: opacity 0.2s ease, transform 0.2s ease;
-  cursor: pointer;
-}
-
-/* Quitamos el SVG invisible y mostramos un símbolo ✕ visible */
-.btn-close::before {
-  content: '✕';
-  color: #fff; /* 🔹 visible tanto en azul como rojo */
-  font-size: 1.2rem;
-  font-weight: 600;
-  line-height: 1;
-}
-
-/* Hover elegante */
-.btn-close:hover {
-  opacity: 1;
-  transform: translateY(-50%) scale(1.1);
-}
-
-/* Ajuste extra por si Bootstrap intenta forzar un SVG */
-.btn-close > svg,
-.btn-close::after {
-  display: none !important;
-}
-
-/* ==========================================================
-   ⚠️ MENSAJES DE ERROR Y VALIDACIÓN (formularios modales)
-========================================================== */
-
-/* --- Contenedor general de errores no asociados a campos --- */
 .form-modal .alert-error,
 .form-modal .nonfield-errors {
   background: #ffe5e5;
@@ -740,7 +676,6 @@ td.acciones {
   font-family: 'Inter', sans-serif;
 }
 
-/* --- Errores de campo individuales (debajo del input) --- */
 .form-modal .errorlist {
   list-style: none;
   padding: 0;
@@ -753,45 +688,35 @@ td.acciones {
   font-weight: 500;
   background: #ffe5e5;
   border-left: 3px solid #b00020;
-  padding: 4px 8px;
+  padding: 5px 9px;
   border-radius: 4px;
-  margin-top: 3px;
+  margin-top: 5px;
 }
 
-/* --- Campos con error --- */
+/* Campos con error */
 .form-modal input.is-invalid,
-.form-modal select.is-invalid {
+.form-modal select.is-invalid,
+.form-modal textarea.is-invalid {
   border-color: #b00020 !important;
   box-shadow: 0 0 0 2px rgba(176, 0, 32, 0.15);
-}
-
-/* --- Ayuda visual al foco --- */
-.form-modal input:focus,
-.form-modal select:focus {
-  outline: none;
-  border-color: var(--azul);
-  box-shadow: 0 0 0 2px rgba(26, 41, 66, 0.15);
 }
 
 /* ==========================================================
    📱 RESPONSIVE
 ========================================================== */
 @media (max-width: 768px) {
-  .ciclos-container {
+  .becas-container {
     padding: 1rem;
   }
 
-  .ciclos-header {
+  .becas-header {
     flex-direction: column;
     align-items: flex-start;
     gap: 1rem;
   }
 
-  .btn-nuevo {
+  .btn-nuevo,
+  .btn-ver-estudiantes {
     width: 100%;
-  }
-
-  .modal-dialog {
-    max-width: 95%;
   }
 }

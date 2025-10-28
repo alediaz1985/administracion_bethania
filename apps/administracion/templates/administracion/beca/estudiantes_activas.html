@@ -3,108 +3,170 @@
 
 {% block title %}Estudiantes con Becas{% endblock %}
 
+{% block extra_styles %}
+<link rel="stylesheet" href="{% static 'administracion/css/beca/styles_estudiantes_becas.css' %}">
+{% endblock %}
+
 {% block content %}
-<div class="container mt-4">
-  <div class="d-flex justify-content-between align-items-center mb-3">
-    <h2>👥 Estudiantes con Becas</h2>
+<div class="estudiantes-becas-container">
 
-    <div class="d-flex gap-2">
-        <a href="{% url 'administracion:lista_becas' %}" class="btn btn-secondary">
-        ⬅️ Volver a Becas
-        </a>
-        <a href="{% url 'administracion:asignar_beca_general' %}" class="btn btn-success">
-        ➕ Asignar Beca a Estudiante
-        </a>
-    </div>
-    </div>
+  <!-- 🔹 CABECERA -->
+  <div class="estudiantes-header">
+    <h2>Estudiantes con Becas</h2>
 
+    <div class="estudiantes-botones">
+      <a href="{% url 'administracion:lista_becas' %}" class="btn-volver">Volver</a>
+      <a href="{% url 'administracion:asignar_beca_general' %}" class="btn-asignar-general">
+        Asignar Beca a Estudiante
+      </a>
+    </div>
+  </div>
+
+  <!-- 🔹 FILTROS -->
+  <form method="get" id="formFiltros" class="filtros-container mb-3">
+    <div class="filtros-row">
+      <!-- Ciclo -->
+      <div class="filtro">
+        <label for="ciclo">Ciclo</label>
+        <select name="ciclo" id="ciclo" class="form-select form-select-sm">
+          <option value="">Todos</option>
+          {% for c in ciclos %}
+            <option value="{{ c.id }}" {% if filtros.ciclo == c.id|stringformat:"s" %}selected{% endif %}>
+              {{ c.anio }}
+            </option>
+          {% endfor %}
+        </select>
+      </div>
+
+      <!-- Nivel -->
+      <div class="filtro">
+        <label for="nivel">Nivel</label>
+        <select name="nivel" id="nivel" class="form-select form-select-sm">
+          <option value="">Todos</option>
+          {% for n in niveles %}
+            <option value="{{ n.id }}" {% if filtros.nivel == n.id|stringformat:"s" %}selected{% endif %}>
+              {{ n.nombre }}
+            </option>
+          {% endfor %}
+        </select>
+      </div>
+
+      <!-- Beca -->
+      <div class="filtro">
+        <label for="beca">Beca</label>
+        <select name="beca" id="beca" class="form-select form-select-sm">
+          <option value="">Todas</option>
+          {% for b in becas %}
+            <option value="{{ b.id }}" {% if filtros.beca == b.id|stringformat:"s" %}selected{% endif %}>
+              {{ b.nombre }}
+            </option>
+          {% endfor %}
+        </select>
+      </div>
+
+      <!-- Buscador -->
+      <div class="filtro filtro-buscar">
+        <label for="q">Buscar</label>
+        <input type="text" name="q" id="q" class="form-control form-control-sm"
+              placeholder="Nombre o Apellido" value="{{ filtros.q|default:'' }}">
+      </div>
+    </div>
+  </form>
+
+  <!-- 🔹 MENSAJES -->
   {% if messages %}
     {% for msg in messages %}
       <div class="alert alert-{{ msg.tags }}">{{ msg }}</div>
     {% endfor %}
   {% endif %}
 
+  <!-- 🔹 TABLA -->
   {% if inscripciones %}
-  <table class="table table-striped align-middle">
-    <thead class="table-dark">
-      <tr>
-        <th>Estudiante</th>
-        <th>Ciclo</th>
-        <th>Nivel</th>
-        <th>Beca actual</th>
-        <th>Acciones</th>
-      </tr>
-    </thead>
-    <tbody>
-      {% for ins in inscripciones %}
-      <tr>
-        <td>{{ ins.estudiante.apellidos_estudiante }}, {{ ins.estudiante.nombres_estudiante }}</td>
-        <td>{{ ins.ciclo.anio }}</td>
-        <td>{{ ins.nivel.nombre }}</td>
-        <td>
-          {% if ins.beca %}
-            <span class="{% if ins.beca.activa %}text-success{% else %}text-danger{% endif %}">
-              {{ ins.beca.nombre }}
-              {% if not ins.beca.activa %}(Inactiva){% endif %}
-            </span>
-          {% else %}
-            <span class="text-muted">Sin beca</span>
-          {% endif %}
-        </td>
-        <td>
-          <form method="post" class="d-flex gap-1 align-items-center">
-            {% csrf_token %}
-            <input type="hidden" name="inscripcion_id" value="{{ ins.id }}">
-
+    <table class="estudiantes-table">
+      <thead>
+        <tr>
+          <th>Estudiante</th>
+          <th>Ciclo</th>
+          <th>Nivel</th>
+          <th>Beca Actual</th>
+          <th>Seleccionar Nueva</th>
+          <th>Acciones</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for ins in inscripciones %}
+        <tr>
+          <td>{{ ins.estudiante.apellidos_estudiante }}, {{ ins.estudiante.nombres_estudiante }}</td>
+          <td>{{ ins.ciclo.anio }}</td>
+          <td>{{ ins.nivel.nombre }}</td>
+          <td>
             {% if ins.beca %}
+              <span class="{% if ins.beca.activa %}text-success{% else %}text-danger{% endif %}">
+                {{ ins.beca.nombre }}
+                {% if not ins.beca.activa %}(Inactiva){% endif %}
+              </span>
+            {% else %}
+              <span class="text-muted">Sin beca</span>
+            {% endif %}
+          </td>
+
+          <td class="col-select">
+            <form method="post">
+              {% csrf_token %}
+              <input type="hidden" name="inscripcion_id" value="{{ ins.id }}">
               <select name="nueva_beca" class="form-select form-select-sm">
-                <option value="">-- Seleccionar nueva beca --</option>
+                <option value="">-- Seleccionar --</option>
                 {% for b in becas %}
                   <option value="{{ b.id }}">{{ b.nombre }} ({{ b.tipo }} - {{ b.valor }})</option>
                 {% endfor %}
               </select>
-              <button type="submit" name="accion" value="cambiar" class="btn btn-sm btn-primary">
-                🔁 Cambiar
+          </td>
+
+          <td class="col-acciones">
+              <button type="submit" name="accion" value="cambiar" class="icon-btn edit" title="Cambiar Beca">
+                <i class="fas fa-sync-alt"></i>
               </button>
-              <button type="button" class="btn btn-sm btn-danger btn-confirmar-quitar"
-                      data-inscripcion-id="{{ ins.id }}">
-                ❌ Quitar
+
+              <button type="button" class="icon-btn delete btn-confirmar-quitar"
+                      data-inscripcion-id="{{ ins.id }}" title="Quitar Beca">
+                <i class="fas fa-trash-alt"></i>
               </button>
-            {% else %}
-              <button type="button" class="btn btn-sm btn-success btn-asignar-beca"
-                      data-inscripcion-id="{{ ins.id }}">
-                ➕ Asignar Beca
-              </button>
-            {% endif %}
-          </form>
-        </td>
-      </tr>
-      {% endfor %}
-    </tbody>
-  </table>
+            </form>
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
   {% else %}
-    <div class="alert alert-info">No hay estudiantes con becas asignadas.</div>
+    <div class="alert alert-info">
+      No hay estudiantes con becas asignadas.
+    </div>
   {% endif %}
 </div>
 
-<!-- 🔹 Modal de confirmación -->
-<div class="modal fade" id="confirmarQuitarModal" tabindex="-1" aria-labelledby="confirmarQuitarLabel" aria-hidden="true">
-  <div class="modal-dialog modal-dialog-centered">
-    <div class="modal-content">
-      <div class="modal-header bg-danger text-white">
-        <h5 class="modal-title" id="confirmarQuitarLabel">Confirmar acción</h5>
-        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+<!-- 🪟 MODAL DE CONFIRMACIÓN (Quitar Beca) -->
+<div class="modal fade" id="confirmarQuitarModal" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered modal-custom">
+    <div class="modal-content modal-confirm">
+      <!-- 🔹 CABECERA -->
+      <div class="modal-header">
+        <h5 class="modal-title">Confirmar acción</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
       </div>
+
+      <!-- 🔹 CUERPO -->
       <div class="modal-body">
-        ¿Estás seguro de quitar la beca de este estudiante?
+        <p>¿Estás seguro de quitar la beca de este estudiante?</p>
       </div>
+
+      <!-- 🔹 PIE -->
       <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+        <button type="button" class="btn-cancelar" data-bs-dismiss="modal">Cancelar</button>
         <form method="post" id="formConfirmarQuitar">
           {% csrf_token %}
           <input type="hidden" name="inscripcion_id" id="inputInscripcionQuitar">
           <input type="hidden" name="accion" value="quitar">
-          <button type="submit" class="btn btn-danger">Sí, quitar</button>
+          <button type="submit" class="btn-eliminar">Sí, quitar</button>
         </form>
       </div>
     </div>
@@ -114,29 +176,81 @@
 
 {% block extra_js %}
 <script>
-  document.addEventListener("DOMContentLoaded", () => {
+document.addEventListener("DOMContentLoaded", () => {
+  // --- Modal (se mantiene igual) ---
+  const modalQuitar = new bootstrap.Modal(document.getElementById("confirmarQuitarModal"));
+  const inputInscripcionQuitar = document.getElementById("inputInscripcionQuitar");
 
-    // 🔹 Modal de confirmación (quitar beca)
-    const modalQuitar = new bootstrap.Modal(document.getElementById("confirmarQuitarModal"));
-    const inputInscripcionQuitar = document.getElementById("inputInscripcionQuitar");
-    const formConfirmarQuitar = document.getElementById("formConfirmarQuitar");
-
-    document.querySelectorAll(".btn-confirmar-quitar").forEach(btn => {
-      btn.addEventListener("click", () => {
-        const inscripcionId = btn.dataset.inscripcionId;
-        inputInscripcionQuitar.value = inscripcionId;
-        modalQuitar.show();
-      });
+  document.querySelectorAll(".btn-confirmar-quitar").forEach(btn => {
+    btn.addEventListener("click", () => {
+      inputInscripcionQuitar.value = btn.dataset.inscripcionId;
+      modalQuitar.show();
     });
-
-    // 🔹 Asignar beca (abrir modal con formulario por AJAX)
-    document.querySelectorAll(".btn-asignar-beca").forEach(btn => {
-      btn.addEventListener("click", () => {
-        const inscripcionId = btn.dataset.inscripcionId;
-        window.location.href = `/administracion/becas/asignar/${inscripcionId}/`; // lo haremos en la siguiente vista
-      });
-    });
-
   });
+
+  // --- Filtros dinámicos ---
+  const ciclo = document.getElementById("ciclo");
+  const nivel = document.getElementById("nivel");
+  const beca = document.getElementById("beca");
+  const searchInput = document.getElementById("q");
+  const filas = document.querySelectorAll(".estudiantes-table tbody tr");
+
+  function aplicarFiltros() {
+    const cicloVal = ciclo.value.trim();
+    const nivelVal = nivel.value.trim();
+    const becaVal = beca.value.trim();
+    const query = searchInput.value.trim().toLowerCase();
+
+    filas.forEach(fila => {
+      const textoFila = fila.innerText.toLowerCase();
+
+      // verificamos que las celdas coincidan con los filtros
+      const cicloCelda = fila.children[1]?.innerText.trim();
+      const nivelCelda = fila.children[2]?.innerText.trim();
+      const becaCelda = fila.children[3]?.innerText.trim();
+
+      const coincideCiclo = !cicloVal || cicloCelda.includes(ciclo.options[ciclo.selectedIndex].text);
+      const coincideNivel = !nivelVal || nivelCelda.includes(nivel.options[nivel.selectedIndex].text);
+      const coincideBeca = !becaVal || becaCelda.includes(beca.options[beca.selectedIndex].text);
+      const coincideBusqueda = !query || textoFila.includes(query);
+
+      // mostrar/ocultar fila
+      if (coincideCiclo && coincideNivel && coincideBeca && coincideBusqueda) {
+        fila.style.display = "";
+      } else {
+        fila.style.display = "none";
+      }
+    });
+  }
+
+  // --- Eventos ---
+  [ciclo, nivel, beca].forEach(sel => {
+    sel.addEventListener("change", aplicarFiltros);
+  });
+  searchInput.addEventListener("input", aplicarFiltros);
+});
+
+// --- Seleccionar automáticamente el ciclo actual ---
+document.addEventListener("DOMContentLoaded", () => {
+  const cicloSelect = document.getElementById("ciclo");
+  if (cicloSelect) {
+    const currentYear = new Date().getFullYear().toString();
+
+    // Buscar la opción cuyo texto coincide con el año actual
+    const currentOption = Array.from(cicloSelect.options).find(
+      opt => opt.text.trim() === currentYear
+    );
+
+    // Si existe y no hay otro ciclo ya seleccionado, lo seleccionamos
+    if (currentOption && !cicloSelect.value) {
+      cicloSelect.value = currentOption.value;
+
+      // Ejecutamos el filtrado inicial
+      const event = new Event("change");
+      cicloSelect.dispatchEvent(event);
+    }
+  }
+});
+
 </script>
 {% endblock %}

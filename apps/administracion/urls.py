@@ -18,6 +18,7 @@ urlpatterns = [
     path('administracion/montos/crear/', views.crear_monto, name='crear_monto'),
     path('administracion/montos/<int:pk>/editar/', views.editar_monto, name='editar_monto'),
     path('administracion/montos/<int:pk>/eliminar/', views.eliminar_monto, name='eliminar_monto'),
+    path('filtrar-montos/', views.filtrar_montos, name='filtrar_montos'),
 
     # 🎓 Becas y Beneficios
     path('administracion/becas/', views.lista_becas, name='lista_becas'),
@@ -26,7 +27,10 @@ urlpatterns = [
     path('administracion/becas/<int:pk>/eliminar/', views.eliminar_beca, name='eliminar_beca'),
     path('becas/estudiantes/', views.estudiantes_becas_activas, name='estudiantes_becas_activas'),
     path('becas/asignar/', views.asignar_beca_general, name='asignar_beca_general'),
-    
+    path('filtrar-becas/', views.filtrar_becas, name='filtrar_becas'),
+    path('filtrar-estudiantes-becas/', views.filtrar_estudiantes_becas, name='filtrar_estudiantes_becas'),
+
+    # 🎓 Inscripción
     path('inscribir/<int:estudiante_id>/', views.inscribir_estudiante, name='inscribir_estudiante'),
     path('pago/registrar/<int:cuota_id>/', views.registrar_pago, name='registrar_pago'),
     path('pago/deshacer/<int:cuota_id>/', views.deshacer_pago, name='deshacer_pago'),

@@ -3,32 +3,64 @@
 
 {% block title %}Becas y Beneficios{% endblock %}
 
-{% block content %}
-<div class="container mt-4">
-  <div class="d-flex justify-content-between align-items-center mb-3">
-    <h2>🎓 Becas y Beneficios</h2>
+{% block extra_styles %}
+<link rel="stylesheet" href="{% static 'administracion/css/beca/styles_becas.css' %}">
+{% endblock %}
 
-    <div class="d-flex gap-2">
-      <a href="{% url 'administracion:estudiantes_becas_activas' %}" class="btn btn-success">
-        👥 Ver Estudiantes con Becas
+{% block content %}
+<div class="becas-container">
+
+  <!-- 🔹 CABECERA -->
+  <div class="becas-header">
+    <div class="becas-titulo">
+      <h2>Becas y Beneficios</h2>
+      <p class="subtitulo">Gestione los descuentos y ayudas otorgadas a estudiantes</p>
+    </div>
+
+    <div class="becas-botones">
+      <!-- 🔸 Botón Volver -->
+      <a href="{% url 'administracion:home_administracion' %}" class="btn-volver">
+        Volver
       </a>
-      <button class="btn btn-primary" id="btnAddBeca">
-        ➕ Nueva Beca
+      
+      <!-- 👥 Ver estudiantes con becas -->
+      <a href="{% url 'administracion:estudiantes_becas_activas' %}" class="btn-ver-estudiantes">
+        Ver Estudiantes con Becas
+      </a>
+
+      <!-- ➕ Nueva beca -->
+      <button class="btn-nuevo" id="btnAddBeca">
+        Nueva Beca
       </button>
     </div>
   </div>
 
-  <div id="tabla-becas">
+  <!-- 🔹 FILTRO DE ACTIVOS -->
+  <div class="becas-filtro">
+    <div class="form-check filtro-activos">
+      <input class="form-check-input" type="checkbox" id="checkActivos">
+      <label class="form-check-label fw-semibold" for="checkActivos">
+        Mostrar solo activos
+      </label>
+    </div>
+  </div>
+
+  <!-- 🔹 TABLA -->
+  <div id="tabla-becas" class="tabla-container">
     {% include 'administracion/beca/_tabla.html' %}
   </div>
+
 </div>
 
-<!-- Modal Bootstrap -->
+<!-- 🔹 MODAL -->
 <div id="modalBeca" class="modal fade" tabindex="-1" aria-hidden="true"></div>
 {% endblock %}
 
 {% block extra_js %}
 <script>
+  // =============================
+  // 🧩 FUNCIONES DE MODAL
+  // =============================
   function loadModal(url) {
     fetch(url)
       .then(r => r.json())
@@ -36,11 +68,9 @@
         const modalDiv = document.getElementById("modalBeca");
         modalDiv.innerHTML = data.html_form;
 
-        // Crear instancia de modal
         const modal = new bootstrap.Modal(modalDiv);
         modal.show();
 
-        // Función para manejar el envío del form
         function handleSubmit(form) {
           form.addEventListener("submit", function (e) {
             e.preventDefault();
@@ -49,37 +79,54 @@
               .then(data => {
                 if (data.form_is_valid) {
                   document.getElementById("tabla-becas").innerHTML = data.html_list;
-                  modal.hide(); // ✅ Solo se cierra si es válido
+                  modal.hide();
                 } else {
-                  // 🔁 Reemplazamos solo el contenido del modal, no lo destruimos
                   modalDiv.innerHTML = data.html_form;
-
-                  // ✅ Volvemos a vincular el nuevo form (porque se recreó)
                   const newForm = modalDiv.querySelector("form");
-                  handleSubmit(newForm);
+                  if (newForm) handleSubmit(newForm);
                 }
               });
           });
         }
 
-        // Asignar el primer form al cargar
         const form = modalDiv.querySelector("form");
         if (form) handleSubmit(form);
       });
   }
 
-  // Crear
+  // ➕ Crear
   document.getElementById("btnAddBeca").addEventListener("click", () => {
     loadModal("{% url 'administracion:crear_beca' %}");
   });
 
-  // Editar / Eliminar (delegación)
+  // ✏️ Editar / 🗑️ Eliminar
   document.addEventListener("click", (e) => {
     const editBtn = e.target.closest(".js-edit");
-    if (editBtn) loadModal(editBtn.dataset.url);
-
     const delBtn = e.target.closest(".js-delete");
+    if (editBtn) loadModal(editBtn.dataset.url);
     if (delBtn) loadModal(delBtn.dataset.url);
+  });
+
+  // =============================
+  // 🎯 FILTRO SOLO ACTIVOS
+  // =============================
+  const checkActivos = document.getElementById("checkActivos");
+
+  function aplicarFiltroActivos() {
+    const activos = checkActivos.checked ? 1 : 0;
+
+    fetch(`{% url 'administracion:filtrar_becas' %}?activos=${activos}`)
+      .then(r => r.text())
+      .then(html => {
+        document.getElementById("tabla-becas").innerHTML = html;
+      });
+  }
+
+  checkActivos.addEventListener("change", aplicarFiltroActivos);
+
+  // 🚀 Al cargar, mostrar todos por defecto
+  document.addEventListener("DOMContentLoaded", () => {
+    aplicarFiltroActivos();
   });
 </script>
 {% endblock %}

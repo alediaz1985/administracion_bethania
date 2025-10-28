@@ -8,6 +8,7 @@ from django.contrib import messages
 from datetime import date
 from django.db import models
 from django.utils import timezone
+from django.db.models import Q
 
 def home(request):
     return render(request, 'home.html')
@@ -79,9 +80,22 @@ def eliminar_ciclo(request, pk):
 # 💰 MONTOS POR NIVEL
 # ============================================================
 def lista_montos(request):
-    montos = MontoNivel.objects.select_related('ciclo', 'nivel').order_by('-ciclo__anio', 'nivel__nombre', '-fecha_vigencia_desde')
-    return render(request, 'administracion/monto_nivel/lista.html', {'montos': montos})
+    montos = MontoNivel.objects.select_related('ciclo', 'nivel').order_by(
+        '-ciclo__anio', 'nivel__nombre', '-fecha_vigencia_desde'
+    )
+    ciclos = CicloLectivo.objects.all().order_by('-anio')
 
+    # 🔹 Año actual
+    anio_actual = date.today().year
+
+    # 🔹 Intentar obtener el ciclo del año actual (puede no existir)
+    ciclo_actual = CicloLectivo.objects.filter(anio=anio_actual).first()
+
+    return render(request, 'administracion/monto_nivel/lista.html', {
+        'montos': montos,
+        'ciclos': ciclos,
+        'ciclo_actual': ciclo_actual,  # 🧩 lo pasamos al template
+    })
 
 def crear_monto(request):
     data = {}
@@ -190,6 +204,19 @@ def eliminar_monto(request, pk):
         data['html_form'] = render_to_string('administracion/monto_nivel/_modal_delete.html', context, request=request)
     return JsonResponse(data)
 
+def filtrar_montos(request):
+    ciclo_id = request.GET.get('ciclo')
+    activos = request.GET.get('activos')
+
+    montos = MontoNivel.objects.all().select_related('nivel', 'ciclo')
+
+    if ciclo_id:
+        montos = montos.filter(ciclo_id=ciclo_id)
+    if activos == '1':
+        montos = montos.filter(activo=True)
+
+    return render(request, 'administracion/monto_nivel/_tabla.html', {'montos': montos})
+
 
 # ============================================================
 # 🎓 BECAS Y BENEFICIOS
@@ -272,21 +299,46 @@ def eliminar_beca(request, pk):
     return JsonResponse(data)
 
 
+from django.db.models import Q
+
 def estudiantes_becas_activas(request):
     """
     Muestra todos los estudiantes que tienen una beca asignada,
     permite cambiar o quitar la beca, y actualiza las cuotas pendientes.
     """
-    # 🔹 Traemos todas las inscripciones con beca (activa o inactiva)
+    # 🔹 Filtros recibidos
+    ciclo_id = request.GET.get('ciclo')
+    nivel_id = request.GET.get('nivel')
+    beca_id = request.GET.get('beca')
+    query = request.GET.get('q')
+
+    # 🔹 Bases para los selects
+    ciclos = CicloLectivo.objects.all().order_by('-anio')
+    niveles = Nivel.objects.all().order_by('nombre')
+    becas = Beca.objects.all().order_by('nombre')
+
+    # 🔹 Traemos las inscripciones con beca (activa o inactiva)
     inscripciones = (
         InscripcionAdministrativa.objects
         .select_related('estudiante', 'beca', 'nivel', 'ciclo')
         .filter(beca__isnull=False)
-        .order_by('-ciclo__anio', 'nivel__nombre', 'estudiante__apellidos_estudiante')
     )
 
-    # 🔹 Todas las becas disponibles (para edición)
-    becas = Beca.objects.all().order_by('nombre')
+    # 🔹 Aplicar filtros si hay valores
+    if ciclo_id:
+        inscripciones = inscripciones.filter(ciclo_id=ciclo_id)
+    if nivel_id:
+        inscripciones = inscripciones.filter(nivel_id=nivel_id)
+    if beca_id:
+        inscripciones = inscripciones.filter(beca_id=beca_id)
+    if query:
+        inscripciones = inscripciones.filter(
+            Q(estudiante__nombres_estudiante__icontains=query) |
+            Q(estudiante__apellidos_estudiante__icontains=query)
+        )
+
+    # 🔹 Ordenar resultados
+    inscripciones = inscripciones.order_by('-ciclo__anio', 'nivel__nombre', 'estudiante__apellidos_estudiante')
 
     # --- POST: si se está actualizando una beca ---
     if request.method == 'POST':
@@ -330,9 +382,18 @@ def estudiantes_becas_activas(request):
             messages.success(request, f"🔁 Se actualizó la beca de {inscripcion.estudiante} a {nueva_beca.nombre}.")
             return redirect('administracion:estudiantes_becas_activas')
 
+    # 🔹 Contexto
     context = {
         'inscripciones': inscripciones,
         'becas': becas,
+        'ciclos': ciclos,
+        'niveles': niveles,
+        'filtros': {
+            'ciclo': ciclo_id,
+            'nivel': nivel_id,
+            'beca': beca_id,
+            'q': query,
+        },
     }
     return render(request, 'administracion/beca/estudiantes_activas.html', context)
 
@@ -376,6 +437,47 @@ def asignar_beca_general(request):
         'becas': becas,
     }
     return render(request, 'administracion/beca/asignar_beca_general.html', context)
+
+def filtrar_becas(request):
+    activos = request.GET.get('activos')
+
+    # 🔹 Traemos todas las becas normalmente
+    becas = Beca.objects.all().order_by('nombre')
+
+    # 🔹 Filtramos si el check está marcado
+    if activos == '1':
+        becas = becas.filter(activa=True)
+
+    return render(request, 'administracion/beca/_tabla.html', {'becas': becas})
+
+from django.db.models import Q
+
+def filtrar_estudiantes_becas(request):
+    ciclo_id = request.GET.get('ciclo')
+    nivel_id = request.GET.get('nivel')
+    beca_id = request.GET.get('beca')
+    query = request.GET.get('q')
+
+    inscripciones = InscripcionAdministrativa.objects.select_related(
+        'estudiante', 'ciclo', 'nivel', 'beca'
+    )
+
+    if ciclo_id:
+        inscripciones = inscripciones.filter(ciclo_id=ciclo_id)
+    if nivel_id:
+        inscripciones = inscripciones.filter(nivel_id=nivel_id)
+    if beca_id:
+        inscripciones = inscripciones.filter(beca_id=beca_id)
+    if query:
+        inscripciones = inscripciones.filter(
+            Q(estudiante__nombres_estudiante__icontains=query) |
+            Q(estudiante__apellidos_estudiante__icontains=query)
+        )
+
+    return render(request, 'administracion/beca/_tabla_estudiantes.html', {
+        'inscripciones': inscripciones,
+        'becas': Beca.objects.all(),  # para el select dentro de cada fila
+    })
 
 
 # ============================================================

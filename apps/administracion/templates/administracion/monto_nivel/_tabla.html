@@ -1,4 +1,4 @@
-<table class="table table-bordered align-middle">
+<table class="montos-table">
   <thead>
     <tr>
       <th>Ciclo</th>
@@ -11,31 +11,44 @@
       <th class="text-center">Acciones</th>
     </tr>
   </thead>
+
   <tbody>
     {% for m in montos %}
-    <tr>
-      <td>{{ m.ciclo.anio }}</td>
-      <td>{{ m.nivel.nombre }}</td>
-      <td>{{ m.monto_inscripcion }}</td>
-      <td>{{ m.monto_cuota }}</td>
-      <td>{{ m.fecha_vigencia_desde }}</td>
-      <td>{{ m.fecha_vigencia_hasta|default:"-" }}</td>
-      <td>
-        {% if m.activo %}
-          <span class="text-success">✔</span>
-        {% else %}
-          <span class="text-muted">✖</span>
-        {% endif %}
-      </td>
-      <td class="text-center">
-        <button class="btn btn-sm btn-outline-primary js-edit"
-                data-url="{% url 'administracion:editar_monto' m.id %}">✏️</button>
-        <button class="btn btn-sm btn-outline-danger js-delete"
-                data-url="{% url 'administracion:eliminar_monto' m.id %}">🗑️</button>
-      </td>
-    </tr>
+      <tr>
+        <td>{{ m.ciclo.anio }}</td>
+        <td>{{ m.nivel.nombre }}</td>
+        <td>{{ m.monto_inscripcion }}</td>
+        <td>{{ m.monto_cuota }}</td>
+        <td>{{ m.fecha_vigencia_desde }}</td>
+        <td>{{ m.fecha_vigencia_hasta|default:"-" }}</td>
+        <td>
+          {% if m.activo %}
+            <span class="badge bg-success">Activo</span>
+          {% else %}
+            <span class="badge bg-secondary">Inactivo</span>
+          {% endif %}
+        </td>
+
+        <td class="acciones">
+          <button class="icon-btn edit js-edit"
+                  data-url="{% url 'administracion:editar_monto' m.id %}"
+                  title="Editar monto">
+            <i class="fas fa-edit"></i>
+          </button>
+
+          <button class="icon-btn delete js-delete"
+                  data-url="{% url 'administracion:eliminar_monto' m.id %}"
+                  title="Eliminar monto">
+            <i class="fas fa-trash-alt"></i>
+          </button>
+        </td>
+      </tr>
     {% empty %}
-    <tr><td colspan="8" class="text-center text-muted">No hay montos registrados.</td></tr>
+      <tr>
+        <td colspan="8" class="text-center text-muted">
+          No hay montos registrados.
+        </td>
+      </tr>
     {% endfor %}
   </tbody>
 </table>

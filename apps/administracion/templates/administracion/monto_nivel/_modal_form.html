@@ -1,17 +1,31 @@
-<div class="modal-dialog">
-  <div class="modal-content">
+<div class="modal-dialog modal-dialog-centered">
+  <div class="modal-content form-modal">
     <form method="post">
       {% csrf_token %}
+
+      <!-- 🔹 CABECERA -->
       <div class="modal-header">
-        <h5 class="modal-title">Monto por Nivel</h5>
-        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+        <h5 class="modal-title fw-semibold">
+          Monto por Nivel
+        </h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
       </div>
+
+      <!-- 🔹 CUERPO -->
       <div class="modal-body">
-        {{ form.as_p }}
+        <div class="form-container">
+          {{ form.as_p }}
+        </div>
       </div>
+
+      <!-- 🔹 PIE -->
       <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
-        <button type="submit" class="btn btn-primary">Guardar</button>
+        <button type="button" class="btn-cancelar" data-bs-dismiss="modal">
+          Cancelar
+        </button>
+        <button type="submit" class="btn-guardar">
+          Guardar
+        </button>
       </div>
     </form>
   </div>

@@ -3,26 +3,71 @@
 
 {% block title %}Montos por Nivel{% endblock %}
 
-{% block content %}
-<div class="container mt-4">
+{% block extra_styles %}
+<link rel="stylesheet" href="{% static 'administracion/css/monto_nivel/styles_montos_nivel.css' %}">
+{% endblock %}
 
-  <div class="d-flex justify-content-between align-items-center mb-3">
-    <h2>💰 Montos por Nivel</h2>
-    <button class="btn btn-primary" id="btnAdd">➕ Nuevo Monto</button>
+{% block content %}
+<div class="montos-container">
+
+  <!-- 🔹 CABECERA -->
+  <div class="montos-header">
+    <div class="montos-titulo">
+      <h2>Montos por Nivel</h2>
+      <p class="subtitulo">Gestione los valores de las cuotas según el nivel educativo</p>
+    </div>
+
+    <div class="montos-botones">
+      <!-- 🔸 Botón Volver -->
+      <a href="{% url 'administracion:home_administracion' %}" class="btn-volver">
+        Volver
+      </a>
+
+      <!-- 🔸 Botón Nuevo Monto -->
+      <button class="btn-nuevo" id="btnAdd">
+        Nuevo Monto
+      </button>
+    </div>
   </div>
 
-  <div id="tabla-montos">
+  <!-- 🔹 FILTROS -->
+  <div class="montos-filtros mb-3 d-flex align-items-center justify-content-between">
+    <div class="filtro-ciclo d-flex align-items-center gap-2">
+      <label for="cicloFilter" class="fw-semibold">Ciclo:</label>
+      <select id="cicloFilter" class="form-select form-select-sm" style="width: 150px;">
+        <option value="">Todos</option>
+        {% for ciclo in ciclos %}
+          <option value="{{ ciclo.id }}" 
+            {% if ciclo_actual and ciclo.id == ciclo_actual.id %}selected{% endif %}>
+            {{ ciclo.anio }}
+          </option>
+        {% endfor %}
+      </select>
+    </div>
+
+    <div class="filtro-activos form-check">
+      <input class="form-check-input" type="checkbox" id="checkActivos">
+      <label class="form-check-label fw-semibold" for="checkActivos">
+        Mostrar solo activos
+      </label>
+    </div>
+  </div>
+
+  <!-- 🔹 TABLA -->
+  <div id="tabla-montos" class="tabla-container">
     {% include 'administracion/monto_nivel/_tabla.html' %}
   </div>
-
 </div>
 
-<!-- Modal -->
+<!-- 🔹 MODAL -->
 <div id="modalMonto" class="modal fade" tabindex="-1"></div>
 {% endblock %}
 
 {% block extra_js %}
 <script>
+  // =============================
+  // 🧩 FUNCIONES DE MODAL
+  // =============================
   function loadModal(url) {
     fetch(url)
       .then(r => r.json())
@@ -33,7 +78,6 @@
         const modal = new bootstrap.Modal(modalDiv);
         modal.show();
 
-        // Función para manejar el envío del form (se reutiliza al re-renderizar)
         function handleSubmit(form) {
           form.addEventListener("submit", function (e) {
             e.preventDefault();
@@ -42,9 +86,8 @@
               .then(data => {
                 if (data.form_is_valid) {
                   document.getElementById("tabla-montos").innerHTML = data.html_list;
-                  modal.hide(); // ✅ sólo si se guardó correctamente
+                  modal.hide();
                 } else {
-                  // 🔁 Reemplazamos el contenido del modal (errores) y volvemos a vincular evento
                   modalDiv.innerHTML = data.html_form;
                   const newForm = modalDiv.querySelector("form");
                   if (newForm) handleSubmit(newForm);
@@ -53,23 +96,53 @@
           });
         }
 
-        // Asignamos la primera vez
         const form = modalDiv.querySelector("form");
         if (form) handleSubmit(form);
       });
   }
 
-  // Crear
+  // ➕ Crear
   document.getElementById("btnAdd").addEventListener("click", () => {
     loadModal("{% url 'administracion:crear_monto' %}");
   });
 
-  // Editar / Eliminar
+  // ✏️ Editar / 🗑️ Eliminar
   document.addEventListener("click", e => {
     const editBtn = e.target.closest(".js-edit");
     const delBtn = e.target.closest(".js-delete");
     if (editBtn) loadModal(editBtn.dataset.url);
     if (delBtn) loadModal(delBtn.dataset.url);
   });
+
+  // =============================
+  // 🎯 FILTROS AJAX
+  // =============================
+  const cicloFilter = document.getElementById("cicloFilter");
+  const checkActivos = document.getElementById("checkActivos");
+
+  function aplicarFiltros() {
+    const ciclo = cicloFilter.value;
+    const activos = checkActivos.checked ? 1 : 0; // ✅ solo si está marcado
+
+    fetch(`{% url 'administracion:filtrar_montos' %}?ciclo=${ciclo}&activos=${activos}`)
+      .then(r => r.text())
+      .then(html => {
+        document.getElementById("tabla-montos").innerHTML = html;
+      });
+  }
+
+  cicloFilter.addEventListener("change", aplicarFiltros);
+  checkActivos.addEventListener("change", aplicarFiltros);
+
+  // =============================
+  // 🚀 FILTRO AUTOMÁTICO AL CARGAR
+  // =============================
+  document.addEventListener("DOMContentLoaded", () => {
+    // 🧩 Si hay un ciclo seleccionado por defecto, lo aplica automáticamente
+    if (cicloFilter && cicloFilter.value) {
+      aplicarFiltros();
+    }
+  });
 </script>
 {% endblock %}
+

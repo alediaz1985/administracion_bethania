@@ -3,27 +3,42 @@
 
 {% block title %}Asignar Beca a Estudiante{% endblock %}
 
+{% block extra_styles %}
+<link rel="stylesheet" href="{% static 'administracion/css/beca/styles_asignar_beca.css' %}">
+{% endblock %}
+
 {% block content %}
-<div class="container mt-4">
-  <div class="d-flex justify-content-between align-items-center mb-3">
-    <h2>➕ Asignar Beca a Estudiante</h2>
-    <a href="{% url 'administracion:estudiantes_becas_activas' %}" class="btn btn-secondary">⬅️ Volver</a>
+<div class="asignar-beca-container">
+
+  <!-- 🔹 CABECERA -->
+  <div class="asignar-header">
+    <div class="asignar-titulo">
+      <h2>Asignar Beca a Estudiante</h2>
+      <p class="subtitulo">Seleccione la beca que desea otorgar a cada estudiante</p>
+    </div>
+
+    <a href="{% url 'administracion:estudiantes_becas_activas' %}" class="btn-volver">
+      Volver
+    </a>
   </div>
 
+  <!-- 🔹 MENSAJES -->
   {% if messages %}
     {% for msg in messages %}
       <div class="alert alert-{{ msg.tags }}">{{ msg }}</div>
     {% endfor %}
   {% endif %}
 
+  <!-- 🔹 TABLA -->
   {% if inscripciones %}
-  <table class="table table-striped align-middle">
-    <thead class="table-dark">
+  <table class="asignar-table">
+    <thead>
       <tr>
         <th>Estudiante</th>
         <th>Ciclo</th>
         <th>Nivel</th>
-        <th>Asignar Beca</th>
+        <th>Seleccionar Beca</th>
+        <th>Acción</th>
       </tr>
     </thead>
     <tbody>
@@ -32,17 +47,23 @@
         <td>{{ ins.estudiante.apellidos_estudiante }}, {{ ins.estudiante.nombres_estudiante }}</td>
         <td>{{ ins.ciclo.anio }}</td>
         <td>{{ ins.nivel.nombre }}</td>
-        <td>
-          <form method="post" class="d-flex gap-2">
+
+        <td class="col-select">
+          <form method="post">
             {% csrf_token %}
             <input type="hidden" name="inscripcion_id" value="{{ ins.id }}">
-            <select name="beca_id" class="form-select form-select-sm" required>
-              <option value="">-- Seleccionar beca --</option>
+            <select name="beca_id" class="form-select-sm" required>
+              <option value="">-- Seleccionar --</option>
               {% for b in becas %}
                 <option value="{{ b.id }}">{{ b.nombre }} ({{ b.tipo }} - {{ b.valor }})</option>
               {% endfor %}
             </select>
-            <button type="submit" class="btn btn-sm btn-success">Asignar</button>
+        </td>
+
+        <td class="col-accion">
+            <button type="submit" class="icon-btn asignar" title="Asignar Beca">
+              <i class="fas fa-check"></i>
+            </button>
           </form>
         </td>
       </tr>
