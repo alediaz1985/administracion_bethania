@@ -1,16 +1,9 @@
-"""
-ASGI config for administracion_bethania project.
-
-It exposes the ASGI callable as a module-level variable named ``application``.
-
-For more information on this file, see
-https://docs.djangoproject.com/en/5.0/howto/deployment/asgi/
-"""
-
+# administracion_bethania/wsgi.py
 import os
+from django.core.wsgi import get_wsgi_application
 
-from django.core.asgi import get_asgi_application
-
-os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'administracion_bethania.settings')
-
-application = get_asgi_application()
+os.environ.setdefault(
+    "DJANGO_SETTINGS_MODULE",
+    "administracion_bethania.settings.production"  # en server, mejor production
+)
+application = get_wsgi_application()

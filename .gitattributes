@@ -1,1 +1,51 @@
 "*.gitignore text eol=lf" 
+# === Django ===
+SECRET_KEY=
+DEBUG=
+ALLOWED_HOSTS=127.0.0.1,localhost
+CSRF_TRUSTED_ORIGINS=
+
+LANGUAGE_CODE=es-ar
+TIME_ZONE=America/Argentina/Buenos_Aires
+
+# === Base de datos ===
+DB_ENGINE=django.db.backends.mysql
+DB_NAME=
+DB_USER=
+DB_PASSWORD=
+DB_HOST=
+DB_PORT=3306
+DB_CONN_MAX_AGE=60
+
+# === Seguridad prod ===
+SECURE_SSL_REDIRECT=true
+SESSION_COOKIE_SECURE=true
+CSRF_COOKIE_SECURE=true
+SECURE_HSTS_SECONDS=31536000
+SECURE_HSTS_INCLUDE_SUBDOMAINS=true
+SECURE_HSTS_PRELOAD=true
+BEHIND_REVERSE_PROXY=true
+ENABLE_WHITENOISE=true
+
+# === Google/Drive ===
+GOOGLE_CREDENTIALS_ALUMNOS=apps/administracion_alumnos/credentials.json
+GOOGLE_CREDENTIALS=apps/documentos/credentials.json
+DRIVE_FOLDER_ID=
+DRIVE_FOLDER_ID_ALUMNOS=
+
+# === Rutas ===
+ARCHIVOS_DIR=media/documentos
+FOTO_PERFIL_ESTUDIANTE_DIR=media/documentos/fotoPerfilEstudiante
+FOTO_ESTUDIANTE_DIR=media/administracion_alumnos/descargados
+
+# === Institución ===
+INSTITUCION_NOMBRE=
+INSTITUCION_DIRECCION=
+INSTITUCION_TELEFONO=
+INSTITUCION_EMAIL=
+INSTITUCION_LOGO_PATH=
+INSTITUCION_FOTO_DIR=
+
+# === Dev-only ===
+ENABLE_DEBUG_TOOLBAR=false
+INTERNAL_IPS=127.0.0.1

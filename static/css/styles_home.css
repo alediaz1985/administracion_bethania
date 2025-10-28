@@ -31,7 +31,7 @@ html, body {
     background-position: center;
     filter: blur(10px);
     z-index: -1;
-    background-image: url('colegio.jpg'); /* Para mostrar la primera imagen difuminada */
+    background-image: url('../img/colegio.jpg'); /* Para mostrar la primera imagen difuminada */
 }
 
 .block-content-hero .content-wrapper {
