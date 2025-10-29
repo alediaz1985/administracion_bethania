@@ -5,7 +5,7 @@
 {% load static %}
 
 {% block extra_styles %}
-    <link rel="stylesheet" href="../../static/documentos/css/error_descarga.css">
+    <link rel="stylesheet" href="../../static/comprobantes/css/error_descarga.css">
 {% endblock %}
 
 {% block content %}
@@ -13,7 +13,7 @@
 <div class="error-container">
     <h1 class="error-title">Ha ocurrido un error</h1>
     <p class="error-message">{{ mensaje_error }}</p>
-    <a href="{% url 'documentos:consulta' %}" class="error-button">Volver a la consulta</a>
+    <a href="{% url 'comprobantes:consulta' %}" class="error-button">Volver a la consulta</a>
 </div>
 
 {% endblock %}

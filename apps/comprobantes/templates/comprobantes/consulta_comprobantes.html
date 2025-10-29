@@ -4,7 +4,7 @@
 {% block title %}Consulta de Comprobantes{% endblock %}
 
 {% block extra_styles %}
-<link rel="stylesheet" href="{% static 'documentos/css/consulta.css' %}">
+<link rel="stylesheet" href="{% static 'comprobantes/css/consulta.css' %}">
 {% endblock %}
 
 {% block content %}
@@ -32,7 +32,7 @@
             <div class="consulta-resultados">
                 <h3 class="consulta__subtitulo">Resultados de la búsqueda</h3>
                 <p class="consulta__cantidad">
-                    <strong>Cantidad de documentos encontrados:</strong> {{ cantidad_archivos }}
+                    <strong>Cantidad de comprobantes encontrados:</strong> {{ cantidad_archivos }}
                 </p>
                 <ul class="consulta__lista-resultados">
                     {% for resultado in resultados %}
@@ -46,7 +46,7 @@
             </div>
         {% else %}
             <p class="mensaje-info">
-                No se encontraron documentos.
+                No se encontraron comprobantes.
             </p>
         {% endif %}
     {% endif %}

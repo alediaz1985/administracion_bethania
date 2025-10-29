@@ -34,8 +34,8 @@ logger = logging.getLogger(__name__)
 pytesseract.pytesseract.tesseract_cmd = r'C:\Program Files\Tesseract-OCR\tesseract.exe'
 
 
-def home_documentos(request):
-    return render(request, 'documentos/home.html')
+def home_comprobantes(request):
+    return render(request, 'comprobantes/home.html')
 
 
 def preprocess_image(image_path):
@@ -186,7 +186,7 @@ def consulta_view(request):
         'cantidad_archivos': cantidad_archivos,
         'search_done': search_done
     }
-    return render(request, 'documentos/consulta.html', context)
+    return render(request, 'comprobantes/consulta.html', context)
 
 def subir_comprobante_view(request):
     if request.method == 'POST':
@@ -196,7 +196,7 @@ def subir_comprobante_view(request):
             return redirect('consulta')
     else:
         form = DocumentoForm()
-    return render(request, 'documentos/subir_comprobante.html', {'form': form})
+    return render(request, 'comprobantes/subir_comprobante.html', {'form': form})
 
 def archivo_existe(ruta_descarga, nombre_archivo):
     archivo_path = os.path.join(ruta_descarga, nombre_archivo)
@@ -234,7 +234,7 @@ def subir_comprobante(request):
     else:
         form = DocumentoForm()
 
-    return render(request, 'documentos/subir_comprobante.html', {'form': form})
+    return render(request, 'comprobantes/subir_comprobante.html', {'form': form})
 
 
 # Nueva función: Descargar archivos desde Google Drive
@@ -261,7 +261,7 @@ def descargar_archivos_nube(request):
 
         if not drive_files:
             logger.info("No se encontraron archivos en la carpeta de Google Drive.")
-            return render(request, 'documentos/sin_archivos.html')
+            return render(request, 'comprobantes/sin_archivos.html')
 
         # Ruta de descarga
         ruta_descarga = os.path.join(settings.MEDIA_ROOT, 'documentos', 'descargados')
@@ -294,7 +294,7 @@ def descargar_archivos_nube(request):
                         logger.error(f"No se pudo obtener el contenido del archivo {file_name}.")
             except Exception as e:
                 logger.error(f"Error descargando archivo {file_name}: {e}")
-                return render(request, 'documentos/error_descarga.html', {'mensaje_error': f"Error descargando archivo {file_name}: {e}"})
+                return render(request, 'comprobantes/error_descarga.html', {'mensaje_error': f"Error descargando archivo {file_name}: {e}"})
 
         # Guardar resultados en la sesión para usarlos en la página de éxito
         request.session['archivos_descargados'] = archivos_descargados
@@ -304,7 +304,7 @@ def descargar_archivos_nube(request):
         return redirect('exito_descarga')
     except Exception as e:
         logger.error(f"Error en la descarga de archivos: {e}")
-        return render(request, 'documentos/error_descarga.html', {'mensaje_error': f"Error en la descarga de archivos: {e}"})
+        return render(request, 'comprobantes/error_descarga.html', {'mensaje_error': f"Error en la descarga de archivos: {e}"})
 
 
 def exito_descarga(request):
@@ -312,7 +312,7 @@ def exito_descarga(request):
     archivos_descargados = request.session.get('archivos_descargados', [])
     archivos_omitidos = request.session.get('archivos_omitidos', [])
 
-    return render(request, 'documentos/exito_descarga.html', {
+    return render(request, 'comprobantes/exito_descarga.html', {
         'archivos_descargados': archivos_descargados,
         'archivos_omitidos': archivos_omitidos
     })
@@ -453,7 +453,7 @@ def consulta_comprobantes(request):
             cantidad_archivos = len(resultados)
             search_done = True
 
-    return render(request, 'documentos/consulta_comprobantes.html', {
+    return render(request, 'comprobantes/consulta_comprobantes.html', {
         'form': form,
         'resultados': resultados,
         'cantidad_archivos': cantidad_archivos,

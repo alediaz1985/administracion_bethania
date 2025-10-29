@@ -1,10 +1,10 @@
 from django.urls import path
 from . import views
 
-app_name = "documentos"  # 👈 importante
+app_name = "comprobantes"  # 👈 importante
 
 urlpatterns = [
-    path('', views.home_documentos, name='home'),
+    path('', views.home_comprobantes, name='home'),
     path('consulta/', views.consulta_view, name='consulta'),
     path('list-files/', views.list_files, name='list_files'),  # 👈 nombre alineado
     path('consulta_comprobantes/', views.consulta_comprobantes, name='consulta_comprobantes'),

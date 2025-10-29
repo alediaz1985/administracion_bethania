@@ -5,7 +5,7 @@
 {% load static %}
 
 {% block extra_styles %}
-    <link rel="stylesheet" href="{% static 'documentos/css/consulta.css' %}">
+    <link rel="stylesheet" href="{% static 'comprobantes/css/consulta.css' %}">
 {% endblock %}
 
 {% block content %}
@@ -69,14 +69,14 @@
                     </ul>
                 </div>
             {% else %}
-                <p class="consulta__mensaje consulta__mensaje--info">No se encontraron documentos.</p>
+                <p class="consulta__mensaje consulta__mensaje--info">No se encontraron comprobantes.</p>
             {% endif %}
         {% endif %}
 
         <!-- Botón para descargar archivos -->
         <div class="descargar-archivos">
             <div class="boton-descargar">
-                <a href="{% url 'documentos:descargar_archivos_nube' %}" class="descargar-archivos-button">Descargar Archivos de Google Drive</a>
+                <a href="{% url 'comprobantes:descargar_archivos_nube' %}" class="descargar-archivos-button">Descargar Archivos de Google Drive</a>
             </div>
         </div>
     </div>
@@ -85,7 +85,7 @@
 <script>
     async function descargarArchivos() {
         try {
-            const response = await fetch("{% url 'documentos:descargar_archivos_nube' %}");
+            const response = await fetch("{% url 'comprobantes:descargar_archivos_nube' %}");
             const data = await response.json();
             if (data.status === 'success') {
                 alert('Archivos descargados:\n' + data.descargados.join('\n') + '\n\nArchivos omitidos:\n' + data.omitidos.join('\n'));

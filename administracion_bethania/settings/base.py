@@ -33,7 +33,7 @@ INSTALLED_APPS = [
     "apps.autenticacion",
     "apps.administracion_alumnos", 
     "apps.dashboard",
-    "apps.documentos",
+    "apps.comprobantes",
 ]
 
 MIDDLEWARE = [

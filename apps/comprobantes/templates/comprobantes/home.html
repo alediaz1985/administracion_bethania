@@ -12,7 +12,7 @@
       <h2 class="m-0">Comprobantes & Documentos</h2>
       <p class="text-muted mb-0">Centro de acciones: búsqueda, subida y sincronización con Google Drive.</p>
     </div>
-    <a href="{% url 'documentos:list_files' %}" target="_blank" class="btn btn-outline-secondary btn-sm" data-bs-toggle="tooltip" title="Ver JSON con archivos en la carpeta configurada">
+    <a href="{% url 'comprobantes:list_files' %}" target="_blank" class="btn btn-outline-secondary btn-sm" data-bs-toggle="tooltip" title="Ver JSON con archivos en la carpeta configurada">
       <i class="bi bi-code"></i> Listar (JSON)
     </a>
   </div>
@@ -31,7 +31,7 @@
             Busca términos dentro de PDFs, imágenes (OCR), DOCX y XLSX en tu carpeta local <code>ARCHIVOS_DIR</code>.
           </p>
           <div class="mt-auto">
-            <a href="{% url 'documentos:consulta' %}" class="btn btn-primary w-100">
+            <a href="{% url 'comprobantes:consulta' %}" class="btn btn-primary w-100">
               Ir a búsqueda local
             </a>
           </div>
@@ -51,7 +51,7 @@
             Filtra por nombre y por fechas de modificación en la carpeta de Google Drive configurada.
           </p>
           <div class="mt-auto">
-            <a href="{% url 'documentos:consulta_comprobantes' %}" class="btn btn-primary w-100">
+            <a href="{% url 'comprobantes:consulta_comprobantes' %}" class="btn btn-primary w-100">
               Ir a búsqueda en Drive
             </a>
           </div>
@@ -71,7 +71,7 @@
             Carga manualmente un comprobante (usa tu <code>DocumentoForm</code>).
           </p>
           <div class="mt-auto">
-            <a href="{% url 'documentos:subir_comprobante' %}" class="btn btn-outline-primary w-100">
+            <a href="{% url 'comprobantes:subir_comprobante' %}" class="btn btn-outline-primary w-100">
               Subir ahora
             </a>
           </div>
@@ -100,7 +100,7 @@
           <div class="modal fade" id="modalDescargar" tabindex="-1" aria-hidden="true">
             <div class="modal-dialog modal-dialog-centered">
               <div class="modal-content">
-                <form method="post" action="{% url 'documentos:descargar_archivos_nube' %}">
+                <form method="post" action="{% url 'comprobantes:descargar_archivos_nube' %}">
                   {% csrf_token %}
                   <div class="modal-header">
                     <h5 class="modal-title"><i class="bi bi-download"></i> Confirmar descarga</h5>
@@ -119,7 +119,7 @@
           </div>
 
           <!-- Link a último resumen -->
-          <a href="{% url 'documentos:exito_descarga' %}" class="btn btn-link mt-2 w-100">
+          <a href="{% url 'comprobantes:exito_descarga' %}" class="btn btn-link mt-2 w-100">
             Ver último resumen de descargas
           </a>
         </div>
@@ -147,7 +147,7 @@
           <div class="modal fade" id="modalVaciar" tabindex="-1" aria-hidden="true">
             <div class="modal-dialog modal-dialog-centered">
               <div class="modal-content">
-                <form method="post" action="{% url 'documentos:vaciar_carpeta_drive' %}">
+                <form method="post" action="{% url 'comprobantes:vaciar_carpeta_drive' %}">
                   {% csrf_token %}
                   <div class="modal-header">
                     <h5 class="modal-title"><i class="bi bi-exclamation-triangle"></i> Confirmar vaciado</h5>
@@ -187,7 +187,7 @@
             <li><strong>Vaciar Drive:</strong> elimina archivos remotos.</li>
           </ul>
           <div class="mt-auto">
-            <a href="{% url 'documentos:consulta' %}" class="btn btn-light w-100">Ver más opciones</a>
+            <a href="{% url 'comprobantes:consulta' %}" class="btn btn-light w-100">Ver más opciones</a>
           </div>
         </div>
       </div>

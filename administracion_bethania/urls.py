@@ -27,8 +27,8 @@ urlpatterns = [
         include(('apps.administracion.urls', 'administracion'), namespace='administracion')
     ),
     path(
-        'documentos/',
-        include(('apps.documentos.urls', 'documentos'), namespace='documentos')
+        'comprobantes/',
+        include(('apps.comprobantes.urls', 'comprobantes'), namespace='comprobantes')
     ),
 ]
 
