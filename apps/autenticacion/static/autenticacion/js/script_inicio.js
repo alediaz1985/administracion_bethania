@@ -1,8 +1,16 @@
-document.getElementById('togglePassword').addEventListener('click', function () {
-    const passwordInput = document.querySelector('.password-input'); // Seleccionamos el campo con la clase 'password-input'
-    const type = passwordInput.getAttribute('type') === 'password' ? 'text' : 'password';
-    passwordInput.setAttribute('type', type);
+document.addEventListener("DOMContentLoaded", () => {
+  const togglePassword = document.getElementById("togglePassword");
+  const passwordField = document.getElementById("id_password");
 
-    // Cambiar el ícono del ojo
-    this.classList.toggle('fa-eye-slash');
+  if (togglePassword && passwordField) {
+    togglePassword.addEventListener("click", () => {
+      // Cambia el tipo de input
+      const isPassword = passwordField.getAttribute("type") === "password";
+      passwordField.setAttribute("type", isPassword ? "text" : "password");
+
+      // Cambia el icono
+      togglePassword.classList.toggle("fa-eye");
+      togglePassword.classList.toggle("fa-eye-slash");
+    });
+  }
 });

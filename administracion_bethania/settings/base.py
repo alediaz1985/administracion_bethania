@@ -42,6 +42,7 @@ MIDDLEWARE = [
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
     "administracion_bethania.middleware.LoginRequiredMiddleware",
+    "apps.administracion.middleware.actualizar_cuotas.ActualizarCuotasMiddleware",
 ]
 
 ROOT_URLCONF = "administracion_bethania.urls"
@@ -129,3 +130,16 @@ INSTITUCION_TELEFONO = os.getenv("INSTITUCION_TELEFONO", "")
 INSTITUCION_EMAIL = os.getenv("INSTITUCION_EMAIL", "")
 INSTITUCION_LOGO_PATH = env_path("INSTITUCION_LOGO_PATH", "static/img/logo.png")
 INSTITUCION_FOTO_DIR = env_path("INSTITUCION_FOTO_DIR", "media/documentos/fotoPerfilEstudiante")
+
+# ============================================================
+# ⚙️ CONFIGURACIÓN DE SESIONES
+# ============================================================
+
+# Cierra la sesión al cerrar el navegador
+SESSION_EXPIRE_AT_BROWSER_CLOSE = True
+
+# Tiempo máximo de sesión (1 hora)
+SESSION_COOKIE_AGE = 3600
+
+# Renueva el tiempo si el usuario sigue activo
+SESSION_SAVE_EVERY_REQUEST = True

@@ -73,6 +73,7 @@
                         <th>Subnivel</th>
                         <th>Turno</th>
                         <th>Fecha Recepción</th>
+                        <th>Estado</th>
                         <th colspan="2"></th>
                     </tr>
                 </thead>
@@ -97,6 +98,15 @@
                                 <td>{{ estudiante.inscripcion.curso_anio_estudiante }}</td>
                                 <td>{{ estudiante.inscripcion.turno_estudiante }}</td>
                                 <td>{{ estudiante.inscripcion.fecha_recepcion }}</td>
+
+                                <!-- 🔹 Estado de inscripción -->
+                                <td>
+                                  {% if estudiante.inscripto %}
+                                    <span class="badge bg-success">Inscripto</span>
+                                  {% else %}
+                                    <span class="badge bg-secondary">No inscripto</span>
+                                  {% endif %}
+                                </td>
 
                                 <!-- Acciones -->
                                 <td class="acciones">
@@ -141,6 +151,7 @@
                         <th>Grado</th>
                         <th>Turno</th>
                         <th>Fecha Recepción</th>
+                        <th>Estado</th>
                         <th colspan="2"></th>
                     </tr>
                 </thead>
@@ -166,6 +177,15 @@
                                 <td>{{ estudiante.inscripcion.curso_anio_estudiante }}</td>
                                 <td>{{ estudiante.inscripcion.turno_estudiante }}</td>
                                 <td>{{ estudiante.inscripcion.fecha_recepcion }}</td>
+
+                                <!-- 🔹 Estado de inscripción -->
+                                <td>
+                                  {% if estudiante.inscripto %}
+                                    <span class="badge bg-success">Inscripto</span>
+                                  {% else %}
+                                    <span class="badge bg-secondary">No inscripto</span>
+                                  {% endif %}
+                                </td>
 
                                 <!-- Acciones -->
                                 <td class="acciones">
@@ -214,6 +234,7 @@
                         <th>Grado</th>
                         <th>Turno</th>
                         <th>Fecha Recepción</th>
+                        <th>Estado</th>
                         <th colspan="2"></th>
                     </tr>
                 </thead>
@@ -239,6 +260,15 @@
                                 <td>{{ estudiante.inscripcion.curso_anio_estudiante }}</td>
                                 <td>{{ estudiante.inscripcion.turno_estudiante }}</td>
                                 <td>{{ estudiante.inscripcion.fecha_recepcion }}</td>
+
+                                <!-- 🔹 Estado de inscripción -->
+                                <td>
+                                  {% if estudiante.inscripto %}
+                                    <span class="badge bg-success">Inscripto</span>
+                                  {% else %}
+                                    <span class="badge bg-secondary">No inscripto</span>
+                                  {% endif %}
+                                </td>
 
                                 <!-- Acciones -->
                                 <td class="acciones">
@@ -531,22 +561,23 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 /* --------------------------------------------------
-   🔹 Ordenar columnas al hacer clic en el encabezado (FIX)
+   🔹 Ordenar columnas al hacer clic (ASC / DESC / ORIGINAL)
 -------------------------------------------------- */
 document.addEventListener('DOMContentLoaded', () => {
   const tables = document.querySelectorAll('.alumnos-table');
 
   tables.forEach(table => {
     const headers = table.querySelectorAll('thead th');
+    const tbody = table.querySelector('tbody');
+    const originalRows = Array.from(tbody.querySelectorAll('tr')); // 🟡 Guardamos el orden original
 
     headers.forEach((th, index) => {
-      // Evitamos ordenar la columna de acciones (la vacía con colspan)
-      if (th.colSpan > 1) return;
+      if (th.colSpan > 1) return; // Evita las columnas de acciones
 
       th.style.cursor = 'pointer';
-      th.dataset.order = 'asc'; // orden inicial
+      th.dataset.order = 'none'; // 🔹 Estado inicial sin ordenar
 
-      // Envolver texto del th y añadir contenedor de flecha
+      // Etiqueta + flecha visual
       const label = th.textContent.trim();
       th.textContent = '';
       const textSpan = document.createElement('span');
@@ -558,17 +589,36 @@ document.addEventListener('DOMContentLoaded', () => {
       th.appendChild(arrow);
 
       th.addEventListener('click', () => {
-        const tbody = table.querySelector('tbody');
         const rows = Array.from(tbody.querySelectorAll('tr'));
-
         const isDateColumn = /fecha/i.test(label);
-        const direction = th.dataset.order === 'asc' ? 1 : -1;
+        const currentOrder = th.dataset.order;
 
-        // Función robusta para parsear fechas dd/mm/yyyy o yyyy-mm-dd
+        // Limpiar flechas previas
+        table.querySelectorAll('.sort-arrow').forEach(el => el.textContent = '');
+
+        // Determinar siguiente estado
+        let nextOrder;
+        if (currentOrder === 'none') nextOrder = 'asc';
+        else if (currentOrder === 'asc') nextOrder = 'desc';
+        else nextOrder = 'none'; // 🔁 vuelve al original
+
+        th.dataset.order = nextOrder;
+
+        // Restaurar orden original
+        if (nextOrder === 'none') {
+          arrow.textContent = '↻';
+          tbody.innerHTML = '';
+          originalRows.forEach(r => tbody.appendChild(r));
+          setTimeout(() => arrow.textContent = '', 500); // Limpia el ícono tras 0.5s
+          return;
+        }
+
+        const direction = nextOrder === 'asc' ? 1 : -1;
+
+        // 🔸 Parsear fechas dd/mm/yyyy o yyyy-mm-dd
         const parseDate = (txt) => {
           const t = txt.trim();
           if (!t) return new Date('1970-01-01');
-          // dd/mm/yyyy -> yyyy-mm-dd
           if (/^\d{1,2}\/\d{1,2}\/\d{2,4}$/.test(t)) {
             const [d, m, y] = t.split('/');
             return new Date(`${y.length===2 ? '20'+y : y}-${m.padStart(2,'0')}-${d.padStart(2,'0')}`);
@@ -576,6 +626,7 @@ document.addEventListener('DOMContentLoaded', () => {
           return new Date(t);
         };
 
+        // 🔸 Ordenamiento general
         rows.sort((a, b) => {
           const aTxt = (a.cells[index]?.innerText || '').trim();
           const bTxt = (b.cells[index]?.innerText || '').trim();
@@ -595,16 +646,10 @@ document.addEventListener('DOMContentLoaded', () => {
           return aTxt.localeCompare(bTxt, 'es', { sensitivity: 'base', numeric: true }) * direction;
         });
 
-        // Alternar orden
-        th.dataset.order = th.dataset.order === 'asc' ? 'desc' : 'asc';
+        // Flecha visual según orden
+        arrow.textContent = nextOrder === 'asc' ? '▲' : '▼';
 
-        // Limpiar flechas de TODOS los th que tengan sort-arrow (evita null)
-        table.querySelectorAll('.sort-arrow').forEach(el => (el.textContent = ''));
-
-        // Poner flecha en el th activo
-        arrow.textContent = th.dataset.order === 'asc' ? '▲' : '▼';
-
-        // Renderizar
+        // Renderizar filas ordenadas
         tbody.innerHTML = '';
         rows.forEach(r => tbody.appendChild(r));
       });

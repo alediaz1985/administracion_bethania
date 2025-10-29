@@ -121,5 +121,16 @@
         document.getElementById("anio-actual").textContent = new Date().getFullYear();
     </script>
     {% endblock %}
+
+    <!-- 🔹 Cierra sesión automáticamente al cerrar pestaña o navegador -->
+    {% if user.is_authenticated %}
+    <script>
+        window.addEventListener('beforeunload', function() {
+            navigator.sendBeacon("{% url 'cerrar_sesion' %}");
+        });
+    </script>
+    {% endif %}
 </body>
 </html>
+
+

@@ -6,47 +6,76 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Inicio de Sesión</title>
     <link rel="shortcut icon" href="{% static 'autenticacion/images/logo.png' %}">
-    <!-- Añadimos la CDN de Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
     <link rel="stylesheet" href="{% static 'autenticacion/css/styles.css' %}">
-    <script defer src="{% static 'autenticacion/js/script.js' %}"></script> <!-- Incluye el script con la ruta correcta -->
 </head>
 <body>
     <div class="container">
         <div class="left-side">
-            <!-- Aquí puedes agregar un diseño adicional -->
             <div class="left-content">
                 <h1>Bienvenido!</h1>
                 <p>Nos alegra verte de nuevo.</p>
             </div>
         </div>
+
         <div class="right-side">
             <div class="login-box">
                 <div class="user-img">
                     <img src="{% static 'autenticacion/images/logo.png' %}" alt="User Image">
                 </div>
+
                 <div class="login-header">
                     <h2>Inicio de sesión</h2>
                 </div>
+
+                {% if error %}
+                    <div class="alert">
+                        ⚠️ {{ error }}
+                    </div>
+                {% endif %}
+
                 <form method="post">
                     {% csrf_token %}
                     <div class="input-box">
                         <i class="fas fa-user"></i>
-                        {{ form.username }} <!-- Aquí va el campo del usuario -->
+                        {{ form.username }}
                     </div>
+
                     <div class="input-box">
                         <i class="fas fa-lock"></i>
-                        {{ form.password }} <!-- Aquí va el campo de la contraseña con el ID -->
-                        <i class="fas fa-eye" id="togglePassword"></i> <!-- Ícono de ojito -->
+                        {{ form.password }}
+                        <i class="fas fa-eye" id="togglePassword"></i>
                     </div>
+
+                    <div class="recordar-box">
+                        <label class="recordar-label">
+                            {{ form.recordar }}
+                            <span class="recordar-text">Mantener sesión iniciada</span>
+                        </label>
+                    </div>
+
                     <button type="submit" class="login-btn">COMENZAR</button>
-                    <!-- <div class="footer-links">
-                        <a href="#">¿Olvidaste tu contraseña?</a>
-                        <a href="#">Crear cuenta</a>
-                    </div> -->
                 </form>
             </div>
         </div>
     </div>
+
+    <!-- 🔹 Script del ojo de contraseña -->
+    <script>
+        document.addEventListener("DOMContentLoaded", () => {
+            const togglePassword = document.getElementById("togglePassword");
+            const passwordField = document.getElementById("id_password");
+
+            if (togglePassword && passwordField) {
+                togglePassword.addEventListener("click", () => {
+                    const isPassword = passwordField.getAttribute("type") === "password";
+                    passwordField.setAttribute("type", isPassword ? "text" : "password");
+
+                    togglePassword.classList.toggle("fa-eye");
+                    togglePassword.classList.toggle("fa-eye-slash");
+                });
+            }
+        });
+    </script>
 </body>
 </html>

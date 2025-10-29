@@ -7,7 +7,7 @@ from .forms import LoginForm, RegisterForm, PerfilUsuarioForm, PerfilForm
 from .models import Perfil
 from django.conf import settings
 import os
-from apps.administracion.utils import actualizar_cuotas_vencidas
+from datetime import timedelta
 
 # --- Iniciar sesión ---
 def login_view(request):
@@ -16,21 +16,30 @@ def login_view(request):
         if form.is_valid():
             username = form.cleaned_data.get('username')
             password = form.cleaned_data.get('password')
+            recordar = form.cleaned_data.get('recordar')  # ✅ nuevo campo
+
             user = authenticate(request, username=username, password=password)
+
             if user is not None:
                 login(request, user)
 
-                # ✅ Al iniciar sesión, actualizamos cuotas vencidas
-                actualizar_cuotas_vencidas()
+                # ✅ Configurar duración de la sesión
+                if recordar:
+                    # 🔹 Mantener sesión iniciada (30 días o hasta cerrar navegador)
+                    request.session.set_expiry(timedelta(days=30))
+                else:
+                    # ⏰ Cerrar sesión tras 20 minutos de inactividad
+                    request.session.set_expiry(timedelta(minutes=20))
 
                 return redirect('home')
             else:
                 return render(request, 'autenticacion/iniciar_sesion.html', {
                     'form': form,
-                    'error': 'Credenciales inválidas'
+                    'error': 'El nombre de usuario o la contraseña no son correctos. Por favor, verificá tus datos e intentá nuevamente.'
                 })
     else:
         form = LoginForm()
+
     return render(request, 'autenticacion/iniciar_sesion.html', {'form': form})
 
 # --- Crear usuarios (solo superusuario) ---
@@ -50,7 +59,7 @@ def register_view(request):
 # --- Cerrar sesión ---
 def logout_view(request):
     logout(request)
-    return redirect('home')
+    return redirect('iniciar_sesion')
 
 # --- Editar perfil (nombre, apellido, correo, foto) ---
 @login_required

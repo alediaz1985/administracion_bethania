@@ -50,9 +50,19 @@ body {
 
 .alumnos-table th {
     background-color: #000;
+    
 }
 
-.alumnos-table th,
+.alumnos-table th {
+    padding: 12px;
+    border-bottom: 1px solid #bbbbbb;  /* línea horizontal */
+    border-right: 1px solid #bbbbbb;   /* línea vertical entre columnas */
+    font-size: 13px;
+    word-wrap: break-word;
+    max-width: 200px;
+    text-align: center;
+}
+
 .alumnos-table td {
     padding: 12px;
     text-align: left;
@@ -507,6 +517,38 @@ td.acciones {
 }
 
 /* ==========================================================
+   🎓 ESTADO DE INSCRIPCIÓN — estilo tipo badge
+========================================================== */
+.alumnos-table td:nth-child(8),  /* 📌 Ajustá el número si cambia el orden de columnas */
+.alumnos-table th:nth-child(8) {
+  text-align: center;       /* Centra el contenido horizontalmente */
+  width: 1%;                /* Deja que se ajuste automáticamente */
+  white-space: nowrap;      /* Evita que el texto se corte en varias líneas */
+}
+
+.badge {
+  padding: 0.4rem 0.6rem;
+  border-radius: 5px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  display: inline-block;
+  text-align: center;
+  min-width: auto;
+}
+
+.badge.bg-success {
+  background: #e3f6e3;
+  color: #267c2e;
+  border: 1px solid #b4e2b4;
+}
+
+.badge.bg-secondary {
+  background: #f1f1f1;
+  color: #b90e0a;
+  border: 1px solid #dab9b9;
+}
+
+/* ==========================================================
    📱 MEDIA QUERIES (Responsivo)
 ========================================================== */
 @media (max-width: 1366px) {
@@ -548,6 +590,10 @@ td.acciones {
 
     .search-box input {
         font-size: 12px;
+    }
+
+    .badge {
+        font-size: 0.75rem;
     }
 }
 

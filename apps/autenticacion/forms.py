@@ -5,8 +5,30 @@ from .models import Perfil
 
 # --- Login ---
 class LoginForm(forms.Form):
-    username = forms.CharField(label='Nombre de usuario')
-    password = forms.CharField(widget=forms.PasswordInput, label='Contraseña')
+    username = forms.CharField(
+        label='Nombre de usuario',
+        widget=forms.TextInput(attrs={
+            'placeholder': 'Ingrese su usuario',
+            'class': 'form-control'
+        })
+    )
+    password = forms.CharField(
+        label='Contraseña',
+        widget=forms.PasswordInput(attrs={
+            'placeholder': 'Ingrese su contraseña',
+            'class': 'form-control',
+            'id': 'id_password'  # 👈 importante para el icono de ojo
+        })
+    )
+
+    # ✅ Nuevo campo
+    recordar = forms.BooleanField(
+        required=False,
+        label='Mantener sesión iniciada',
+        widget=forms.CheckboxInput(attrs={
+            'class': 'form-check-input',
+        })
+    )
 
 # --- Registro (solo superuser lo usa) ---
 class RegisterForm(UserCreationForm):

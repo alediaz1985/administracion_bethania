@@ -21,14 +21,10 @@ from django.shortcuts import render
 from apps.administracion_alumnos.models import Estudiante
 from django.templatetags.static import static 
 from django.http import JsonResponse
-
 from googleapiclient.http import MediaIoBaseDownload
 from io import FileIO
-
 from django.contrib.auth.decorators import login_required
-
 from reportlab.lib.units import cm, inch
-
 from .models import (
     Estudiante, Inscripcion, InformacionAcademica, ContactoEstudiante,
     SaludEstudiante, Responsable, Documentacion, EstadoDocumentacion
@@ -37,18 +33,19 @@ from .utils import (
     get_institucion, get_logo_path, logo_flowable, foto_estudiante_flowable,
     styleset, table_style_base, table_style_header, fmt, fmt_bool
 )
-
-from apps.administracion.models import Cuota
+from apps.administracion.models import Cuota, InscripcionAdministrativa
 
 
 # ----------------FUNCIONA------------------------------
+from apps.administracion.models import InscripcionAdministrativa
+
 def estudiante_lista(request):
     # Trae todos los estudiantes con sus relaciones
     estudiantes = Estudiante.objects.select_related(
         'inscripcion', 'estado_documentacion'
     ).all()
 
-    # Filtra por estado (pendiente / aprobado)
+    # 🔹 Filtra por estado (pendiente / aprobado)
     estudiantes_pendientes = estudiantes.filter(
         estado_documentacion__estado='Pendiente'
     )
@@ -56,14 +53,22 @@ def estudiante_lista(request):
         estado_documentacion__estado='Aprobado'
     )
 
+    # 🔹 Agrega atributo dinámico "inscripto" a cada estudiante de TODAS las listas
+    for grupo in [estudiantes, estudiantes_pendientes, estudiantes_aprobados]:
+        for est in grupo:
+            est.inscripto = InscripcionAdministrativa.objects.filter(
+                estudiante=est,
+                activo=True
+            ).exists()
+
     # Renderiza la plantilla con los datos
     return render(request, 'administracion_alumnos/estudiante_list.html', {
         'estudiantes': estudiantes,
         'estudiantes_pendientes': estudiantes_pendientes,
         'estudiantes_aprobados': estudiantes_aprobados,
     })
-# ----------------FUNCIONA---------------------------------
 
+# ----------------FUNCIONA---------------------------------
 def cambiar_estado_documentacion(request, estudiante_id):
     estado_doc = get_object_or_404(EstadoDocumentacion, estudiante_id=estudiante_id)
     estudiante = estado_doc.estudiante

@@ -144,6 +144,57 @@ body {
     text-decoration: underline;
 }
 
+.alert {
+  background-color: #f8d7da;
+  color: #842029;
+  padding: 10px 15px;
+  border-radius: 8px;
+  margin-bottom: 15px;
+  text-align: center;
+  font-size: 0.9rem;
+}
+
+/* ==========================================================
+   ✅ Estilo minimalista: "Mantener sesión iniciada"
+========================================================== */
+.recordar-box {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 20px;
+}
+
+.recordar-label {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+  padding: 6px 12px;
+  border-radius: 8px;
+  transition: background-color 0.2s ease, color 0.2s ease;
+}
+
+.recordar-label:hover {
+  background-color: #f4f4f4; /* sutil cambio de fondo */
+}
+
+.recordar-label input[type="checkbox"] {
+  width: 18px;
+  height: 18px;
+  cursor: pointer;
+  accent-color: #1565C0; /* azul institucional */
+  transition: transform 0.2s ease;
+}
+
+.recordar-label input[type="checkbox"]:hover {
+  transform: scale(1.1); /* leve agrandamiento */
+}
+
+.recordar-text {
+  font-size: 14px;
+  font-weight: 500;
+  color: #333;
+}
+
 /* Medias queries para pantallas de 1366px a 1024px */
 @media (max-width: 1366px) and (min-width: 1024px) {
     .container {
@@ -188,6 +239,10 @@ body {
         font-size: 14px;
         padding: 8px 16px;
     }
+
+    .recordar-text {
+        font-size: 12px;
+    }
 }
 
 /* Medias queries para pantallas de 1024px a 768px */
@@ -230,6 +285,10 @@ body {
     .login-btn {
         font-size: 15px;
         padding: 10px 20px;
+    }
+
+    .alert {
+        font-size: 0.7rem;
     }
 }
 
