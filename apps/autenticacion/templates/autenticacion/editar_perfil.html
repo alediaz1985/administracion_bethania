@@ -19,7 +19,7 @@
         <label for="id_foto" class="foto-label">
           {% if request.user.perfil.foto %}
             <img id="previewFoto"
-                src="{{ request.user.perfil.foto_url }}"
+                src="{% static 'autenticacion/images/usuarios/' %}{{ request.user.perfil.foto }}"
                 alt="Foto de perfil"
                 class="perfil-photo">
           {% else %}
