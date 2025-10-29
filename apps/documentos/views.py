@@ -33,6 +33,11 @@ logger = logging.getLogger(__name__)
 
 pytesseract.pytesseract.tesseract_cmd = r'C:\Program Files\Tesseract-OCR\tesseract.exe'
 
+
+def home_documentos(request):
+    return render(request, 'documentos/home.html')
+
+
 def preprocess_image(image_path):
     try:
         image = Image.open(image_path)
@@ -388,7 +393,8 @@ from .google_drive import get_drive_service
 DRIVE_FOLDER_ID = '1BGucPl_22qKLBcEnyQpQRR_BBTjqPEc_zzmwJzcF-hkJQR7USfZPqUrTAmhTemD8OoQqhy3Z'
 
 def list_files(request):
-    drive_service = authenticate_drive()
+    #drive_service = authenticate_drive()
+    drive_service = get_drive_service()
     query = f"'{DRIVE_FOLDER_ID}' in parents and trashed = false"
     results = drive_service.files().list(q=query, fields="files(id, name)").execute()
     files = results.get('files', [])
@@ -419,7 +425,8 @@ def consulta_comprobantes(request):
             fecha_fin = form.cleaned_data.get('fecha_fin')
 
             # Lógica de búsqueda en Google Drive
-            drive_service = authenticate_drive()
+            #drive_service = authenticate_drive()
+            drive_service = get_drive_service()
             query = "trashed = false"
 
             # Filtrar por consulta si existe
@@ -460,7 +467,8 @@ def vaciar_carpeta_drive(request):
     """
     if request.method == 'POST':
         try:
-            drive_service = authenticate_drive()
+            #drive_service = authenticate_drive()
+            drive_service = get_drive_service()
             query = "trashed = false"
             results = drive_service.files().list(q=query, fields="files(id)").execute()
             files = results.get('files', [])

@@ -26,6 +26,10 @@ urlpatterns = [
         'administracion/',
         include(('apps.administracion.urls', 'administracion'), namespace='administracion')
     ),
+    path(
+        'documentos/',
+        include(('apps.documentos.urls', 'documentos'), namespace='documentos')
+    ),
 ]
 
 
