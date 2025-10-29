@@ -155,19 +155,33 @@ body {
 }
 
 /* ==========================================================
-   📋 FORMULARIO DE INSCRIPCIÓN
+   🧩 CONTENEDOR PRINCIPAL DEL FORMULARIO + MONTOS
+========================================================== */
+.registro-container {
+  display: grid;
+  grid-template-columns: 60% 38%;
+  gap: 2%;
+  align-items: start;
+  margin-top: 2rem;
+}
+
+/* ==========================================================
+   📋 FORMULARIO DE INSCRIPCIÓN (columna izquierda)
 ========================================================== */
 .form-inscripcion {
-  margin-top: 1.8rem;
-  border-top: 2px solid var(--azul);
-  padding-top: 1.5rem;
+  border: 1px solid var(--borde);
+  border-radius: 10px;
+  background: #fff;
+  padding: 1.5rem 1.8rem;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
 }
 
 .form-inscripcion h3 {
   color: var(--azul);
-  font-size: 1.05rem;
+  font-size: 1.1rem;
   font-weight: 600;
-  margin-bottom: 1rem;
+  margin-bottom: 1.2rem;
+  text-align: center;
 }
 
 .form-inscripcion table {
@@ -175,24 +189,22 @@ body {
   border-collapse: collapse;
   background: #fff;
   border-radius: 10px;
-  border: 1px solid var(--borde);
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
 }
 
 .form-inscripcion th {
-  width: 28%;
+  width: 32%;
   text-align: left;
-  background: #e8ebf0;
+  background: #f2f4f8;
   color: var(--azul);
   font-weight: 600;
   font-size: 0.9rem;
   padding: 10px 14px;
-  border-bottom: 1px solid #ccc;
+  border-bottom: 1px solid #ddd;
 }
 
 .form-inscripcion td {
   padding: 10px 14px;
-  border-bottom: 1px solid #ccc;
+  border-bottom: 1px solid #ddd;
 }
 
 .form-inscripcion select,
@@ -201,7 +213,7 @@ body {
   border: 1px solid var(--borde);
   border-radius: 6px;
   padding: 6px 8px;
-  font-size: 0.88rem;
+  font-size: 0.9rem;
   color: var(--texto);
   background: #fff;
   transition: all 0.25s ease;
@@ -214,9 +226,156 @@ body {
   outline: none;
 }
 
-.form-inscripcion textarea {
-  resize: none;
-  min-height: 70px;
+/* ==========================================================
+   💰 MONTOS (columna derecha — versión minimalista premium mejorada)
+========================================================== */
+.montos-container {
+  background: #ffffff;
+  border: 1px solid #e3e6ec;
+  border-radius: 14px;
+  padding: 2rem 2rem 1.5rem;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.04);
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  justify-content: space-between;
+  transition: box-shadow 0.3s ease, transform 0.2s ease;
+}
+
+.montos-container:hover {
+  box-shadow: 0 4px 18px rgba(0, 0, 0, 0.08);
+  transform: translateY(-2px);
+}
+
+/* --- Título --- */
+.montos-container h3 {
+  font-size: 1.05rem;
+  color: var(--azul);
+  font-weight: 600;
+  text-align: left;
+  margin-bottom: 1.2rem;
+  padding-bottom: 0.6rem;
+  border-bottom: 1px solid #e2e5ea;
+  letter-spacing: 0.3px;
+}
+
+/* --- Bloque de información --- */
+.montos-info {
+  display: flex;
+  flex-direction: column;
+  gap: 1.1rem;
+  margin-bottom: 1rem;
+}
+
+/* --- Línea de datos --- */
+.montos-info p {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 0.93rem;
+  margin: 0;
+  padding-bottom: 0.4rem;
+  border-bottom: 1px dashed #d8d8d8;
+  color: #2c2c2c;
+}
+
+.montos-info p:last-child {
+  border-bottom: none;
+}
+
+/* --- Etiquetas (izquierda) --- */
+.montos-info p strong {
+  color: #4a4a4a;
+  font-weight: 500;
+}
+
+/* --- Valores (derecha) --- */
+.montos-info span {
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: 0.3px;
+  transition: color 0.25s ease;
+}
+
+/* 🔵 Monto general */
+#monto-inscripcion,
+#monto-cuota {
+  color: var(--azul);
+}
+
+/* 🔴 Monto de beca */
+#monto-beca {
+  color: #c62828;
+}
+
+/* 🟢🔴 Total dinámico */
+#monto-total {
+  font-size: 1rem;
+  font-weight: 700;
+  transition: color 0.25s ease;
+}
+
+/* Verde positivo / Rojo negativo */
+#monto-total.positivo {
+  color: #2e7d32; /* verde */
+}
+
+#monto-total.negativo {
+  color: #c62828; /* rojo */
+}
+
+/* --- Total final destacado --- */
+.montos-info .total {
+  margin-top: 0.5rem;
+  padding-top: 1rem;
+  border-top: 2px solid var(--azul);
+}
+
+/* --- Alerta de beca --- */
+.alerta-beca {
+  display: none;
+  background: #fff7e0;
+  border-left: 4px solid #e1a600;
+  color: #7a5200;
+  font-size: 0.88rem;
+  padding: 0.9rem 1rem;
+  border-radius: 6px;
+  margin-top: 1.3rem;
+  line-height: 1.4;
+  animation: aparecer 0.3s ease;
+}
+
+@keyframes aparecer {
+  from { opacity: 0; transform: translateY(-3px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* --- Sutil animación al actualizar valores --- */
+.montos-info span.actualizado {
+  animation: flashValor 0.6s ease;
+}
+
+@keyframes flashValor {
+  0% { background: #fff3b0; }
+  100% { background: transparent; }
+}
+
+/* ==========================================================
+   ⚠️ ALERTA DE BECA
+========================================================== */
+.alerta-beca {
+  display: none;
+  margin-top: 1rem;
+  background-color: #fff8e1;
+  color: #7a5200;
+  border: 1px solid #f5d17a;
+  border-left: 6px solid #d99c00;
+  padding: 0.8rem 1rem;
+  border-radius: 8px;
+  font-size: 0.9rem;
+  line-height: 1.4;
+  font-weight: 500;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
 }
 
 /* ==========================================================
@@ -231,19 +390,19 @@ body {
 }
 
 .btn-inscribir {
-  background: var(--verde);
+  background: #2e7d32;
   color: #fff;
   border: none;
   border-radius: 6px;
   font-weight: 500;
-  font-size: 0.85rem;
-  padding: 0.6rem 1.4rem;
+  font-size: 0.9rem;
+  padding: 0.7rem 1.6rem;
   cursor: pointer;
   transition: all 0.25s ease;
 }
 
 .btn-inscribir:hover {
-  background: #1e6228;
+  background: #256828;
   transform: translateY(-1px);
 }
 

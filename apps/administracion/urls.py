@@ -36,4 +36,6 @@ urlpatterns = [
     path('pago/registrar/<int:cuota_id>/', views.registrar_pago, name='registrar_pago'),
     path('pago/deshacer/<int:cuota_id>/', views.deshacer_pago, name='deshacer_pago'),
 
+    path('generar-pdf-deuda/<int:estudiante_id>/', views.generar_pdf_deuda, name='generar_pdf_deuda'),
+
 ]

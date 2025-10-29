@@ -12,6 +12,12 @@ from django.db.models import Q
 from django.db import transaction
 from django.contrib.auth.decorators import login_required
 import json
+from reportlab.lib.pagesizes import A4
+from reportlab.lib import colors
+from reportlab.lib.units import cm
+from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer, Table, TableStyle
+from reportlab.lib.styles import getSampleStyleSheet
+from datetime import datetime
 
 def home(request):
     return render(request, 'home.html')
@@ -731,3 +737,64 @@ def deshacer_pago(request, cuota_id):
 
         return redirect('ver_datos_estudiante', pk=cuota.inscripcion.estudiante.id)
 
+def generar_pdf_deuda(request, estudiante_id):
+    estudiante = Estudiante.objects.get(pk=estudiante_id)
+
+    todas = request.GET.get('todas', False)
+    desde = request.GET.get('desde')
+    hasta = request.GET.get('hasta')
+
+    cuotas = Cuota.objects.filter(inscripcion__estudiante=estudiante).order_by('anio', 'mes')
+
+    if not todas and desde and hasta:
+        cuotas = cuotas.filter(mes__gte=desde, mes__lte=hasta)
+
+    response = HttpResponse(content_type='application/pdf')
+    response['Content-Disposition'] = f'inline; filename="estado_deuda_{estudiante.apellidos_estudiante}.pdf"'
+
+    doc = SimpleDocTemplate(response, pagesize=A4)
+    styles = getSampleStyleSheet()
+    elements = []
+
+    titulo = Paragraph(f"<b>U.E.G.P. N° 82, Hogar de Bethania</b><br/><br/>", styles['Title'])
+    subtitulo = Paragraph(
+        f"<b>Estado de Deuda al {datetime.now().strftime('%d/%m/%Y')}</b><br/><br/>"
+        f"<b>Estudiante:</b> {estudiante.apellidos_estudiante}, {estudiante.nombres_estudiante}<br/>"
+        f"<b>CUIL:</b> {estudiante.cuil_estudiante}<br/><br/>",
+        styles['Normal']
+    )
+    elements.extend([titulo, subtitulo, Spacer(1, 12)])
+
+    data = [["Mes", "Año", "Monto Final", "Estado", "Vencimiento"]]
+    total_deuda = 0
+
+    for cuota in cuotas:
+        if cuota.estado != "Pagada":
+            total_deuda += float(cuota.monto_final)
+        data.append([
+            cuota.mes,
+            cuota.anio,
+            f"${cuota.monto_final}",
+            cuota.estado,
+            cuota.fecha_vencimiento.strftime("%d/%m/%Y"),
+        ])
+
+    tabla = Table(data, colWidths=[2*cm, 2*cm, 3*cm, 3*cm, 4*cm])
+    tabla.setStyle(TableStyle([
+        ('BACKGROUND', (0, 0), (-1, 0), colors.HexColor("#1a2942")),
+        ('TEXTCOLOR', (0, 0), (-1, 0), colors.white),
+        ('ALIGN', (0, 0), (-1, -1), 'CENTER'),
+        ('GRID', (0, 0), (-1, -1), 0.5, colors.grey),
+        ('BACKGROUND', (0, 1), (-1, -1), colors.whitesmoke),
+    ]))
+
+    elements.append(tabla)
+    elements.append(Spacer(1, 20))
+
+    total_paragraph = Paragraph(
+        f"<b>Total Adeudado:</b> ${total_deuda:.2f}", styles['Heading4']
+    )
+    elements.append(total_paragraph)
+
+    doc.build(elements)
+    return response

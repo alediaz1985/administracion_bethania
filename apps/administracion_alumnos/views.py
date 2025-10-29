@@ -137,6 +137,12 @@ def ver_datos_estudiante(request, pk):
         inscripcion__estudiante=estudiante
     ).select_related('inscripcion', 'inscripcion__nivel', 'inscripcion__ciclo').order_by('anio', 'mes')
 
+    # 🔹 Lista de meses (marzo a diciembre)
+    meses = [
+        'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio',
+        'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'
+    ]
+
     # 🔹 Renderizar vista
     return render(
         request,
@@ -145,6 +151,7 @@ def ver_datos_estudiante(request, pk):
             'estudiante': estudiante,
             'image_url': foto_url,
             'cuotas': cuotas,  # ✅ enviamos las cuotas al template
+            'meses': meses,  # ✅ enviamos la lista al template
         }
     )
 

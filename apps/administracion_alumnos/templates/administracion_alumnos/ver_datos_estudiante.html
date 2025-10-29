@@ -252,6 +252,59 @@
   <!-- ===== CUOTAS ===== -->
   <div class="tab-content" id="tab-cuotas">
     {% if cuotas %}
+
+    <!-- 🔹 MODAL PARA ELEGIR RANGO -->
+    <div class="modal fade" id="modalGenerarPDF" tabindex="-1" aria-labelledby="modalGenerarPDFLabel" aria-hidden="true">
+      <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content form-modal">
+          <div class="modal-header">
+            <h5 class="modal-title" id="modalGenerarPDFLabel">Generar Estado de Deuda</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+          </div>
+
+          <div class="modal-body">
+            <form id="formGenerarPDF" method="GET" action="{% url 'administracion:generar_pdf_deuda' estudiante.id %}" target="_blank">
+
+              <!-- 📅 Selección de rango -->
+              <div class="rango-meses">
+                <div>
+                  <label for="desde">Desde</label>
+                  <select name="desde" id="desde" class="form-select">
+                    {% for mes in meses %}
+                      <option value="{{ forloop.counter|add:2 }}">{{ mes }}</option>
+                    {% endfor %}
+                  </select>
+                </div>
+                <div>
+                  <label for="hasta">Hasta</label>
+                  <select name="hasta" id="hasta" class="form-select">
+                    {% for mes in meses %}
+                      <option value="{{ forloop.counter|add:2 }}">{{ mes }}</option>
+                    {% endfor %}
+                  </select>
+                </div>
+              </div>
+
+              <!-- ✅ Checkbox -->
+              <div class="form-check">
+                <input class="form-check-input" type="checkbox" id="todas" name="todas">
+                <label class="form-check-label" for="todas">Generar deuda completa</label>
+              </div>
+
+              <!-- 🧭 Botones -->
+              <div class="modal-actions">
+                <button type="button" class="btn btn-light" data-bs-dismiss="modal">Cancelar</button>
+                <button type="submit" class="btn btn-success">
+                  Generar PDF
+                </button>
+              </div>
+
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+
     <table>
       <thead>
         <tr>
@@ -305,6 +358,13 @@
         {% endfor %}
       </tbody>
     </table>
+
+    <!-- 🔹 BOTÓN GENERAR PDF -->
+    <div class="pdf-actions">
+      <button class="btn-pdf" data-bs-toggle="modal" data-bs-target="#modalGenerarPDF">
+        <i class="fas fa-file-pdf"></i> Generar Estado de Deuda
+      </button>
+    </div>
     {% else %}
       <p>No hay cuotas registradas.</p>
     {% endif %}
@@ -743,6 +803,19 @@ document.addEventListener("DOMContentLoaded", () => {
         setTimeout(() => toast.remove(), 400);
       }, 4000);
     }, delay);
+  });
+});
+</script>
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+  const todas = document.getElementById('todas');
+  const desde = document.getElementById('desde');
+  const hasta = document.getElementById('hasta');
+
+  todas.addEventListener('change', () => {
+    const disabled = todas.checked;
+    desde.disabled = disabled;
+    hasta.disabled = disabled;
   });
 });
 </script>

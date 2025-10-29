@@ -838,6 +838,210 @@ body {
   to { opacity: 0; transform: translateY(-10px); }
 }
 
+/* ==========================================================
+   📄 BOTÓN PDF — Estado de Deuda (debajo de tabla Cuotas)
+========================================================== */
+
+#tab-cuotas .pdf-actions {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  margin-top: 1.3rem;
+  padding-top: 1rem;
+  border-top: 1px solid var(--borde); /* 🔹 separador sutil */
+}
+
+#tab-cuotas .btn-pdf {
+  background: var(--azul);
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  padding: 0.6rem 1rem;
+  font-size: 0.85rem;
+  font-weight: 500;
+  letter-spacing: 0.3px;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  transition: background 0.3s ease, transform 0.2s ease, box-shadow 0.2s ease;
+  cursor: pointer;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.08);
+}
+
+#tab-cuotas .btn-pdf i {
+  font-size: 1rem;
+}
+
+#tab-cuotas .btn-pdf:hover {
+  background: #22385d;
+  transform: translateY(-1px);
+  box-shadow: 0 3px 8px rgba(0, 0, 0, 0.1);
+}
+
+#tab-cuotas .btn-pdf:focus {
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(26, 41, 66, 0.25);
+}
+
+/* ==========================================================
+   💰 MODAL ESTADO DE DEUDA — Versión final refinada Bethania
+========================================================== */
+
+/* --- 🔧 Controla el fondo oscuro del modal (intensidad aquí) --- */
+.modal-backdrop.show {
+  background-color: rgba(0, 0, 0, 0.04); /* 🔹 MODIFICÁ ESTE VALOR (0.45 = intensidad del fondo) */
+  backdrop-filter: blur(3px);
+}
+
+/* --- Centrado y estructura del modal --- */
+#modalGenerarPDF .modal-dialog {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  margin: 0;
+}
+
+/* --- Caja principal --- */
+#modalGenerarPDF .modal-content.form-modal {
+  background: #fff;
+  border-radius: 16px;
+  padding: 2rem 2.2rem 2.2rem;
+  border: 1px solid rgba(0, 0, 0, 0.05);
+  box-shadow: 0 10px 35px rgba(0, 0, 0, 0.25);
+  font-family: 'Inter', sans-serif;
+  max-width: 480px;
+  width: 100%;
+  animation: modalZoomIn 0.3s ease;
+}
+
+/* --- Cabecera --- */
+#modalGenerarPDF .modal-header {
+  border: none;
+  padding: 0;
+  margin-bottom: 1.5rem;
+  text-align: center;
+  position: relative;
+}
+
+#modalGenerarPDF .modal-title {
+  color: var(--azul);
+  font-weight: 700;
+  font-size: 1.2rem;
+  letter-spacing: 0.3px;
+}
+
+/* --- Botón cerrar (X) --- */
+#modalGenerarPDF .btn-close {
+  position: absolute;
+  top: 0;
+  right: 0;
+  background: none;
+  border: none;
+  font-size: 1.1rem;
+  color: var(--texto);
+  opacity: 0.6;
+  transition: opacity 0.2s ease, transform 0.2s ease;
+}
+#modalGenerarPDF .btn-close:hover {
+  opacity: 1;
+  transform: scale(1.15);
+}
+
+/* --- Cuerpo del formulario --- */
+#modalGenerarPDF .modal-body {
+  padding: 0;
+}
+
+/* --- Grilla para los selects (Desde / Hasta) --- */
+#modalGenerarPDF .rango-meses {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+  margin-bottom: 1.4rem;
+}
+
+#modalGenerarPDF label {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--azul);
+  display: block;
+  margin-bottom: 0.3rem;
+}
+
+#modalGenerarPDF .form-select {
+  width: 100%;
+  border: 1px solid #c4c8ce;
+  border-radius: 8px;
+  padding: 8px 10px;
+  font-size: 0.9rem;
+  background: #fff;
+  color: var(--texto);
+  transition: all 0.25s ease;
+}
+#modalGenerarPDF .form-select:focus {
+  border-color: var(--azul);
+  box-shadow: 0 0 0 3px rgba(26, 41, 66, 0.2);
+  outline: none;
+}
+
+/* --- Checkbox + texto en la misma fila --- */
+#modalGenerarPDF .form-check {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 1.8rem;
+}
+#modalGenerarPDF .form-check-input {
+  width: 1.1rem;
+  height: 1.1rem;
+  accent-color: var(--azul);
+  cursor: pointer;
+}
+#modalGenerarPDF .form-check-label {
+  font-size: 0.9rem;
+  color: var(--texto);
+  cursor: pointer;
+}
+
+/* --- Botones inferiores (Generar / Cancelar) --- */
+#modalGenerarPDF .modal-actions {
+  display: flex;
+  justify-content: center; /* ✅ Centra los botones horizontalmente */
+  gap: 1rem;
+  margin-top: 1.5rem;
+}
+
+#modalGenerarPDF .btn {
+  border-radius: 10px;
+  font-size: 0.9rem;
+  font-weight: 500;
+  padding: 0.6rem 1.3rem;
+  transition: all 0.25s ease;
+}
+
+/* Botón principal */
+#modalGenerarPDF .btn-success {
+  background: var(--azul);
+  color: #fff;
+  border: none;
+  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.15);
+}
+#modalGenerarPDF .btn-success:hover {
+  background: #22385d;
+  transform: translateY(-2px);
+}
+
+/* Botón secundario */
+#modalGenerarPDF .btn-light {
+  background: #f3f3f3;
+  color: var(--texto);
+  border: 1px solid #dcdcdc;
+}
+#modalGenerarPDF .btn-light:hover {
+  background: #e8e8e8;
+}
+
 /* ============================
    📱 MEDIA QUERY
    Controla tamaño general
