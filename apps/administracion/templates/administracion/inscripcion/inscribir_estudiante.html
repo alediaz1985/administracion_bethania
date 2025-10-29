@@ -167,12 +167,16 @@
     </div>
     <!-- 💰 Columna Derecha: Montos dinámicos -->
     <div class="montos-container">
-      <h3>Montos del Nivel Seleccionado</h3>
+      <h3>💰 Montos del Nivel Seleccionado</h3>
       <div class="montos-info">
-        <p><strong>Inscripción:</strong> <span id="monto-inscripcion">—</span></p>
-        <p><strong>Cuota mensual:</strong> <span id="monto-cuota">—</span></p>
-        <p><strong>Beca aplicada:</strong> <span id="monto-beca">—</span></p>
-        <p class="total"><strong>Total final:</strong> <span id="monto-total">—</span></p>
+        <p><strong>Monto de Inscripción:</strong> <span id="monto-inscripcion">—</span></p>
+        <p><strong>Monto de Cuotas:</strong> <span id="monto-cuota">—</span></p>
+        <p><strong>Beca asignada:</strong> <span id="monto-beca">—</span></p>
+        <p class="total"><strong>Total de la cuota a pagar todos los meses:</strong> <span id="monto-total">—</span></p>
+      </div>
+      <div id="alerta-beca" class="alerta-beca">
+        ⚠️ El monto de la beca supera o iguala el valor de la cuota mensual.
+        <br>Por favor, revise la configuración de la beca.
       </div>
     </div>
   </div>  
@@ -189,112 +193,95 @@
 
 <script>
 document.addEventListener('DOMContentLoaded', function () {
-  // 1) Cargar JSON de forma segura
-  var montosScript = document.getElementById('montos-json');
-  var montosData = [];
-  if (montosScript && montosScript.textContent) {
-    try {
-      montosData = JSON.parse(montosScript.textContent);
-    } catch (e) {
-      montosData = [];
-    }
+  let montosData = [];
+
+  try {
+    montosData = JSON.parse(document.getElementById('montos-json').textContent);
+  } catch (err) {
+    console.error('❌ Error parseando JSON:', err);
   }
 
-  // 2) Tomar referencias de elementos
-  var nivelSelect = document.querySelector('select[name="nivel"]');
-  var cicloSelect = document.querySelector('select[name="ciclo"]');
-  var becaSelect  = document.querySelector('select[name="beca"]');
+  console.log('✅ montosData:', montosData, Array.isArray(montosData));
 
-  var spanInscripcion = document.getElementById('monto-inscripcion');
-  var spanCuota       = document.getElementById('monto-cuota');
-  var spanBeca        = document.getElementById('monto-beca');
-  var spanTotal       = document.getElementById('monto-total');
+  const cicloSelect = document.querySelector('select[name="ciclo"]');
+  const nivelSelect = document.querySelector('select[name="nivel"]');
+  const becaSelect  = document.querySelector('select[name="beca"]');
 
-  // Si faltan elementos clave, no seguimos
-  if (!nivelSelect || !cicloSelect || !spanInscripcion || !spanCuota || !spanBeca || !spanTotal) {
-    return;
-  }
+  const spanInscripcion = document.getElementById('monto-inscripcion');
+  const spanCuota       = document.getElementById('monto-cuota');
+  const spanBeca        = document.getElementById('monto-beca');
+  const spanTotal       = document.getElementById('monto-total');
 
-  var cuotaBase = 0;
+  let cuotaBase = 0;
 
-  function formatear(valor) {
-    try {
-      return '$' + Number(valor).toLocaleString('es-AR', { minimumFractionDigits: 2 });
-    } catch (e) {
-      var n = Math.round(Number(valor) * 100) / 100;
-      return '$' + n;
-    }
-  }
+  const formatear = (v) => `$${Number(v).toLocaleString('es-AR', { minimumFractionDigits: 2 })}`;
 
-  function limpiarMontos() {
+  function limpiar() {
     spanInscripcion.textContent = '—';
-    spanCuota.textContent       = '—';
-    spanBeca.textContent        = '—';
-    spanTotal.textContent       = '—';
+    spanCuota.textContent = '—';
+    spanBeca.textContent = '—';
+    spanTotal.textContent = '—';
   }
 
   function actualizarMontos() {
-    var cicloId = parseInt(cicloSelect.value || '0', 10);
-    var nivelId = parseInt(nivelSelect.value || '0', 10);
+    const cicloId = parseInt(cicloSelect.value);
+    const nivelId = parseInt(nivelSelect.value);
 
-    // Buscar registro en montosData
-    var monto = null;
-    for (var i = 0; i < montosData.length; i++) {
-      var m = montosData[i];
-      if (m.nivel_id === nivelId && m.ciclo_id === cicloId) {
-        monto = m;
-        break;
-      }
-    }
-
-    if (!monto) {
-      limpiarMontos();
+    if (isNaN(cicloId) || isNaN(nivelId)) {
+      limpiar();
       return;
     }
 
-    cuotaBase = Number(monto.monto_cuota) || 0;
-    spanInscripcion.textContent = formatear(monto.monto_inscripcion);
-    spanCuota.textContent       = formatear(cuotaBase);
+    console.log('🔍 Buscando ciclo:', cicloId, 'nivel:', nivelId);
 
-    // Beca
-    var becaTexto = '';
-    if (becaSelect && becaSelect.options && becaSelect.selectedIndex >= 0) {
-      becaTexto = becaSelect.options[becaSelect.selectedIndex].textContent || '';
+    const monto = montosData.find(m => m.ciclo_id === cicloId && m.nivel_id === nivelId);
+
+    if (!monto) {
+      limpiar();
+      return;
     }
 
-    // Reset beca
-    spanBeca.textContent  = '—';
-    spanTotal.textContent = formatear(cuotaBase);
+    cuotaBase = Number(monto.monto_cuota);
+    spanInscripcion.textContent = formatear(monto.monto_inscripcion);
+    spanCuota.textContent = formatear(cuotaBase);
 
-    if (becaTexto.indexOf('Porcentaje') !== -1) {
-      var pctStr = becaTexto.replace(/[^0-9.,]/g, '').replace(',', '.');
-      var porcentaje = parseFloat(pctStr);
-      if (!isNaN(porcentaje)) {
-        var descuento = cuotaBase * (porcentaje / 100);
-        var total     = Math.max(cuotaBase - descuento, 0);
-        spanBeca.textContent  = '-' + formatear(descuento);
-        spanTotal.textContent = formatear(total);
-      }
-    } else if (becaTexto.indexOf('Monto fijo') !== -1) {
-      var fijoStr = becaTexto.replace(/[^0-9.,]/g, '').replace(',', '.');
-      var fijo = parseFloat(fijoStr);
-      if (!isNaN(fijo)) {
-        var total2 = Math.max(cuotaBase - fijo, 0);
-        spanBeca.textContent  = '-' + formatear(fijo);
-        spanTotal.textContent = formatear(total2);
-      }
+    calcularConBeca();
+  }
+
+  function calcularConBeca() {
+    const becaTexto = becaSelect.options[becaSelect.selectedIndex]?.textContent || '';
+    const alertaDiv = document.getElementById('alerta-beca');
+
+    if (cuotaBase === 0) {
+      limpiar();
+      if (alertaDiv) alertaDiv.style.display = 'none';
+      return;
+    }
+
+    let descuento = 0;
+    if (becaTexto.includes('Porcentaje')) {
+      const p = parseFloat(becaTexto.replace(/[^0-9.,]/g, '').replace(',', '.')) || 0;
+      descuento = cuotaBase * (p / 100);
+    } else if (becaTexto.includes('Monto fijo')) {
+      descuento = parseFloat(becaTexto.replace(/[^0-9.,]/g, '').replace(',', '.')) || 0;
+    }
+
+    const total = Math.max(cuotaBase - descuento, 0);
+    spanBeca.textContent = descuento ? `-${formatear(descuento)}` : '—';
+    spanTotal.textContent = formatear(total);
+
+    // ⚠️ Mostrar alerta si la beca es mayor o igual a la cuota
+    if (descuento >= cuotaBase && descuento > 0) {
+      alertaDiv.style.display = 'block';
+    } else {
+      alertaDiv.style.display = 'none';
     }
   }
 
-  // 3) Listeners (solo si existen)
-  if (nivelSelect) nivelSelect.addEventListener('change', actualizarMontos);
-  if (cicloSelect) cicloSelect.addEventListener('change', actualizarMontos);
-  if (becaSelect)  becaSelect.addEventListener('change', actualizarMontos);
-
-  // 4) Calcular al cargar, por si hay valores preseleccionados
-  actualizarMontos();
+  cicloSelect.addEventListener('change', actualizarMontos);
+  nivelSelect.addEventListener('change', actualizarMontos);
+  becaSelect.addEventListener('change', calcularConBeca);
 });
 </script>
-
 
 {% endblock %}

@@ -636,6 +636,7 @@ def inscribir_estudiante(request, estudiante_id):
     # 💵 Datos de montos activos (para mostrar en el form)
     # =====================================================
     montos = MontoNivel.objects.filter(activo=True)
+
     montos_data = [
         {
             "nivel_id": m.nivel.id,
@@ -654,9 +655,12 @@ def inscribir_estudiante(request, estudiante_id):
         'niveles': niveles,
         'subniveles': subniveles,
         'becas': becas,
-        'montos_json': json.dumps(montos_data),
+        # 🔹 sin json.dumps()
+        'montos_json': montos_data,
     }
+
     return render(request, 'administracion/inscripcion/inscribir_estudiante.html', context)
+
 
 @login_required
 def eliminar_inscripcion(request, inscripcion_id):
