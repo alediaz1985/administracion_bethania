@@ -32,14 +32,14 @@
           {% for r in rows %}
             <tr>
               {% if tipo == "estudiantes" %}
-                <td>{% firstof r.id "—" %}</td>
+                <td>{% firstof r.cuil_estudiante r.documento "—" %}</td>
                 <td>{% firstof r.apellidos_estudiante r.apellidos r.last_name "—" %}</td>
                 <td>{% firstof r.nombres_estudiante r.nombres r.first_name "—" %}</td>
-                <td>{% firstof r.cuil_estudiante r.documento "—" %}</td>
+
                 <td>
-                  <a class="btn btn-sm btn-outline-primary"
-                     href="{% url 'dashboard:lista_inscripciones' %}?q={% firstof r.cuil_estudiante r.documento r.id %}">
-                     Ver inscripciones
+                  <a class="btn btn-outline-success"
+                    href="{% url 'ver_datos_estudiante' pk=r.id %}">
+                    Ver ficha
                   </a>
                 </td>
 
