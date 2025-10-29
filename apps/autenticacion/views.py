@@ -23,13 +23,16 @@ def login_view(request):
             if user is not None:
                 login(request, user)
 
+                # ✅ Guardar preferencia del usuario en la sesión
+                request.session['recordar'] = bool(recordar)
+
                 # ✅ Configurar duración de la sesión
                 if recordar:
                     # 🔹 Mantener sesión iniciada (30 días o hasta cerrar navegador)
                     request.session.set_expiry(timedelta(days=30))
                 else:
                     # ⏰ Cerrar sesión tras 20 minutos de inactividad
-                    request.session.set_expiry(timedelta(minutes=20))
+                    request.session.set_expiry(timedelta(minutes=25))
 
                 return redirect('home')
             else:
@@ -58,6 +61,7 @@ def register_view(request):
 
 # --- Cerrar sesión ---
 def logout_view(request):
+    request.session.pop('recordar', None)  # 🔹 elimina la variable si existe
     logout(request)
     return redirect('iniciar_sesion')
 
@@ -100,17 +104,22 @@ def editar_perfil(request):
                 )
                 os.makedirs(destino, exist_ok=True)
 
-                # Nombre de archivo: username + extensión
-                extension = nueva_foto.name.split('.')[-1]
+                # 🔸 Eliminar cualquier foto anterior del usuario (sin importar extensión)
+                for ext in ['jpg', 'jpeg', 'png', 'gif', 'webp']:
+                    archivo_existente = os.path.join(destino, f"{user.username}.{ext}")
+                    if os.path.exists(archivo_existente):
+                        os.remove(archivo_existente)
+
+                # 🔸 Guardar la nueva foto
+                extension = nueva_foto.name.split('.')[-1].lower()
                 nombre_archivo = f"{user.username}.{extension}"
                 ruta_archivo = os.path.join(destino, nombre_archivo)
 
-                # Guardar físicamente
                 with open(ruta_archivo, 'wb+') as f:
                     for chunk in nueva_foto.chunks():
                         f.write(chunk)
 
-                # Guardar en el modelo el nombre del archivo
+                # 🔸 Actualizar el campo en el modelo
                 perfil.foto = nombre_archivo
                 perfil.save()
             else:

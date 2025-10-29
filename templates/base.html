@@ -122,14 +122,40 @@
     </script>
     {% endblock %}
 
-    <!-- 🔹 Cierra sesión automáticamente al cerrar pestaña o navegador -->
     {% if user.is_authenticated %}
+    {{ request.session.recordar|default:False|json_script:"mantener-sesion-data" }}
+
     <script>
-        window.addEventListener('beforeunload', function() {
-            navigator.sendBeacon("{% url 'cerrar_sesion' %}");
-        });
+    (function() {
+        // ✅ Recupera el valor exacto (true/false) desde Django sin errores
+        const mantenerSesion = JSON.parse(
+            document.getElementById("mantener-sesion-data").textContent
+        );
+
+        if (mantenerSesion) return; // si marcó “mantener sesión”, no hacer nada
+
+        let timeout;
+        const INACTIVIDAD_MS = 20 * 60 * 1000; // 1 minuto (para pruebas)
+
+        function cerrarSesion() {
+            fetch("{% url 'cerrar_sesion' %}", { method: "GET" })
+            .then(() => window.location.href = "{% url 'iniciar_sesion' %}");
+        }
+
+        function reiniciarTimer() {
+            clearTimeout(timeout);
+            timeout = setTimeout(cerrarSesion, INACTIVIDAD_MS);
+        }
+
+        ['mousemove', 'keydown', 'click', 'scroll'].forEach(evt =>
+            window.addEventListener(evt, reiniciarTimer)
+        );
+
+        reiniciarTimer();
+    })();
     </script>
     {% endif %}
+
 </body>
 </html>
 
