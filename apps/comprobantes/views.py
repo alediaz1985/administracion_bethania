@@ -188,15 +188,32 @@ def consulta_view(request):
     }
     return render(request, 'comprobantes/consulta.html', context)
 
-def subir_comprobante_view(request):
-    if request.method == 'POST':
-        form = DocumentoForm(request.POST, request.FILES)
+from django.contrib import messages
+from django.shortcuts import render, redirect
+from django.conf import settings
+from .forms import DocumentoForm, ConsultaForm
+
+def subir_comprobante(request):
+    """
+    Subida de comprobantes.
+    - correo se inicializa con settings.INSTITUCION_EMAIL (readonly en el form)
+    - archivo va a /media/documentos/comprobantes/
+    - valida CUILs y relaciones
+    """
+    correo_institucional = getattr(settings, "INSTITUCION_EMAIL", "institucional@hogardebethania.edu.ar")
+
+    if request.method == "POST":
+        form = DocumentoForm(request.POST, request.FILES, correo_institucional=correo_institucional)
         if form.is_valid():
             form.save()
-            return redirect('consulta')
+            messages.success(request, "Comprobante subido correctamente.")
+            return redirect("comprobantes:subir_comprobante")
     else:
-        form = DocumentoForm()
-    return render(request, 'comprobantes/subir_comprobante.html', {'form': form})
+        form = DocumentoForm(correo_institucional=correo_institucional)
+
+    return render(request, "comprobantes/subir_comprobante.html", {"form": form})
+
+
 
 def archivo_existe(ruta_descarga, nombre_archivo):
     archivo_path = os.path.join(ruta_descarga, nombre_archivo)
@@ -218,23 +235,6 @@ def obtener_ruta_archivo(file_name):
     else:
         return None
     
-
-from django.shortcuts import render, redirect
-from .forms import DocumentoForm
-
-def subir_comprobante(request):
-    """
-    Vista para subir comprobantes.
-    """
-    if request.method == 'POST':
-        form = DocumentoForm(request.POST, request.FILES)
-        if form.is_valid():
-            form.save()
-            return redirect('consulta_comprobantes')  # Redirige a consulta_comprobantes tras subir
-    else:
-        form = DocumentoForm()
-
-    return render(request, 'comprobantes/subir_comprobante.html', {'form': form})
 
 
 # Nueva función: Descargar archivos desde Google Drive

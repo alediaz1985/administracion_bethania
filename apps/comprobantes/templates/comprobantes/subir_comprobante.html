@@ -1,14 +1,21 @@
-{% extends 'base.html' %}
-
+{% extends "base.html" %}
+{% load static %}
 {% block title %}Subir Comprobante{% endblock %}
 
 {% block content %}
-<div class="upload-container">
-    <h2>Subir Comprobante</h2>
-    <form method="post" enctype="multipart/form-data">
-        {% csrf_token %}
-        {{ form.as_p }}
-        <button type="submit" class="btn btn-success">Subir</button>
-    </form>
+<div class="container py-4">
+  <h3 class="mb-3">Subir Comprobante</h3>
+
+  {% if messages %}
+    {% for message in messages %}
+      <div class="alert alert-success">{{ message }}</div>
+    {% endfor %}
+  {% endif %}
+
+  <form method="post" enctype="multipart/form-data" class="card p-3 shadow-sm">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit" class="btn btn-primary mt-2">Subir</button>
+  </form>
 </div>
 {% endblock %}
