@@ -11,6 +11,7 @@ from django.utils import timezone
 from django.db.models import Q
 from django.db import transaction
 from django.contrib.auth.decorators import login_required
+import json
 
 def home(request):
     return render(request, 'home.html')
@@ -630,6 +631,20 @@ def inscribir_estudiante(request, estudiante_id):
                 # ✅ Mensaje final y redirección
                 messages.success(request, f"✅ Inscripción y cuotas generadas correctamente ({inscripcion.nivel.nombre} - {anio_ciclo}).")
                 return redirect('ver_datos_estudiante', pk=estudiante.id)
+            
+    # =====================================================
+    # 💵 Datos de montos activos (para mostrar en el form)
+    # =====================================================
+    montos = MontoNivel.objects.filter(activo=True)
+    montos_data = [
+        {
+            "nivel_id": m.nivel.id,
+            "ciclo_id": m.ciclo.id,
+            "monto_inscripcion": float(m.monto_inscripcion),
+            "monto_cuota": float(m.monto_cuota),
+        }
+        for m in montos
+    ]
 
     context = {
         'estudiante': estudiante,
@@ -639,6 +654,7 @@ def inscribir_estudiante(request, estudiante_id):
         'niveles': niveles,
         'subniveles': subniveles,
         'becas': becas,
+        'montos_json': json.dumps(montos_data),
     }
     return render(request, 'administracion/inscripcion/inscribir_estudiante.html', context)
 

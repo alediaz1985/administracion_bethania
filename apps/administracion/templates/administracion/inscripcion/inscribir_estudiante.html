@@ -93,77 +93,89 @@
 
   <!-- 📋 Formulario de Inscripción -->
   {% if puede_inscribir %}
-  <div class="form-inscripcion">
-    <h3>Registrar Inscripción</h3>
-    <form method="post">
-      {% csrf_token %}
+  <div class="registro-container">
+    <div class="form-inscripcion">
+      <h3>Registrar Inscripción</h3>
+      <form method="post">
+        {% csrf_token %}
 
-      <table class="tabla-datos">
-        <tr>
-          <th>Ciclo Lectivo:</th>
-          <td>
-            <select name="ciclo" required>
-              <option value="">Seleccione...</option>
-              {% for ciclo in ciclos %}
-                <option value="{{ ciclo.id }}">{{ ciclo.anio }}</option>
-              {% endfor %}
-            </select>
-          </td>
-        </tr>
-        <tr>
-          <th>Nivel:</th>
-          <td>
-            <select name="nivel" required>
-              <option value="">Seleccione...</option>
-              {% for nivel in niveles %}
-                <option value="{{ nivel.id }}">{{ nivel.nombre }}</option>
-              {% endfor %}
-            </select>
-          </td>
-        </tr>
-        <tr>
-          <th>Subnivel:</th>
-          <td>
-            <select name="subnivel" required>
-              <option value="">Seleccione...</option>
-              {% for subnivel in subniveles %}
-                <option value="{{ subnivel.id }}">{{ subnivel.nombre }}</option>
-              {% endfor %}
-            </select>
-          </td>
-        </tr>
-        <tr>
-          <th>Turno:</th>
-          <td>
-            <select name="turno" required>
-              <option value="">Seleccione...</option>
-              <option value="Mañana">Mañana</option>
-              <option value="Tarde">Tarde</option>
-            </select>
-          </td>
-        </tr>
-        <tr>
-          <th>Beca (opcional):</th>
-          <td>
-            <select name="beca">
-              <option value="">Sin beca</option>
-              {% for beca in becas %}
-                <option value="{{ beca.id }}">{{ beca.nombre }} - {{ beca.tipo }} {{ beca.valor }}</option>
-              {% endfor %}
-            </select>
-          </td>
-        </tr>
-        <tr>
-          <th>Observaciones:</th>
-          <td><textarea name="observaciones" rows="3"></textarea></td>
-        </tr>
-      </table>
+        <table class="tabla-datos">
+          <tr>
+            <th>Ciclo Lectivo:</th>
+            <td>
+              <select name="ciclo" required>
+                <option value="">Seleccione...</option>
+                {% for ciclo in ciclos %}
+                  <option value="{{ ciclo.id }}">{{ ciclo.anio }}</option>
+                {% endfor %}
+              </select>
+            </td>
+          </tr>
+          <tr>
+            <th>Nivel:</th>
+            <td>
+              <select name="nivel" required>
+                <option value="">Seleccione...</option>
+                {% for nivel in niveles %}
+                  <option value="{{ nivel.id }}">{{ nivel.nombre }}</option>
+                {% endfor %}
+              </select>
+            </td>
+          </tr>
+          <tr>
+            <th>Subnivel:</th>
+            <td>
+              <select name="subnivel" required>
+                <option value="">Seleccione...</option>
+                {% for subnivel in subniveles %}
+                  <option value="{{ subnivel.id }}">{{ subnivel.nombre }}</option>
+                {% endfor %}
+              </select>
+            </td>
+          </tr>
+          <tr>
+            <th>Turno:</th>
+            <td>
+              <select name="turno" required>
+                <option value="">Seleccione...</option>
+                <option value="Mañana">Mañana</option>
+                <option value="Tarde">Tarde</option>
+              </select>
+            </td>
+          </tr>
+          <tr>
+            <th>Beca (opcional):</th>
+            <td>
+              <select name="beca">
+                <option value="">Sin beca</option>
+                {% for beca in becas %}
+                  <option value="{{ beca.id }}">{{ beca.nombre }} - {{ beca.tipo }} {{ beca.valor }}</option>
+                {% endfor %}
+              </select>
+            </td>
+          </tr>
+          <tr>
+            <th>Observaciones:</th>
+            <td><textarea name="observaciones" rows="3"></textarea></td>
+          </tr>
+        </table>
 
-      <div class="student-actions">
-        <button type="submit" class="btn-inscribir">Inscribir</button>
+        <div class="student-actions">
+          <button type="submit" class="btn-inscribir">Inscribir</button>
+        </div>
+      </form>
+    </div>
+    <!-- 💰 Columna Derecha: Montos dinámicos -->
+    <div class="montos-container">
+      <h3>Montos del Nivel Seleccionado</h3>
+      <div class="montos-info">
+        <p><strong>Inscripción:</strong> <span id="monto-inscripcion">—</span></p>
+        <p><strong>Cuota mensual:</strong> <span id="monto-cuota">—</span></p>
+        <p><strong>Beca aplicada:</strong> <span id="monto-beca">—</span></p>
+        <p class="total"><strong>Total final:</strong> <span id="monto-total">—</span></p>
       </div>
-    </form>
-  </div>
+    </div>
+  </div>  
   {% endif %}
 
   <!-- 🔘 Volver -->
@@ -172,4 +184,117 @@
   </div>
 
 </div>
+
+{{ montos_json|json_script:"montos-json" }}
+
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+  // 1) Cargar JSON de forma segura
+  var montosScript = document.getElementById('montos-json');
+  var montosData = [];
+  if (montosScript && montosScript.textContent) {
+    try {
+      montosData = JSON.parse(montosScript.textContent);
+    } catch (e) {
+      montosData = [];
+    }
+  }
+
+  // 2) Tomar referencias de elementos
+  var nivelSelect = document.querySelector('select[name="nivel"]');
+  var cicloSelect = document.querySelector('select[name="ciclo"]');
+  var becaSelect  = document.querySelector('select[name="beca"]');
+
+  var spanInscripcion = document.getElementById('monto-inscripcion');
+  var spanCuota       = document.getElementById('monto-cuota');
+  var spanBeca        = document.getElementById('monto-beca');
+  var spanTotal       = document.getElementById('monto-total');
+
+  // Si faltan elementos clave, no seguimos
+  if (!nivelSelect || !cicloSelect || !spanInscripcion || !spanCuota || !spanBeca || !spanTotal) {
+    return;
+  }
+
+  var cuotaBase = 0;
+
+  function formatear(valor) {
+    try {
+      return '$' + Number(valor).toLocaleString('es-AR', { minimumFractionDigits: 2 });
+    } catch (e) {
+      var n = Math.round(Number(valor) * 100) / 100;
+      return '$' + n;
+    }
+  }
+
+  function limpiarMontos() {
+    spanInscripcion.textContent = '—';
+    spanCuota.textContent       = '—';
+    spanBeca.textContent        = '—';
+    spanTotal.textContent       = '—';
+  }
+
+  function actualizarMontos() {
+    var cicloId = parseInt(cicloSelect.value || '0', 10);
+    var nivelId = parseInt(nivelSelect.value || '0', 10);
+
+    // Buscar registro en montosData
+    var monto = null;
+    for (var i = 0; i < montosData.length; i++) {
+      var m = montosData[i];
+      if (m.nivel_id === nivelId && m.ciclo_id === cicloId) {
+        monto = m;
+        break;
+      }
+    }
+
+    if (!monto) {
+      limpiarMontos();
+      return;
+    }
+
+    cuotaBase = Number(monto.monto_cuota) || 0;
+    spanInscripcion.textContent = formatear(monto.monto_inscripcion);
+    spanCuota.textContent       = formatear(cuotaBase);
+
+    // Beca
+    var becaTexto = '';
+    if (becaSelect && becaSelect.options && becaSelect.selectedIndex >= 0) {
+      becaTexto = becaSelect.options[becaSelect.selectedIndex].textContent || '';
+    }
+
+    // Reset beca
+    spanBeca.textContent  = '—';
+    spanTotal.textContent = formatear(cuotaBase);
+
+    if (becaTexto.indexOf('Porcentaje') !== -1) {
+      var pctStr = becaTexto.replace(/[^0-9.,]/g, '').replace(',', '.');
+      var porcentaje = parseFloat(pctStr);
+      if (!isNaN(porcentaje)) {
+        var descuento = cuotaBase * (porcentaje / 100);
+        var total     = Math.max(cuotaBase - descuento, 0);
+        spanBeca.textContent  = '-' + formatear(descuento);
+        spanTotal.textContent = formatear(total);
+      }
+    } else if (becaTexto.indexOf('Monto fijo') !== -1) {
+      var fijoStr = becaTexto.replace(/[^0-9.,]/g, '').replace(',', '.');
+      var fijo = parseFloat(fijoStr);
+      if (!isNaN(fijo)) {
+        var total2 = Math.max(cuotaBase - fijo, 0);
+        spanBeca.textContent  = '-' + formatear(fijo);
+        spanTotal.textContent = formatear(total2);
+      }
+    }
+  }
+
+  // 3) Listeners (solo si existen)
+  if (nivelSelect) nivelSelect.addEventListener('change', actualizarMontos);
+  if (cicloSelect) cicloSelect.addEventListener('change', actualizarMontos);
+  if (becaSelect)  becaSelect.addEventListener('change', actualizarMontos);
+
+  // 4) Calcular al cargar, por si hay valores preseleccionados
+  actualizarMontos();
+});
+</script>
+
+
 {% endblock %}
