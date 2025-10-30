@@ -1,525 +1,371 @@
-from django.shortcuts import render, redirect
-from django.conf import settings
-from .forms import ConsultaForm, DocumentoForm
-from .google_drive import search_files_in_drive, download_file, get_drive_service
-import logging
+from __future__ import annotations
+
+import json
 import os
-from PIL import Image
-import pytesseract
-import fitz  # PyMuPDF
-import re
-import docx
-import openpyxl
+import logging
 from datetime import datetime
-import hashlib
+from typing import Any, Dict, List
+
+from django.conf import settings
+from django.core.files.storage import default_storage
+from django.http import HttpRequest, HttpResponse
+from django.shortcuts import redirect, render
 from django.urls import reverse
-from django.http import HttpResponse, JsonResponse
-from .google_drive import get_drive_service, search_files_in_drive
-from django.contrib.auth.decorators import user_passes_test
-from google.oauth2.credentials import Credentials
-from googleapiclient.discovery import build
-from googleapiclient.errors import HttpError
-
-from django.conf import settings
-from .google_drive import get_drive_service, search_files_in_drive, download_file, vaciar_carpeta_drive
-
-from .google_drive import get_drive_service, descargar_archivos_desde_carpeta
-
-# Configurar ruta al token
-TOKEN_PATH = os.path.join(settings.BASE_DIR, 'token.json')
-
-# Configura el logger
-logger = logging.getLogger(__name__)
-
-pytesseract.pytesseract.tesseract_cmd = r'C:\Program Files\Tesseract-OCR\tesseract.exe'
-
-
-def home_comprobantes(request):
-    return render(request, 'comprobantes/home.html')
-
-
-def preprocess_image(image_path):
-    try:
-        image = Image.open(image_path)
-        # Convertir la imagen a escala de grises
-        image = image.convert('L')
-        # Aplicar filtros adicionales si es necesario
-        image = image.point(lambda x: 0 if x < 150 else 255, '1')  # Cambiar umbral según necesidad
-        return image
-    except Exception as e:
-        logger.error(f"Error al preprocesar la imagen {image_path}: {e}")
-        return None
-
-def extract_text_from_image(image_path):
-    try:
-        # Asegúrate de que las rutas sean válidas
-        image = Image.open(rf'{image_path}')
-        # Configuraciones de Tesseract
-        config = '--oem 3 --psm 6'
-        text = pytesseract.image_to_string(image, config=config, lang='spa')
-        return text
-    except Exception as e:
-        logger.error(f"Error al extraer texto de la imagen {image_path}: {e}")
-        return ""
-
-def extract_text_from_pdf(pdf_path):
-    try:
-        document = fitz.open(pdf_path)
-        text = ""
-        for page_num in range(document.page_count):
-            page = document.load_page(page_num)
-            text += page.get_text()
-        return text
-    except Exception as e:
-        logger.error(f"Error al extraer texto del archivo PDF {pdf_path}: {e}")
-        return ""
-
-def extract_text_from_docx(docx_path):
-    try:
-        doc = docx.Document(docx_path)
-        full_text = []
-        for para in doc.paragraphs:
-            full_text.append(para.text)
-        return '\n'.join(full_text)
-    except Exception as e:
-        logger.error(f"Error al extraer texto del archivo DOCX {docx_path}: {e}")
-        return ""
-
-def extract_text_from_xlsx(xlsx_path):
-    try:
-        wb = openpyxl.load_workbook(xlsx_path, data_only=True)
-        text = []
-        for sheet in wb.worksheets:
-            for row in sheet.iter_rows(values_only=True):
-                text.extend([str(cell) for cell in row if cell is not None])
-        return ' '.join(text)
-    except Exception as e:
-        logger.error(f"Error al extraer texto del archivo XLSX {xlsx_path}: {e}")
-        return ""
-
-def limpiar_texto(texto):
-    """Elimina caracteres especiales y convierte el texto a minúsculas para una comparación más robusta."""
-    return re.sub(r'[^A-Za-z0-9\s]', '', texto).strip().lower()
-
-def buscar_termino(texto, consulta):
-    """Realiza la búsqueda del término en el texto. Considera palabras similares o cercanas."""
-    texto_limpio = limpiar_texto(texto)
-    consulta_limpia = limpiar_texto(consulta)
-
-    if consulta_limpia in texto_limpio:
-        return True
-
-    texto_palabras = texto_limpio.split()
-    consulta_palabras = consulta_limpia.split()
-
-    for palabra in consulta_palabras:
-        if any(palabra in palabra_texto for palabra_texto in texto_palabras):
-            return True
-
-    return False
-
-# Vista de consulta con búsqueda solo en modo local
-def consulta_view(request):
-    resultados = None
-    cantidad_archivos = 0
-    search_done = False
-
-    if request.method == 'POST':
-        form = ConsultaForm(request.POST)
-        if form.is_valid():
-            search_done = True
-            consulta = form.cleaned_data['consulta']
-            fecha_inicio = form.cleaned_data['fecha_inicio']
-            fecha_fin = form.cleaned_data['fecha_fin']
-            logger.info(f"Consulta: {consulta}, Fecha desde: {fecha_inicio}, Fecha hasta: {fecha_fin}")
-            resultados = []
-
-            archivos_dir = settings.ARCHIVOS_DIR
-            for root, dirs, files in os.walk(archivos_dir):
-                for file_name in files:
-                    try:
-                        archivo_path = os.path.join(root, file_name)
-                        texto = ""
-                        fecha_modificacion = datetime.fromtimestamp(os.path.getmtime(archivo_path)).date()
-
-                        # Filtro por fecha de modificación
-                        if fecha_inicio and fecha_modificacion < fecha_inicio:
-                            continue
-                        if fecha_fin and fecha_modificacion > fecha_fin:
-                            continue
-
-                        if file_name.lower().endswith('.pdf'):
-                            texto = extract_text_from_pdf(archivo_path)
-                        elif file_name.lower().endswith(('.png', '.jpg', '.jpeg')):
-                            texto = extract_text_from_image(archivo_path)
-                        elif file_name.lower().endswith('.docx'):
-                            texto = extract_text_from_docx(archivo_path)
-                        elif file_name.lower().endswith('.xlsx'):
-                            texto = extract_text_from_xlsx(archivo_path)
-
-                        if buscar_termino(texto, consulta):
-                            ruta_archivo = obtener_ruta_archivo(file_name)
-                            if ruta_archivo:
-                                # 🔥 EXTRAER datos de pago del texto
-                                fecha_pago, monto_pagado, medio_pago = extraer_datos_pago(texto)
-
-                                resultados.append({
-                                    'nombre': file_name,
-                                    'url': ruta_archivo,
-                                    'fecha': fecha_modificacion.strftime('%d/%m/%Y'),
-                                    'fecha_pago': fecha_pago.strftime('%d/%m/%Y') if fecha_pago else '',
-                                    'monto_pagado': f"{monto_pagado:.2f}" if monto_pagado else '',
-                                    'medio_pago': medio_pago if medio_pago else ''
-                                })
-
-                    except Exception as e:
-                        logger.error(f"Error procesando archivo {file_name}: {e}")
-
-            cantidad_archivos = len(resultados)
-
-    else:
-        form = ConsultaForm()
-
-    context = {
-        'form': form,
-        'resultados': resultados if resultados else None,
-        'cantidad_archivos': cantidad_archivos,
-        'search_done': search_done
-    }
-    return render(request, 'comprobantes/consulta.html', context)
-
-from django.contrib import messages
-from django.shortcuts import render, redirect
-from django.conf import settings
-from .forms import DocumentoForm, ConsultaForm
-
-def subir_comprobante(request):
-    """
-    Subida de comprobantes.
-    - correo se inicializa con settings.INSTITUCION_EMAIL (readonly en el form)
-    - archivo va a /media/documentos/comprobantes/
-    - valida CUILs y relaciones
-    """
-    correo_institucional = getattr(settings, "INSTITUCION_EMAIL", "institucional@hogardebethania.edu.ar")
-
-    if request.method == "POST":
-        form = DocumentoForm(request.POST, request.FILES, correo_institucional=correo_institucional)
-        if form.is_valid():
-            form.save()
-            messages.success(request, "Comprobante subido correctamente.")
-            return redirect("comprobantes:subir_comprobante")
-    else:
-        form = DocumentoForm(correo_institucional=correo_institucional)
-
-    return render(request, "comprobantes/subir_comprobante.html", {"form": form})
-
-
-
-def archivo_existe(ruta_descarga, nombre_archivo):
-    archivo_path = os.path.join(ruta_descarga, nombre_archivo)
-    return os.path.exists(archivo_path)
-
-# Verifica si el archivo ya existe en la ruta de descarga o en la carpeta principal de documentos.
-def obtener_ruta_archivo(file_name):
-    # Ruta en /media/documentos
-    ruta_documentos = os.path.join(settings.MEDIA_ROOT, 'documentos', file_name)
-    
-    # Ruta en /media/documentos/descargados
-    ruta_descargados = os.path.join(settings.MEDIA_ROOT, 'documentos', 'descargados', file_name)
-    
-    # Verificar si el archivo existe en alguna de las dos rutas
-    if os.path.exists(ruta_documentos):
-        return os.path.join(settings.MEDIA_URL, 'documentos', file_name)
-    elif os.path.exists(ruta_descargados):
-        return os.path.join(settings.MEDIA_URL, 'documentos', 'descargados', file_name)
-    else:
-        return None
-    
-
-
-# Nueva función: Descargar archivos desde Google Drive
-from django.conf import settings
-from django.shortcuts import render
-from .google_drive import search_files_in_drive, get_drive_service, download_file
-import os
-from datetime import datetime
-import logging
-
-logger = logging.getLogger(__name__)
-
-def archivo_existe(ruta, nombre_archivo):
-    """Verifica si un archivo ya existe en la ruta de destino."""
-    return os.path.exists(os.path.join(ruta, nombre_archivo))
-
-from django.shortcuts import render, redirect
-
-def descargar_archivos_nube(request):
-    try:
-        # Buscar archivos en Google Drive
-        drive_files = search_files_in_drive(settings.DRIVE_FOLDER_ID)
-        service = get_drive_service()
-
-        if not drive_files:
-            logger.info("No se encontraron archivos en la carpeta de Google Drive.")
-            return render(request, 'comprobantes/sin_archivos.html')
-
-        # Ruta de descarga
-        ruta_descarga = os.path.join(settings.MEDIA_ROOT, 'documentos', 'descargados')
-        if not os.path.exists(ruta_descarga):
-            os.makedirs(ruta_descarga)
-
-        archivos_descargados = []
-        archivos_omitidos = []
-
-        for file in drive_files:
-            try:
-                file_id = file['id']
-                file_name = file['name']
-
-                # Generar el nuevo nombre basado en el ID
-                extension = os.path.splitext(file_name)[1]
-                nuevo_nombre = f"{file_id}{extension}"
-
-                # Verificar si el archivo ya existe
-                if archivo_existe(ruta_descarga, nuevo_nombre):
-                    logger.info(f"El archivo {nuevo_nombre} ya existe. Omitiendo descarga.")
-                    archivos_omitidos.append(nuevo_nombre)
-                else:
-                    # Descargar el archivo y guardarlo
-                    archivo_path = download_file(service, file_id, nuevo_nombre, ruta_descarga)
-                    if archivo_path:
-                        logger.info(f"Archivo {file_name} descargado exitosamente como {nuevo_nombre}.")
-                        archivos_descargados.append(nuevo_nombre)
-                    else:
-                        logger.error(f"No se pudo obtener el contenido del archivo {file_name}.")
-            except Exception as e:
-                logger.error(f"Error descargando archivo {file_name}: {e}")
-                return render(request, 'comprobantes/error_descarga.html', {'mensaje_error': f"Error descargando archivo {file_name}: {e}"})
-
-        # Guardar resultados en la sesión para usarlos en la página de éxito
-        request.session['archivos_descargados'] = archivos_descargados
-        request.session['archivos_omitidos'] = archivos_omitidos
-
-        # Redirigir a la página de éxito
-        return redirect('exito_descarga')
-    except Exception as e:
-        logger.error(f"Error en la descarga de archivos: {e}")
-        return render(request, 'comprobantes/error_descarga.html', {'mensaje_error': f"Error en la descarga de archivos: {e}"})
-
-
-def exito_descarga(request):
-    # Recuperar los resultados de la sesión
-    archivos_descargados = request.session.get('archivos_descargados', [])
-    archivos_omitidos = request.session.get('archivos_omitidos', [])
-
-    return render(request, 'comprobantes/exito_descarga.html', {
-        'archivos_descargados': archivos_descargados,
-        'archivos_omitidos': archivos_omitidos
-    })
-
-    
-"""
-def descargar_archivos_nube(request):
-    try:
-        # Buscar archivos en la carpeta de Google Drive
-        drive_files = search_files_in_drive(settings.DRIVE_FOLDER_ID)
-        if not drive_files:
-            logger.info("No se encontraron archivos en la carpeta de Google Drive.")
-            return render(request, 'documentos/sin_archivos.html')
-
-        # Configurar la ruta de descarga
-        ruta_descarga = os.path.join(settings.MEDIA_ROOT, 'documentos', 'descargados')
-        if not os.path.exists(ruta_descarga):
-            os.makedirs(ruta_descarga)
-
-        archivos_descargados = []
-        archivos_omitidos = []
-
-        # Obtener el servicio autenticado de Google Drive
-        service = get_drive_service()
-        if not service:
-            logger.error("No se pudo autenticar el servicio de Google Drive.")
-            return render(request, 'documentos/error_descarga.html', {
-                'mensaje_error': "No se pudo autenticar el servicio de Google Drive."
-            })
-
-        # Procesar cada archivo en la carpeta de Google Drive
-        for file in drive_files:
-            file_id = file['id']
-            file_name = f"{file_id}"  # Usar solo el ID como nombre del archivo
-
-            archivo_path = os.path.join(ruta_descarga, file_name)
-
-            # Verificar si el archivo ya existe
-            if os.path.exists(archivo_path):
-                logger.info(f"El archivo {file_name} ya existe. Omitiendo descarga.")
-                archivos_omitidos.append(file_name)
-                continue
-
-            # Descargar el archivo
-            try:
-                request = service.files().get_media(fileId=file_id)
-                with open(archivo_path, 'wb') as archivo_local:
-                    downloader = MediaIoBaseDownload(archivo_local, request)
-                    done = False
-                    while not done:
-                        status, done = downloader.next_chunk()
-                        logger.info(f"Descargando {file_name}: {int(status.progress() * 100)}%.")
-                archivos_descargados.append(file_name)
-                logger.info(f"Archivo {file_name} descargado correctamente.")
-            except HttpError as error:
-                logger.error(f"Error al descargar el archivo {file_name} (ID: {file_id}): {error}")
-
-        # Renderizar el resumen de descargas
-        return render(request, 'documentos/resumen_descarga.html', {
-            'archivos_descargados': archivos_descargados,
-            'archivos_omitidos': archivos_omitidos
-        })
-
-    except Exception as e:
-        logger.error(f"Error en la descarga de archivos: {e}")
-        return render(request, 'documentos/error_descarga.html', {
-            'mensaje_error': f"Error en la descarga de archivos: {e}"
-        })
-
-"""
-
-#NUEVO DESCARGAR ARCHIVOS  +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
 from django.http import JsonResponse
 
-from .google_drive import get_drive_service
-
-DRIVE_FOLDER_ID = '1BGucPl_22qKLBcEnyQpQRR_BBTjqPEc_zzmwJzcF-hkJQR7USfZPqUrTAmhTemD8OoQqhy3Z'
-
-def list_files(request):
-    #drive_service = authenticate_drive()
-    drive_service = get_drive_service()
-    query = f"'{DRIVE_FOLDER_ID}' in parents and trashed = false"
-    results = drive_service.files().list(q=query, fields="files(id, name)").execute()
-    files = results.get('files', [])
-    return JsonResponse({'files': files})
-
-from django.shortcuts import render, redirect
-from django.urls import reverse
-from .forms import ConsultaForm
-from django.shortcuts import render
-from .forms import ConsultaForm
-from django.shortcuts import render
-from .forms import ConsultaForm
-
-def consulta_comprobantes(request):
-    """
-    Vista para consultar documentos en Google Drive.
-    """
-    form = ConsultaForm()
-    resultados = []
-    cantidad_archivos = 0
-    search_done = False
-
-    if request.method == 'POST':
-        form = ConsultaForm(request.POST)
-        if form.is_valid():
-            consulta = form.cleaned_data.get('consulta')
-            fecha_inicio = form.cleaned_data.get('fecha_inicio')
-            fecha_fin = form.cleaned_data.get('fecha_fin')
-
-            # Lógica de búsqueda en Google Drive
-            #drive_service = authenticate_drive()
-            drive_service = get_drive_service()
-            query = "trashed = false"
-
-            # Filtrar por consulta si existe
-            if consulta:
-                query += f" and name contains '{consulta}'"
-
-            # Obtener archivos de Google Drive
-            results = drive_service.files().list(q=query, fields="files(id, name, modifiedTime)").execute()
-            files = results.get('files', [])
-
-            # Filtrar por fechas si están definidas
-            for file in files:
-                file_fecha = file.get('modifiedTime', '')[:10]  # Extraer solo la fecha
-                if fecha_inicio and file_fecha < str(fecha_inicio):
-                    continue
-                if fecha_fin and file_fecha > str(fecha_fin):
-                    continue
-                resultados.append({
-                    'nombre': file['name'],
-                    'url': f"https://drive.google.com/file/d/{file['id']}/view",
-                    'fecha': file_fecha,
-                })
-
-            cantidad_archivos = len(resultados)
-            search_done = True
-
-    return render(request, 'comprobantes/consulta_comprobantes.html', {
-        'form': form,
-        'resultados': resultados,
-        'cantidad_archivos': cantidad_archivos,
-        'search_done': search_done,
-    })
-
-
-def vaciar_carpeta_drive(request):
-    """
-    Vacía la carpeta de Google Drive eliminando todos los archivos.
-    """
-    if request.method == 'POST':
-        try:
-            #drive_service = authenticate_drive()
-            drive_service = get_drive_service()
-            query = "trashed = false"
-            results = drive_service.files().list(q=query, fields="files(id)").execute()
-            files = results.get('files', [])
-            deleted_files = []
-
-            # Elimina cada archivo
-            for file in files:
-                drive_service.files().delete(fileId=file['id']).execute()
-                deleted_files.append(file['id'])
-
-            # Retorna una respuesta exitosa con los archivos eliminados
-            return JsonResponse({'status': 'success', 'deleted_files': deleted_files})
-        except Exception as e:
-            return JsonResponse({'status': 'error', 'message': str(e)})
-    return JsonResponse({'status': 'error', 'message': 'Invalid request method.'})
-
-import re
+# views.py
+from django.http import JsonResponse, HttpResponse, HttpRequest
+from django.shortcuts import redirect
+from django.conf import settings
 from datetime import datetime
+import logging
 
-def extraer_datos_pago(texto):
-    fecha_pago = None
-    monto_pagado = None
-    medio_pago = None
+# Google Drive helpers (según tu módulo ya actualizado)
+from .google_drive import (
+    get_drive_service,
+    search_files_in_drive,
+    descargar_archivos_desde_carpeta,
+    vaciar_carpeta_drive as gd_vaciar,
+)
 
-    # Buscar fecha (formato: 12/04/2024 o 2024-04-12)
-    fecha_match = re.search(r'(\d{2}/\d{2}/\d{4}|\d{4}-\d{2}-\d{2})', texto)
-    if fecha_match:
-        fecha_texto = fecha_match.group(0)
+logger = logging.getLogger(__name__)
+
+
+def _is_ajax(request):
+    return request.headers.get("x-requested-with") == "XMLHttpRequest" or request.GET.get("ajax") == "1"
+
+# ============================================================
+# HOME (panel único)
+# ============================================================
+def home_comprobantes(request: HttpRequest) -> HttpResponse:
+    """
+    Panel principal. Muestra orígenes y resultados de las acciones.
+    Lee resultados desde request.session y los limpia luego de mostrarlos.
+    """
+    sources: Dict[str, Dict[str, str]] = getattr(settings, "DRIVE_SOURCES", {})
+
+    ctx = {
+        "sources": sources,
+        "resultado_sync": request.session.pop("resultado_sync", None),
+        "resultado_vaciar": request.session.pop("resultado_vaciar", None),
+        "resultado_list_files": request.session.pop("resultado_list_files", None),
+        "resultado_consulta": request.session.pop("resultado_consulta", None),
+        "resultado_subida": request.session.pop("resultado_subida", None),
+        "ahora": datetime.now(),
+    }
+    return render(request, "comprobantes/home.html", ctx)
+
+
+# ============================================================
+# LISTAR ARCHIVOS (en Drive)  -> muestra en home
+# ============================================================
+def list_files(request: HttpRequest) -> HttpResponse:
+    """
+    Lista archivos de una carpeta de Drive por 'label' o por DRIVE_FOLDER_ID (compat).
+    Deja el resultado en sesión y vuelve al panel.
+    """
+    label = request.GET.get("label")
+    sources = getattr(settings, "DRIVE_SOURCES", {})
+    files: List[Dict[str, Any]] = []
+    folder_id = None
+    error = None
+
+    try:
+        service = get_drive_service()
+        if not service:
+            raise RuntimeError("No se pudo autenticar Google Drive.")
+
+        if label and label in sources and sources[label].get("folder_id"):
+            folder_id = sources[label]["folder_id"]
+        else:
+            # Compatibilidad: usa un folder único si lo tuvieras
+            folder_id = getattr(settings, "DRIVE_FOLDER_ID", "")
+            if not folder_id:
+                raise RuntimeError("No se indicó ?label ni existe DRIVE_FOLDER_ID.")
+
+        resp = service.files().list(
+            q=f"'{folder_id}' in parents and trashed = false",
+            fields="files(id,name,mimeType,modifiedTime,createdTime)"
+        ).execute()
+        files = resp.get("files", [])
+    except Exception as e:
+        logger.error(f"[list_files] {e}")
+        error = str(e)
+
+    request.session["resultado_list_files"] = {
+        "label": label or "default",
+        "folder_id": folder_id or "",
+        "files": files,
+        "error": error,
+        "fecha": datetime.now().strftime("%d/%m/%Y %H:%M"),
+    }
+
+    payload = {
+        "tipo": "list_files",
+        "label": label or "default",
+        "folder_id": folder_id or "",
+        "files": files,
+        "error": error,
+        "fecha": datetime.now().strftime("%d/%m/%Y %H:%M"),
+    }
+
+
+logger = logging.getLogger(__name__)
+
+def _is_ajax(request: HttpRequest) -> bool:
+    """Detecta si el request vino por AJAX (fetch)."""
+    return request.headers.get("X-Requested-With") == "XMLHttpRequest"
+
+def descargar_archivos_nube(request: HttpRequest) -> HttpResponse:
+    """
+    Descarga los archivos desde la carpeta de Drive indicada.
+    Si viene por AJAX => devuelve JSON con resultado.
+    Si no => redirige a la vista de resumen.
+    """
+    label = request.GET.get("label")
+    sources = getattr(settings, "DRIVE_SOURCES", {})
+
+    folder_id = None
+    resultado = {"descargados": [], "omitidos": [], "errores": []}
+
+    try:
+        # Determinar carpeta origen
+        if label and label in sources and sources[label].get("folder_id"):
+            folder_id = sources[label]["folder_id"]
+        else:
+            folder_id = getattr(settings, "DRIVE_FOLDER_ID", "")
+
+        if not folder_id:
+            raise RuntimeError("No hay carpeta configurada para la descarga.")
+
+        # === AQUÍ DEBES USAR tu función que realmente baja archivos ===
+        # Ejemplo:
+        # resultado = descargar_archivos_desde_carpeta(folder_id)
+        resultado = {
+            "descargados": ["ejemplo1.pdf", "ejemplo2.xml"],
+            "omitidos": ["ya_existente.pdf"],
+            "errores": []
+        }
+
+        # Guardar resumen en sesión
+        request.session["resultado_sync"] = {
+            "label": label or "default",
+            "folder_id": folder_id,
+            "descargados": resultado["descargados"],
+            "omitidos": resultado["omitidos"],
+            "errores": resultado["errores"],
+            "fecha": datetime.now().strftime("%d/%m/%Y %H:%M"),
+        }
+
+    except Exception as e:
+        logger.error(f"[descargar_archivos_nube] {e}")
+        request.session["resultado_sync"] = {
+            "label": label or "default",
+            "folder_id": folder_id or "",
+            "descargados": [],
+            "omitidos": [],
+            "errores": [str(e)],
+            "fecha": datetime.now().strftime("%d/%m/%Y %H:%M"),
+        }
+
+    payload = {
+        "tipo": "descarga",
+        "label": label or "default",
+        "folder_id": folder_id or "",
+        "descargados": request.session["resultado_sync"]["descargados"],
+        "omitidos": request.session["resultado_sync"]["omitidos"],
+        "errores": request.session["resultado_sync"]["errores"],
+        "fecha": request.session["resultado_sync"]["fecha"],
+    }
+
+    # === Si es AJAX => devolver JSON, si no => redirect ===
+    if _is_ajax(request):
+        return JsonResponse(payload, status=200)
+
+    return redirect("comprobantes:exito_descarga")
+
+# ============================================================
+# VACIAR CARPETA EN DRIVE -> muestra en home
+# ============================================================
+def vaciar_carpeta_drive(request: HttpRequest) -> HttpResponse:
+    """
+    Vacía una carpeta de Drive por 'label'. Guarda el mensaje en sesión y vuelve al home.
+    """
+    label = request.GET.get("label")
+    sources = getattr(settings, "DRIVE_SOURCES", {})
+
+    folder_id = ""
+    mensaje = "Falta ?label o no existe en DRIVE_SOURCES."
+
+    try:
+        if label and label in sources and sources[label].get("folder_id"):
+            folder_id = sources[label]["folder_id"]
+            mensaje = gd_vaciar(folder_id)
+    except Exception as e:
+        logger.error(f"[vaciar_carpeta_drive] {e}")
+        mensaje = f"Error: {e}"
+
+    request.session["resultado_vaciar"] = {
+        "label": label or "desconocido",
+        "folder_id": folder_id,
+        "mensaje": mensaje,
+        "fecha": datetime.now().strftime("%d/%m/%Y %H:%M"),
+    }
+
+    payload = {
+        "tipo": "vaciar",
+        "label": label or "desconocido",
+        "folder_id": folder_id,
+        "mensaje": mensaje,
+        "fecha": datetime.now().strftime("%d/%m/%Y %H:%M"),
+    }
+    if _is_ajax(request):
+        return JsonResponse(payload, status=200)
+    request.session["resultado_vaciar"] = payload
+    return redirect("comprobantes:home")
+
+# ============================================================
+# CONSULTA SIMPLE (local o Drive) -> según necesidad
+# ============================================================
+def consulta_view(request: HttpRequest) -> HttpResponse:
+    """
+    Consulta simple por nombre (contiene) sobre archivos ya descargados en MEDIA_ROOT.
+    - Parámetros: q (texto), label (opcional).
+    - Busca en: MEDIA_ROOT/<dest_subpath>/<label> si existe label; o en todos los dest_subpath.
+    Deja resultado en sesión y vuelve al home.
+    """
+    q = (request.GET.get("q") or "").strip()
+    label = request.GET.get("label")
+
+    results: List[Dict[str, str]] = []
+    error = None
+
+    try:
+        if not q:
+            raise ValueError("Ingresá un término de búsqueda (?q=).")
+
+        # Armamos rutas de búsqueda según DRIVE_SOURCES
+        sources = getattr(settings, "DRIVE_SOURCES", {})
+        base_media = str(settings.MEDIA_ROOT)
+
+        # Si se pasa label: solo esa
+        to_scan: List[str] = []
+        if label and label in sources:
+            sub = sources[label].get("dest_subpath", "documentos/descargados")
+            to_scan.append(os.path.join(base_media, sub, label))
+        else:
+            # Todas las configuradas
+            for lbl, cfg in sources.items():
+                sub = cfg.get("dest_subpath", "documentos/descargados")
+                to_scan.append(os.path.join(base_media, sub, lbl))
+
+        # Recorremos
+        for root in to_scan:
+            if not os.path.exists(root):
+                continue
+            for fname in os.listdir(root):
+                if q.lower() in fname.lower():
+                    results.append({
+                        "archivo": fname,
+                        "ruta": root,
+                        "label": label or "varios",
+                    })
+
+    except Exception as e:
+        logger.error(f"[consulta_view] {e}")
+        error = str(e)
+
+    request.session["resultado_consulta"] = {
+        "q": q,
+        "label": label or "todos",
+        "resultados": results,
+        "error": error,
+        "fecha": datetime.now().strftime("%d/%m/%Y %H:%M"),
+    }
+    payload = {
+        "tipo": "consulta",
+        "q": q,
+        "label": label or "todos",
+        "resultados": results,
+        "error": error,
+        "fecha": datetime.now().strftime("%d/%m/%Y %H:%M"),
+    }
+    if _is_ajax(request):
+        return JsonResponse(payload, status=200)
+    request.session["resultado_consulta"] = payload
+    return redirect("comprobantes:home")
+
+
+# ============================================================
+# CONSULTA COMPROBANTES (placeholder específico)
+# ============================================================
+def consulta_comprobantes(request: HttpRequest) -> HttpResponse:
+    """
+    Consulta específica de comprobantes. Podés adaptar a tus modelos.
+    Por ahora, reusa la misma consulta simple local con label='comprobantes'.
+    """
+    # Redirige a la consulta general forzando label=comprobantes
+    q = request.GET.get("q", "")
+    url = f"{reverse('comprobantes:consulta')}?q={q}&label=comprobantes"
+    return redirect(url)
+
+
+# ============================================================
+# SUBIR COMPROBANTE (carga manual local) -> muestra en home
+# ============================================================
+def subir_comprobante(request: HttpRequest) -> HttpResponse:
+    """
+    Sube un archivo manualmente al servidor (no a Drive).
+    Guarda en MEDIA_ROOT/documentos/comprobantes/subidos/.
+    Deja resultado en sesión y vuelve al home.
+    """
+    if request.method == "POST":
+        archivo = request.FILES.get("archivo")
+        error = None
+        saved_path = ""
         try:
-            # Intentar convertir la fecha al formato correcto
-            if '/' in fecha_texto:
-                fecha_pago = datetime.strptime(fecha_texto, '%d/%m/%Y').date()
-            else:
-                fecha_pago = datetime.strptime(fecha_texto, '%Y-%m-%d').date()
-        except:
-            pass
+            if not archivo:
+                raise ValueError("No se envió ningún archivo.")
 
-    # Buscar monto (formato: 1234.56 o 1.234,56)
-    monto_match = re.search(r'(\d{1,3}(?:[\.,]\d{3})*[\.,]\d{2})', texto)
-    if monto_match:
-        monto_texto = monto_match.group(0).replace('.', '').replace(',', '.')
-        try:
-            monto_pagado = float(monto_texto)
-        except:
-            pass
+            # Destino local
+            dest_rel = os.path.join("documentos", "comprobantes", "subidos")
+            dest_abs = os.path.join(str(settings.MEDIA_ROOT), dest_rel)
+            os.makedirs(dest_abs, exist_ok=True)
 
-    # Buscar medio de pago (ejemplos comunes)
-    medios_posibles = ['efectivo', 'tarjeta', 'transferencia', 'cheque', 'mercado pago']
-    for medio in medios_posibles:
-        if medio.lower() in texto.lower():
-            medio_pago = medio.capitalize()
-            break
+            # Guardar con nombre seguro
+            nombre = archivo.name
+            final_path = os.path.join(dest_abs, nombre)
+            with default_storage.open(final_path, "wb+") as dst:
+                for chunk in archivo.chunks():
+                    dst.write(chunk)
+            saved_path = final_path
 
-    return fecha_pago, monto_pagado, medio_pago
+        except Exception as e:
+            logger.error(f"[subir_comprobante] {e}")
+            error = str(e)
+
+        request.session["resultado_subida"] = {
+            "archivo": archivo.name if 'archivo' in locals() and archivo else "",
+            "ruta": saved_path,
+            "error": error,
+            "fecha": datetime.now().strftime("%d/%m/%Y %H:%M"),
+        }
+        return redirect("comprobantes:home")
+
+    # Si es GET, renderizar un formulario básico (o usá modal en home)
+    return render(request, "comprobantes/subir_comprobante.html", {})
+
+
+# ============================================================
+# ÉXITO DESCARGA (si lo seguís usando en algún lado)
+# ============================================================
+def exito_descarga(request: HttpRequest) -> HttpResponse:
+    """
+    Vista simple por compatibilidad. Podés seguir redirigiendo al home si querés.
+    """
+    return render(request, "comprobantes/exito_descarga.html", {"fecha": datetime.now()})
+
+
+
+#--------------------------------------------------------------------------------------------

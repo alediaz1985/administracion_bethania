@@ -1,16 +1,8 @@
-{% extends 'base.html' %}
-
+{% extends "base.html" %}
 {% block title %}Sin archivos{% endblock %}
-
-{% load static %}
-
-{% block extra_styles %}
-<link rel="stylesheet" href="{% static 'cuotas/css/cuotas.css' %}">
-{% endblock %}
-
 {% block content %}
-
-<h1>No se encontraron comprobantes en la carpeta de Google Drive</h1>
-    <a href="{% url 'consulta' %}">Volver a la consulta</a>
-
+<div class="container py-5 text-center">
+  <h3 class="text-muted">📭 No se encontraron archivos en la carpeta de Google Drive.</h3>
+  <a href="{% url 'comprobantes:home' %}" class="btn btn-outline-primary mt-3">Volver</a>
+</div>
 {% endblock %}

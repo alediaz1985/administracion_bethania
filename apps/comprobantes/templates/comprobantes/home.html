@@ -10,50 +10,76 @@
   <div class="d-flex align-items-center justify-content-between mb-4">
     <div>
       <h2 class="m-0">Comprobantes & Documentos</h2>
-      <p class="text-muted mb-0">Centro de acciones: búsqueda, subida y sincronización con Google Drive.</p>
+      <p class="text-muted mb-0">Centro de acciones: búsqueda, subida y sincronización con Google Drive (AJAX).</p>
     </div>
-    <a href="{% url 'comprobantes:list_files' %}" target="_blank" class="btn btn-outline-secondary btn-sm" data-bs-toggle="tooltip" title="Ver JSON con archivos en la carpeta configurada">
-      <i class="bi bi-code"></i> Listar (JSON)
-    </a>
+    <!-- Botón “Listar (JSON)” con selector de origen -->
+    <div class="d-flex gap-2">
+      <select id="select-listar-label" class="form-control form-control-sm" style="width:auto;">
+        {% for label, cfg in sources.items %}
+          <option value="{{ label }}">{{ label }}</option>
+        {% endfor %}
+      </select>
+      <a id="btn-listar-json" href="#" target="_blank" class="btn btn-outline-secondary btn-sm" data-toggle="tooltip" title="Ver JSON con archivos en la carpeta seleccionada">
+        <i class="bi bi-code"></i> Listar (JSON)
+      </a>
+    </div>
   </div>
 
   <!-- Grid de acciones -->
   <div class="row g-3">
-    <!-- Buscar local -->
+
+    <!-- Buscar local (AJAX) -->
     <div class="col-12 col-md-6 col-xl-4">
       <div class="card shadow-sm h-100">
         <div class="card-body d-flex flex-column">
           <div class="d-flex align-items-center mb-2">
-            <div class="me-2 fs-4"><i class="bi bi-search"></i></div>
+            <div class="mr-2 h4"><i class="bi bi-search"></i></div>
             <h5 class="card-title mb-0">Búsqueda local</h5>
           </div>
           <p class="text-muted mb-3">
-            Busca términos dentro de PDFs, imágenes (OCR), DOCX y XLSX en tu carpeta local <code>ARCHIVOS_DIR</code>.
+            Busca por nombre en tus archivos ya descargados en <code>MEDIA_ROOT</code>.
           </p>
-          <div class="mt-auto">
-            <a href="{% url 'comprobantes:consulta' %}" class="btn btn-primary w-100">
-              Ir a búsqueda local
-            </a>
-          </div>
+          <form id="form-consulta" class="mt-auto">
+            <div class="mb-2">
+              <input type="text" name="q" class="form-control form-control-sm" placeholder="Ej: 12345678901, factura, 2025-10…" required>
+            </div>
+            <div class="d-flex gap-2">
+              <select name="label" class="form-control form-control-sm">
+                <option value="">Todos</option>
+                {% for label, cfg in sources.items %}
+                  <option value="{{ label }}">{{ label }}</option>
+                {% endfor %}
+              </select>
+              <button id="btn-consultar" class="btn btn-primary btn-sm w-100" type="submit">
+                <i class="bi bi-search"></i> Consultar
+              </button>
+            </div>
+          </form>
         </div>
       </div>
     </div>
 
-    <!-- Buscar en Drive -->
+    <!-- Buscar en Drive (AJAX: lista) -->
     <div class="col-12 col-md-6 col-xl-4">
       <div class="card shadow-sm h-100">
         <div class="card-body d-flex flex-column">
           <div class="d-flex align-items-center mb-2">
-            <div class="me-2 fs-4"><i class="bi bi-cloud-check"></i></div>
+            <div class="mr-2 h4"><i class="bi bi-cloud-check"></i></div>
             <h5 class="card-title mb-0">Búsqueda en Google Drive</h5>
           </div>
-          <p class="text-muted mb-3">
-            Filtra por nombre y por fechas de modificación en la carpeta de Google Drive configurada.
-          </p>
-          <div class="mt-auto">
-            <a href="{% url 'comprobantes:consulta_comprobantes' %}" class="btn btn-primary w-100">
-              Ir a búsqueda en Drive
-            </a>
+          <p class="text-muted mb-3">Lista los archivos de la carpeta seleccionada en Google Drive.</p>
+          <div class="mt-auto d-flex gap-2">
+            <select id="select-listar-ajax-label" class="form-control form-control-sm">
+              {% for label, cfg in sources.items %}
+                <option value="{{ label }}">{{ label }}</option>
+              {% endfor %}
+            </select>
+            <button class="btn btn-outline-secondary btn-sm w-100" id="btn-listar-ajax">
+              <i class="bi bi-list-ul"></i> Listar ahora
+            </button>
+          </div>
+          <div class="small text-muted mt-2">
+            <strong>Destino:</strong> muestra solo metadatos en Drive (no descarga).
           </div>
         </div>
       </div>
@@ -64,12 +90,10 @@
       <div class="card shadow-sm h-100">
         <div class="card-body d-flex flex-column">
           <div class="d-flex align-items-center mb-2">
-            <div class="me-2 fs-4"><i class="bi bi-upload"></i></div>
+            <div class="mr-2 h4"><i class="bi bi-upload"></i></div>
             <h5 class="card-title mb-0">Subir comprobante</h5>
           </div>
-          <p class="text-muted mb-3">
-            Carga manualmente un comprobante (usa tu <code>DocumentoForm</code>).
-          </p>
+          <p class="text-muted mb-3">Carga manual de comprobantes al servidor.</p>
           <div class="mt-auto">
             <a href="{% url 'comprobantes:subir_comprobante' %}" class="btn btn-outline-primary w-100">
               Subir ahora
@@ -84,43 +108,47 @@
       <div class="card shadow-sm h-100">
         <div class="card-body d-flex flex-column">
           <div class="d-flex align-items-center mb-2">
-            <div class="me-2 fs-4"><i class="bi bi-download"></i></div>
+            <div class="mr-2 h4"><i class="bi bi-download"></i></div>
             <h5 class="card-title mb-0">Descargar desde Google Drive</h5>
           </div>
           <p class="text-muted mb-3">
-            Descarga todos los archivos nuevos de la carpeta de Drive a <code>/media/documentos/descargados</code>.
+            Descarga nuevos archivos a <code>/media/documentos/&lt;dest_subpath&gt;/&lt;label&gt;/</code>.
           </p>
 
-          <!-- Botón que abre modal de confirmación -->
-          <button class="btn btn-success w-100" data-bs-toggle="modal" data-bs-target="#modalDescargar">
-            Descargar ahora
-          </button>
+          <div class="d-flex gap-2">
+            <select id="select-descargar-label" class="form-control form-control-sm">
+              {% for label, cfg in sources.items %}
+                <option value="{{ label }}">{{ label }}</option>
+              {% endfor %}
+            </select>
+            <button class="btn btn-success btn-sm w-100" data-toggle="modal" data-target="#modalDescargar">
+              Descargar ahora
+            </button>
+          </div>
 
           <!-- Modal confirmar descarga -->
-          <div class="modal fade" id="modalDescargar" tabindex="-1" aria-hidden="true">
-            <div class="modal-dialog modal-dialog-centered">
+          <div class="modal fade" id="modalDescargar" tabindex="-1" role="dialog" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered" role="document">
               <div class="modal-content">
-                <form method="post" action="{% url 'comprobantes:descargar_archivos_nube' %}">
-                  {% csrf_token %}
-                  <div class="modal-header">
-                    <h5 class="modal-title"><i class="bi bi-download"></i> Confirmar descarga</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
-                  </div>
-                  <div class="modal-body">
-                    ¿Deseás descargar los archivos desde Google Drive? Se omitirán los que ya existan con el mismo nombre destino.
-                  </div>
-                  <div class="modal-footer">
-                    <button type="button" class="btn btn-light" data-bs-dismiss="modal">Cancelar</button>
-                    <button type="submit" class="btn btn-success">Sí, descargar</button>
-                  </div>
-                </form>
+                <div class="modal-header">
+                  <h5 class="modal-title"><i class="bi bi-download"></i> Confirmar descarga</h5>
+                  <button type="button" class="close" data-dismiss="modal" aria-label="Cerrar">
+                    <span aria-hidden="true">&times;</span>
+                  </button>
+                </div>
+                <div class="modal-body">
+                  ¿Deseás descargar los archivos desde Google Drive? Se omitirán los que ya existan con el mismo nombre destino.
+                </div>
+                <div class="modal-footer">
+                  <button type="button" class="btn btn-light" data-dismiss="modal">Cancelar</button>
+                  <button id="btn-confirmar-descarga" type="button" class="btn btn-success">Sí, descargar</button>
+                </div>
               </div>
             </div>
           </div>
 
-          <!-- Link a último resumen -->
           <a href="{% url 'comprobantes:exito_descarga' %}" class="btn btn-link mt-2 w-100">
-            Ver último resumen de descargas
+            Ver último resumen
           </a>
         </div>
       </div>
@@ -128,39 +156,44 @@
 
     <!-- Vaciar carpeta de Drive -->
     <div class="col-12 col-md-6 col-xl-4">
-      <div class="card shadow-sm h-100 border-danger-subtle">
+      <div class="card shadow-sm h-100 border-danger">
         <div class="card-body d-flex flex-column">
           <div class="d-flex align-items-center mb-2">
-            <div class="me-2 fs-4 text-danger"><i class="bi bi-trash"></i></div>
+            <div class="mr-2 h4 text-danger"><i class="bi bi-trash"></i></div>
             <h5 class="card-title mb-0 text-danger">Vaciar carpeta de Drive</h5>
           </div>
           <p class="text-muted mb-3">
             <strong>Acción destructiva:</strong> elimina <u>todos</u> los archivos de la carpeta remota (no del servidor).
           </p>
 
-          <!-- Botón que abre modal de confirmación -->
-          <button class="btn btn-outline-danger w-100" data-bs-toggle="modal" data-bs-target="#modalVaciar">
-            Vaciar carpeta (Drive)
-          </button>
+          <div class="d-flex gap-2">
+            <select id="select-vaciar-label" class="form-control form-control-sm">
+              {% for label, cfg in sources.items %}
+                <option value="{{ label }}">{{ label }}</option>
+              {% endfor %}
+            </select>
+            <button class="btn btn-outline-danger btn-sm w-100" data-toggle="modal" data-target="#modalVaciar">
+              Vaciar carpeta
+            </button>
+          </div>
 
           <!-- Modal confirmar vaciado -->
-          <div class="modal fade" id="modalVaciar" tabindex="-1" aria-hidden="true">
-            <div class="modal-dialog modal-dialog-centered">
+          <div class="modal fade" id="modalVaciar" tabindex="-1" role="dialog" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered" role="document">
               <div class="modal-content">
-                <form method="post" action="{% url 'comprobantes:vaciar_carpeta_drive' %}">
-                  {% csrf_token %}
-                  <div class="modal-header">
-                    <h5 class="modal-title"><i class="bi bi-exclamation-triangle"></i> Confirmar vaciado</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
-                  </div>
-                  <div class="modal-body">
-                    Esta acción eliminará <strong>todos</strong> los archivos de la carpeta de Google Drive configurada. ¿Seguro?
-                  </div>
-                  <div class="modal-footer">
-                    <button type="button" class="btn btn-light" data-bs-dismiss="modal">Cancelar</button>
-                    <button type="submit" class="btn btn-danger">Sí, vaciar</button>
-                  </div>
-                </form>
+                <div class="modal-header">
+                  <h5 class="modal-title"><i class="bi bi-exclamation-triangle"></i> Confirmar vaciado</h5>
+                  <button type="button" class="close" data-dismiss="modal" aria-label="Cerrar">
+                    <span aria-hidden="true">&times;</span>
+                  </button>
+                </div>
+                <div class="modal-body">
+                  Esta acción eliminará <strong>todos</strong> los archivos de la carpeta de Google Drive seleccionada. ¿Seguro?
+                </div>
+                <div class="modal-footer">
+                  <button type="button" class="btn btn-light" data-dismiss="modal">Cancelar</button>
+                  <button id="btn-confirmar-vaciar" type="button" class="btn btn-danger">Sí, vaciar</button>
+                </div>
               </div>
             </div>
           </div>
@@ -177,14 +210,13 @@
       <div class="card shadow-sm h-100">
         <div class="card-body d-flex flex-column">
           <div class="d-flex align-items-center mb-2">
-            <div class="me-2 fs-4"><i class="bi bi-info-circle"></i></div>
+            <div class="mr-2 h4"><i class="bi bi-info-circle"></i></div>
             <h5 class="card-title mb-0">Ayuda rápida</h5>
           </div>
           <ul class="text-muted small mb-3">
-            <li><strong>Búsqueda local:</strong> inspecciona contenido con OCR y texto.</li>
-            <li><strong>Drive:</strong> consulta por nombre y rango de fechas.</li>
-            <li><strong>Descargar:</strong> guarda en <code>/media/documentos/descargados</code>.</li>
-            <li><strong>Vaciar Drive:</strong> elimina archivos remotos.</li>
+            <li><strong>Búsqueda local:</strong> inspecciona archivos guardados en el servidor.</li>
+            <li><strong>Drive:</strong> Listar muestra metadatos; Descargar guarda en <code>MEDIA_ROOT</code>.</li>
+            <li><strong>Vaciar Drive:</strong> elimina archivos remotos (requiere scope de escritura).</li>
           </ul>
           <div class="mt-auto">
             <a href="{% url 'comprobantes:consulta' %}" class="btn btn-light w-100">Ver más opciones</a>
@@ -195,17 +227,150 @@
 
   </div><!-- /row -->
 
+  <!-- Resultados -->
+  <hr class="my-4">
+  <div id="resultados"></div>
+
+  <!-- Spinner global -->
+  <div id="spinner-global" class="text-center mt-4" style="display:none;">
+    <div class="spinner-border" role="status" aria-hidden="true"></div>
+    <div class="small text-muted mt-2">Procesando…</div>
+  </div>
+
 </div>
 
-<!-- Bootstrap Icons (si no los tenés ya incluidos en base.html) -->
+<!-- Bootstrap Icons -->
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css">
 
+<!-- jQuery + Popper + Bootstrap 4 JS -->
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.6.2/js/bootstrap.min.js"></script>
+
 <script>
-  document.addEventListener('DOMContentLoaded', function () {
-    const tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'))
-    tooltipTriggerList.forEach(function (tooltipTriggerEl) {
-      new bootstrap.Tooltip(tooltipTriggerEl)
-    })
+  // ===== Tooltips (Bootstrap 4)
+  $(function () {
+    $('[data-toggle="tooltip"]').tooltip();
+  });
+
+  // ===== CSRF
+  function getCookie(name) {
+    const value = `; ${document.cookie}`;
+    const parts = value.split(`; ${name}=`);
+    if (parts.length === 2) return parts.pop().split(';').shift();
+  }
+  const csrftoken = getCookie('csrftoken');
+
+  function showSpinner(show=true) {
+    $('#spinner-global').toggle(show);
+  }
+  function disableButtons(disabled=true) {
+    $('#btn-consultar, #btn-listar-ajax, #btn-confirmar-descarga, #btn-confirmar-vaciar, #btn-listar-json').prop('disabled', disabled);
+  }
+
+  // ===== Render helpers (idénticos a antes)
+  function renderListFiles(payload) {
+    const files = payload.files || [];
+    let html = `<div class="mb-4"><h4 class="text-secondary">📋 Archivos en Google Drive (${payload.label})</h4><p class="small text-muted">Carpeta: <code>${payload.folder_id}</code> | Fecha: ${payload.fecha}</p>`;
+    if (payload.error) {
+      html += `<div class="alert alert-danger">${payload.error}</div>`;
+    } else if (files.length) {
+      html += `<ul class="list-group small">` +
+        files.map(f => `<li class="list-group-item d-flex justify-content-between align-items-center"><span>${f.name}</span><code>${f.id}</code></li>`).join('') +
+        `</ul>`;
+    } else {
+      html += `<div class="alert alert-info">No se encontraron archivos.</div>`;
+    }
+    html += `</div>`;
+    return html;
+  }
+
+  function renderDescarga(payload) {
+    let html = `<div class="mb-4"><h4 class="text-primary">📥 Descarga desde Drive (${payload.label})</h4><p class="text-muted small">Fecha: ${payload.fecha} | Carpeta ID: <code>${payload.folder_id}</code></p>`;
+    if (payload.descargados?.length) {
+      html += `<div class="alert alert-success"><strong>Descargados (${payload.descargados.length}):</strong><ul class="mb-0 small">${payload.descargados.map(x => `<li>${x}</li>`).join('')}</ul></div>`;
+    }
+    if (payload.omitidos?.length) {
+      html += `<div class="alert alert-warning"><strong>Omitidos (${payload.omitidos.length}):</strong><ul class="mb-0 small">${payload.omitidos.map(x => `<li>${x}</li>`).join('')}</ul></div>`;
+    }
+    if (payload.errores?.length) {
+      html += `<div class="alert alert-danger"><strong>Errores:</strong><ul class="mb-0 small">${payload.errores.map(x => `<li>${x}</li>`).join('')}</ul></div>`;
+    }
+    html += `</div>`;
+    return html;
+  }
+
+  function renderVaciar(payload) {
+    return `<div class="mb-4"><h4 class="text-danger">🗑️ Resultado de vaciado</h4><p class="small text-muted">Carpeta: <code>${payload.folder_id}</code> | Fecha: ${payload.fecha}</p><div class="alert alert-info mb-0">${payload.mensaje}</div></div>`;
+  }
+
+  function renderConsulta(payload) {
+    let html = `<div class="mb-4"><h4 class="text-success">🔍 Consulta local</h4><p class="small text-muted">Término: <code>${payload.q}</code> | Origen: ${payload.label}</p>`;
+    if (payload.error) {
+      html += `<div class="alert alert-danger">${payload.error}</div>`;
+    } else if (payload.resultados?.length) {
+      html += `<ul class="small">${payload.resultados.map(r => `<li><strong>${r.archivo}</strong> — ${r.ruta}</li>`).join('')}</ul>`;
+    } else {
+      html += `<div class="alert alert-info">Sin coincidencias.</div>`;
+    }
+    html += `</div>`;
+    return html;
+  }
+
+  function appendResult(html) {
+    $('#resultados').prepend(html);
+  }
+
+  async function doGet(url) {
+    showSpinner(true); disableButtons(true);
+    try {
+      const resp = await fetch(url, { headers: { 'X-Requested-With': 'XMLHttpRequest' } });
+      return await resp.json();
+    } finally {
+      showSpinner(false); disableButtons(false);
+    }
+  }
+
+  // ===== Acciones =====
+
+  $('#btn-listar-json').on('click', function(e) {
+    e.preventDefault();
+    const label = $('#select-listar-label').val();
+    const url = `{% url 'comprobantes:list_files' %}?label=${encodeURIComponent(label)}&ajax=1`;
+    window.open(url, '_blank');
+  });
+
+  $('#btn-listar-ajax').on('click', async function() {
+    const label = $('#select-listar-ajax-label').val();
+    const url = `{% url 'comprobantes:list_files' %}?label=${encodeURIComponent(label)}&ajax=1`;
+    const data = await doGet(url);
+    appendResult(renderListFiles(data));
+  });
+
+  $('#form-consulta').on('submit', async function(e) {
+    e.preventDefault();
+    const q = $('input[name="q"]').val();
+    const label = $('select[name="label"]').val();
+    const url = `{% url 'comprobantes:consulta' %}?q=${encodeURIComponent(q)}&label=${encodeURIComponent(label)}&ajax=1`;
+    const data = await doGet(url);
+    appendResult(renderConsulta(data));
+  });
+
+  $('#btn-confirmar-descarga').on('click', async function() {
+    const label = $('#select-descargar-label').val();
+    const url = `{% url 'comprobantes:descargar_archivos_nube' %}?label=${encodeURIComponent(label)}&ajax=1`;
+    const data = await doGet(url);
+    appendResult(renderDescarga(data));
+    $('#modalDescargar').modal('hide');
+  });
+
+  $('#btn-confirmar-vaciar').on('click', async function() {
+    const label = $('#select-vaciar-label').val();
+    if (!confirm(`¿Vaciar carpeta ${label} en Drive? Esta acción es irreversible.`)) return;
+    const url = `{% url 'comprobantes:vaciar_carpeta_drive' %}?label=${encodeURIComponent(label)}&ajax=1`;
+    const data = await doGet(url);
+    appendResult(renderVaciar(data));
+    $('#modalVaciar').modal('hide');
   });
 </script>
 {% endblock %}

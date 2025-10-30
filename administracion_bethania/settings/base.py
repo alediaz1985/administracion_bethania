@@ -111,7 +111,9 @@ STATICFILES_FINDERS = [
 ]
 
 MEDIA_URL = "/media/"
-MEDIA_ROOT = str(BASE_DIR / "media")
+#MEDIA_ROOT = str(BASE_DIR / "media") (guarda datos string)
+
+MEDIA_ROOT = BASE_DIR / "media" #guarda datos tipos objetos
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 LOGIN_URL = "iniciar_sesion"
@@ -119,12 +121,45 @@ CRISPY_TEMPLATE_PACK = "bootstrap4"
 
 # Google / Drive / Rutas
 GOOGLE_CREDENTIALS_ALUMNOS = env_path("GOOGLE_CREDENTIALS_ALUMNOS", "apps/administracion_alumnos/credentials.json")
-GOOGLE_CREDENTIALS = env_path("GOOGLE_CREDENTIALS", "apps/documentos/credentials.json")
+#GOOGLE_CREDENTIALS = env_path("GOOGLE_CREDENTIALS", "apps/documentos/credentials.json")
+GOOGLE_CREDENTIALS = os.getenv("GOOGLE_CREDENTIALS", "apps/comprobantes/credentials.json")
+# Forzamos absoluto por si te lo pasan relativo en el .env
+if not os.path.isabs(GOOGLE_CREDENTIALS):
+    GOOGLE_CREDENTIALS = str((BASE_DIR / GOOGLE_CREDENTIALS).resolve())
+
 DRIVE_FOLDER_ID = os.getenv("DRIVE_FOLDER_ID", "")
 DRIVE_FOLDER_ID_ALUMNOS = os.getenv("DRIVE_FOLDER_ID_ALUMNOS", "")
 ARCHIVOS_DIR = env_path("ARCHIVOS_DIR", "media/documentos")
 FOTO_PERFIL_ESTUDIANTE_DIR = env_path("FOTO_PERFIL_ESTUDIANTE_DIR", "media/documentos/fotoPerfilEstudiante")
 FOTO_ESTUDIANTE_DIR = env_path("FOTO_ESTUDIANTE_DIR", "media/administracion_alumnos/descargados")
+
+
+
+# --- Google / Sheets ---
+GOOGLE_CREDENTIALS = os.getenv("GOOGLE_CREDENTIALS", "apps/comprobantes/credentials.json")
+
+COMPROBANTES_SHEET_ID   = os.getenv("COMPROBANTES_SHEET_ID", "")
+COMPROBANTES_SHEET_TAB  = os.getenv("COMPROBANTES_SHEET_TAB", "")
+COMPROBANTES_SHEET_RANGE= os.getenv("COMPROBANTES_SHEET_RANGE", "A:E")
+
+# --- Orígenes de Drive etiquetados ---
+DRIVE_SOURCES = {
+    # label: { folder_id, dest_subpath }
+    "comprobantes": {
+        "folder_id": os.getenv("DRIVE_FOLDER_COMPROBANTES", ""),
+        "dest_subpath": "documentos/comprobantes",  # relativo a MEDIA_ROOT
+    },
+    # "recibos": {
+    #     "folder_id": os.getenv("DRIVE_FOLDER_RECIBOS", ""),
+    #     "dest_subpath": "documentos/recibos",
+    # },
+    # "fotos": {
+    #     "folder_id": os.getenv("DRIVE_FOLDER_FOTOS", ""),
+    #     "dest_subpath": "documentos/fotos",
+    # },
+}
+# IDs de carpetas configurables por entorno
+
 
 # Datos de la institución (para PDFs, headers, etc.)
 INSTITUCION_NOMBRE = os.getenv("INSTITUCION_NOMBRE", "")

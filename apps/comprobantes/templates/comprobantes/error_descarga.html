@@ -1,19 +1,11 @@
-{% extends 'base.html' %}
-
-{% block title %}Error de Descarga{% endblock %}
-
-{% load static %}
-
-{% block extra_styles %}
-    <link rel="stylesheet" href="../../static/comprobantes/css/error_descarga.css">
-{% endblock %}
-
+{% extends "base.html" %}
+{% block title %}Error en descarga{% endblock %}
 {% block content %}
-
-<div class="error-container">
-    <h1 class="error-title">Ha ocurrido un error</h1>
-    <p class="error-message">{{ mensaje_error }}</p>
-    <a href="{% url 'comprobantes:consulta' %}" class="error-button">Volver a la consulta</a>
+<div class="container py-5 text-center">
+  <div class="alert alert-danger">
+    <h4 class="alert-heading">⚠️ Ocurrió un error</h4>
+    <p>{{ error }}</p>
+  </div>
+  <a href="{% url 'comprobantes:home' %}" class="btn btn-outline-primary">Volver</a>
 </div>
-
 {% endblock %}

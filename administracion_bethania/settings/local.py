@@ -1,16 +1,30 @@
-# administracion_bethania/settings/local.py
 import os
+from pathlib import Path
 from dotenv import load_dotenv
+
+# ============================================================
+# 1️⃣ Definir BASE_DIR y cargar .env.local antes de importar base.py
+# ============================================================
+# Este archivo está en administracion_bethania/settings/local.py
+# Subimos dos niveles hasta la raíz del proyecto
+BASE_DIR = Path(__file__).resolve().parents[2]
+
+# Cargar variables desde .env.local
+env_path = BASE_DIR / ".env.local"
+if env_path.exists():
+    load_dotenv(env_path)
+    print(f"[DEV] Cargando variables desde {env_path}")
+else:
+    print("[DEV] ⚠️ No se encontró .env.local")
+
+# ============================================================
+# 2️⃣ Importar todo lo de base.py (ya con el entorno cargado)
+# ============================================================
 from .base import *  # noqa
 
-# =========================
-# Cargar variables de .env.local (si falta, no rompe)
-# =========================
-load_dotenv(BASE_DIR / ".env.local")
-
-# =========================
-# Básico de Django (LOCAL)
-# =========================
+# ============================================================
+# 3️⃣ Configuración específica del entorno LOCAL
+# ============================================================
 DEBUG = env_bool("DEBUG", True)
 ALLOWED_HOSTS = env_list("ALLOWED_HOSTS", "127.0.0.1,localhost")
 CSRF_TRUSTED_ORIGINS = env_list("CSRF_TRUSTED_ORIGINS", "http://127.0.0.1,http://localhost")
@@ -20,38 +34,17 @@ TIME_ZONE = os.getenv("TIME_ZONE", "America/Argentina/Buenos_Aires")
 USE_I18N = True
 USE_TZ = True
 
-# =========================
-# Debug toolbar (opcional)
-# =========================
-if env_bool("ENABLE_DEBUG_TOOLBAR", False):
-    INSTALLED_APPS += ["debug_toolbar"]
-    MIDDLEWARE.insert(0, "debug_toolbar.middleware.DebugToolbarMiddleware")
-    INTERNAL_IPS = env_list("INTERNAL_IPS", "127.0.0.1")
+# ============================================================
+# Google / Drive / Sheets
+# ============================================================
+GOOGLE_CREDENTIALS = os.getenv("GOOGLE_CREDENTIALS", "apps/comprobantes/credentials.json")
+COMPROBANTES_SHEET_ID = os.getenv("COMPROBANTES_SHEET_ID", "")
+COMPROBANTES_SHEET_TAB = os.getenv("COMPROBANTES_SHEET_TAB", "")
+COMPROBANTES_SHEET_RANGE = os.getenv("COMPROBANTES_SHEET_RANGE", "A:E")
 
-# =========================
-# Archivos estáticos y media (dev)
-# =========================
-# En dev, runserver sirve estáticos; WhiteNoise desactivado
-ENABLE_WHITENOISE = env_bool("ENABLE_WHITENOISE", False)
-
-# Si en base.py usás rutas por defecto, no hace falta tocar.
-# Si querés forzar rutas locales:
-# STATIC_URL = "/static/"
-# MEDIA_URL = "/media/"
-# STATIC_ROOT = BASE_DIR / "staticfiles"
-# MEDIA_ROOT = BASE_DIR / "media"
-
-# =========================
-# Google / credenciales extra
-# =========================
-# Estas variables vienen de .env.local si las definiste
-GOOGLE_CREDENTIALS = os.getenv("GOOGLE_CREDENTIALS", GOOGLE_CREDENTIALS)
-GOOGLE_CREDENTIALS_ALUMNOS = os.getenv("GOOGLE_CREDENTIALS_ALUMNOS", None)
-
-# =========================
-# FORZAR DATABASES desde .env.local
-# (evita que quede el config de base/.env)
-# =========================
+# ============================================================
+# Base de datos (local con remoto)
+# ============================================================
 DATABASES["default"] = {
     "ENGINE": os.getenv("DB_ENGINE", "django.db.backends.mysql"),
     "NAME": os.getenv("DB_NAME", ""),
@@ -66,9 +59,20 @@ DATABASES["default"] = {
     },
 }
 
-# =========================
-# Prints útiles en consola (dev)
-# =========================
+# ============================================================
+# Debug toolbar opcional
+# ============================================================
+if env_bool("ENABLE_DEBUG_TOOLBAR", False):
+    INSTALLED_APPS += ["debug_toolbar"]
+    MIDDLEWARE.insert(0, "debug_toolbar.middleware.DebugToolbarMiddleware")
+    INTERNAL_IPS = env_list("INTERNAL_IPS", "127.0.0.1")
+
+# ============================================================
+# Logs de verificación en consola
+# ============================================================
 print(f"[DEV] BASE_DIR={BASE_DIR}")
 print(f"[DEV] GOOGLE_CREDENTIALS={GOOGLE_CREDENTIALS}")
 print(f"[DEV] DB_HOST={DATABASES['default']['HOST']}  DB_PORT={DATABASES['default']['PORT']}")
+print(f"[DEV] SHEET_ID={COMPROBANTES_SHEET_ID}")
+print(f"[DEV] SHEET_TAB={COMPROBANTES_SHEET_TAB}")
+print(f"[DEV] SHEET_RANGE={COMPROBANTES_SHEET_RANGE}")

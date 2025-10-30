@@ -1,0 +1,91 @@
+{% comment %}
+Este archivo se incluye dentro de home.html
+Muestra todos los resultados de acciones (descargar, listar, vaciar, consultar, subir)
+{% endcomment %}
+
+{% if resultado_sync %}
+<div class="mb-4">
+  <h4 class="text-primary">📥 Descarga desde Drive ({{ resultado_sync.label }})</h4>
+  <p class="text-muted small">Fecha: {{ resultado_sync.fecha }} | Carpeta ID: <code>{{ resultado_sync.folder_id }}</code></p>
+
+  {% if resultado_sync.descargados %}
+  <div class="alert alert-success">
+    <strong>Archivos descargados ({{ resultado_sync.descargados|length }}):</strong>
+    <ul class="mb-0 small">{% for f in resultado_sync.descargados %}<li>{{ f }}</li>{% endfor %}</ul>
+  </div>
+  {% endif %}
+  {% if resultado_sync.omitidos %}
+  <div class="alert alert-warning">
+    <strong>Omitidos ({{ resultado_sync.omitidos|length }}):</strong>
+    <ul class="mb-0 small">{% for f in resultado_sync.omitidos %}<li>{{ f }}</li>{% endfor %}</ul>
+  </div>
+  {% endif %}
+  {% if resultado_sync.errores %}
+  <div class="alert alert-danger">
+    <strong>Errores:</strong>
+    <ul class="mb-0 small">{% for e in resultado_sync.errores %}<li>{{ e }}</li>{% endfor %}</ul>
+  </div>
+  {% endif %}
+</div>
+{% endif %}
+
+{% if resultado_list_files %}
+<div class="mb-4">
+  <h4 class="text-secondary">📋 Archivos en Google Drive ({{ resultado_list_files.label }})</h4>
+  <p class="small text-muted">Carpeta: <code>{{ resultado_list_files.folder_id }}</code> | Fecha: {{ resultado_list_files.fecha }}</p>
+
+  {% if resultado_list_files.error %}
+    <div class="alert alert-danger">{{ resultado_list_files.error }}</div>
+  {% elif resultado_list_files.files %}
+    <ul class="list-group small">
+      {% for f in resultado_list_files.files %}
+      <li class="list-group-item d-flex justify-content-between align-items-center">
+        <span>{{ f.name }}</span>
+        <code>{{ f.id }}</code>
+      </li>
+      {% endfor %}
+    </ul>
+  {% else %}
+    <div class="alert alert-info">No se encontraron archivos.</div>
+  {% endif %}
+</div>
+{% endif %}
+
+{% if resultado_vaciar %}
+<div class="mb-4">
+  <h4 class="text-danger">🗑️ Resultado de vaciado</h4>
+  <p class="small text-muted">Carpeta: <code>{{ resultado_vaciar.folder_id }}</code></p>
+  <div class="alert alert-info">{{ resultado_vaciar.mensaje }}</div>
+</div>
+{% endif %}
+
+{% if resultado_consulta %}
+<div class="mb-4">
+  <h4 class="text-success">🔍 Consulta local</h4>
+  <p class="small text-muted">Término: <code>{{ resultado_consulta.q }}</code></p>
+
+  {% if resultado_consulta.error %}
+    <div class="alert alert-danger">{{ resultado_consulta.error }}</div>
+  {% elif resultado_consulta.resultados %}
+    <ul class="small">
+      {% for r in resultado_consulta.resultados %}
+        <li><strong>{{ r.archivo }}</strong> — {{ r.ruta }}</li>
+      {% endfor %}
+    </ul>
+  {% else %}
+    <div class="alert alert-info">Sin coincidencias.</div>
+  {% endif %}
+</div>
+{% endif %}
+
+{% if resultado_subida %}
+<div class="mb-4">
+  <h4 class="text-success">📤 Subida de comprobante</h4>
+  <p class="small text-muted">Archivo: <strong>{{ resultado_subida.archivo }}</strong></p>
+  {% if resultado_subida.error %}
+    <div class="alert alert-danger">{{ resultado_subida.error }}</div>
+  {% else %}
+    <div class="alert alert-success">Guardado correctamente en <code>{{ resultado_subida.ruta }}</code></div>
+  {% endif %}
+</div>
+{% endif %}

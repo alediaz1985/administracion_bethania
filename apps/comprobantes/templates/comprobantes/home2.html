@@ -1,0 +1,263 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Gestión de Comprobantes (AJAX){% endblock %}
+
+{% block content %}
+<div class="container py-4">
+  <!-- Encabezado -->
+  <div class="d-flex align-items-center justify-content-between mb-4">
+    <div>
+      <h2 class="m-0">📂 Panel de Comprobantes y Documentos</h2>
+      <p class="text-muted mb-0">Sincronización, consultas y gestión de archivos desde Google Drive — sin recargar.</p>
+    </div>
+    <a href="{% url 'comprobantes:subir_comprobante' %}" class="btn btn-outline-success btn-sm">
+      <i class="bi bi-upload"></i> Subir comprobante
+    </a>
+  </div>
+
+  <!-- Consulta local rápida -->
+  <form id="form-consulta" class="row g-2 align-items-end mb-4">
+    <div class="col-md-5">
+      <label class="form-label">Buscar en archivos locales</label>
+      <input type="text" class="form-control" name="q" placeholder="Ej: 2030-01-ABCD, 12345678..." required>
+    </div>
+    <div class="col-md-4">
+      <label class="form-label">Origen (opcional)</label>
+      <select class="form-select" name="label">
+        <option value="">Todos</option>
+        {% for label, cfg in sources.items %}
+          <option value="{{ label }}">{{ label }}</option>
+        {% endfor %}
+      </select>
+    </div>
+    <div class="col-md-3">
+      <button id="btn-consultar" type="submit" class="btn btn-outline-dark w-100">
+        <i class="bi bi-search"></i> Consultar
+      </button>
+    </div>
+  </form>
+
+  <!-- Orígenes configurados -->
+  <div class="row row-cols-1 row-cols-md-2 g-3">
+    {% for label, cfg in sources.items %}
+    <div class="col">
+      <div class="card shadow-sm border-0 h-100">
+        <div class="card-body">
+          <h5 class="card-title text-capitalize">{{ label }}</h5>
+          <p class="text-muted small mb-2">
+            <strong>Folder ID:</strong> <code>{{ cfg.folder_id }}</code><br>
+            <strong>Destino:</strong> <code>{{ cfg.dest_subpath }}</code>
+          </p>
+          <div class="d-flex gap-2">
+            <button class="btn btn-outline-secondary btn-sm js-listar" data-label="{{ label }}">
+              <i class="bi bi-list-ul"></i> Listar
+            </button>
+            <button class="btn btn-outline-primary btn-sm js-descargar" data-label="{{ label }}">
+              <i class="bi bi-cloud-arrow-down"></i> Descargar
+            </button>
+            <button class="btn btn-outline-danger btn-sm js-vaciar" data-label="{{ label }}">
+              <i class="bi bi-trash"></i> Vaciar
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+    {% empty %}
+    <div class="col">
+      <div class="alert alert-warning">
+        ⚠️ No hay orígenes configurados en <code>settings.DRIVE_SOURCES</code>.
+      </div>
+    </div>
+    {% endfor %}
+  </div>
+
+  <!-- Resultados -->
+  <hr class="my-4">
+  <div id="resultados"></div>
+
+  <!-- Spinner global -->
+  <div id="spinner-global" class="text-center mt-4" style="display:none;">
+    <div class="spinner-border" role="status" aria-hidden="true"></div>
+    <div class="small text-muted mt-2">Procesando…</div>
+  </div>
+</div>
+
+<!-- ========================= -->
+<!-- JS: AJAX / Helpers -->
+<!-- ========================= -->
+<script>
+  // ===== CSRF =====
+  function getCookie(name) {
+    const value = `; ${document.cookie}`;
+    const parts = value.split(`; ${name}=`);
+    if (parts.length === 2) { return parts.pop().split(';').shift(); }
+  }
+  const csrftoken = getCookie('csrftoken');
+
+  function showSpinner(show=true) {
+    document.getElementById('spinner-global').style.display = show ? 'block' : 'none';
+  }
+
+  function disableButtons(disabled=true) {
+    document.querySelectorAll('.js-listar, .js-descargar, .js-vaciar, #btn-consultar').forEach(btn => {
+      btn.disabled = disabled;
+    });
+  }
+
+  // ===== Render Helpers =====
+  function renderListFiles(payload) {
+    const files = payload.files || [];
+    let html = `
+      <div class="mb-4">
+        <h4 class="text-secondary">📋 Archivos en Google Drive (${payload.label})</h4>
+        <p class="small text-muted">Carpeta: <code>${payload.folder_id}</code> | Fecha: ${payload.fecha}</p>
+    `;
+    if (payload.error) {
+      html += `<div class="alert alert-danger">${payload.error}</div>`;
+    } else if (files.length) {
+      html += `<ul class="list-group small">` +
+              files.map(f => `<li class="list-group-item d-flex justify-content-between align-items-center">
+                                <span>${f.name}</span><code>${f.id}</code>
+                              </li>`).join('') +
+              `</ul>`;
+    } else {
+      html += `<div class="alert alert-info">No se encontraron archivos.</div>`;
+    }
+    html += `</div>`;
+    return html;
+  }
+
+  function renderDescarga(payload) {
+    let html = `
+      <div class="mb-4">
+        <h4 class="text-primary">📥 Descarga desde Drive (${payload.label})</h4>
+        <p class="text-muted small">Fecha: ${payload.fecha} | Carpeta ID: <code>${payload.folder_id}</code></p>
+    `;
+    if (payload.descargados?.length) {
+      html += `<div class="alert alert-success">
+        <strong>Descargados (${payload.descargados.length}):</strong>
+        <ul class="mb-0 small">${payload.descargados.map(x => `<li>${x}</li>`).join('')}</ul>
+      </div>`;
+    }
+    if (payload.omitidos?.length) {
+      html += `<div class="alert alert-warning">
+        <strong>Omitidos (${payload.omitidos.length}):</strong>
+        <ul class="mb-0 small">${payload.omitidos.map(x => `<li>${x}</li>`).join('')}</ul>
+      </div>`;
+    }
+    if (payload.errores?.length) {
+      html += `<div class="alert alert-danger">
+        <strong>Errores:</strong>
+        <ul class="mb-0 small">${payload.errores.map(x => `<li>${x}</li>`).join('')}</ul>
+      </div>`;
+    }
+    html += `</div>`;
+    return html;
+  }
+
+  function renderVaciar(payload) {
+    return `
+      <div class="mb-4">
+        <h4 class="text-danger">🗑️ Resultado de vaciado</h4>
+        <p class="small text-muted">Carpeta: <code>${payload.folder_id}</code> | Fecha: ${payload.fecha}</p>
+        <div class="alert alert-info mb-0">${payload.mensaje}</div>
+      </div>
+    `;
+  }
+
+  function renderConsulta(payload) {
+    let html = `
+      <div class="mb-4">
+        <h4 class="text-success">🔍 Consulta local</h4>
+        <p class="small text-muted">Término: <code>${payload.q}</code> | Origen: ${payload.label}</p>
+    `;
+    if (payload.error) {
+      html += `<div class="alert alert-danger">${payload.error}</div>`;
+    } else if (payload.resultados?.length) {
+      html += `<ul class="small">` +
+              payload.resultados.map(r => `<li><strong>${r.archivo}</strong> — ${r.ruta}</li>`).join('') +
+              `</ul>`;
+    } else {
+      html += `<div class="alert alert-info">Sin coincidencias.</div>`;
+    }
+    html += `</div>`;
+    return html;
+  }
+
+  function appendResult(html) {
+    const cont = document.getElementById('resultados');
+    cont.insertAdjacentHTML('afterbegin', html);
+  }
+
+  // ===== Fetch Helpers =====
+  async function doGet(url) {
+    showSpinner(true); disableButtons(true);
+    try {
+      const resp = await fetch(url, {
+        headers: { 'X-Requested-With': 'XMLHttpRequest' }
+      });
+      return await resp.json();
+    } finally {
+      showSpinner(false); disableButtons(false);
+    }
+  }
+
+  async function doPost(url, data=null) {
+    showSpinner(true); disableButtons(true);
+    try {
+      const resp = await fetch(url, {
+        method: 'POST',
+        headers: {
+          'X-Requested-With': 'XMLHttpRequest',
+          'X-CSRFToken': csrftoken
+        },
+        body: data
+      });
+      return await resp.json();
+    } finally {
+      showSpinner(false); disableButtons(false);
+    }
+  }
+
+  // ===== Eventos botones por tarjeta =====
+  document.querySelectorAll('.js-listar').forEach(btn => {
+    btn.addEventListener('click', async (e) => {
+      const label = e.currentTarget.dataset.label;
+      const url = `{% url 'comprobantes:list_files' %}?label=${encodeURIComponent(label)}&ajax=1`;
+      const data = await doGet(url);
+      appendResult(renderListFiles(data));
+    });
+  });
+
+  document.querySelectorAll('.js-descargar').forEach(btn => {
+    btn.addEventListener('click', async (e) => {
+      const label = e.currentTarget.dataset.label;
+      const url = `{% url 'comprobantes:descargar_archivos_nube' %}?label=${encodeURIComponent(label)}&ajax=1`;
+      const data = await doGet(url);
+      appendResult(renderDescarga(data));
+    });
+  });
+
+  document.querySelectorAll('.js-vaciar').forEach(btn => {
+    btn.addEventListener('click', async (e) => {
+      const label = e.currentTarget.dataset.label;
+      if (!confirm(`¿Vaciar carpeta ${label} en Drive? Esta acción es irreversible.`)) return;
+      const url = `{% url 'comprobantes:vaciar_carpeta_drive' %}?label=${encodeURIComponent(label)}&ajax=1`;
+      const data = await doGet(url);
+      appendResult(renderVaciar(data));
+    });
+  });
+
+  // ===== Consulta local (form superior) =====
+  document.getElementById('form-consulta').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const fd = new FormData(e.currentTarget);
+    const q = fd.get('q') || '';
+    const label = fd.get('label') || '';
+    const url = `{% url 'comprobantes:consulta' %}?q=${encodeURIComponent(q)}&label=${encodeURIComponent(label)}&ajax=1`;
+    const data = await doGet(url);
+    appendResult(renderConsulta(data));
+  });
+</script>
+{% endblock %}
