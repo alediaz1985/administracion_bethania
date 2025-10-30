@@ -1,13 +1,13 @@
 <table class="montos-table">
   <thead>
     <tr>
-      <th>Ciclo</th>
-      <th>Nivel</th>
-      <th>Inscripción ($)</th>
-      <th>Cuota ($)</th>
-      <th>Desde</th>
-      <th>Hasta</th>
-      <th>Activo</th>
+      <th class="sortable" data-col="ciclo__anio">Ciclo</th>
+      <th class="sortable" data-col="nivel__nombre">Nivel</th>
+      <th class="sortable" data-col="monto_inscripcion">Inscripción ($)</th>
+      <th class="sortable" data-col="monto_cuota">Cuota ($)</th>
+      <th class="sortable" data-col="fecha_vigencia_desde">Desde</th>
+      <th class="sortable" data-col="fecha_vigencia_hasta">Hasta</th>
+      <th class="sortable" data-col="activo">Activo</th>
       <th class="text-center">Acciones</th>
     </tr>
   </thead>
@@ -19,7 +19,7 @@
         <td>{{ m.nivel.nombre }}</td>
         <td>{{ m.monto_inscripcion }}</td>
         <td>{{ m.monto_cuota }}</td>
-        <td>{{ m.fecha_vigencia_desde }}</td>
+        <td>{{ m.fecha_vigencia_desde|date:"d/m/Y" }}</td>
         <td>{{ m.fecha_vigencia_hasta|default:"-" }}</td>
         <td>
           {% if m.activo %}

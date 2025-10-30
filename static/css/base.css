@@ -10,6 +10,7 @@
 
 html {
   height: 100%;
+  scrollbar-gutter: stable;
 }
 
 body {
@@ -17,6 +18,7 @@ body {
   min-height: 100vh;
   display: flex;
   flex-direction: column;
+  overflow-y: scroll;
 }
 
 /* =====================================================
@@ -277,6 +279,30 @@ footer.footer * {
   z-index: 1050 !important;
 }
 
+/* Scrollbar moderno */
+::-webkit-scrollbar {
+  width: 10px;
+}
+
+::-webkit-scrollbar-track {
+  background: #f4f4f4;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #c2c2c2;
+  border-radius: 10px;
+  transition: background 0.3s;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #999;
+}
+
+/* Firefox */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: #c2c2c2 #f4f4f4;
+}
 
 /* =====================================================
    📱 Ajuste para pantallas de hasta 1366px de ancho

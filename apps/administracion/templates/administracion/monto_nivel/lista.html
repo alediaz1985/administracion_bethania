@@ -18,15 +18,10 @@
     </div>
 
     <div class="montos-botones">
-      <!-- 🔸 Botón Volver -->
       <a href="{% url 'administracion:home_administracion' %}" class="btn-volver">
         Volver
       </a>
-
-      <!-- 🔸 Botón Nuevo Monto -->
-      <button class="btn-nuevo" id="btnAdd">
-        Nuevo Monto
-      </button>
+      <button class="btn-nuevo" id="btnAdd">Nuevo Monto</button>
     </div>
   </div>
 
@@ -37,7 +32,7 @@
       <select id="cicloFilter" class="form-select form-select-sm" style="width: 150px;">
         <option value="">Todos</option>
         {% for ciclo in ciclos %}
-          <option value="{{ ciclo.id }}" 
+          <option value="{{ ciclo.id }}"
             {% if ciclo_actual and ciclo.id == ciclo_actual.id %}selected{% endif %}>
             {{ ciclo.anio }}
           </option>
@@ -47,9 +42,7 @@
 
     <div class="filtro-activos form-check">
       <input class="form-check-input" type="checkbox" id="checkActivos">
-      <label class="form-check-label fw-semibold" for="checkActivos">
-        Mostrar solo activos
-      </label>
+      <label class="form-check-label fw-semibold" for="checkActivos">Mostrar solo activos</label>
     </div>
   </div>
 
@@ -65,6 +58,9 @@
 
 {% block extra_js %}
 <script>
+  let sortCol = "ciclo__anio";
+  let sortDir = "desc";
+
   // =============================
   // 🧩 FUNCIONES DE MODAL
   // =============================
@@ -74,45 +70,33 @@
       .then(data => {
         const modalDiv = document.getElementById("modalMonto");
         modalDiv.innerHTML = data.html_form;
-
         const modal = new bootstrap.Modal(modalDiv);
         modal.show();
 
-        function handleSubmit(form) {
-          form.addEventListener("submit", function (e) {
-            e.preventDefault();
-            fetch(url, { method: "POST", body: new FormData(form) })
-              .then(r => r.json())
-              .then(data => {
-                if (data.form_is_valid) {
-                  document.getElementById("tabla-montos").innerHTML = data.html_list;
-                  modal.hide();
-                } else {
-                  modalDiv.innerHTML = data.html_form;
-                  const newForm = modalDiv.querySelector("form");
-                  if (newForm) handleSubmit(newForm);
-                }
-              });
-          });
-        }
-
         const form = modalDiv.querySelector("form");
-        if (form) handleSubmit(form);
+        if (form) handleSubmit(form, url, modal, modalDiv);
       });
   }
 
-  // ➕ Crear
-  document.getElementById("btnAdd").addEventListener("click", () => {
-    loadModal("{% url 'administracion:crear_monto' %}");
-  });
-
-  // ✏️ Editar / 🗑️ Eliminar
-  document.addEventListener("click", e => {
-    const editBtn = e.target.closest(".js-edit");
-    const delBtn = e.target.closest(".js-delete");
-    if (editBtn) loadModal(editBtn.dataset.url);
-    if (delBtn) loadModal(delBtn.dataset.url);
-  });
+  function handleSubmit(form, url, modal, modalDiv) {
+    form.addEventListener("submit", e => {
+      e.preventDefault();
+      fetch(url, { method: "POST", body: new FormData(form) })
+        .then(r => r.json())
+        .then(data => {
+          if (data.form_is_valid) {
+            document.getElementById("tabla-montos").innerHTML = data.html_list;
+            modal.hide();
+            inicializarEventos();
+            actualizarIndicadoresOrden(); // 🧭 mantiene las flechas correctas
+          } else {
+            modalDiv.innerHTML = data.html_form;
+            const newForm = modalDiv.querySelector("form");
+            if (newForm) handleSubmit(newForm, url, modal, modalDiv);
+          }
+        });
+    });
+  }
 
   // =============================
   // 🎯 FILTROS AJAX
@@ -122,27 +106,87 @@
 
   function aplicarFiltros() {
     const ciclo = cicloFilter.value;
-    const activos = checkActivos.checked ? 1 : 0; // ✅ solo si está marcado
+    const activos = checkActivos.checked ? 1 : 0;
 
-    fetch(`{% url 'administracion:filtrar_montos' %}?ciclo=${ciclo}&activos=${activos}`)
+    const url = `{% url 'administracion:filtrar_montos' %}?ciclo=${ciclo}&activos=${activos}&sort_col=${sortCol}&sort_dir=${sortDir}`;
+    fetch(url)
       .then(r => r.text())
       .then(html => {
         document.getElementById("tabla-montos").innerHTML = html;
+        inicializarEventos();
+        actualizarIndicadoresOrden(); // ✅ se vuelve a marcar la columna ordenada
       });
   }
 
-  cicloFilter.addEventListener("change", aplicarFiltros);
-  checkActivos.addEventListener("change", aplicarFiltros);
+  // =============================
+  // ⚙️ FUNCIÓN CENTRAL DE EVENTOS
+  // =============================
+  function inicializarEventos() {
+    const btnAdd = document.getElementById("btnAdd");
+    if (btnAdd) btnAdd.addEventListener("click", () => loadModal("{% url 'administracion:crear_monto' %}"));
+
+    document.querySelectorAll(".js-edit, .js-delete").forEach(btn => {
+      btn.addEventListener("click", e => {
+        e.preventDefault();
+        loadModal(btn.dataset.url);
+      });
+    });
+
+    // 🔽 ORDENAMIENTO POR COLUMNAS
+    document.querySelectorAll("th.sortable").forEach(th => {
+      th.addEventListener("click", () => {
+        const col = th.dataset.col;
+
+        if (col === sortCol) {
+          // cambia dirección solo si vuelven a hacer click en la misma columna
+          sortDir = sortDir === "asc" ? "desc" : "asc";
+        } else {
+          // nueva columna → arranca ascendente
+          sortCol = col;
+          sortDir = "asc";
+        }
+
+        aplicarFiltros();
+      });
+    });
+  }
 
   // =============================
-  // 🚀 FILTRO AUTOMÁTICO AL CARGAR
+  // 🧭 INDICADORES VISUALES (persistentes)
+  // =============================
+  function actualizarIndicadoresOrden() {
+    document.querySelectorAll("th.sortable").forEach(th => {
+      const col = th.dataset.col;
+      const icon = th.querySelector(".sort-icon");
+
+      // 🔹 si no tiene ícono, lo creamos una vez
+      if (!icon) {
+        const span = document.createElement("span");
+        span.classList.add("sort-icon");
+        span.style.marginLeft = "6px";
+        span.style.opacity = "0.6";
+        th.appendChild(span);
+      }
+    });
+
+    document.querySelectorAll(".sort-icon").forEach(icon => (icon.textContent = "⇅"));
+
+    // 🔹 solo la columna actual muestra ▲ o ▼
+    const activeTh = document.querySelector(`th[data-col="${sortCol}"] .sort-icon`);
+    if (activeTh) activeTh.textContent = sortDir === "asc" ? "▲" : "▼";
+  }
+
+  // =============================
+  // 🚀 AL CARGAR LA PÁGINA
   // =============================
   document.addEventListener("DOMContentLoaded", () => {
-    // 🧩 Si hay un ciclo seleccionado por defecto, lo aplica automáticamente
-    if (cicloFilter && cicloFilter.value) {
-      aplicarFiltros();
-    }
+    inicializarEventos();
+    actualizarIndicadoresOrden();
+
+    cicloFilter.addEventListener("change", aplicarFiltros);
+    checkActivos.addEventListener("change", aplicarFiltros);
+
+    if (cicloFilter.value) aplicarFiltros();
   });
 </script>
 {% endblock %}
-

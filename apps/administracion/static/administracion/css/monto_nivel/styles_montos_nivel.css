@@ -811,6 +811,25 @@ td.acciones {
   font-family: 'Inter', sans-serif;
 }
 
+th.sortable {
+  cursor: pointer;
+  user-select: none;
+  transition: color 0.2s;
+}
+
+th.sortable:hover {
+  color: var(--azul);
+}
+
+.sort-icon {
+  font-size: 0.75rem;
+  transition: transform 0.2s ease, opacity 0.2s ease;
+}
+
+th.sortable:hover .sort-icon {
+  opacity: 0.9;
+}
+
 /* ==========================================================
    📱 RESPONSIVE
 ========================================================== */

@@ -183,20 +183,52 @@ def crear_monto(request):
 def editar_monto(request, pk):
     monto = get_object_or_404(MontoNivel, pk=pk)
     data = {}
+
     if request.method == 'POST':
         form = MontoNivelForm(request.POST, instance=monto)
         if form.is_valid():
-            form.save()
+            monto_editado = form.save()
+
+            # 🔹 Actualizamos las cuotas pendientes si el monto está activo
+            if monto_editado.activo:
+                inscripciones = InscripcionAdministrativa.objects.filter(
+                    ciclo=monto_editado.ciclo,
+                    nivel=monto_editado.nivel,
+                    activo=True
+                )
+
+                for ins in inscripciones:
+                    cuotas_restantes = ins.cuotas.filter(
+                        estado='Pendiente',
+                        mes__gte=monto_editado.fecha_vigencia_desde.month
+                    )
+                    for cuota in cuotas_restantes:
+                        cuota.monto_original = monto_editado.monto_cuota
+                        cuota.monto_final = monto_editado.monto_cuota - cuota.monto_descuento
+                        cuota.save()
+
+            # ✅ Recargamos la tabla de montos
             data['form_is_valid'] = True
-            montos = MontoNivel.objects.select_related('ciclo', 'nivel').order_by('-ciclo__anio', 'nivel__nombre', '-fecha_vigencia_desde')
-            data['html_list'] = render_to_string('administracion/monto_nivel/_tabla.html', {'montos': montos})
+            montos = MontoNivel.objects.select_related('ciclo', 'nivel').order_by(
+                '-ciclo__anio', 'nivel__nombre', '-fecha_vigencia_desde'
+            )
+            data['html_list'] = render_to_string(
+                'administracion/monto_nivel/_tabla.html',
+                {'montos': montos}
+            )
+
         else:
             data['form_is_valid'] = False
+
     else:
         form = MontoNivelForm(instance=monto)
 
     context = {'form': form}
-    data['html_form'] = render_to_string('administracion/monto_nivel/_modal_form.html', context, request=request)
+    data['html_form'] = render_to_string(
+        'administracion/monto_nivel/_modal_form.html',
+        context,
+        request=request
+    )
     return JsonResponse(data)
 
 
@@ -216,6 +248,8 @@ def eliminar_monto(request, pk):
 def filtrar_montos(request):
     ciclo_id = request.GET.get('ciclo')
     activos = request.GET.get('activos')
+    sort_col = request.GET.get('sort_col', 'ciclo__anio')
+    sort_dir = request.GET.get('sort_dir', 'desc')
 
     montos = MontoNivel.objects.all().select_related('nivel', 'ciclo')
 
@@ -223,6 +257,12 @@ def filtrar_montos(request):
         montos = montos.filter(ciclo_id=ciclo_id)
     if activos == '1':
         montos = montos.filter(activo=True)
+
+    # 🔹 Orden dinámico
+    if sort_dir == 'desc':
+        montos = montos.order_by(f'-{sort_col}')
+    else:
+        montos = montos.order_by(sort_col)
 
     return render(request, 'administracion/monto_nivel/_tabla.html', {'montos': montos})
 
