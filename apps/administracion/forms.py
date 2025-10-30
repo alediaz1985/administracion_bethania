@@ -2,15 +2,18 @@ from django import forms
 from apps.administracion.models import CicloLectivo, MontoNivel, Beca
 from django.utils import timezone
 
+# ============================================================
+# 📅 FORMULARIO DE CICLO LECTIVO
+# ============================================================
 class CicloLectivoForm(forms.ModelForm):
     class Meta:
         model = CicloLectivo
-        fields = ['anio', 'fecha_inicio', 'fecha_fin', 'activo']
+        fields = ['anio', 'fecha_inicio', 'fecha_fin', 'estado']
         labels = {
             'anio': 'Año',
             'fecha_inicio': 'Fecha de inicio',
             'fecha_fin': 'Fecha de fin',
-            'activo': 'Activo',
+            'estado': 'Estado',
         }
         widgets = {
             'anio': forms.NumberInput(attrs={
@@ -25,7 +28,9 @@ class CicloLectivoForm(forms.ModelForm):
                 format='%Y-%m-%d',
                 attrs={'class': 'form-control', 'type': 'date'}
             ),
-            'activo': forms.CheckboxInput(attrs={'class': 'form-check-input'}),
+            'estado': forms.Select(attrs={
+                'class': 'form-select'
+            }),
         }
 
     def __init__(self, *args, **kwargs):

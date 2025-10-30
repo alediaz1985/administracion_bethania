@@ -6,9 +6,20 @@ from .models import (
 
 @admin.register(CicloLectivo)
 class CicloLectivoAdmin(admin.ModelAdmin):
-    list_display = ('anio', 'fecha_inicio', 'fecha_fin', 'activo')
-    list_filter = ('activo',)
+    list_display = ('anio', 'fecha_inicio', 'fecha_fin', 'mostrar_estado')
+    list_filter = ('estado',)
     search_fields = ('anio',)
+    ordering = ('-anio',)
+
+    def mostrar_estado(self, obj):
+        """Devuelve el estado con color según su tipo."""
+        colores = {
+            'Activo': '🟢 Activo',
+            'Preparacion': '🟡 En preparación',
+            'Inactivo': '⚪ Inactivo'
+        }
+        return colores.get(obj.estado, obj.estado)
+    mostrar_estado.short_description = 'Estado'
 
 
 @admin.register(MontoNivel)

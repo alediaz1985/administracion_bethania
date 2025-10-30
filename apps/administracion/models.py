@@ -8,17 +8,53 @@ from django.core.exceptions import ValidationError
 # 🗓️ CICLO LECTIVO (Un registro por año)
 # ============================================================
 class CicloLectivo(models.Model):
+    ESTADO_CHOICES = [
+        ('Activo', 'Activo'),
+        ('Preparacion', 'En preparación'),
+        ('Inactivo', 'Inactivo'),
+    ]
+
     anio = models.PositiveIntegerField()
     fecha_inicio = models.DateField()
     fecha_fin = models.DateField()
-    activo = models.BooleanField(default=True)
+    estado = models.CharField(
+        max_length=20,
+        choices=ESTADO_CHOICES,
+        default='Inactivo'
+    )
 
     class Meta:
         db_table = 'adm_ciclo_lectivo'
         ordering = ['-anio']
 
     def __str__(self):
-        return str(self.anio)
+        return f"{self.anio} ({self.estado})"
+
+    def clean(self):
+        """
+        Valida que:
+        - Solo haya un ciclo 'Activo'.
+        - Solo haya un ciclo 'En preparación'.
+        - La fecha de inicio sea anterior a la fecha de fin.
+        """
+        # Validar cantidad de ciclos activos
+        if self.estado == 'Activo' and CicloLectivo.objects.filter(estado='Activo').exclude(id=self.id).exists():
+            raise ValidationError("Solo puede haber un ciclo activo a la vez.")
+
+        # Validar cantidad de ciclos en preparación
+        if self.estado == 'Preparacion' and CicloLectivo.objects.filter(estado='Preparacion').exclude(id=self.id).exists():
+            raise ValidationError("Solo puede haber un ciclo en preparación a la vez.")
+
+        # Validar orden de fechas
+        if self.fecha_inicio and self.fecha_fin and self.fecha_inicio >= self.fecha_fin:
+            raise ValidationError("La fecha de inicio debe ser anterior a la fecha de fin.")
+
+    def save(self, *args, **kwargs):
+        """
+        Ejecuta validaciones antes de guardar.
+        """
+        self.full_clean()
+        super().save(*args, **kwargs)
 
 
 # ============================================================

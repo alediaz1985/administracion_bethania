@@ -241,6 +241,13 @@ td.acciones {
   border: 1px solid #ccc;
 }
 
+/* 🟡 En preparación */
+.badge.bg-warning {
+  background: #fff7e0;
+  color: #8c6c00;
+  border: 1px solid #f2d27d;
+}
+
 /* ==========================================================
    🪟 MODAL — Centrado + estilo institucional (Bootstrap compatible)
 ========================================================== */

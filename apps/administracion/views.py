@@ -38,17 +38,29 @@ def crear_ciclo(request):
     if request.method == 'POST':
         form = CicloLectivoForm(request.POST)
         if form.is_valid():
-            form.save()
-            data['form_is_valid'] = True
-            ciclos = CicloLectivo.objects.all().order_by('-anio')
-            data['html_list'] = render_to_string('administracion/ciclo_lectivo/_tabla.html', {'ciclos': ciclos})
+            try:
+                form.save()
+                data['form_is_valid'] = True
+                ciclos = CicloLectivo.objects.all().order_by('-anio')
+                data['html_list'] = render_to_string(
+                    'administracion/ciclo_lectivo/_tabla.html',
+                    {'ciclos': ciclos}
+                )
+            except Exception as e:
+                # ⚠️ Captura el mensaje de validación del modelo (por ejemplo, “Solo puede haber un ciclo activo”)
+                data['form_is_valid'] = False
+                data['error_message'] = str(e)
         else:
             data['form_is_valid'] = False
     else:
         form = CicloLectivoForm()
 
     context = {'form': form}
-    data['html_form'] = render_to_string('administracion/ciclo_lectivo/_modal_form.html', context, request=request)
+    data['html_form'] = render_to_string(
+        'administracion/ciclo_lectivo/_modal_form.html',
+        context,
+        request=request
+    )
     return JsonResponse(data)
 
 
@@ -58,17 +70,28 @@ def editar_ciclo(request, pk):
     if request.method == 'POST':
         form = CicloLectivoForm(request.POST, instance=ciclo)
         if form.is_valid():
-            form.save()
-            data['form_is_valid'] = True
-            ciclos = CicloLectivo.objects.all().order_by('-anio')
-            data['html_list'] = render_to_string('administracion/ciclo_lectivo/_tabla.html', {'ciclos': ciclos})
+            try:
+                form.save()
+                data['form_is_valid'] = True
+                ciclos = CicloLectivo.objects.all().order_by('-anio')
+                data['html_list'] = render_to_string(
+                    'administracion/ciclo_lectivo/_tabla.html',
+                    {'ciclos': ciclos}
+                )
+            except Exception as e:
+                data['form_is_valid'] = False
+                data['error_message'] = str(e)
         else:
             data['form_is_valid'] = False
     else:
         form = CicloLectivoForm(instance=ciclo)
 
     context = {'form': form}
-    data['html_form'] = render_to_string('administracion/ciclo_lectivo/_modal_form.html', context, request=request)
+    data['html_form'] = render_to_string(
+        'administracion/ciclo_lectivo/_modal_form.html',
+        context,
+        request=request
+    )
     return JsonResponse(data)
 
 
@@ -79,10 +102,17 @@ def eliminar_ciclo(request, pk):
         ciclo.delete()
         data['form_is_valid'] = True
         ciclos = CicloLectivo.objects.all().order_by('-anio')
-        data['html_list'] = render_to_string('administracion/ciclo_lectivo/_tabla.html', {'ciclos': ciclos})
+        data['html_list'] = render_to_string(
+            'administracion/ciclo_lectivo/_tabla.html',
+            {'ciclos': ciclos}
+        )
     else:
         context = {'ciclo': ciclo}
-        data['html_form'] = render_to_string('administracion/ciclo_lectivo/_modal_delete.html', context, request=request)
+        data['html_form'] = render_to_string(
+            'administracion/ciclo_lectivo/_modal_delete.html',
+            context,
+            request=request
+        )
     return JsonResponse(data)
 
 # ============================================================

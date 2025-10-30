@@ -15,8 +15,10 @@
         <td>{{ ciclo.fecha_inicio }}</td>
         <td>{{ ciclo.fecha_fin }}</td>
         <td>
-          {% if ciclo.activo %}
+          {% if ciclo.estado == "Activo" %}
             <span class="badge bg-success">Activo</span>
+          {% elif ciclo.estado == "Preparacion" %}
+            <span class="badge bg-warning text-dark">En preparación</span>
           {% else %}
             <span class="badge bg-secondary">Inactivo</span>
           {% endif %}
