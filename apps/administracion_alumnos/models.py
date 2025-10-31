@@ -107,7 +107,7 @@ class SaludEstudiante(models.Model):
     problema_neurologico_estudiante = models.CharField(max_length=100)
     cual_prob_neurologico_estudiante = models.CharField(max_length=100)
     problema_fisico_estudiante = models.CharField(max_length=100)
-    certificado_medico_estudiante = models.CharField(max_length=100)
+    certificado_medico_estudiante = models.CharField(max_length=100, blank=True, null=True)
     problema_aprendizaje_estudiante = models.CharField(max_length=100)
     cual_aprendizaje_estudiante = models.CharField(max_length=100)
     atencion_medica_estudiante = models.CharField(max_length=100)
@@ -145,8 +145,8 @@ class Responsable(models.Model):
     tel_fijo = models.CharField(max_length=50, blank=True, null=True)
     tel_cel = models.CharField(max_length=50)
     ocupacion = models.CharField(max_length=100)
-    tel_laboral = models.CharField(max_length=50)
-    horario_trabajo = models.CharField(max_length=100)
+    tel_laboral = models.CharField(max_length=50, blank=True, null=True)
+    horario_trabajo = models.CharField(max_length=100, blank=True, null=True)
 
     def __str__(self):
         return f"{self.apellidos}, {self.nombres}"
