@@ -37,7 +37,7 @@ from apps.administracion.models import Cuota, InscripcionAdministrativa
 
 
 # ----------------FUNCIONA------------------------------
-from apps.administracion.models import InscripcionAdministrativa
+from apps.administracion.models import InscripcionAdministrativa, CicloLectivo
 
 def estudiante_lista(request):
     # Trae todos los estudiantes con sus relaciones
@@ -102,7 +102,8 @@ from .models import Estudiante
 def ver_datos_estudiante(request, pk):
     """
     Muestra los datos completos de un estudiante,
-    incluyendo su foto y las cuotas asociadas (si existen).
+    incluyendo su foto, cuotas asociadas y estado de inscripción
+    respecto al ciclo lectivo (activo o en preparación).
     """
     fotos_path = os.path.join(settings.MEDIA_ROOT, 'documentos', 'fotoPerfilEstudiante')
 
@@ -143,6 +144,10 @@ def ver_datos_estudiante(request, pk):
         'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'
     ]
 
+    # 🔹 Ciclos lectivos disponibles
+    ciclo_activo = CicloLectivo.objects.filter(estado='Activo').first()
+    ciclo_preparacion = CicloLectivo.objects.filter(estado='Preparacion').first()
+
     # 🔹 Renderizar vista
     return render(
         request,
@@ -150,8 +155,10 @@ def ver_datos_estudiante(request, pk):
         {
             'estudiante': estudiante,
             'image_url': foto_url,
-            'cuotas': cuotas,  # ✅ enviamos las cuotas al template
-            'meses': meses,  # ✅ enviamos la lista al template
+            'cuotas': cuotas,
+            'meses': meses,
+            'ciclo_activo': ciclo_activo,
+            'ciclo_preparacion': ciclo_preparacion,
         }
     )
 

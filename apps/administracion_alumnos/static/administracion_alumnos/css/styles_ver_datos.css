@@ -28,46 +28,43 @@ body {
 ============================ */
 .student-header {
   display: flex;
-  align-items: flex-start; /* ✅ Alinea todos los elementos arriba (h2) */
+  align-items: flex-start;
   justify-content: space-between;
   border-bottom: 1px solid var(--borde);
   padding-bottom: 1.5rem;
   margin-bottom: 1.5rem;
-  position: relative;
+  gap: 2rem; /* espacio entre foto/info y bloque de inscripción */
 }
 
 .student-info {
   flex: 1;
-  margin-left: 1rem;
 }
 
-/* 🔹 Contenedor del botón/mensaje */
+/* 🏷️ Bloque de inscripción — ahora alineado en columna */
 .student-inscripcion {
-  position: absolute;
-  right: 0; /* ✅ Pegado al borde derecho */
-  top: 0;   /* ✅ A la misma altura del nombre */
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 0.4rem;
   text-align: right;
+  min-width: 270px; /* evita que salte de línea */
 }
 
 .btn-inscribir {
-  background: #28a745;             /* 💠 Turquesa (diferenciador) */
+  background: #2b62a3; /* azul institucional */
   color: #fff;
   text-align: center;
-  padding: 0.45rem 0;
-  width: 150px;
-  border-radius: 5px;
-  text-decoration: none;
-  font-size: 0.75rem;
-  letter-spacing: 0.3px;
+  padding: 0.5rem 1rem;
+  border-radius: 6px;
+  font-size: 0.8rem;
   font-weight: 500;
+  border: none;
   transition: all 0.25s ease;
-  border: 1px solid transparent;
-  display: inline-block;
+  cursor: pointer;
 }
 
 .btn-inscribir:hover {
-  background: #218838;             /* Un poco más oscuro */
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
+  background: #234f83;
   transform: translateY(-1px);
 }
 
@@ -80,6 +77,9 @@ body {
   font-size: 0.8rem;
   font-weight: 500;
   white-space: nowrap;
+  text-align: right;
+  width: 100%;
+  box-sizing: border-box;
 }
 
 /* 🔹 Ajustes de foto e info */
@@ -104,22 +104,21 @@ body {
 
 /* 🔘 Botón eliminar inscripción */
 .btn-eliminar {
-  background-color: #c0392b;
+  background-color: #e74c3c;
   color: #fff;
   border: none;
-  padding: 0.45rem 0.9rem;
-  border-radius: 8px;
+  padding: 0.5rem 1rem;
+  border-radius: 6px;
   cursor: pointer;
   font-family: 'Inter', sans-serif;
   font-weight: 500;
-  font-size: 0.85rem;
+  font-size: 0.8rem;
   transition: background 0.2s ease, transform 0.1s ease;
-  margin-top: 0.4rem;
 }
 
 .btn-eliminar:hover {
-  background-color: #a93226;
-  transform: scale(1.03);
+  background-color: #c0392b;
+  transform: translateY(-1px);
 }
 
 /* Modal genérico (ya usás este formato, pero aseguremos compatibilidad) */

@@ -579,7 +579,7 @@ def inscribir_estudiante(request, estudiante_id):
     puede_inscribir = estado_actual == 'aprobado'
 
     # --- Datos para selects ---
-    ciclos = CicloLectivo.objects.filter(activo=True)
+    ciclos = CicloLectivo.objects.filter(estado__in=['Activo', 'Preparacion'])
     niveles = Nivel.objects.all()
     subniveles = Subnivel.objects.all()
     becas = Beca.objects.filter(activa=True)
@@ -731,7 +731,6 @@ def inscribir_estudiante(request, estudiante_id):
         'niveles': niveles,
         'subniveles': subniveles,
         'becas': becas,
-        # 🔹 sin json.dumps()
         'montos_json': montos_data,
     }
 

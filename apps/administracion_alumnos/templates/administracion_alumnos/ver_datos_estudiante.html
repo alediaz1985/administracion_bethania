@@ -21,34 +21,66 @@
 
   <!-- CABECERA -->
   <div class="student-header">
-    <!-- Foto -->
+    <!-- 📸 Foto -->
     <img src="{{ image_url }}" alt="Foto del Estudiante" class="student-photo">
 
-    <!-- Información -->
+    <!-- 🧾 Información -->
     <div class="student-info">
       <h2>{{ estudiante.apellidos_estudiante }}, {{ estudiante.nombres_estudiante }}</h2>
       <p><strong>DNI:</strong> {{ estudiante.dni_estudiante }}</p>
       <p><strong>CUIL:</strong> {{ estudiante.cuil_estudiante }}</p>
     </div>
 
-    <!-- Botón / Mensaje Inscripción -->
+    <!-- 🏷️ Inscripción -->
     <div class="student-inscripcion">
       {% if estudiante.inscripciones_admin.exists %}
-        <div class="inscripcion-estado">
-          ✅ Alumno inscripto en el ciclo {{ estudiante.inscripciones_admin.last.ciclo.anio }}
-        </div>
-        <!-- 🔘 Botón que abre el modal -->
-        <button type="button"
-                class="btn-eliminar"
-                id="abrirModalEliminar"
-                data-inscripcion-id="{{ estudiante.inscripciones_admin.last.id }}"
-                data-estudiante="{{ estudiante.apellidos_estudiante }}, {{ estudiante.nombres_estudiante }}">
-          Eliminar inscripción
-        </button>
+        {% with inscripcion_actual=estudiante.inscripciones_admin.last %}
+          <div class="inscripcion-estado">
+            ✅ Alumno inscripto en el ciclo {{ inscripcion_actual.ciclo.anio }}
+            <span class="badge 
+              {% if inscripcion_actual.ciclo.estado == 'Activo' %}bg-success
+              {% elif inscripcion_actual.ciclo.estado == 'Preparacion' %}bg-warning
+              {% else %}bg-secondary{% endif %}">
+              {{ inscripcion_actual.ciclo.estado }}
+            </span>
+          </div>
+
+          {% if ciclo_preparacion %}
+            <!-- 🟡 Mostrar botón para inscribir al nuevo ciclo en preparación -->
+            <a href="{% url 'administracion:inscribir_estudiante' estudiante.id %}"
+              class="btn-inscribir">
+              Inscribir Ciclo {{ ciclo_preparacion.anio }}
+            </a>
+          {% endif %}
+
+          <!-- 🔘 Botón para eliminar inscripción actual -->
+          <button type="button"
+                  class="btn-eliminar"
+                  id="abrirModalEliminar"
+                  data-inscripcion-id="{{ inscripcion_actual.id }}"
+                  data-estudiante="{{ estudiante.apellidos_estudiante }}, {{ estudiante.nombres_estudiante }}">
+            Eliminar inscripción {{ inscripcion_actual.ciclo.anio }}
+          </button>
+        {% endwith %}
       {% else %}
-        <a href="{% url 'administracion:inscribir_estudiante' estudiante.id %}" class="btn-inscribir">
-          Inscribir Estudiante
-        </a>
+        {% if ciclo_preparacion %}
+          <!-- 🟡 Sin inscripciones previas, ciclo en preparación -->
+          <a href="{% url 'administracion:inscribir_estudiante' estudiante.id %}"
+            class="btn-inscribir">
+            Inscribir Estudiante ({{ ciclo_preparacion.anio }})
+          </a>
+        {% elif ciclo_activo %}
+          <!-- 🟢 Sin inscripciones previas, ciclo activo -->
+          <a href="{% url 'administracion:inscribir_estudiante' estudiante.id %}"
+            class="btn-inscribir">
+            Inscribir Estudiante ({{ ciclo_activo.anio }})
+          </a>
+        {% else %}
+          <!-- ⚪ Ningún ciclo disponible -->
+          <div class="inscripcion-estado text-muted">
+            ⚠️ No hay un ciclo lectivo activo o en preparación para inscribir estudiantes.
+          </div>
+        {% endif %}
       {% endif %}
     </div>
   </div>
