@@ -94,33 +94,30 @@ def estudiante_detail(request, pk):
     estudiante = get_object_or_404(Estudiante, pk=pk)
     return render(request, 'administracion_alumnos/estudiante_detail.html', {'estudiante': estudiante})
 
-import os
-from django.shortcuts import render, get_object_or_404
-from django.conf import settings
-from .models import Estudiante
 
 def ver_datos_estudiante(request, pk):
     """
     Muestra los datos completos de un estudiante,
     incluyendo su foto, cuotas asociadas y estado de inscripción
     respecto al ciclo lectivo (activo o en preparación).
+    Además, permite filtrar las cuotas por ciclo lectivo.
     """
     fotos_path = os.path.join(settings.MEDIA_ROOT, 'documentos', 'fotoPerfilEstudiante')
 
     # 🔹 Obtener el estudiante
     estudiante = get_object_or_404(Estudiante, pk=pk)
 
-    # 🔹 Obtener la foto desde la inscripción (si existe)
+    # ======================================================
+    # 📸 FOTO DEL ESTUDIANTE
+    # ======================================================
     foto_campo = None
     if hasattr(estudiante, 'inscripcion') and estudiante.inscripcion.foto_estudiante:
         foto_campo = estudiante.inscripcion.foto_estudiante
 
-    # 🔹 Buscar ID de Google Drive
     foto_id = None
     if foto_campo and "id=" in foto_campo:
         foto_id = foto_campo.split("id=")[-1]
 
-    # 🔹 Resolver URL de la foto (local o default)
     foto_url = None
     if foto_id and os.path.exists(fotos_path):
         for archivo in os.listdir(fotos_path):
@@ -133,22 +130,63 @@ def ver_datos_estudiante(request, pk):
     if not foto_url:
         foto_url = os.path.join(settings.STATIC_URL, 'images/default.jpg')
 
-    # 🔹 Obtener todas las cuotas relacionadas al estudiante
-    cuotas = Cuota.objects.filter(
-        inscripcion__estudiante=estudiante
-    ).select_related('inscripcion', 'inscripcion__nivel', 'inscripcion__ciclo').order_by('anio', 'mes')
+    # ======================================================
+    # 🗓️ CICLOS LECTIVOS Y FILTRO POR CICLO
+    # ======================================================
+    ciclos = CicloLectivo.objects.all().order_by('-anio')
+    ciclo_activo = CicloLectivo.objects.filter(estado='Activo').first()
+    ciclo_preparacion = CicloLectivo.objects.filter(estado='Preparacion').first()
 
-    # 🔹 Lista de meses (marzo a diciembre)
+    ciclo_filtrado = request.GET.get('ciclo')
+
+    try:
+        ciclo_filtrado = int(ciclo_filtrado) if ciclo_filtrado else None
+    except (ValueError, TypeError):
+        ciclo_filtrado = None
+
+    # Si no se selecciona un ciclo manualmente
+    if not ciclo_filtrado:
+        # Si el estudiante tiene inscripciones, tomamos la más reciente
+        ultima_inscripcion = estudiante.inscripciones_admin.order_by('-ciclo__anio').first()
+        if ultima_inscripcion:
+            ciclo_filtrado = ultima_inscripcion.ciclo.anio
+        elif ciclo_activo:
+            ciclo_filtrado = ciclo_activo.anio
+        else:
+            ciclo_filtrado = timezone.now().year
+
+    # ======================================================
+    # 💰 CUOTAS DEL ESTUDIANTE (filtradas por ciclo)
+    # ======================================================
+    cuotas = Cuota.objects.filter(
+        inscripcion__estudiante=estudiante,
+        inscripcion__ciclo__anio=ciclo_filtrado
+    ).select_related(
+        'inscripcion',
+        'inscripcion__nivel',
+        'inscripcion__ciclo'
+    ).order_by('anio', 'mes')
+
+    # ======================================================
+    # ⚠️ DETECTAR DEUDAS DE CICLOS ANTERIORES
+    # ======================================================
+    tiene_deudas_anteriores = Cuota.objects.filter(
+        inscripcion__estudiante=estudiante,
+        inscripcion__ciclo__anio__lt=ciclo_filtrado,
+        estado__in=['Pendiente', 'Vencida']
+    ).exists()
+
+    # ======================================================
+    # 🗓️ LISTA DE MESES
+    # ======================================================
     meses = [
         'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio',
         'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'
     ]
 
-    # 🔹 Ciclos lectivos disponibles
-    ciclo_activo = CicloLectivo.objects.filter(estado='Activo').first()
-    ciclo_preparacion = CicloLectivo.objects.filter(estado='Preparacion').first()
-
-    # 🔹 Renderizar vista
+    # ======================================================
+    # 🎯 RENDERIZAR
+    # ======================================================
     return render(
         request,
         'administracion_alumnos/ver_datos_estudiante.html',
@@ -157,8 +195,11 @@ def ver_datos_estudiante(request, pk):
             'image_url': foto_url,
             'cuotas': cuotas,
             'meses': meses,
+            'ciclos': ciclos,
             'ciclo_activo': ciclo_activo,
             'ciclo_preparacion': ciclo_preparacion,
+            'ciclo_filtrado': ciclo_filtrado,
+            'tiene_deudas_anteriores': tiene_deudas_anteriores,  # ✅ NUEVO
         }
     )
 

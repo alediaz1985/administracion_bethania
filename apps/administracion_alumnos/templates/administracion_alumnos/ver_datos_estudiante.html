@@ -106,19 +106,162 @@
 
   <!-- PESTAÑAS -->
   <div class="tabs">
-    <button type="button" class="tab-button active" data-tab="datos">Datos Personales</button>
+    <button type="button" class="tab-button active" data-tab="cuotas">Cuotas</button>
+    <button type="button" class="tab-button" data-tab="datos">Datos Personales</button>
     <button type="button" class="tab-button" data-tab="inscripcion">Inscripción</button>
     <button type="button" class="tab-button" data-tab="academica">Académica</button>
     <button type="button" class="tab-button" data-tab="contacto">Contacto</button>
     <button type="button" class="tab-button" data-tab="salud">Salud</button>
     <button type="button" class="tab-button" data-tab="responsables">Responsables</button>
     <button type="button" class="tab-button" data-tab="documentacion">Documentación</button>
-    <button type="button" class="tab-button" data-tab="cuotas">Cuotas</button>
     <button type="button" class="tab-button" data-tab="estado">Estado Doc.</button>
   </div>
 
+  <!-- ===== CUOTAS ===== -->
+  <div class="tab-content active" id="tab-cuotas">
+
+    <!-- 🔹 FILTRO + BOTÓN PDF (misma fila) -->
+    <div class="acciones-cuotas">
+      <form method="get" id="filtroCicloForm" class="filtro-ciclo">
+        <label for="select-ciclo">Filtrar por ciclo lectivo:</label>
+        <select id="select-ciclo" name="ciclo" class="form-select" onchange="this.form.submit()">
+          {% for ciclo in ciclos %}
+            <option value="{{ ciclo.anio }}" {% if ciclo.anio == ciclo_filtrado|add:0 %}selected{% endif %}>
+              {{ ciclo.anio }} ({{ ciclo.estado }})
+            </option>
+          {% endfor %}
+        </select>
+      </form>
+
+      <button class="btn-pdf" data-bs-toggle="modal" data-bs-target="#modalGenerarPDF">
+        <i class="fas fa-file-pdf"></i> Generar Estado de Deuda
+      </button>
+    </div>
+
+    {% if cuotas %}
+      <!-- 🔹 MODAL PARA ELEGIR RANGO -->
+      <div class="modal fade" id="modalGenerarPDF" tabindex="-1" aria-labelledby="modalGenerarPDFLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+          <div class="modal-content form-modal">
+            <div class="modal-header">
+              <h5 class="modal-title" id="modalGenerarPDFLabel">Generar Estado de Deuda</h5>
+              <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+
+            <div class="modal-body">
+              <form id="formGenerarPDF" method="GET" action="{% url 'administracion:generar_pdf_deuda' estudiante.id %}" target="_blank">
+
+                <!-- 📅 Selección de rango -->
+                <div class="rango-meses">
+                  <div>
+                    <label for="desde">Desde</label>
+                    <select name="desde" id="desde" class="form-select">
+                      {% for mes in meses %}
+                        <option value="{{ forloop.counter|add:2 }}">{{ mes }}</option>
+                      {% endfor %}
+                    </select>
+                  </div>
+                  <div>
+                    <label for="hasta">Hasta</label>
+                    <select name="hasta" id="hasta" class="form-select">
+                      {% for mes in meses %}
+                        <option value="{{ forloop.counter|add:2 }}">{{ mes }}</option>
+                      {% endfor %}
+                    </select>
+                  </div>
+                </div>
+
+                <!-- ✅ Checkbox -->
+                <div class="form-check">
+                  <input class="form-check-input" type="checkbox" id="todas" name="todas">
+                  <label class="form-check-label" for="todas">Generar deuda completa</label>
+                </div>
+
+                <!-- 🧭 Botones -->
+                <div class="modal-actions">
+                  <button type="button" class="btn btn-light" data-bs-dismiss="modal">Cancelar</button>
+                  <button type="submit" class="btn btn-success">
+                    Generar PDF
+                  </button>
+                </div>
+
+              </form>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {% if tiene_deudas_anteriores %}
+        <div class="alerta-deuda">
+          ⚠️ El estudiante tiene cuotas pendientes de ciclos anteriores.
+        </div>
+      {% endif %}
+
+      <!-- 🔹 TABLA DE CUOTAS -->
+      <table>
+        <thead>
+          <tr>
+            <th>Mes</th>
+            <th>Año</th>
+            <th>Monto</th>
+            <th>Estado</th>
+            <th>Vencimiento</th>
+            <th>Pago</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for cuota in cuotas %}
+          <tr>
+            <td>{{ cuota.mes }}</td>
+            <td>{{ cuota.anio }}</td>
+            <td>${{ cuota.monto_final }}</td>
+            <td>
+              {% if cuota.estado == 'Pagada' %}
+                <span style="color:green; font-weight:bold;">Pagada</span>
+              {% elif cuota.estado == 'Vencida' %}
+                <span style="color:red; font-weight:bold;">Vencida</span>
+              {% else %}
+                <span style="color:orange; font-weight:bold;">Pendiente</span>
+              {% endif %}
+            </td>
+            <td>{{ cuota.fecha_vencimiento|date:"d/m/Y" }}</td>
+            <td>
+              {% if cuota.estado == 'Pagada' %}
+                <button type="button"
+                        class="btn btn-warning btn-deshacer-pago"
+                        data-cuota-id="{{ cuota.id }}"
+                        data-estudiante="{{ estudiante.apellidos_estudiante }}, {{ estudiante.nombres_estudiante }}"
+                        title="Deshacer Pago">
+                  <i class="fas fa-times"></i>
+                </button>
+              {% else %}
+                <button type="button"
+                        class="btn btn-light btn-registrar-pago"
+                        data-cuota-id="{{ cuota.id }}"
+                        data-monto="{{ cuota.monto_final }}"
+                        data-mes="{{ cuota.mes }}"
+                        data-anio="{{ cuota.anio }}"
+                        data-estudiante="{{ estudiante.apellidos_estudiante }}, {{ estudiante.nombres_estudiante }}"
+                        title="Registrar Pago">
+                  <i class="fas fa-cash-register"></i>
+                </button>
+              {% endif %}
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+
+    {% else %}
+      <!-- ⚠️ MENSAJE SIN CUOTAS (EL FILTRO SIGUE ARRIBA) -->
+      <div class="sin-cuotas">
+        ⚠️ No hay cuotas registradas para el ciclo {{ ciclo_filtrado }}.
+      </div>
+    {% endif %}
+  </div>
+
   <!-- ===== DATOS PERSONALES ===== -->
-  <div class="tab-content active" id="tab-datos">
+  <div class="tab-content" id="tab-datos">
     <table>
       <tr><th>Apellidos</th><td>{{ estudiante.apellidos_estudiante }}</td></tr>
       <tr><th>Nombres</th><td>{{ estudiante.nombres_estudiante }}</td></tr>
@@ -278,127 +421,6 @@
     </table>
     {% else %}
     <p>No hay documentación registrada.</p>
-    {% endif %}
-  </div>
-
-  <!-- ===== CUOTAS ===== -->
-  <div class="tab-content" id="tab-cuotas">
-    {% if cuotas %}
-
-    <!-- 🔹 MODAL PARA ELEGIR RANGO -->
-    <div class="modal fade" id="modalGenerarPDF" tabindex="-1" aria-labelledby="modalGenerarPDFLabel" aria-hidden="true">
-      <div class="modal-dialog modal-dialog-centered">
-        <div class="modal-content form-modal">
-          <div class="modal-header">
-            <h5 class="modal-title" id="modalGenerarPDFLabel">Generar Estado de Deuda</h5>
-            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-          </div>
-
-          <div class="modal-body">
-            <form id="formGenerarPDF" method="GET" action="{% url 'administracion:generar_pdf_deuda' estudiante.id %}" target="_blank">
-
-              <!-- 📅 Selección de rango -->
-              <div class="rango-meses">
-                <div>
-                  <label for="desde">Desde</label>
-                  <select name="desde" id="desde" class="form-select">
-                    {% for mes in meses %}
-                      <option value="{{ forloop.counter|add:2 }}">{{ mes }}</option>
-                    {% endfor %}
-                  </select>
-                </div>
-                <div>
-                  <label for="hasta">Hasta</label>
-                  <select name="hasta" id="hasta" class="form-select">
-                    {% for mes in meses %}
-                      <option value="{{ forloop.counter|add:2 }}">{{ mes }}</option>
-                    {% endfor %}
-                  </select>
-                </div>
-              </div>
-
-              <!-- ✅ Checkbox -->
-              <div class="form-check">
-                <input class="form-check-input" type="checkbox" id="todas" name="todas">
-                <label class="form-check-label" for="todas">Generar deuda completa</label>
-              </div>
-
-              <!-- 🧭 Botones -->
-              <div class="modal-actions">
-                <button type="button" class="btn btn-light" data-bs-dismiss="modal">Cancelar</button>
-                <button type="submit" class="btn btn-success">
-                  Generar PDF
-                </button>
-              </div>
-
-            </form>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <table>
-      <thead>
-        <tr>
-          <th>Mes</th>
-          <th>Año</th>
-          <th>Monto</th>
-          <th>Estado</th>
-          <th>Vencimiento</th>
-          <th>Pago</th>
-        </tr>
-      </thead>
-      <tbody>
-        {% for cuota in cuotas %}
-        <tr>
-          <td>{{ cuota.mes }}</td>
-          <td>{{ cuota.anio }}</td>
-          <td>${{ cuota.monto_final }}</td>
-          <td>
-            {% if cuota.estado == 'Pagada' %}
-              <span style="color:green; font-weight:bold;">Pagada</span>
-            {% elif cuota.estado == 'Vencida' %}
-              <span style="color:red; font-weight:bold;">Vencida</span>
-            {% else %}
-              <span style="color:orange; font-weight:bold;">Pendiente</span>
-            {% endif %}
-          </td>
-          <td>{{ cuota.fecha_vencimiento|date:"d/m/Y" }}</td>
-          <td>
-            {% if cuota.estado == 'Pagada' %}
-              <button type="button"
-                      class="btn btn-warning btn-deshacer-pago"
-                      data-cuota-id="{{ cuota.id }}"
-                      data-estudiante="{{ estudiante.apellidos_estudiante }}, {{ estudiante.nombres_estudiante }}"
-                      title="Deshacer Pago">
-                <i class="fas fa-times"></i>
-              </button>
-            {% else %}
-              <button type="button"
-                      class="btn btn-light btn-registrar-pago"
-                      data-cuota-id="{{ cuota.id }}"
-                      data-monto="{{ cuota.monto_final }}"
-                      data-mes="{{ cuota.mes }}"
-                      data-anio="{{ cuota.anio }}"
-                      data-estudiante="{{ estudiante.apellidos_estudiante }}, {{ estudiante.nombres_estudiante }}"
-                      title="Registrar Pago">
-                <i class="fas fa-cash-register"></i>
-              </button>
-            {% endif %}
-          </td>
-        </tr>
-        {% endfor %}
-      </tbody>
-    </table>
-
-    <!-- 🔹 BOTÓN GENERAR PDF -->
-    <div class="pdf-actions">
-      <button class="btn-pdf" data-bs-toggle="modal" data-bs-target="#modalGenerarPDF">
-        <i class="fas fa-file-pdf"></i> Generar Estado de Deuda
-      </button>
-    </div>
-    {% else %}
-      <p>No hay cuotas registradas.</p>
     {% endif %}
   </div>
 
@@ -849,6 +871,19 @@ document.addEventListener('DOMContentLoaded', () => {
     desde.disabled = disabled;
     hasta.disabled = disabled;
   });
+});
+</script>
+<script>
+document.addEventListener("DOMContentLoaded", () => {
+  const selectCiclo = document.getElementById("select-ciclo");
+  if (selectCiclo) {
+    selectCiclo.addEventListener("change", () => {
+      const ciclo = selectCiclo.value;
+      const url = new URL(window.location.href);
+      url.searchParams.set("ciclo", ciclo);
+      window.location.href = url.toString();
+    });
+  }
 });
 </script>
 

@@ -867,3 +867,55 @@ def generar_pdf_deuda(request, estudiante_id):
 
     doc.build(elements)
     return response
+
+def ver_cuotas_estudiante(request, estudiante_id):
+    estudiante = get_object_or_404(Estudiante, id=estudiante_id)
+    ciclos = CicloLectivo.objects.all().order_by('-anio')
+
+    # 🔹 Ciclo filtrado desde el selector
+    ciclo_filtrado = request.GET.get('ciclo')
+    if ciclo_filtrado:
+        ciclo_actual = get_object_or_404(CicloLectivo, anio=ciclo_filtrado)
+    else:
+        # Si no hay filtro, tomar el ciclo activo o el más reciente en preparación
+        ciclo_actual = (
+            CicloLectivo.objects
+            .filter(estado__in=['Activo', 'Preparacion'])
+            .order_by('-anio')
+            .first()
+        )
+
+    # 🔹 Cuotas del ciclo actual
+    cuotas = Cuota.objects.filter(
+        inscripcion__estudiante=estudiante,
+        inscripcion__ciclo=ciclo_actual
+    ).order_by('anio', 'mes')
+
+    # 🔹 Deudas de ciclos anteriores
+    tiene_deudas_anteriores = Cuota.objects.filter(
+        inscripcion__estudiante=estudiante,
+        inscripcion__ciclo__anio__lt=ciclo_actual.anio,
+        estado__in=['Pendiente', 'Vencida']
+    ).exists()
+
+    print("🧠 Ciclo actual:", ciclo_actual.anio, ciclo_actual.estado)
+    print("🧠 Cuotas encontradas en este ciclo:", cuotas.count())
+
+    deudas = Cuota.objects.filter(
+        inscripcion__estudiante=estudiante,
+        inscripcion__ciclo__anio__lt=ciclo_actual.anio,
+        estado__in=['Pendiente', 'Vencida']
+    )
+    print("🧾 Deudas anteriores encontradas:", deudas.count())
+    for d in deudas:
+        print("   -", d.inscripcion.ciclo.anio, d.mes, d.estado)
+
+    context = {
+        'estudiante': estudiante,
+        'cuotas': cuotas,
+        'ciclo_filtrado': ciclo_actual.anio if ciclo_actual else None,
+        'ciclos': ciclos,
+        'tiene_deudas_anteriores': tiene_deudas_anteriores,
+    }
+
+    return render(request, 'administracion_alumnos/cuotas.html', context)

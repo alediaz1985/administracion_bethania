@@ -40,48 +40,6 @@ body {
   flex: 1;
 }
 
-/* 🏷️ Bloque de inscripción — ahora alineado en columna */
-.student-inscripcion {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-end;
-  gap: 0.4rem;
-  text-align: right;
-  min-width: 270px; /* evita que salte de línea */
-}
-
-.btn-inscribir {
-  background: #2b62a3; /* azul institucional */
-  color: #fff;
-  text-align: center;
-  padding: 0.5rem 1rem;
-  border-radius: 6px;
-  font-size: 0.8rem;
-  font-weight: 500;
-  border: none;
-  transition: all 0.25s ease;
-  cursor: pointer;
-}
-
-.btn-inscribir:hover {
-  background: #234f83;
-  transform: translateY(-1px);
-}
-
-.inscripcion-estado {
-  background: #f0fff0;
-  color: #2b7a2b;
-  border: 1px solid #b5e0b5;
-  padding: 0.4rem 0.8rem;
-  border-radius: 6px;
-  font-size: 0.8rem;
-  font-weight: 500;
-  white-space: nowrap;
-  text-align: right;
-  width: 100%;
-  box-sizing: border-box;
-}
-
 /* 🔹 Ajustes de foto e info */
 .student-photo {
   width: 90px;
@@ -102,18 +60,62 @@ body {
   color: var(--secundario);
 }
 
-/* 🔘 Botón eliminar inscripción */
+/* 🏷️ Bloque de inscripción */
+.student-inscripcion {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 0.5rem;
+  text-align: right;
+  min-width: 270px;
+}
+
+/* 💬 Mensaje de estado */
+.inscripcion-estado {
+  background: #f0fff0;
+  color: #2b7a2b;
+  border: 1px solid #b5e0b5;
+  padding: 0.4rem 0.8rem;
+  border-radius: 6px;
+  font-size: 0.8rem;
+  font-weight: 500;
+  white-space: nowrap;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+/* 🔘 Botones de acción (comparten base) */
+.btn-inscribir,
+.btn-eliminar {
+  display: inline-block;
+  width: 70%;               /* ambos mismo ancho */
+  text-align: center;
+  padding: 0.55rem 0;        /* misma altura */
+  border-radius: 6px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  border: none;
+  cursor: pointer;
+  transition: all 0.25s ease;
+  text-decoration: none;     /* ❌ sin subrayado */
+  letter-spacing: 0.3px;
+}
+
+/* 🟦 Botón Inscribir */
+.btn-inscribir {
+  background: #2b62a3;
+  color: #fff;
+}
+
+.btn-inscribir:hover {
+  background: #234f83;
+  transform: translateY(-1px);
+}
+
+/* 🔴 Botón Eliminar */
 .btn-eliminar {
   background-color: #e74c3c;
   color: #fff;
-  border: none;
-  padding: 0.5rem 1rem;
-  border-radius: 6px;
-  cursor: pointer;
-  font-family: 'Inter', sans-serif;
-  font-weight: 500;
-  font-size: 0.8rem;
-  transition: background 0.2s ease, transform 0.1s ease;
 }
 
 .btn-eliminar:hover {
@@ -838,18 +840,52 @@ body {
 }
 
 /* ==========================================================
-   📄 BOTÓN PDF — Estado de Deuda (debajo de tabla Cuotas)
+   🧭 FILTRO + BOTÓN PDF — Barra de acciones de cuotas
 ========================================================== */
 
-#tab-cuotas .pdf-actions {
+#tab-cuotas .acciones-cuotas {
   display: flex;
-  justify-content: flex-end;
+  justify-content: space-between;
   align-items: center;
-  margin-top: 1.3rem;
-  padding-top: 1rem;
-  border-top: 1px solid var(--borde); /* 🔹 separador sutil */
+  flex-wrap: wrap;
+  gap: 1rem;
+  margin-bottom: 1.3rem;
+  padding-bottom: 0.7rem;
+  border-bottom: 1px solid var(--borde);
 }
 
+/* --- Filtro --- */
+#tab-cuotas .filtro-ciclo {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+}
+
+#tab-cuotas .filtro-ciclo label {
+  font-size: 0.9rem;
+  font-weight: 500;
+  color: var(--texto);
+  white-space: nowrap; /* evita salto de línea */
+}
+
+#tab-cuotas .filtro-ciclo select {
+  border: 1px solid var(--borde);
+  border-radius: 8px;
+  padding: 0.45rem 0.8rem;
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+  background-color: #fff;
+  min-width: 160px;
+}
+
+#tab-cuotas .filtro-ciclo select:focus {
+  outline: none;
+  border-color: var(--azul);
+  box-shadow: 0 0 0 2px rgba(26, 41, 66, 0.15);
+}
+
+/* --- Botón PDF --- */
 #tab-cuotas .btn-pdf {
   background: var(--azul);
   color: #fff;
@@ -880,6 +916,17 @@ body {
 #tab-cuotas .btn-pdf:focus {
   outline: none;
   box-shadow: 0 0 0 3px rgba(26, 41, 66, 0.25);
+}
+
+.alerta-deuda {
+  background: #f7f8fa;
+  border-left: 4px solid #ffc107;
+  color: #444;
+  border-radius: 6px;
+  padding: 8px 14px;
+  margin-bottom: 1rem;
+  font-size: 0.9rem;
+  font-family: 'Inter', sans-serif;
 }
 
 /* ==========================================================
