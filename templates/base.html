@@ -17,11 +17,11 @@
     <link href="https://fonts.googleapis.com/css2?family=Verdana&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
     {% block extra_styles %}
-    <link rel="stylesheet" href="../apps/administracion_alumnos/static/administracion_alumnos/css/styles_listar_alumnos.css">
-    <link rel="stylesheet" href="../apps/administracion_alumnos/static/administracion_alumnos/css/styles_ver_datos.css">
-    <link rel="stylesheet" href="../apps/administracion_alumnos/static/administracion_alumnos/css/styles_registrar_alumno.css">
-    <link rel="stylesheet" href="../apps/administracion_alumnos/static/administracion_alumnos/css/detalle_estudiante.css">
-    <link rel="stylesheet" href="{% static 'css/editar_alumno' %}">
+    <link rel="stylesheet" href="{% static 'administracion_alumnos/css/styles_listar_alumnos.css' %}">
+    <link rel="stylesheet" href="{% static 'administracion_alumnos/css/styles_ver_datos.css' %}">
+    <link rel="stylesheet" href="{% static 'administracion_alumnos/css/styles_registrar_alumno.css' %}">
+    <link rel="stylesheet" href="{% static 'administracion_alumnos/css/detalle_estudiante.css' %}">
+    <link rel="stylesheet" href="{% static 'administracion_alumnos/css/editar_alumno.css' %}">
     <link rel="stylesheet" href="{% static 'administracion_alumnos/css/alumno_confirm_delete.css' %}">
     <link rel="stylesheet" href="{% static 'administracion_alumnos/css/error_aprobacion.css' %}">
     <link rel="stylesheet" href="{% static 'comprobantes/css/descarga-exito.css' %}">
@@ -107,7 +107,6 @@
     {% endif %}
 
     <!-- Scripts -->
-    <script src="{% static 'js/scripts.js' %}"></script>
     <script defer src="{% static 'js/base.js' %}"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
