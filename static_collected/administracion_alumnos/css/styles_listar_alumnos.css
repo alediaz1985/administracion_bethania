@@ -1,0 +1,622 @@
+/* ==========================================================
+   🧩 ESTILOS GENERALES
+========================================================== */
+body {
+    font-family: 'Roboto', sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: #d6dbe1;
+    color: #000;
+}
+
+/* ==========================================================
+   📦 CONTENEDOR PRINCIPAL
+========================================================== */
+.alumnos-container {
+    width: 100%;
+    padding: 15px 25px;
+    float: right;
+    margin-bottom: 0.5rem;
+}
+
+.alumnos {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin: 10px 0;
+}
+
+/* ==========================================================
+   🔽 SCROLL Y TABLAS
+========================================================== */
+.alumnos-scroll-container {
+    height: calc(100vh - 216px);
+    overflow-y: auto;
+    border: none;
+    background-color: #fff;
+    border-radius: 10px;
+    box-shadow: 0 4px 25px rgba(0, 0, 0, 0.5);
+}
+
+.alumnos-table {
+    width: 100%;
+    border-collapse: collapse;
+    box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
+}
+
+.alumnos-table thead {
+    background-color: #f8fafc;
+}
+
+.alumnos-table th {
+    background-color: #000;
+    
+}
+
+.alumnos-table th {
+    padding: 12px;
+    border-bottom: 1px solid #bbbbbb;  /* línea horizontal */
+    border-right: 1px solid #bbbbbb;   /* línea vertical entre columnas */
+    font-size: 13px;
+    word-wrap: break-word;
+    max-width: 200px;
+    text-align: center;
+}
+
+.alumnos-table td {
+    padding: 12px;
+    text-align: left;
+    border-bottom: 1px solid #bbbbbb;  /* línea horizontal */
+    border-right: 1px solid #bbbbbb;   /* línea vertical entre columnas */
+    font-size: 13px;
+    word-wrap: break-word;
+    max-width: 200px;
+}
+
+/* 🔹 Elimina la línea de la última columna (para no duplicar borde) */
+.alumnos-table th:last-child,
+.alumnos-table td:last-child {
+    border-right: none;
+}
+
+.alumnos-table th {
+    background-color: #d6dbe1;
+    color: #333;
+    font-weight: bold;
+    border: 1px solid #bbbbbb;
+}
+
+.alumnos-table tbody tr:hover {
+    background-color: #d6dbe1;
+}
+
+/* Enlaces dentro de la tabla */
+.alumnos-table a {
+    text-decoration: none;
+    color: #000;
+}
+
+.alumnos-table a:hover {
+    color: #0d6efd;
+}
+
+/* ==========================================================
+   🎛️ CELDAS DE ACCIÓN (Ver / Editar / PDF / Eliminar)
+========================================================== */
+td.acciones {
+    text-align: center;
+    white-space: nowrap;
+    padding: 0 2px;             /* menos espacio lateral */
+    width: 110px;               /* columna más compacta */
+    vertical-align: middle;
+}
+
+/* Formularios inline */
+.icon-form {
+    display: inline-block;
+    margin: 0;
+    padding: 0;
+}
+
+/* Botones minimalistas de ícono */
+.icon-btn {
+    background: none;
+    border: none;
+    color: #1a2942;             /* 🔹 color base azul oscuro */
+    font-size: 14px;
+    cursor: pointer;
+    padding: 3px 4px;           /* íconos más compactos */
+    margin: 0 1.5px;            /* separación visual ajustada */
+    transition: color 0.2s ease, transform 0.15s ease;
+}
+
+.icon-btn:hover {
+    transform: scale(1.12);
+}
+
+.icon-btn i {
+    display: inline-block;
+    width: 16px;                /* ancho uniforme para todos los íconos */
+    text-align: center;
+}
+
+/* Corrección óptica para íconos con diferente ancho visual */
+.icon-btn.edit i {
+    margin-right: -1px;         /* lápiz parece más angosto */
+}
+
+.icon-btn.delete i {
+    margin-left: -1px;          /* tacho parece más separado */
+}
+
+/* 🔍 Ver (azul oscuro) */
+.icon-btn.view i {
+    color: #1a2942;
+}
+.icon-btn.view:hover i {
+    color: #1a2942;
+}
+
+/* 📄 PDF (azul oscuro) */
+.icon-btn.pdf i {
+    color: #1a2942;
+}
+.icon-btn.pdf:hover i {
+    color: #1a2942;
+}
+
+/* 🖊️ Editar (amarillo en hover) */
+.icon-btn.edit i {
+    color: #1a2942;
+}
+.icon-btn.edit:hover i {
+    color: #f5b700;
+}
+
+/* 🗑️ Eliminar (rojo en hover) */
+.icon-btn.delete i {
+    color: #1a2942;
+}
+.icon-btn.delete:hover i {
+    color: #d00000;
+}
+
+/* ==========================================================
+   📑 TABS
+========================================================== */
+.tabs {
+  display: flex;
+  flex-wrap: nowrap;
+  justify-content: flex-start;     /* Alineadas a la izquierda */
+  gap: 6px;
+  margin: 1rem 0 0.1rem 1rem;           /* Separación similar */
+  scrollbar-width: thin;
+  scrollbar-color: #1a2942 #eaeaea;
+}
+
+.tabs::-webkit-scrollbar {
+  height: 6px;
+}
+
+.tabs::-webkit-scrollbar-thumb {
+  background: #1a2942;
+  border-radius: 10px;
+}
+
+/* Botones */
+.tab-button {
+  width: 140px;                    /* Todas con el mismo ancho */
+  background: #f9f9f9;
+  border: 1px solid #b8b8b8;
+  border-bottom: none;
+  padding: 10px 10px;
+  cursor: pointer;
+  font-weight: 600;
+  border-radius: 8px 8px 0 0;
+  color: #222;
+  transition: all 0.3s ease;
+  white-space: nowrap;
+  font-size: 0.9rem;
+  text-align: center;
+}
+
+.tab-button:hover {
+  background: #efefef;
+}
+
+.tab-button.active {
+  background: #1a2942;  /* Azul igual al de ver_datos */
+  color: #fff;
+  border-color: #1a2942;
+}
+
+/* Contenido de pestañas */
+.tab-content {
+  display: none;
+  animation: fadeIn 0.25s ease-in-out;
+  border: 1px solid #b8b8b8;
+  border-radius: 0 10px 10px 10px;
+  padding: 1rem 1.5rem;
+  background-color: #fff;
+}
+
+.tab-content.active {
+  display: block;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* ==========================================================
+   🔍 FILTRO DE NIVEL — versión limpia y profesional
+========================================================== */
+#nivel-filter {
+    appearance: none;               /* quita algunos bordes nativos */
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    padding: 10px 40px 10px 14px;   /* espacio interior */
+    font-size: 14px;
+    font-weight: 500;
+    border: 1px solid #d1d5db;      /* borde suave */
+    border-radius: 8px;             /* bordes redondeados */
+    background-color: #ffffff;      /* fondo blanco limpio */
+    color: #1a1a1a;                 /* texto oscuro */
+    transition: all 0.25s ease;
+    cursor: pointer;
+    font-family: 'Poppins', sans-serif;
+    box-shadow: 0 0 15px rgba(0, 0, 0, 0.35);
+    position: relative;
+}
+
+/* Hover y foco */
+#nivel-filter:hover,
+#nivel-filter:focus {
+    border-color: #1a2942;          /* azul institucional */
+    box-shadow: 0 0 6px rgba(26, 41, 66, 0.25);
+    outline: none;
+}
+
+/* Flecha minimalista personalizada */
+#nivel-filter::after {
+    content: "";
+    position: absolute;
+    right: 16px;
+    top: 50%;
+    width: 7px;
+    height: 7px;
+    border-right: 2px solid #1a2942;
+    border-bottom: 2px solid #1a2942;
+    transform: translateY(-50%) rotate(45deg);
+    pointer-events: none;
+}
+
+/* Opciones */
+#nivel-filter option {
+    background: #ffffff;
+    color: #1a1a1a;
+    font-weight: 500;
+}
+
+/* Hover de opción (para navegadores modernos) */
+#nivel-filter option:hover {
+    background: #f4f4f4;
+}
+
+/* ==========================================================
+   🔍 BUSCADOR
+========================================================== */
+.search-box {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex: 1;
+    position: relative;
+}
+
+.search-box input {
+    width: 420px; /* más ancho, centrado y proporcionado */
+    padding: 10px 42px 10px 14px;
+    border: 1px solid #b8b8b8;
+    border-radius: 10px;
+    background-color: #ffffff;
+    font-size: 14px;
+    color: #1a1a1a;
+    outline: none;
+    transition: all 0.25s ease;
+    box-shadow: 0 0 15px rgba(0, 0, 0, 0.35);
+}
+
+.search-box input::placeholder {
+    color: #777;
+    font-style: italic;
+}
+
+.search-box input:focus {
+    border-color: #1a2942; /* azul institucional */
+    box-shadow: 0 0 6px rgba(26, 41, 66, 0.4);
+}
+
+/* Ícono de búsqueda a la derecha del input */
+.search-box i {
+    position: absolute;
+    right: 14px;
+    color: #1a2942;
+    font-size: 16px;
+    pointer-events: none;
+    transition: transform 0.2s ease, color 0.2s ease;
+}
+
+.search-box input:focus + i {
+    transform: scale(1.1);
+    color: #000;
+}
+
+/* ==========================================================
+   🧭 BOTONES DE ACCIÓN (PDF / REFRESH)
+========================================================== */
+.actions {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.btn-minimal {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    background: #ffffff;
+    box-shadow: 0 0 15px rgba(0, 0, 0, 0.35);
+    color: #1e1e1e;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    padding: 8px 12px;
+    font-size: 14px;
+    cursor: pointer;
+    transition: all 0.2s ease-in-out;
+    text-decoration: none; /* ❌ sin subrayado */
+}
+
+.btn-minimal i {
+    font-size: 16px;
+}
+
+.btn-minimal:hover {
+    background-color: #f5f5f5;
+    border-color: #999;
+}
+
+.btn-minimal:active {
+    background-color: #eaeaea;
+}
+
+/* Hover PDF */
+.btn-minimal[title="Generar PDF"]:hover {
+    color: #b71c1c;
+    border-color: #b71c1c;
+}
+
+/* Hover Refresh */
+.btn-minimal[title="Actualizar datos"]:hover {
+    color: #0d6efd;
+    border-color: #0d6efd;
+}
+
+/* Hover Registrar */
+.btn-minimal[title="Registrar nuevo estudiante"]:hover {
+    color: #0b874b;            /* Verde profesional */
+    border-color: #0b874b;
+}
+
+/* ==========================================================
+   🔁 ESTADO DE CARGA (botón Refresh)
+========================================================== */
+@keyframes spin {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+}
+
+.btn-minimal.loading i {
+    animation: spin 1s linear infinite;
+    color: #0d6efd;
+}
+
+.btn-minimal.loading {
+    opacity: 0.6;
+    pointer-events: none;
+}
+
+/* ==========================================================
+   🪟 MODAL DE CONFIRMACIÓN
+========================================================== */
+.modal-overlay {
+  position: fixed;
+  top: 0; left: 0;
+  width: 100vw; height: 100vh;
+  background: rgba(0,0,0,0.6);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+}
+
+.modal-content {
+  background: #fff;
+  border-radius: 10px;
+  padding: 25px 35px;
+  text-align: center;
+  box-shadow: 0 5px 25px rgba(0,0,0,0.3);
+  width: 90%;
+  max-width: 420px;
+  animation: fadeInScale 0.25s ease-out;
+}
+
+.modal-content h3 {
+  margin-bottom: 10px;
+  font-size: 1.2rem;
+  color: #1a2942;
+}
+
+.modal-content p {
+  font-size: 0.9rem;
+  color: #333;
+  margin-bottom: 20px;
+}
+
+.modal-actions {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+}
+
+.btn-danger {
+  background-color: #d00000;
+  color: #fff;
+  border: none;
+  padding: 8px 18px;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.btn-danger:hover {
+  background-color: #a40000;
+}
+
+.btn-secondary {
+  background-color: #ccc;
+  border: none;
+  padding: 8px 18px;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.btn-secondary:hover {
+  background-color: #b3b3b3;
+}
+
+@keyframes fadeInScale {
+  from { opacity: 0; transform: scale(0.9); }
+  to { opacity: 1; transform: scale(1); }
+}
+
+/* ==========================================================
+   🔽 Flechas de ordenamiento (minimalistas)
+========================================================== */
+.sort-arrow {
+  margin-left: 6px;
+  font-size: 0.75rem;
+  color: #1a2942;
+  transition: transform 0.2s ease;
+}
+
+.alumnos-table th:hover .sort-arrow {
+  transform: scale(1.1);
+}
+
+/* ==========================================================
+   🎓 ESTADO DE INSCRIPCIÓN — estilo tipo badge
+========================================================== */
+.alumnos-table td:nth-child(8),  /* 📌 Ajustá el número si cambia el orden de columnas */
+.alumnos-table th:nth-child(8) {
+  text-align: center;       /* Centra el contenido horizontalmente */
+  width: 1%;                /* Deja que se ajuste automáticamente */
+  white-space: nowrap;      /* Evita que el texto se corte en varias líneas */
+}
+
+.badge {
+  padding: 0.4rem 0.6rem;
+  border-radius: 5px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  display: inline-block;
+  text-align: center;
+  min-width: auto;
+}
+
+.badge.bg-success {
+  background: #e3f6e3;
+  color: #267c2e;
+  border: 1px solid #b4e2b4;
+}
+
+.badge.bg-secondary {
+  background: #f1f1f1;
+  color: #b90e0a;
+  border: 1px solid #dab9b9;
+}
+
+/* ==========================================================
+   📱 MEDIA QUERIES (Responsivo)
+========================================================== */
+@media (max-width: 1366px) {
+    .alumnos-scroll-container {
+        height: calc(100vh - 202px);
+    }
+
+    .alumnos-table th,
+    .alumnos-table td {
+        padding: 8px;
+        font-size: 12px;
+    }
+
+    #nivel-filter,
+    #nivel-filter option {
+        font-size: 10px;
+    }
+
+    .tabs button {
+        font-size: 0.6875rem;
+    }
+
+    .search-box input {
+        font-size: 12px;
+    }
+
+    td.acciones {
+        padding: 0 1px;
+    }
+
+    /* Botones minimalistas de ícono */
+    .icon-btn {
+        font-size: 12px;
+    }
+
+    .btn-minimal {
+        font-size: 12px;
+    }
+
+    .search-box input {
+        font-size: 12px;
+    }
+
+    .badge {
+        font-size: 0.75rem;
+    }
+}
+
+@media (max-width: 1024px) {
+    .alumnos-table th,
+    .alumnos-table td {
+        padding: 6px;
+        font-size: 11px;
+    }
+}
+
+@media (max-width: 768px) {
+    .alumnos-table th,
+    .alumnos-table td {
+        padding: 5px;
+        font-size: 10px;
+    }
+}
+
+@media (max-width: 480px) {
+    .alumnos-table th,
+    .alumnos-table td {
+        padding: 4px;
+        font-size: 8px;
+    }
+}

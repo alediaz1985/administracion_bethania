@@ -1,0 +1,265 @@
+body {
+    background-image: url('../img/fondo1.png'); /* Cambia por la ruta de tu imagen */
+    background-size: cover;  /* Asegura que la imagen cubra todo el fondo */
+    background-position: center; /* Centra la imagen */
+    background-repeat: no-repeat; /* Evita que la imagen se repita */
+    width: 96%;
+    float: right;
+}
+
+/* Estilo para el contenedor de detalles del alumno */
+.detail-student-container {
+    font-family: 'Helvetica Neue', Arial, sans-serif;
+    background-color: #c9c9ca;
+    color: #1b1b1b;
+    padding: 50px;
+    margin: 30px auto;
+    max-width: 600px;
+    height: 420px;
+    border-radius: 15px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.9);
+}
+
+/* Estilo para el título del detalle */
+.detail-student-container h1 {
+    font-size: 18px;
+    color: #282929;
+    text-align: center;
+    margin-bottom: 30px;
+}
+
+.detail-student-container h2 {
+    font-size: 19px;
+    color: #282929;
+    text-align: center;
+    margin-bottom: 30px;
+}
+
+/* Estilo para los párrafos con los detalles del alumno */
+.detail-student-container p {
+    font-size: 17px;
+    margin-bottom: 15px;
+}
+
+.detail-student-container strong {
+    color: #202020;
+}
+
+/* Botones de acción (Editar y Volver) */
+.button-group {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 50px;
+}
+
+/* From Uiverse.io by mRcOol7 */ 
+.button {
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    background: rgb(66 149 33
+    );
+    border: none;
+    font-weight: 300;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0px 0px 20px rgba(0, 0, 0, 0.164);
+    cursor: pointer;
+    transition: transform 0.3s ease-in-out, color 0.3s ease-in-out;
+    overflow: hidden;
+    position: relative;
+  }
+  
+  .svgIcon {
+    width: 20px;
+    transition: transform 0.3s ease-in-out;
+  }
+  
+  .svgIcon path {
+    fill: white;
+  }
+  
+  .button:hover {
+    width: 90px;
+    border-radius: 50px;
+    transform: scale(1.1);
+    color: rgba(255, 255, 255, 0.9);
+    box-shadow: 0px 0px 30px rgba(0, 0, 0, 0.3);
+  }
+  
+  .button:hover .svgIcon {
+    width: 50px;
+    transform: translateY(60%);
+  }
+  
+  .button::before {
+    position: absolute;
+    top: -20px;
+    content: "Ver Datos";
+    color: white;
+    transition: font-size 0.3s ease-in-out, opacity 0.3s ease-in-out,
+      transform 0.3s ease-in-out, color 0.3s ease-in-out;
+    font-size: 2px;
+  }
+  
+  .button:hover::before {
+    font-size: 13px;
+    opacity: 1;
+    transform: translateY(30px);
+    color: rgba(255, 255, 255, 0.9);
+  }
+
+/* Segundo boton */ 
+.button-1 {
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    background: rgb(66 149 33
+    );
+    border: none;
+    font-weight: 300;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0px 0px 20px rgba(0, 0, 0, 0.164);
+    cursor: pointer;
+    transition: transform 0.3s ease-in-out, color 0.3s ease-in-out;
+    overflow: hidden;
+    position: relative;
+  }
+  
+  .svgIcon-1 {
+    width: 20px;
+    transition: transform 0.3s ease-in-out;
+  }
+  
+  .svgIcon-1 path {
+    fill: white;
+  }
+  
+  .button-1:hover {
+    width: 90px;
+    border-radius: 50px;
+    transform: scale(1.1);
+    color: rgba(255, 255, 255, 0.9);
+    box-shadow: 0px 0px 30px rgba(0, 0, 0, 0.3);
+  }
+  
+  .button-1:hover .svgIcon-1 {
+    width: 50px;
+    transform: translateY(60%);
+  }
+  
+  .button-1::before {
+    position: absolute;
+    top: -20px;
+    content: "Editar";
+    color: white;
+    transition: font-size 0.3s ease-in-out, opacity 0.3s ease-in-out,
+      transform 0.3s ease-in-out, color 0.3s ease-in-out;
+    font-size: 2px;
+  }
+  
+  .button-1:hover::before {
+    font-size: 13px;
+    opacity: 1;
+    transform: translateY(30px);
+    color: rgba(255, 255, 255, 0.9);
+  }
+
+/* Tercer boton */ 
+.button-2 {
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    background: rgb(66 149 33
+    );
+    border: none;
+    font-weight: 300;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0px 0px 20px rgba(0, 0, 0, 0.164);
+    cursor: pointer;
+    transition: transform 0.3s ease-in-out, color 0.3s ease-in-out;
+    overflow: hidden;
+    position: relative;
+  }
+  
+  .svgIcon-2 {
+    width: 20px;
+    transition: transform 0.3s ease-in-out;
+  }
+  
+  .svgIcon-2 path {
+    fill: white;
+  }
+  
+  .button-2:hover {
+    width: 90px;
+    border-radius: 50px;
+    transform: scale(1.1);
+    color: rgba(255, 255, 255, 0.9);
+    box-shadow: 0px 0px 30px rgba(0, 0, 0, 0.3);
+  }
+  
+  .button-2:hover .svgIcon-2 {
+    width: 50px;
+    transform: translateY(60%);
+  }
+  
+  .button-2::before {
+    position: absolute;
+    top: -20px;
+    content: "Atrás";
+    color: white;
+    transition: font-size 0.3s ease-in-out, opacity 0.3s ease-in-out,
+      transform 0.3s ease-in-out, color 0.3s ease-in-out;
+    font-size: 2px;
+  }
+  
+  .button-2:hover::before {
+    font-size: 13px;
+    opacity: 1;
+    transform: translateY(30px);
+    color: rgba(255, 255, 255, 0.9);
+  }
+  
+@media (max-width: 1366px) {
+    .detail-student-container {
+        padding: 50px;
+        margin: 30px auto;
+        max-width: 550px;
+        height: 370px;
+    }
+    .detail-student-container h1 {
+        font-size: 18px;
+        margin-bottom: 20px;
+    }
+
+    .detail-student-container h2 {
+        font-size: 16px;
+        margin-bottom: 30px;
+    }
+
+    .detail-student-container p {
+        font-size: 14px;
+        margin-bottom: 15px;
+    }
+
+    .button-group {
+        margin-top: 35px;
+    }
+
+    .alumnos-btn-1 {
+        padding: 10px 30px;
+        font-size: 12px;
+    }
+    
+    .alumnos-btn-2 {
+        padding: 10px 30px;
+        font-size: 12px;
+    }
+
+}

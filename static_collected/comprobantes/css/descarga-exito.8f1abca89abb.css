@@ -1,0 +1,111 @@
+/* Estilos generales */
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+  
+body {
+    font-family: 'Helvetica Neue', Arial, sans-serif;
+    line-height: 1.5;
+    color: #333;
+    background-image: url("../img/fondo1.5362fac78c1c.png"); /* Cambia por la ruta de tu imagen */
+    background-size: cover;  /* Asegura que la imagen cubra todo el fondo */
+    background-position: center; /* Centra la imagen */
+    background-repeat: no-repeat; /* Evita que la imagen se repita */
+}
+
+.descarga-exitosa {
+    background-color: #ffffff;
+    max-width: 700px;
+    margin: 3rem auto;
+    padding: 2rem 2.5rem;
+    border-radius: 16px;
+    box-shadow: 0 12px 30px rgba(0, 0, 0, 0.12);
+    color: #333;
+    animation: fadeIn 0.6s ease-in-out;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.descarga-exitosa__titulo {
+    font-size: 16px;
+    margin-bottom: 1.8rem;
+    color: #28a745;
+    text-align: center;
+    font-weight: bold;
+}
+
+.descarga-exitosa__seccion {
+    margin-bottom: 2rem;
+}
+
+.descarga-exitosa__texto {
+    font-weight: 600;
+    margin-bottom: 0.7rem;
+    font-size: 14px;
+    color: #444;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.descarga-exitosa__texto::before {
+    content: "📁";
+    font-size: 18px;
+}
+
+.descarga-exitosa__lista {
+    list-style: none;
+    padding-left: 0;
+    border-left: 4px solid #28a745;
+    padding-left: 1rem;
+    margin: 0;
+    font-size: 14px;
+}
+
+.descarga-exitosa__item {
+    background-color: #e8f5e9;
+    margin-bottom: 0.5rem;
+    padding: 0.7rem 0.7rem;
+    border-radius: 8px;
+    font-size: 12px;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.descarga-exitosa__item::before {
+    content: "✅";
+    font-size: 12px;
+}
+
+.descarga-exitosa__item:hover {
+    background-color: #d0f0d6;
+    transform: scale(1.02);
+    cursor: default;
+}
+
+.descarga-exitosa__enlace {
+    display: inline-block;
+    margin-top: 2rem;
+    background-color: #28a745;
+    color: white;
+    padding: 0.7rem 1.7rem;
+    text-decoration: none;
+    border-radius: 10px;
+    font-size: 14px;
+    font-weight: bold;
+    text-align: center;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+.descarga-exitosa__enlace:hover {
+    background-color: #218838;
+    transform: scale(1.03);
+}

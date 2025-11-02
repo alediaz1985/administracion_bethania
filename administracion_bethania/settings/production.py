@@ -7,7 +7,7 @@ Configuración de PRODUCCIÓN
 - WhiteNoise (o S3 opcional)
 - Logging sobrio + Sentry opcional
 """
-
+from .base import *
 import os
 from pathlib import Path
 from dotenv import load_dotenv
@@ -25,16 +25,24 @@ DEBUG = False
 # SECRET_KEY obligatorio en prod (si falta, que explote)
 SECRET_KEY = os.environ["SECRET_KEY"]
 
-ALLOWED_HOSTS = env_list("ALLOWED_HOSTS", "")  # e.g. "mi-dominio.com,127.0.0.1"
-CSRF_TRUSTED_ORIGINS = env_list(              # e.g. "https://mi-dominio.com"
-    "CSRF_TRUSTED_ORIGINS",
-    "",
-)
+
+ALLOWED_HOSTS = [
+    "vps-5435089-x.dattaweb.com",
+    "127.0.0.1",
+    "localhost",
+]
+
+CSRF_TRUSTED_ORIGINS = [
+    "http://vps-5435089-x.dattaweb.com",
+    "https://vps-5435089-x.dattaweb.com",
+]
 
 # 4) Seguridad / SSL
 SECURE_SSL_REDIRECT = env_bool("SECURE_SSL_REDIRECT", True)
-SESSION_COOKIE_SECURE = True
-CSRF_COOKIE_SECURE = True
+
+SESSION_COOKIE_SECURE = False
+
+CSRF_COOKIE_SECURE = False
 
 # HSTS (activar en cuanto tengas HTTPS estable)
 SECURE_HSTS_SECONDS = int(os.getenv("SECURE_HSTS_SECONDS", "31536000"))  # 1 año
@@ -93,7 +101,7 @@ SERVER_EMAIL = os.getenv("SERVER_EMAIL", DEFAULT_FROM_EMAIL)
 
 # 8) Archivos estáticos
 USE_WHITENOISE = env_bool("USE_WHITENOISE", True)
-STATIC_ROOT = str((BASE_DIR / "staticfiles").resolve())
+STATIC_ROOT = str((BASE_DIR / "static_collected").resolve())
 
 if USE_WHITENOISE:
     INSTALLED_APPS = ["whitenoise.runserver_nostatic"] + INSTALLED_APPS  # noqa: F405

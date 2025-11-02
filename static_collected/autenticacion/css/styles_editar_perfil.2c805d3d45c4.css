@@ -1,0 +1,240 @@
+:root {
+  --azul: #1a2942;
+  --gris-claro: #f9f9f9;
+  --borde: #b8b8b8;
+  --texto: #222;
+  --secundario: #555;
+}
+
+body {
+  background-color: #d6dbe1;
+  font-family: 'Inter', sans-serif;
+}
+
+/* ============================
+   📦 CONTENEDOR PRINCIPAL
+============================ */
+.perfil-editar-card {
+  max-width: 850px;
+  min-height: 400px;
+  margin: 3rem auto;
+  background: #fff;
+  border-radius: 10px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.25);
+  padding: 2rem 2.5rem;
+  
+  /* 🔹 Clave para mantener botones abajo */
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  position: relative;
+}
+
+/* ============================
+   FORMULARIO INTERNO
+============================ */
+.perfil-editar-form {
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1;
+}
+
+/* ============================
+   CABECERA — FOTO + CAMPOS
+============================ */
+.perfil-editar-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 3rem;
+  flex-grow: 1; /* 🔹 ocupa el espacio superior */
+}
+
+/* FOTO */
+.perfil-editar-foto {
+  text-align: center;
+  width: 200px;
+}
+
+.perfil-photo {
+  width: 180px;
+  height: 180px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 2px solid var(--borde);
+  background-color: var(--gris-claro);
+  box-shadow: 0 2px 4px rgba(0,0,0,0.15);
+  cursor: pointer;
+  transition: transform 0.25s ease;
+}
+
+.perfil-photo:hover {
+  transform: scale(1.05);
+}
+
+.foto-texto {
+  font-size: 0.8rem;
+  color: var(--secundario);
+  margin-top: 0.5rem;
+}
+
+/* ============================
+   CAMPOS (a la derecha)
+============================ */
+.perfil-editar-campos {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  gap: 1.2rem;
+}
+
+.perfil-row {
+  display: flex;
+  gap: 1.2rem;
+}
+
+.campo {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+
+.campo label {
+  font-size: 0.85rem;
+  color: var(--azul);
+  font-weight: 600;
+}
+
+.campo input,
+.perfil-editar-campos input[type="text"],
+.perfil-editar-campos input[type="email"],
+.perfil-editar-campos input[type="password"] {
+  padding: 8px 12px;
+  border: 1px solid var(--borde);
+  border-radius: 6px;
+  font-size: 0.85rem;
+  color: var(--texto);
+  transition: all 0.2s ease;
+}
+
+.campo input:focus {
+  outline: none;
+  border-color: var(--azul);
+  box-shadow: 0 0 5px rgba(26,41,66,0.25);
+}
+
+/* ============================
+   BOTONES
+============================ */
+.perfil-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 1rem;
+  
+  /* 🔹 Hace que siempre queden al fondo */
+  margin-top: auto;
+  padding-top: 1.5rem;
+}
+
+.btn {
+  background: var(--azul);
+  color: #fff;
+  border: none;
+  padding: 0.55rem 1.2rem;
+  border-radius: 5px;
+  font-size: 0.75rem;
+  font-weight: 500;
+  text-decoration: none;
+  cursor: pointer;
+  transition: all 0.25s ease;
+}
+
+.btn:hover {
+  background: #22385d;
+  transform: scale(1.05);
+}
+
+.btn-light {
+  background: #f3f3f3;
+  color: #333;
+  border: 1px solid #dcdcdc;
+}
+
+.btn-light:hover {
+  background: #e8e8e8;
+}
+
+/* ============================
+   🖥️ ADAPTACIÓN A PANTALLAS GRANDES (1920px+)
+============================ */
+@media (min-width: 1600px) {
+  .perfil-editar-card {
+    max-width: 1300px;
+    min-height: 650px;
+    padding: 3.5rem 5rem;
+  }
+
+  .perfil-editar-header {
+    gap: 4rem;
+    align-items: center;
+  }
+
+  .perfil-photo {
+    width: 220px;
+    height: 220px;
+  }
+
+  .foto-texto {
+    font-size: 1rem;
+  }
+
+  .campo label {
+    font-size: 1.2rem;
+  }
+
+  .campo input {
+    font-size: 1.2rem;
+    padding: 14px 14px;
+  }
+
+  .perfil-editar-campos {
+    gap: 2.5rem;
+  }
+
+  .btn {
+    font-size: 1.05rem;
+    padding: 0.9rem 1.8rem;
+  }
+
+  .perfil-actions {
+    margin-top: auto;
+    padding-top: 2rem;
+  }
+}
+
+/* ============================
+   📱 RESPONSIVE
+============================ */
+@media (max-width: 768px) {
+  .perfil-editar-header {
+    flex-direction: column;
+    align-items: center;
+    gap: 1.5rem;
+  }
+
+  .perfil-editar-foto {
+    width: 100%;
+  }
+
+  .perfil-row {
+    flex-direction: column;
+    gap: 1rem;
+  }
+
+  .perfil-actions {
+    justify-content: center;
+    margin-top: 1.5rem;
+  }
+}

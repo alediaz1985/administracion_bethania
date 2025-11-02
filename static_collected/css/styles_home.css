@@ -1,0 +1,251 @@
+html, body {
+    height: 100%;  /* Asegura que la altura del body ocupe el 100% de la pantalla */
+    margin: 0;
+    padding: 0;
+}
+
+.block-content-hero {
+    width: 100%;
+    height: calc(100vh - 105px);  /* Restando los 140px del nav y footer */
+    float: right;
+}
+
+.block-content-hero .hero-container {
+    position: relative;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-size: cover;
+    background-position: center;
+    transition: background-image 1s ease-in-out;
+}
+
+.block-content-hero .blurred-background {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-size: cover;
+    background-position: center;
+    filter: blur(10px);
+    z-index: -1;
+    background-image: url('../img/colegio.jpg'); /* Para mostrar la primera imagen difuminada */
+}
+
+.block-content-hero .content-wrapper {
+    display: flex;
+    justify-content: space-between;
+    width: 90%;
+    height: 90%;
+    position: relative;
+    z-index: 2;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+    background: rgba(0, 0, 0, 0.1);
+    
+}
+
+.block-content-hero .text-content {
+    flex-basis: 26%;
+    color: white;
+    padding: 40px;
+    background: rgba(0, 0, 0, 0.5);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    text-align: left;
+}
+
+.block-content-hero .text-content h1 {
+    font-size: 2.0vw;
+    margin-bottom: 20px;
+    font-weight: 600;
+    letter-spacing: 1px;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+}
+
+.block-content-hero .text-content p {
+    font-size: 1.0vw;
+    margin-bottom: 20px;
+    max-width: 90%;
+    line-height: 1.5;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+}
+
+.block-content-hero .text-content button {
+    padding: 1vw 2vw;
+    font-size: 1vw;
+    background-color: transparent;
+    border: 2px solid white;
+    border-radius: 5px;
+    color: white;
+    cursor: pointer;
+    transition: background-color 0.3s, color 0.3s;
+    box-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+    width: fit-content;
+}
+
+.block-content-hero .text-content button:hover {
+    background-color: white;
+    color: black;
+}
+
+.block-content-hero .image-box {
+    flex-basis: 74%;
+    position: relative;
+    overflow: hidden;
+}
+
+.block-content-hero .carousel {
+    display: flex;
+    width: 300%;
+    height: 100%;
+    transition: transform 0.5s ease-in-out;
+}
+
+.block-content-hero .carousel img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.block-content-hero .carousel-controls {
+    position: absolute;
+    bottom: 20px;
+    right: 20px;
+    display: flex;
+    gap: 10px;
+}
+
+.block-content-hero .carousel-controls .circle {
+    width: 15px;
+    height: 15px;
+    border-radius: 50%;
+    background-color: white;
+    opacity: 0.5;
+    cursor: pointer;
+    transition: opacity 0.3s;
+}
+
+.block-content-hero .carousel-controls .circle.active {
+    opacity: 1;
+}
+
+.block-content-hero .carousel-controls .circle:hover {
+    opacity: 0.8;
+}
+
+/* Monitores grandes */
+@media (min-width: 1600px) {
+    /* Para notebooks comunes, FullHD, 1366px */
+    .block-content-hero {
+        height: calc(100vh - 100px);
+    }
+
+    .block-content-hero .text-content h1 {
+        font-size: 1.8rem;
+    }
+
+    .block-content-hero .text-content p {
+        font-size: 0.9rem;
+    }
+}
+  
+
+/* Estilos para pantallas desde 1024px y menores */
+@media (max-width: 1024px) {
+    .block-content-hero .content-wrapper {
+        flex-direction: column; /* Cambiar el layout a vertical */
+        width: 90%; /* Ajustar el ancho */
+        height: 70vh; /* Reducir la altura */
+    }
+
+    .block-content-hero .text-content {
+        flex-basis: 100%;
+        text-align: center; /* Centrar el texto */
+        padding: 30px 20px; /* Ajustar padding */
+    }
+
+    .block-content-hero .image-box {
+        flex-basis: 100%;
+        margin-top: 20px; /* Añadir un margen entre texto e imagen */
+    }
+
+    .block-content-hero .text-content h1 {
+        font-size: 3vw; /* Ajustar tamaño del título */
+    }
+
+    .block-content-hero .text-content p {
+        font-size: 1.8vw; /* Ajustar tamaño del texto */
+    }
+
+    .block-content-hero .text-content button {
+        padding: 1.5vw 3vw; /* Ajustar el tamaño del botón */
+        font-size: 1.5vw; /* Ajustar el tamaño del texto del botón */
+    }
+
+    .block-content-hero .carousel img {
+        height: auto; /* Ajustar el alto de las imágenes para evitar recortes */
+    }
+
+    .block-content-hero .carousel-controls {
+        bottom: 10px;
+        right: 10px;
+    }
+}
+
+/* Estilos para pantallas de 768px y menores */
+@media (max-width: 768px) {
+    .block-content-hero .content-wrapper {
+        width: 95%;
+        height: auto; /* Dejar que la altura se ajuste automáticamente */
+    }
+
+    .block-content-hero .text-content h1 {
+        font-size: 4vw; /* Un poco más grande en pantallas pequeñas */
+    }
+
+    .block-content-hero .text-content p {
+        font-size: 3vw; /* Ajustar el texto del párrafo */
+    }
+
+    .block-content-hero .text-content button {
+        padding: 2vw 4vw; /* Botón más grande */
+        font-size: 2vw; /* Aumentar el tamaño del texto del botón */
+    }
+
+    .block-content-hero .image-box {
+        width: 100%;
+        margin-top: 20px; /* Separar imagen del texto */
+    }
+
+    .block-content-hero .carousel img {
+        height: auto; /* Ajustar el alto de las imágenes */
+    }
+
+    .block-content-hero .carousel-controls {
+        bottom: 10px;
+        right: 10px;
+    }
+}
+
+/* Estilos para pantallas de 480px y menores (muy pequeñas) */
+@media (max-width: 480px) {
+    .block-content-hero .text-content h1 {
+        font-size: 5vw; /* Aumentar el tamaño del título */
+    }
+
+    .block-content-hero .text-content p {
+        font-size: 3.5vw; /* Ajustar el texto del párrafo */
+    }
+
+    .block-content-hero .text-content button {
+        padding: 3vw 5vw; /* Botón más grande */
+        font-size: 2.5vw; /* Aumentar el tamaño del texto del botón */
+    }
+
+    .block-content-hero .image-box {
+        flex-basis: 100%; /* La imagen ocupa todo el ancho */
+    }
+}

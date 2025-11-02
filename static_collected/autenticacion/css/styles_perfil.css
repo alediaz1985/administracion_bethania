@@ -1,0 +1,184 @@
+:root {
+  --azul: #1a2942;
+  --gris-claro: #f9f9f9;
+  --borde: #b8b8b8;
+  --texto: #222;
+  --secundario: #555;
+}
+
+/* Fondo general */
+body {
+  background-color: #d6dbe1;
+  font-family: 'Inter', sans-serif;
+}
+
+/* ============================
+   📦 CONTENEDOR PRINCIPAL
+============================ */
+.perfil-card {
+  max-width: 800px;
+  min-height: 320px; /* 🔹 más alto */
+  margin: 4rem auto;
+  background: #fff;
+  border-radius: 10px;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.40);
+  padding: 2.5rem 3rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+/* ============================
+   🧑‍💼 CABECERA (foto + datos)
+============================ */
+.perfil-header {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 2.5rem;
+  border-bottom: 1px solid var(--borde);
+  padding-bottom: 2rem;
+  margin-bottom: 2rem;
+}
+
+/* Foto circular */
+.perfil-photo {
+  width: 150px;  /* 🔹 más grande */
+  height: 150px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 3px solid var(--borde);
+  background-color: var(--gris-claro);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+}
+
+/* Datos a la derecha */
+.perfil-info {
+  flex: 1;
+}
+
+.perfil-info h2 {
+  font-size: 1.6rem; /* 🔹 un poco más grande */
+  margin-bottom: 0.8rem;
+  color: var(--azul);
+  font-weight: 600;
+}
+
+.perfil-info p {
+  margin: 0.5rem 0;
+  color: var(--secundario);
+  font-size: 1rem;
+}
+
+/* ============================
+   🔘 BOTONES
+============================ */
+.perfil-actions {
+  margin-top: auto;             /* 🔹 Empuja los botones al fondo */
+  align-self: flex-end;         /* 🔹 Los alinea a la derecha */
+  display: flex;
+  gap: 1rem;
+  padding-top: 1rem;            /* 🔹 Espacio visual antes del borde */
+}
+
+.perfil-card,
+.perfil-editar-card {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between; /* 🔹 Distribuye el contenido y empuja los botones al fondo */
+  height: 70%; /* 🔹 Asegura que use toda la altura disponible */
+  position: relative; /* útil si agregás pseudo-elementos o fondos */
+}
+
+.btn {
+  background: var(--azul);
+  color: white;
+  text-align: center;
+  padding: 0.6rem 1.2rem;
+  border-radius: 5px;
+  text-decoration: none;
+  font-size: 0.75rem;
+  font-weight: 500;
+  transition: all 0.25s ease;
+  border: 1px solid transparent;
+}
+
+.btn:hover {
+  background: #22385d;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
+}
+
+.btn-light {
+  background: #f3f3f3;
+  color: #333;
+  border: 1px solid #dcdcdc;
+}
+
+.btn-light:hover {
+  background: #e8e8e8;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+}
+
+/* ============================
+   🖥️ ADAPTACIÓN A PANTALLAS GRANDES (1920px+)
+============================ */
+@media (min-width: 1600px) {
+  .perfil-card {
+    max-width: 1300px;       /* 🔹 más ancho */
+    min-height: 650px;       /* 🔹 más alto */
+    padding: 3.5rem 5rem;    /* 🔹 más espacio interior */
+  }
+
+  .perfil-photo {
+    width: 220px;            /* 🔹 foto más grande */
+    height: 220px;
+  }
+
+  .perfil-info h2 {
+    font-size: 2.2rem;       /* 🔹 título más grande */
+  }
+
+  .perfil-info p {
+    font-size: 1.2rem;
+  }
+
+  .perfil-header {
+    gap: 4rem;
+    padding-bottom: 2.5rem;
+    margin-bottom: 2.5rem;
+  }
+
+  .btn {
+    font-size: 1.05rem;
+    padding: 0.9rem 1.8rem;
+  }
+
+  .perfil-actions {
+    margin-top: 2rem;
+  }
+}
+
+/* ============================
+   📱 RESPONSIVE (pantallas pequeñas)
+============================ */
+@media (max-width: 768px) {
+  .perfil-header {
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    gap: 1.5rem;
+  }
+
+  .perfil-photo {
+    width: 130px;
+    height: 130px;
+  }
+
+  .perfil-info h2 {
+    font-size: 1.4rem;
+  }
+
+  .perfil-card {
+    padding: 2rem;
+  }
+}

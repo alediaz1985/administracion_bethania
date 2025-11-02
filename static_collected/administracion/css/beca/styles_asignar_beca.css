@@ -1,0 +1,312 @@
+/* ==========================================================
+   🎓 ASIGNAR BECA A ESTUDIANTE
+   Estilo institucional — UEGP N°82 “Hogar de Bethania”
+========================================================== */
+
+:root {
+  --azul: #1a2942;
+  --azul-medio: #22385d;
+  --gris-fondo: #d6dbe1;
+  --gris-claro: #f8f8f8;
+  --texto: #222;
+  --borde: #b8b8b8;
+  --verde: #267c2e;
+  --rojo: #d00000;
+  --dorado: #b38f00;
+}
+
+/* ==========================================================
+   🧩 ESTRUCTURA GENERAL
+========================================================== */
+body {
+  background: var(--gris-fondo);
+  font-family: 'Inter', sans-serif;
+  color: var(--texto);
+}
+
+.asignar-beca-container {
+  max-width: 1180px;
+  margin: 2rem auto;
+  background: #fff;
+  border-radius: 10px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.25);
+  padding: 2rem;
+}
+
+/* ==========================================================
+   🔹 CABECERA
+========================================================== */
+.asignar-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  border-bottom: 1px solid var(--borde);
+  padding-bottom: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+.asignar-titulo h2 {
+  color: var(--azul);
+  font-weight: 600;
+  font-size: 1.2rem;
+  margin: 0;
+}
+
+.asignar-titulo .subtitulo {
+  font-size: 0.9rem;
+  color: #555;
+  margin-top: 0.25rem;
+}
+
+/* ==========================================================
+   🔹 BOTÓN VOLVER
+========================================================== */
+.btn-volver {
+  background: transparent;
+  color: var(--azul);
+  border: 1px solid var(--azul);
+  border-radius: 6px;
+  padding: 0.55rem 1.2rem;
+  font-size: 0.85rem;
+  font-weight: 500;
+  cursor: pointer;
+  text-decoration: none;
+  transition: all 0.25s ease;
+}
+
+.btn-volver:hover {
+  background: var(--azul);
+  color: #fff;
+  transform: translateY(-1px);
+}
+
+/* ==========================================================
+   🎯 FILTROS DE BÚSQUEDA Y SELECCIÓN
+========================================================== */
+
+.filtros-container {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 1.5rem;
+  background: var(--gris-claro);
+  border: 1px solid var(--borde);
+  border-radius: 8px;
+  padding: 1rem 1.2rem;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+}
+
+/* --- Fila principal --- */
+.filtros-row {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+
+/* --- Cada bloque de filtro --- */
+.filtro {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-width: 160px;
+}
+
+/* --- Etiquetas --- */
+.filtro label {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--azul);
+  margin-bottom: 4px;
+}
+
+/* --- Selects y campo de texto --- */
+.filtro select,
+.filtro input[type="text"] {
+  border: 1px solid var(--borde);
+  border-radius: 6px;
+  padding: 6px 8px;
+  font-size: 0.88rem;
+  color: var(--texto);
+  transition: all 0.25s ease;
+  background: #fff;
+}
+
+.filtro select:focus,
+.filtro input[type="text"]:focus {
+  border-color: var(--azul);
+  box-shadow: 0 0 0 2px rgba(26, 41, 66, 0.15);
+  outline: none;
+}
+
+/* --- Buscador ocupa más espacio --- */
+.filtro-buscar {
+  flex: 1.8;
+}
+
+/* --- Placeholder del buscador --- */
+.filtro-buscar input::placeholder {
+  color: #777;
+  font-style: italic;
+}
+
+/* --- Hover suave en selects --- */
+.filtro select:hover,
+.filtro input[type="text"]:hover {
+  border-color: var(--azul-medio);
+}
+
+/* ==========================================================
+   📋 TABLA DE ASIGNACIÓN
+========================================================== */
+.asignar-table {
+  width: 100%;
+  border-collapse: collapse;
+  background: #fff;
+  border-radius: 10px;
+  overflow: hidden;
+  border: 1px solid #b8b8b8;
+  box-shadow: 0 4px 25px rgba(0, 0, 0, 0.35);
+}
+
+.asignar-table thead {
+  background: #d6dbe1;
+}
+
+.asignar-table th {
+  color: var(--azul);
+  font-weight: 600;
+  font-size: 13px;
+  padding: 12px;
+  text-align: left;
+  border-bottom: 1px solid #bbb;
+  border-right: 1px solid #bbb;
+}
+
+.asignar-table td {
+  font-size: 13px;
+  color: #222;
+  padding: 12px;
+  border-bottom: 1px solid #bbb;
+  border-right: 1px solid #bbb;
+  vertical-align: middle;
+}
+
+.asignar-table th:last-child,
+.asignar-table td:last-child {
+  border-right: none;
+}
+
+.asignar-table tbody tr:nth-child(even) {
+  background-color: #fafafa;
+}
+
+.asignar-table tbody tr:hover {
+  background-color: #eef1f6;
+  transition: background 0.2s ease;
+}
+
+/* ==========================================================
+   🎯 COLUMNAS PERSONALIZADAS
+========================================================== */
+.col-select {
+  width: 35%;
+}
+
+.col-accion {
+  width: 70px;
+  text-align: center;
+  white-space: nowrap;
+}
+
+/* ==========================================================
+   🧭 ELEMENTOS DE FORMULARIO
+========================================================== */
+.form-select-sm {
+  border: 1px solid var(--borde);
+  border-radius: 6px;
+  font-size: 0.85rem;
+  padding: 4px 6px;
+  transition: border 0.2s ease, box-shadow 0.2s ease;
+  width: 100%;
+}
+
+.form-select-sm:focus {
+  border-color: var(--azul);
+  box-shadow: 0 0 0 2px rgba(26, 41, 66, 0.15);
+  outline: none;
+}
+
+/* ==========================================================
+   ✅ BOTÓN DE ASIGNACIÓN (ICONO)
+========================================================== */
+.icon-btn {
+  background: none;
+  border: none;
+  color: var(--verde);
+  font-size: 16px;
+  cursor: pointer;
+  padding: 5px 7px;
+  border-radius: 6px;
+  transition: color 0.2s ease, transform 0.15s ease;
+}
+
+.icon-btn:hover {
+  transform: scale(1.15);
+  color: #1d5e23;
+}
+
+/* ==========================================================
+   ⚠️ MENSAJES Y ALERTAS
+========================================================== */
+.alert {
+  border-radius: 6px;
+  padding: 0.75rem 1rem;
+  font-size: 0.9rem;
+  margin-bottom: 1rem;
+}
+
+.alert-info {
+  background: #e8f1ff;
+  color: #1a2942;
+  border: 1px solid #bcd1ff;
+}
+
+.alert-success {
+  background: #e3f6e3;
+  color: #267c2e;
+  border: 1px solid #b4e2b4;
+}
+
+.alert-danger {
+  background: #ffe5e5;
+  color: #b00020;
+  border: 1px solid #f5c2c2;
+}
+
+/* ==========================================================
+   📱 RESPONSIVE
+========================================================== */
+@media (max-width: 768px) {
+  .asignar-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 1rem;
+  }
+
+  .btn-volver {
+    width: 100%;
+  }
+
+  .col-select {
+    width: 100%;
+  }
+
+  .col-accion {
+    text-align: left;
+  }
+
+  .icon-btn {
+    font-size: 18px;
+  }
+}

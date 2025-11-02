@@ -1,0 +1,88 @@
+/* Estilo general del contenedor de confirmación */
+.confirmation-container {
+    max-width: 600px;
+    margin: 50px auto;
+    padding: 20px;
+    background-color: #f9f9f9;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+h2 {
+    text-align: center;
+    color: #2ecc71; /* Verde para resaltar acción positiva */
+    font-size: 24px;
+    margin-bottom: 20px;
+}
+
+/* Detalles del estudiante */
+.student-details {
+    margin-bottom: 20px;
+}
+
+.student-details p {
+    font-size: 18px;
+    margin: 10px 0;
+    color: black;
+}
+
+.student-details strong {
+    font-weight: bold;
+    color: black;
+}
+
+/* Estilo de los botones */
+.button-submit,
+.button-cancel {
+    display: inline-block;
+    padding: 10px 20px;
+    margin: 10px 0;
+    font-size: 16px;
+    text-align: center;
+    border-radius: 5px;
+    text-decoration: none;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+/* Botón de aprobar */
+.button-submit {
+    background-color: #2ecc71; /* Verde */
+    color: white;
+    border: none;
+}
+
+.button-submit:hover {
+    background-color: #27ae60;
+}
+
+/* Botón de cancelar */
+.button-cancel {
+    background-color: #e74c3c; /* Rojo */
+    color: white;
+    border: none;
+}
+
+.button-cancel:hover {
+    background-color: #c0392b;
+}
+
+/* Estilo del formulario */
+form {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+/* Ajuste de espaciado y alineación */
+form .button-submit {
+    width: 100%;
+    max-width: 200px;
+}
+
+form .button-cancel {
+    width: 100%;
+    max-width: 200px;
+    text-align: center;
+}

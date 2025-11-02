@@ -1,0 +1,1166 @@
+:root {
+  --azul: #1a2942;
+  --gris-claro: #f9f9f9;
+  --borde: #b8b8b8;
+  --texto: #222;
+  --secundario: #555;
+}
+
+body {
+    background-color: #d6dbe1;
+}
+
+/* ============================
+   CONTENEDOR PRINCIPAL
+============================ */
+.student-card {
+  max-width: 1180px;
+  margin: 2rem auto;
+  background: #fff;
+  border-radius: 10px;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+  padding: 2rem;
+  font-family: 'Inter', sans-serif;
+}
+
+/* ============================
+   CABECERA
+============================ */
+.student-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  border-bottom: 1px solid var(--borde);
+  padding-bottom: 1.5rem;
+  margin-bottom: 1.5rem;
+  gap: 2rem; /* espacio entre foto/info y bloque de inscripción */
+}
+
+.student-info {
+  flex: 1;
+}
+
+/* 🔹 Ajustes de foto e info */
+.student-photo {
+  width: 90px;
+  height: 90px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 1px solid var(--borde);
+}
+
+.student-info h2 {
+  font-size: 1.25rem;
+  margin: 0;
+  color: var(--azul);
+}
+
+.student-info p {
+  margin: 0.25rem 0;
+  color: var(--secundario);
+}
+
+/* 🏷️ Bloque de inscripción */
+.student-inscripcion {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 0.5rem;
+  text-align: right;
+  min-width: 270px;
+}
+
+/* 💬 Mensaje de estado */
+.inscripcion-estado {
+  background: #f0fff0;
+  color: #2b7a2b;
+  border: 1px solid #b5e0b5;
+  padding: 0.4rem 0.8rem;
+  border-radius: 6px;
+  font-size: 0.8rem;
+  font-weight: 500;
+  white-space: nowrap;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+/* 🔘 Botones de acción (comparten base) */
+.btn-inscribir,
+.btn-eliminar {
+  display: inline-block;
+  width: 70%;               /* ambos mismo ancho */
+  text-align: center;
+  padding: 0.55rem 0;        /* misma altura */
+  border-radius: 6px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  border: none;
+  cursor: pointer;
+  transition: all 0.25s ease;
+  text-decoration: none;     /* ❌ sin subrayado */
+  letter-spacing: 0.3px;
+}
+
+/* 🟦 Botón Inscribir */
+.btn-inscribir {
+  background: #2b62a3;
+  color: #fff;
+}
+
+.btn-inscribir:hover {
+  background: #234f83;
+  transform: translateY(-1px);
+}
+
+/* 🔴 Botón Eliminar */
+.btn-eliminar {
+  background-color: #e74c3c;
+  color: #fff;
+}
+
+.btn-eliminar:hover {
+  background-color: #c0392b;
+  transform: translateY(-1px);
+}
+
+/* Modal genérico (ya usás este formato, pero aseguremos compatibilidad) */
+.modal {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.45);
+  justify-content: center;
+  align-items: center;
+  z-index: 999;
+}
+
+.modal-content {
+  background: #fff;
+  padding: 1.5rem;
+  border-radius: 10px;
+  width: 90%;
+  max-width: 400px;
+  box-shadow: 0 6px 20px rgba(0,0,0,0.2);
+  text-align: center;
+}
+
+.modal-actions {
+  margin-top: 1rem;
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+/* ============================
+   BOTONES
+============================ */
+.student-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-bottom: 1.5rem;
+}
+
+.btn {
+  background: var(--azul);
+  color: white;
+  text-align: center;
+  padding: 0.45rem 0;
+  width: 150px;
+  border-radius: 5px;
+  text-decoration: none;
+  font-size: 0.75rem;
+  letter-spacing: 0.3px;
+  font-weight: 500;
+  transition: all 0.25s ease;
+  border: 1px solid transparent;
+}
+
+.btn:hover {
+  background: #22385d;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
+}
+
+.btn-light {
+  background: #f3f3f3;
+  color: #333;
+  border: 1px solid #dcdcdc;
+}
+
+.btn-light:hover {
+  background: #e8e8e8;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+}
+
+.btn-warning {
+  background: #ffc107;
+  color: #222;
+  border: none;
+}
+
+.btn-warning:hover {
+  background: #e0a800;
+  color: #fff;
+}
+
+/* --- Botón verde (Aprobar Doc.) --- */
+.btn-success {
+  background: #28a745;           /* verde institucional original */
+  color: #fff;
+  border: none;
+}
+
+.btn-success:hover {
+  background: #218838;           /* un poco más oscuro en hover */
+  color: #fff;
+}
+
+/* ============================
+   🔹 PESTAÑAS
+============================ */
+.tabs {
+  display: flex;
+  flex-wrap: nowrap;
+  overflow-x: auto;
+  gap: 6px;
+  border-bottom: 2px solid var(--borde);
+  margin-bottom: 0.3rem;
+  scrollbar-width: thin;
+  scrollbar-color: var(--azul) #eaeaea;
+}
+
+.tabs::-webkit-scrollbar {
+  height: 6px;
+}
+
+.tabs::-webkit-scrollbar-thumb {
+  background: var(--azul);
+  border-radius: 10px;
+}
+
+.tab-button {
+  flex: 1;
+  background: var(--gris-claro);
+  border: 1px solid var(--borde);
+  border-bottom: none;
+  padding: 10px 14px;
+  cursor: pointer;
+  font-weight: 600;
+  border-radius: 8px 8px 0 0;
+  color: var(--texto);
+  transition: all 0.3s;
+  white-space: nowrap;
+  font-size: 0.9rem;
+}
+
+.tab-button:hover {
+  background: #efefef;
+}
+
+.tab-button.active {
+  background: var(--azul);
+  color: #fff;
+  border-color: var(--azul);
+}
+
+/* ============================
+   CONTENIDO DE PESTAÑAS
+============================ */
+.tab-content {
+  display: none;
+  animation: fadeIn 0.25s ease-in-out;
+  border: 1px solid var(--borde);
+  border-radius: 0 10px 10px 10px;
+  padding: 1rem 1.5rem;
+  background-color: #fff;
+}
+
+.tab-content.active {
+  display: block;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* ============================
+   TABLAS Y CAMPOS
+============================ */
+.tab-content table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.tab-content th {
+  text-align: left;
+  padding: 6px;
+  width: 35%;
+  color: var(--secundario);
+  font-weight: 500;
+  vertical-align: top;
+}
+
+.tab-content td {
+  padding: 6px;
+  vertical-align: top;
+}
+
+.tab-content input {
+  width: 100%;
+  padding: 6px 8px;
+  border: 1px solid var(--borde);
+  border-radius: 6px;
+  font-size: 0.9rem;
+  color: var(--texto);
+}
+
+.tab-content tr:nth-child(even) {
+  background: #fafafa;
+}
+
+/* ============================
+   RESPONSABLES
+============================ */
+#tab-responsables h4 {
+  margin-top: 1rem;
+  margin-bottom: 1rem;
+  color: var(--azul);
+  font-weight: 600;
+  font-size: 1rem;
+}
+
+/* ============================
+   ESTADO VISUAL
+============================ */
+.status {
+  margin-top: 1.2rem;
+  text-align: center;
+  font-weight: 500;
+  padding: 1rem;
+  border-radius: 6px;
+}
+
+.status.aprobado {
+  background: #f3fdf3;
+  color: #267c2e;
+  border: 1px solid #b8e0b8;
+}
+
+.status.pendiente {
+  background: #fdf6f6;
+  color: #a73636;
+  border: 1px solid #f0c3c3;
+}
+
+/* ==========================================================
+   🪟 MODALES INSTITUCIONALES — Estilo avanzado Bethania
+========================================================== */
+
+.modal {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.55);
+  backdrop-filter: blur(5px);
+  z-index: 1050;
+  justify-content: center;
+  align-items: center;
+  animation: fadeInBackdrop 0.4s ease;
+}
+
+@keyframes fadeInBackdrop {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+/* --- Caja principal --- */
+.modal-content {
+  background: linear-gradient(180deg, #ffffff 0%, #f9f9f9 100%);
+  border-radius: 14px;
+  padding: 2rem 2.3rem;
+  width: 90%;
+  max-width: 460px;
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.35);
+  text-align: center;
+  position: relative;
+  border: 1px solid rgba(0, 0, 0, 0.05);
+  animation: modalZoomIn 0.35s cubic-bezier(0.24, 1.25, 0.32, 1);
+  transform-origin: center;
+}
+
+@keyframes modalZoomIn {
+  from { opacity: 0; transform: scale(0.8); }
+  to { opacity: 1; transform: scale(1); }
+}
+
+/* --- Cabecera --- */
+.modal-content h3 {
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: var(--azul);
+  margin-bottom: 1rem;
+  letter-spacing: 0.3px;
+}
+
+.modal-content p {
+  color: var(--texto);
+  font-size: 0.95rem;
+  line-height: 1.5;
+}
+
+/* --- Línea decorativa superior --- */
+.modal-content::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  height: 5px;
+  width: 100%;
+  border-radius: 14px 14px 0 0;
+}
+
+/* --- Contenedor de botones --- */
+.modal-actions {
+  display: flex;
+  justify-content: center;
+  gap: 0.9rem;
+  margin-top: 1.8rem;
+}
+
+/* --- Botones --- */
+.modal .btn {
+  border-radius: 8px;
+  font-size: 0.75rem;
+  padding: 0.55rem 1.25rem;
+  font-weight: 500;
+  transition: all 0.25s ease;
+  cursor: pointer;
+  text-decoration: none;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+}
+
+/* Botón neutro */
+.modal .btn-light {
+  background: #f6f6f6;
+  color: #333;
+  border: 1px solid #ccc;
+}
+.modal .btn-light:hover {
+  background: #e9e9e9;
+  transform: translateY(-1px);
+}
+
+/* Verde confirmación */
+.modal .btn-success {
+  background: linear-gradient(135deg, #2ca44c, #1e7435);
+  color: #fff;
+  border: none;
+}
+.modal .btn-success:hover {
+  filter: brightness(1.1);
+  transform: translateY(-1px);
+}
+
+/* Rojo advertencia */
+.modal .btn-danger {
+  background: linear-gradient(135deg, #d00000, #a30000);
+  color: #fff;
+  border: none;
+}
+.modal .btn-danger:hover {
+  filter: brightness(1.1);
+  transform: translateY(-1px);
+}
+
+/* Azul institucional */
+.modal .btn-primary {
+  background: linear-gradient(135deg, var(--azul), var(--azul-medio));
+  color: #fff;
+  border: none;
+}
+.modal .btn-primary:hover {
+  filter: brightness(1.1);
+  transform: translateY(-1px);
+}
+
+/* Dorado informativo */
+.modal .btn-gold {
+  background: linear-gradient(135deg, #b38f00, #8a7000);
+  color: #fff;
+  border: none;
+}
+.modal .btn-gold:hover {
+  filter: brightness(1.1);
+  transform: translateY(-1px);
+}
+
+/* ==========================================================
+   🔹 MODALES INDIVIDUALES — Colores distintivos
+========================================================== */
+
+/* --- Confirmación --- */
+#modalEstado .modal-content::before {
+  background: var(--azul);
+}
+#modalEstado .modal-content h3 {
+  color: var(--azul);
+}
+
+/* --- Descarga completada --- */
+#modalDescarga .modal-content::before {
+  background: var(--dorado);
+}
+#modalDescarga .modal-content h3 {
+  color: var(--dorado);
+}
+
+/* --- Registrar pago --- */
+#modalPago .modal-content::before {
+  background: var(--verde);
+}
+#modalPago .modal-content h3 {
+  color: var(--verde);
+}
+
+/* Campos de formulario */
+#modalPago select,
+#modalPago textarea {
+  width: 100%;
+  border: 1px solid #bbb;
+  border-radius: 8px;
+  padding: 7px 9px;
+  font-size: 0.9rem;
+  color: var(--texto);
+  background: #fff;
+  transition: all 0.2s ease;
+}
+#modalPago select:focus,
+#modalPago textarea:focus {
+  border-color: var(--verde);
+  box-shadow: 0 0 0 3px rgba(38, 124, 46, 0.2);
+  outline: none;
+}
+#modalPago label {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--azul);
+  display: block;
+  margin-top: 0.7rem;
+  margin-bottom: 0.3rem;
+}
+#modalPago textarea {
+  resize: none;
+}
+
+/* --- Deshacer pago --- */
+#modalDeshacerPago .modal-content::before {
+  background: var(--rojo);
+}
+#modalDeshacerPago .modal-content h3 {
+  color: var(--rojo);
+}
+
+/* --- Visor certificado (Bootstrap modal) --- */
+#visorCertificadoModal .modal-header {
+  background: var(--azul);
+  color: #fff;
+  border-bottom: 1px solid #1e2d4d;
+}
+#visorCertificadoModal .modal-title {
+  font-weight: 600;
+}
+#visorCertificadoModal .btn-close::before {
+  color: #fff;
+}
+
+/* ==========================================================
+   ✨ Animación de cierre
+========================================================== */
+.modal.hide {
+  animation: fadeOutModal 0.25s ease forwards;
+}
+
+@keyframes fadeOutModal {
+  from { opacity: 1; transform: scale(1); }
+  to { opacity: 0; transform: scale(0.95); }
+}
+
+/* ==========================================================
+   💳 PESTAÑA CUOTAS — Estilo institucional Bethania
+========================================================== */
+
+#tab-cuotas {
+  margin-top: 1rem;
+}
+
+#tab-cuotas table {
+  width: 100%;
+  border-collapse: collapse;
+  background: #fff;
+  border-radius: 10px;
+  overflow: hidden;
+  border: 1px solid var(--borde);
+  box-shadow: 0 4px 25px rgba(0, 0, 0, 0.35);
+  table-layout: fixed;
+}
+
+/* --- Encabezado --- */
+#tab-cuotas thead {
+  background: #d6dbe1;
+}
+
+#tab-cuotas th,
+#tab-cuotas td {
+  font-size: 13px;
+  color: #222;
+  padding: 12px;
+  border-bottom: 1px solid #bbb;
+  border-right: 1px solid #bbb;
+  vertical-align: middle;
+  text-align: center; /* ✅ Todo centrado */
+  word-wrap: break-word;
+}
+
+#tab-cuotas th:last-child,
+#tab-cuotas td:last-child {
+  border-right: none;
+}
+
+/* --- Proporciones equilibradas --- */
+#tab-cuotas th:nth-child(1),
+#tab-cuotas td:nth-child(1) { width: 10%; } /* Mes */
+#tab-cuotas th:nth-child(2),
+#tab-cuotas td:nth-child(2) { width: 12%; } /* Año */
+#tab-cuotas th:nth-child(3),
+#tab-cuotas td:nth-child(3) { width: 18%; } /* Monto */
+#tab-cuotas th:nth-child(4),
+#tab-cuotas td:nth-child(4) { width: 18%; } /* Estado */
+#tab-cuotas th:nth-child(5),
+#tab-cuotas td:nth-child(5) { width: 22%; } /* Vencimiento */
+#tab-cuotas th:nth-child(6),
+#tab-cuotas td:nth-child(6) { width: 10%; } /* Pago */
+
+#tab-cuotas tbody tr:nth-child(even) {
+  background-color: #fafafa;
+}
+
+#tab-cuotas tbody tr:hover {
+  background-color: #eef1f6;
+  transition: background 0.2s ease;
+}
+
+/* --- Estados visuales --- */
+#tab-cuotas td span {
+  display: inline-block;
+  padding: 3px 10px;
+  border-radius: 5px;
+  font-weight: 600;
+  font-size: 0.8rem;
+}
+
+#tab-cuotas td span[style*="green"] {
+  background: #e3f6e3;
+  color: var(--verde) !important;
+}
+
+#tab-cuotas td span[style*="red"] {
+  background: #ffe5e5;
+  color: var(--rojo) !important;
+}
+
+#tab-cuotas td span[style*="orange"] {
+  background: #fff4e5;
+  color: var(--dorado) !important;
+}
+
+/* --- Botón de acción (negro minimalista) --- */
+#tab-cuotas .btn {
+  background: none;
+  border: none;
+  outline: none;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 4px;
+  transition: transform 0.2s ease;
+}
+
+#tab-cuotas .btn i {
+  color: var(--azul);
+  font-size: 1.1rem;
+  transition: color 0.2s ease, transform 0.2s ease;
+}
+
+/* Hover elegante y consistente */
+#tab-cuotas .btn:hover i {
+  color: var(--dorado);
+  transform: scale(1.15);
+}
+
+/* Sin fondo ni borde al hacer foco */
+#tab-cuotas .btn:focus {
+  outline: none;
+  box-shadow: none;
+}
+
+/* --- Mensaje sin datos --- */
+#tab-cuotas p {
+  text-align: center;
+  color: var(--texto);
+  font-style: italic;
+  padding: 1.5rem 0;
+  background: #fafafa;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+}
+
+/* ==========================================================
+   🎯 Centrado del botón dentro de la columna Pago
+========================================================== */
+
+/* Celdas de la columna Pago */
+#tab-cuotas td:last-child {
+  text-align: center;
+  vertical-align: middle;
+}
+
+/* Asegura que el botón esté perfectamente centrado */
+#tab-cuotas td:last-child .btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto; /* ✅ centra horizontalmente */
+  width: 32px;
+  height: 32px;
+}
+
+/* Ícono del botón */
+#tab-cuotas td:last-child .btn i {
+  color: var(--azul);
+  font-size: 1.1rem;
+  transition: color 0.2s ease, transform 0.2s ease;
+}
+
+/* Hover minimalista dorado */
+#tab-cuotas td:last-child .btn:hover i {
+  color: var(--dorado);
+  transform: scale(1.15);
+}
+
+/* ==========================================================
+   💳 BOTÓN DESHACER PAGO — Ícono X negro minimalista
+========================================================== */
+
+.btn-deshacer-pago {
+  background: none !important;
+  border: none !important;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  transition: transform 0.25s ease;
+}
+
+.btn-deshacer-pago i {
+  font-size: 1.1rem;
+  color: var(--azul);
+  transition: color 0.25s ease, transform 0.25s ease;
+}
+
+/* Hover dorado elegante */
+.btn-deshacer-pago:hover i {
+  color: var(--dorado);
+  transform: scale(1.15);
+}
+
+/* Limpieza de foco */
+.btn-deshacer-pago:focus {
+  outline: none;
+  box-shadow: none;
+}
+
+/* =====================================================
+   🔔 MENSAJES FLOTANTES — estilo minimalista del sistema
+===================================================== */
+#toast-container {
+  position: fixed;
+  top: 4.5rem;
+  right: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+  z-index: 9999;
+}
+
+/* --- Cuerpo del mensaje --- */
+.toast-message {
+  background: #fff;
+  border-left: 4px solid var(--azul);
+  color: var(--texto);
+  font-family: 'Inter', sans-serif;
+  font-size: 0.9rem;
+  font-weight: 500;
+  padding: 0.7rem 1rem;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+  opacity: 0;
+  transform: translateY(-10px);
+  animation: fadeInSlide 0.4s ease forwards;
+}
+
+/* ✅ Éxito */
+.toast-message.success {
+  border-left-color: #2e7d32;
+}
+
+/* ⚠️ Advertencia */
+.toast-message.warning {
+  border-left-color: #b38f00;
+}
+
+/* ❌ Error */
+.toast-message.error {
+  border-left-color: #c62828;
+}
+
+/* Animaciones suaves */
+@keyframes fadeInSlide {
+  from { opacity: 0; transform: translateY(-10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes fadeOut {
+  from { opacity: 1; transform: translateY(0); }
+  to { opacity: 0; transform: translateY(-10px); }
+}
+
+/* ==========================================================
+   🧭 FILTRO + BOTÓN PDF — Barra de acciones de cuotas
+========================================================== */
+
+#tab-cuotas .acciones-cuotas {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 1rem;
+  margin-bottom: 1.3rem;
+  padding-bottom: 0.7rem;
+  border-bottom: 1px solid var(--borde);
+}
+
+/* --- Filtro --- */
+#tab-cuotas .filtro-ciclo {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+}
+
+#tab-cuotas .filtro-ciclo label {
+  font-size: 0.9rem;
+  font-weight: 500;
+  color: var(--texto);
+  white-space: nowrap; /* evita salto de línea */
+}
+
+#tab-cuotas .filtro-ciclo select {
+  border: 1px solid var(--borde);
+  border-radius: 8px;
+  padding: 0.45rem 0.8rem;
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+  background-color: #fff;
+  min-width: 160px;
+}
+
+#tab-cuotas .filtro-ciclo select:focus {
+  outline: none;
+  border-color: var(--azul);
+  box-shadow: 0 0 0 2px rgba(26, 41, 66, 0.15);
+}
+
+/* --- Botón PDF --- */
+#tab-cuotas .btn-pdf {
+  background: var(--azul);
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  padding: 0.6rem 1rem;
+  font-size: 0.85rem;
+  font-weight: 500;
+  letter-spacing: 0.3px;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  transition: background 0.3s ease, transform 0.2s ease, box-shadow 0.2s ease;
+  cursor: pointer;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.08);
+}
+
+#tab-cuotas .btn-pdf i {
+  font-size: 1rem;
+}
+
+#tab-cuotas .btn-pdf:hover {
+  background: #22385d;
+  transform: translateY(-1px);
+  box-shadow: 0 3px 8px rgba(0, 0, 0, 0.1);
+}
+
+#tab-cuotas .btn-pdf:focus {
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(26, 41, 66, 0.25);
+}
+
+.alerta-deuda {
+  background: #f7f8fa;
+  border-left: 4px solid #ffc107;
+  color: #444;
+  border-radius: 6px;
+  padding: 8px 14px;
+  margin-bottom: 1rem;
+  font-size: 0.9rem;
+  font-family: 'Inter', sans-serif;
+}
+
+/* ==========================================================
+   💰 MODAL ESTADO DE DEUDA — Versión final refinada Bethania
+========================================================== */
+
+/* --- 🔧 Controla el fondo oscuro del modal (intensidad aquí) --- */
+.modal-backdrop.show {
+  background-color: rgba(0, 0, 0, 0.04); /* 🔹 MODIFICÁ ESTE VALOR (0.45 = intensidad del fondo) */
+  backdrop-filter: blur(3px);
+}
+
+/* --- Centrado y estructura del modal --- */
+#modalGenerarPDF .modal-dialog {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  margin: 0;
+}
+
+/* --- Caja principal --- */
+#modalGenerarPDF .modal-content.form-modal {
+  background: #fff;
+  border-radius: 16px;
+  padding: 2rem 2.2rem 2.2rem;
+  border: 1px solid rgba(0, 0, 0, 0.05);
+  box-shadow: 0 10px 35px rgba(0, 0, 0, 0.25);
+  font-family: 'Inter', sans-serif;
+  max-width: 480px;
+  width: 100%;
+  animation: modalZoomIn 0.3s ease;
+}
+
+/* --- Cabecera --- */
+#modalGenerarPDF .modal-header {
+  border: none;
+  padding: 0;
+  margin-bottom: 1.5rem;
+  text-align: center;
+  position: relative;
+}
+
+#modalGenerarPDF .modal-title {
+  color: var(--azul);
+  font-weight: 700;
+  font-size: 1.2rem;
+  letter-spacing: 0.3px;
+}
+
+/* --- Botón cerrar (X) --- */
+#modalGenerarPDF .btn-close {
+  position: absolute;
+  top: 0;
+  right: 0;
+  background: none;
+  border: none;
+  font-size: 1.1rem;
+  color: var(--texto);
+  opacity: 0.6;
+  transition: opacity 0.2s ease, transform 0.2s ease;
+}
+#modalGenerarPDF .btn-close:hover {
+  opacity: 1;
+  transform: scale(1.15);
+}
+
+/* --- Cuerpo del formulario --- */
+#modalGenerarPDF .modal-body {
+  padding: 0;
+}
+
+/* --- Grilla para los selects (Desde / Hasta) --- */
+#modalGenerarPDF .rango-meses {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+  margin-bottom: 1.4rem;
+}
+
+#modalGenerarPDF label {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--azul);
+  display: block;
+  margin-bottom: 0.3rem;
+}
+
+#modalGenerarPDF .form-select {
+  width: 100%;
+  border: 1px solid #c4c8ce;
+  border-radius: 8px;
+  padding: 8px 10px;
+  font-size: 0.9rem;
+  background: #fff;
+  color: var(--texto);
+  transition: all 0.25s ease;
+}
+#modalGenerarPDF .form-select:focus {
+  border-color: var(--azul);
+  box-shadow: 0 0 0 3px rgba(26, 41, 66, 0.2);
+  outline: none;
+}
+
+/* --- Checkbox + texto en la misma fila --- */
+#modalGenerarPDF .form-check {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 1.8rem;
+}
+#modalGenerarPDF .form-check-input {
+  width: 1.1rem;
+  height: 1.1rem;
+  accent-color: var(--azul);
+  cursor: pointer;
+}
+#modalGenerarPDF .form-check-label {
+  font-size: 0.9rem;
+  color: var(--texto);
+  cursor: pointer;
+}
+
+/* --- Botones inferiores (Generar / Cancelar) --- */
+#modalGenerarPDF .modal-actions {
+  display: flex;
+  justify-content: center; /* ✅ Centra los botones horizontalmente */
+  gap: 1rem;
+  margin-top: 1.5rem;
+}
+
+#modalGenerarPDF .btn {
+  border-radius: 10px;
+  font-size: 0.9rem;
+  font-weight: 500;
+  padding: 0.6rem 1.3rem;
+  transition: all 0.25s ease;
+}
+
+/* Botón principal */
+#modalGenerarPDF .btn-success {
+  background: var(--azul);
+  color: #fff;
+  border: none;
+  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.15);
+}
+#modalGenerarPDF .btn-success:hover {
+  background: #22385d;
+  transform: translateY(-2px);
+}
+
+/* Botón secundario */
+#modalGenerarPDF .btn-light {
+  background: #f3f3f3;
+  color: var(--texto);
+  border: 1px solid #dcdcdc;
+}
+#modalGenerarPDF .btn-light:hover {
+  background: #e8e8e8;
+}
+
+/* ============================
+   📱 MEDIA QUERY
+   Controla tamaño general
+============================ */
+@media screen and (max-width: 1366px) and (max-height: 768px) {
+  .student-card .tab-button {
+    font-size: 0.65rem;
+    padding: 8px 10px;
+  }
+
+  .student-card {
+    max-width: 1080px;
+    padding: 1.5rem;
+    font-size: 0.75rem;
+  }
+
+  .student-info h2,
+  .student-info p,
+  .tab-content input {
+    font-size: 0.75rem;
+  }
+
+  .btn {
+    width: 130px;
+    font-size: 0.65rem;
+    padding: 0.35rem 0;
+  }
+
+  .btn-inscribir {
+  font-size: 0.65rem;
+  }
+}
+
+
+/* === Visor de Certificado Médico === */
+
+/* === VISOR CERTIFICADO (forzar ancho/alto grandes y centrado) === */
+
+/* Ancho: usamos la variable oficial de Bootstrap 5 para el modal */
+#visorCertificadoModal {
+  --bs-modal-width: 95vw;   /* ocupa el 95% del ancho de pantalla */
+}
+
+/* Centrado horizontal + separación del viewport */
+#visorCertificadoModal .modal-dialog {
+  margin: 1.25rem auto;
+}
+
+/* Alto: que el contenido ocupe la mayor parte de la pantalla */
+#visorCertificadoModal .modal-content {
+  height: 90vh;             /* 90% del alto de la pantalla */
+  display: flex;
+  flex-direction: column;
+}
+
+#visorCertificadoModal .modal-body {
+  flex: 1 1 auto;           /* que la body se estire */
+  padding: 0;               /* ya tenemos la toolbar del visor */
+  overflow: hidden;         /* sin scroll dobles */
+}
+
+#visorCertificadoModal #visor-loading {
+  text-align: center;
+}
+
+#visorCertificadoModal #visor-frame {
+  width: 100%;
+  height: 100%;             /* el iframe llena toda la body */
+  display: block;
+}
+
+/* Mobile: que no rompa */
+@media (max-width: 768px) {
+  #visorCertificadoModal { --bs-modal-width: 98vw; }
+  #visorCertificadoModal .modal-content { height: 85vh; }
+}
