@@ -41,3 +41,58 @@ class Documento(models.Model):
 
     def __str__(self):
         return f"Comprobante {self.drive_file_id} - {self.estudiante}"
+
+# ==========================================================
+# 🧾 NUEVO MODELO — COMPROBANTE DE PAGO
+# ==========================================================
+
+class ComprobantePago(models.Model):
+    ESTADO_CHOICES = [
+        ('Pendiente', 'Pendiente de revisión'),
+        ('Procesado', 'Procesado'),
+    ]
+
+    # 🕒 Datos principales
+    marca_temporal = models.CharField(max_length=100)
+    correo = models.EmailField()
+    url_comprobante = models.URLField(max_length=500)
+
+    # 👥 Identificación
+    cuil_estudiante = models.CharField(max_length=20)
+    cuil_responsable = models.CharField(max_length=20, blank=True, null=True)
+
+    # 🔗 Relación con estudiante (automática si el CUIL coincide)
+    estudiante = models.ForeignKey(
+        Estudiante,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name='comprobantes_pago'
+    )
+
+    # ⚙️ Estado del comprobante
+    estado = models.CharField(max_length=20, choices=ESTADO_CHOICES, default='Pendiente')
+
+    # 🗓️ Fecha en que se registró (texto)
+    fecha_registro = models.CharField(max_length=100)
+
+    class Meta:
+        db_table = 'adm_comprobantes_pago'
+        ordering = ['-marca_temporal']
+        verbose_name = "Comprobante de Pago"
+        verbose_name_plural = "Comprobantes de Pago"
+
+    def save(self, *args, **kwargs):
+        """
+        Antes de guardar, intenta vincular el comprobante con el estudiante
+        cuyo CUIL coincida con el cuil_estudiante del comprobante.
+        """
+        if self.cuil_estudiante and not self.estudiante:
+            estudiante = Estudiante.objects.filter(cuil_estudiante=self.cuil_estudiante).first()
+            if estudiante:
+                self.estudiante = estudiante
+        super().save(*args, **kwargs)
+
+    def __str__(self):
+        fecha = self.marca_temporal or "Sin fecha"
+        return f"Comprobante — {self.cuil_estudiante} ({fecha})"

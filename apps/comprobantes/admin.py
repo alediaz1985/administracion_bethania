@@ -79,3 +79,22 @@ class DocumentoAdmin(admin.ModelAdmin):
     def ver_archivo(self, obj):
         return format_html('<a href="{}" download>Descargar</a>', obj.archivo.url) if obj.archivo else "—"
     ver_archivo.short_description = "Archivo"
+
+# ==========================================================
+# 🧾 ADMIN — COMPROBANTE DE PAGO
+# ==========================================================
+from .models import ComprobantePago
+
+@admin.register(ComprobantePago)
+class ComprobantePagoAdmin(admin.ModelAdmin):
+    list_display = (
+        'marca_temporal',
+        'cuil_estudiante',
+        'cuil_responsable',
+        'correo',
+        'estado',
+        'estudiante',
+    )
+    list_filter = ('estado',)
+    search_fields = ('cuil_estudiante', 'cuil_responsable', 'correo')
+    ordering = ('-marca_temporal',)
