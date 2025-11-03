@@ -1,0 +1,100 @@
+# =========================================
+# ENTORNO PRODUCCIÓN (.env)
+# =========================================
+
+# -----------------------------
+# Django
+# -----------------------------
+DEBUG=False
+SECRET_KEY=a4n-m^7ytt1))4fytqc8xft1s&^64hk#+%pop0_f&r%qxjfsde
+
+# Hosts y CSRF (sin puertos; luego agrega https cuando emitas el cert)
+ALLOWED_HOSTS=179.43.121.187,vps-5435089-x.dattaweb.com
+CSRF_TRUSTED_ORIGINS=http://179.43.121.187,http://vps-5435089-x.dattaweb.com
+
+LANGUAGE_CODE=es-ar
+TIME_ZONE=America/Argentina/Cordoba
+
+# -----------------------------
+# Seguridad
+# (mantén False hasta tener HTTPS; luego pasa a True y agrega https en CSRF)
+# -----------------------------
+SECURE_SSL_REDIRECT=False
+SESSION_COOKIE_SECURE=False
+CSRF_COOKIE_SECURE=False
+
+# HSTS sólo aplica sobre HTTPS; puedes dejarlo configurado desde ahora
+SECURE_HSTS_SECONDS=31536000
+SECURE_HSTS_INCLUDE_SUBDOMAINS=True
+SECURE_HSTS_PRELOAD=True
+
+# -----------------------------
+# Archivos estáticos
+# Whitenoise ON (tu production.py lo soporta).
+# Si prefieres que SOLO Nginx sirva estáticos, pon USE_WHITENOISE=False.
+# -----------------------------
+USE_WHITENOISE=True
+
+# =========================================
+# BASE DE DATOS (MariaDB local en el VPS)
+# =========================================
+DB_ENGINE=django.db.backends.mysql
+DB_NAME=hbethania
+DB_USER=bethania_db
+DB_PASSWORD=FuqE9rgM0osm82*C
+DB_HOST=localhost
+DB_PORT=3306
+
+# Conexión y pooling
+DB_CONN_MAX_AGE=60
+DB_CONN_TIMEOUT=10
+DB_CHARSET=utf8mb4
+DB_INIT_COMMAND=SET sql_mode='STRICT_TRANS_TABLES'
+
+# SSL MySQL (déjalo en 0 para local)
+DB_SSL=0
+# DB_SSL_CA=/ruta/al/ca-cert.pem
+
+# =========================================
+# ARCHIVOS / CREDENCIALES
+# (rutas relativas a BASE_DIR; tu base.py ya las resuelve)
+# =========================================
+GOOGLE_CREDENTIALS_ALUMNOS=apps/administracion_alumnos/credentials.json
+GOOGLE_CREDENTIALS=apps/documentos/credentials.json
+ARCHIVOS_DIR=media/documentos
+FOTO_PERFIL_ESTUDIANTE_DIR=media/documentos/fotoPerfilEstudiante
+FOTO_ESTUDIANTE_DIR=media/administracion_alumnos/descargados
+INSTITUCION_LOGO_PATH=static/img/logo.png
+
+# =========================================
+# DATOS INSTITUCIONALES
+# =========================================
+INSTITUCION_NOMBRE=U.E.G.P. N°82
+INSTITUCION_DIRECCION=Urquiza 768 / 846 - Pcia. Roque Sáenz Peña
+INSTITUCION_TELEFONO=0364-4423041 / 0364-4436798
+INSTITUCION_EMAIL=contacto@hdebethania.edu.ar
+
+# =========================================
+# Email (SMTP real)
+# =========================================
+EMAIL_HOST=smtp.sendgrid.net
+EMAIL_PORT=587
+EMAIL_HOST_USER=apikey
+EMAIL_HOST_PASSWORD=COLOCA_TU_API_KEY
+EMAIL_USE_TLS=True
+DEFAULT_FROM_EMAIL=notificaciones@hdebethania.edu.ar
+SERVER_EMAIL=errores@hdebethania.edu.ar
+
+# =========================================
+# Admins para alertas
+# Formato: Nombre|correo,Nombre2|correo2
+# =========================================
+ADMINS=Alejandro|alexis@hdebethania.edu.ar,Alejandro|alejandro@hdebethania.edu.ar,Soporte|soporte@hdebethania.edu.ar
+
+# =========================================
+# Cache / Sentry (opcionales)
+# =========================================
+# REDIS_URL=redis://:password@host:6379/0
+# SENTRY_DSN=https://********@oXXXX.ingest.sentry.io/XXXX
+# SENTRY_TRACES_SAMPLE_RATE=0.2
+
