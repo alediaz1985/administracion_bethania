@@ -77,3 +77,4 @@ credentials.json
 token.json
 apps/**/credentials*.json
 apps/**/service_account*.json
+/static_collected/
