@@ -7,7 +7,6 @@ from administracion_bethania import views  # Importa las vistas globales (errore
 from django.conf import settings
 from django.conf.urls.static import static
 
-from django.views.generic import RedirectView
 
 # ======================================================
 # RUTAS PRINCIPALES DEL SISTEMA
@@ -15,7 +14,6 @@ from django.views.generic import RedirectView
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('admin', RedirectView.as_view(url='/admin/', permanent=True)),
 
     # Página principal
     path('', home, name='home'),
