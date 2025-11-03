@@ -28,8 +28,8 @@ SECRET_KEY = os.environ["SECRET_KEY"]
 
 ALLOWED_HOSTS = [
     "vps-5435089-x.dattaweb.com",
-    "127.0.0.1",
-    "localhost",
+    "179.43.121.187",
+    "localhost", "127.0.0.1",
 ]
 
 CSRF_TRUSTED_ORIGINS = [
