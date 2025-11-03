@@ -33,50 +33,49 @@
 
     <!-- 🏷️ Inscripción -->
     <div class="student-inscripcion">
-      {% if estudiante.inscripciones_admin.exists %}
-        {% with inscripcion_actual=estudiante.inscripciones_admin.last %}
-          <div class="inscripcion-estado">
-            ✅ Alumno inscripto en el ciclo {{ inscripcion_actual.ciclo.anio }}
-            <span class="badge 
-              {% if inscripcion_actual.ciclo.estado == 'Activo' %}bg-success
-              {% elif inscripcion_actual.ciclo.estado == 'Preparacion' %}bg-warning
-              {% else %}bg-secondary{% endif %}">
-              {{ inscripcion_actual.ciclo.estado }}
-            </span>
-          </div>
 
-          {% if ciclo_preparacion %}
-            <!-- 🟡 Mostrar botón para inscribir al nuevo ciclo en preparación -->
-            <a href="{% url 'administracion:inscribir_estudiante' estudiante.id %}"
-              class="btn-inscribir">
-              Inscribir Ciclo {{ ciclo_preparacion.anio }}
-            </a>
-          {% endif %}
+      {% if inscripcion_actual %}
+        <!-- ✅ Tiene inscripción -->
+        <div class="inscripcion-estado">
+          ✅ Alumno inscripto en el ciclo {{ inscripcion_actual.ciclo.anio }}
+          <span class="badge 
+            {% if inscripcion_actual.ciclo.estado == 'Preparacion' %}bg-warning
+            {% elif inscripcion_actual.ciclo.estado == 'Activo' %}bg-success
+            {% else %}bg-secondary{% endif %}">
+            {{ inscripcion_actual.ciclo.estado }}
+          </span>
+        </div>
 
-          <!-- 🔘 Botón para eliminar inscripción actual -->
-          <button type="button"
-                  class="btn-eliminar"
-                  id="abrirModalEliminar"
-                  data-inscripcion-id="{{ inscripcion_actual.id }}"
-                  data-estudiante="{{ estudiante.apellidos_estudiante }}, {{ estudiante.nombres_estudiante }}">
-            Eliminar inscripción {{ inscripcion_actual.ciclo.anio }}
-          </button>
-        {% endwith %}
-      {% else %}
-        {% if ciclo_preparacion %}
-          <!-- 🟡 Sin inscripciones previas, ciclo en preparación -->
+        {% if ciclo_preparacion and not inscripcion_actual.ciclo.id == ciclo_preparacion.id %}
+          <!-- 🟡 Mostrar botón para inscribir al nuevo ciclo en preparación -->
           <a href="{% url 'administracion:inscribir_estudiante' estudiante.id %}"
             class="btn-inscribir">
-            Inscribir Estudiante ({{ ciclo_preparacion.anio }})
+            Inscribir Estudiante
+          </a>
+        {% endif %}
+
+        <!-- 🔘 Botón para eliminar inscripción actual -->
+        <button type="button"
+                class="btn-eliminar"
+                id="abrirModalEliminar"
+                data-inscripcion-id="{{ inscripcion_actual.id }}"
+                data-estudiante="{{ estudiante.apellidos_estudiante }}, {{ estudiante.nombres_estudiante }}">
+          Eliminar inscripción {{ inscripcion_actual.ciclo.anio }}
+        </button>
+
+      {% else %}
+        <!-- 🚫 No tiene inscripción -->
+        {% if ciclo_preparacion %}
+          <a href="{% url 'administracion:inscribir_estudiante' estudiante.id %}"
+            class="btn-inscribir">
+            Inscribir Estudiante
           </a>
         {% elif ciclo_activo %}
-          <!-- 🟢 Sin inscripciones previas, ciclo activo -->
           <a href="{% url 'administracion:inscribir_estudiante' estudiante.id %}"
             class="btn-inscribir">
             Inscribir Estudiante ({{ ciclo_activo.anio }})
           </a>
         {% else %}
-          <!-- ⚪ Ningún ciclo disponible -->
           <div class="inscripcion-estado text-muted">
             ⚠️ No hay un ciclo lectivo activo o en preparación para inscribir estudiantes.
           </div>
@@ -90,17 +89,6 @@
     <a href="{% url 'generar_pdf_estudiante' estudiante_id=estudiante.id %}" class="btn">Generar PDF</a>
     <button type="button" id="btnDescargarArchivos" class="btn">Archivos</button>
     <a href="{% url 'estudiante_edit' pk=estudiante.id %}" class="btn">Editar</a>
-      {% if estudiante.estado_documentacion.estado|lower == 'pendiente' %}
-        <button type="button" class="btn btn-success" id="abrirModalEstado"
-                data-accion="aprobar" data-color="success" data-nuevo="aprobado">
-          Aprobar Doc.
-        </button>
-      {% elif estudiante.estado_documentacion.estado|lower == 'aprobado' %}
-        <button type="button" class="btn btn-warning" id="abrirModalEstado"
-                data-accion="marcar como pendiente" data-color="warning" data-nuevo="pendiente">
-          Marcar Pendiente
-        </button>
-      {% endif %}
     <a href="{% url 'estudiante_list' %}" class="btn btn-light">Volver</a>
   </div>
 
@@ -114,7 +102,6 @@
     <button type="button" class="tab-button" data-tab="salud">Salud</button>
     <button type="button" class="tab-button" data-tab="responsables">Responsables</button>
     <button type="button" class="tab-button" data-tab="documentacion">Documentación</button>
-    <button type="button" class="tab-button" data-tab="estado">Estado Doc.</button>
   </div>
 
   <!-- ===== CUOTAS ===== -->
@@ -280,7 +267,20 @@
     <table>
       <tr><th>Marca Temporal</th><td>{{ estudiante.inscripcion.marca_temporal }}</td></tr>
       <tr><th>Email Registro</th><td>{{ estudiante.inscripcion.email_registro }}</td></tr>
-      <tr><th>Foto</th><td>{{ estudiante.inscripcion.foto_estudiante }}</td></tr>
+      <tr>
+        <th>Foto</th>
+        <td>
+          {% if estudiante.inscripcion.foto_estudiante %}
+            <a href="{{ estudiante.inscripcion.foto_estudiante }}"
+              target="_blank"
+              class="link-boton">
+              Ver Foto
+            </a>
+          {% else %}
+            <span class="text-muted">No disponible</span>
+          {% endif %}
+        </td>
+      </tr>
       <tr><th>N° Legajo</th><td>{{ estudiante.inscripcion.num_legajo_estudiante }}</td></tr>
       <tr><th>Fecha Recepción</th><td>{{ estudiante.inscripcion.fecha_recepcion }}</td></tr>
       <tr><th>Salita / Grado / Año</th><td>{{ estudiante.inscripcion.salita_grado_anio_estudiante }}</td></tr>
@@ -345,25 +345,19 @@
       <tr><th>Cuál</th><td>{{ estudiante.salud.cual_prob_neurologico_estudiante }}</td></tr>
       <tr><th>Problema Físico</th><td>{{ estudiante.salud.problema_fisico_estudiante }}</td></tr>
       <tr>
-    <th>Certificado Médico</th>
-    <td>
-      {% if estudiante.salud.certificado_medico_estudiante %}
-        <button type="button"
-                class="btn btn-sm btn-primary"
-                data-view-url="{% url 'ver_certificado_medico' estudiante.id %}"
-                id="btn-ver-certificado">
-          <i class="bi bi-file-earmark-pdf"></i> Ver certificado
-        </button>
-
-        <small class="text-muted ms-2 d-block d-md-inline text-break">
-          {{ estudiante.salud.certificado_medico_estudiante }}
-        </small>
-      {% else %}
-        <span class="text-muted">Sin certificado cargado</span>
-      {% endif %}
-    </td>
-  </tr>
-
+        <th>Certificado Médico</th>
+        <td>
+          {% if estudiante.salud.certificado_medico_estudiante %}
+            <a href="{{ estudiante.salud.certificado_medico_estudiante }}"
+              target="_blank"
+              class="link-boton">
+              Ver certificado
+            </a>
+          {% else %}
+            <span class="text-muted">Sin certificado cargado</span>
+          {% endif %}
+        </td>
+      </tr>
       <tr><th>Problema de Aprendizaje</th><td>{{ estudiante.salud.problema_aprendizaje_estudiante }}</td></tr>
       <tr><th>Cuál</th><td>{{ estudiante.salud.cual_aprendizaje_estudiante }}</td></tr>
       <tr><th>Atención Médica</th><td>{{ estudiante.salud.atencion_medica_estudiante }}</td></tr>
@@ -422,37 +416,6 @@
     {% else %}
     <p>No hay documentación registrada.</p>
     {% endif %}
-  </div>
-
-  <!-- ===== ESTADO DE DOCUMENTACIÓN ===== -->
-  <div class="tab-content" id="tab-estado">
-    {% if estudiante.estado_documentacion %}
-    <div class="status {{ estudiante.estado_documentacion.estado|lower }}">
-      <strong>Estado de Documentación:</strong> {{ estudiante.estado_documentacion.estado }}<br>
-      <span>Última actualización: {{ estudiante.estado_documentacion.fecha_actualizacion|date:"d/m/Y H:i" }}</span>
-    </div>
-    {% else %}
-    <p>No hay estado de documentación registrado.</p>
-    {% endif %}
-  </div>
-</div>
-
-<!-- MODAL CONFIRMACIÓN -->
-<div id="modalEstado" class="modal">
-  <div class="modal-content">
-    <h3 id="modalTitulo">Confirmar acción</h3>
-    <p id="modalTexto">
-      ¿Seguro que deseas realizar esta acción?
-    </p>
-    <div class="modal-actions">
-      <form id="modalForm" method="post" action="">
-        {% csrf_token %}
-        <button type="submit" id="modalBoton" class="btn">
-          <i class="fas fa-check"></i> Confirmar
-        </button>
-      </form>
-      <button type="button" class="btn btn-light" id="cerrarModalEstado">Cancelar</button>
-    </div>
   </div>
 </div>
 
@@ -535,6 +498,7 @@
     </form>
   </div>
 </div>
+
 <!-- MODAL ELIMINAR INSCRIPCIÓN -->
 <div id="modalEliminarInscripcion" class="modal">
   <div class="modal-content" style="max-width: 430px;">

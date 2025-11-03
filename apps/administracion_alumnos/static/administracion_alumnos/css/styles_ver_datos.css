@@ -319,6 +319,20 @@ body {
   background: #fafafa;
 }
 
+/* ==========================================================
+   🩺 EQUILIBRIO ENTRE FILAS DE LAS TABLAS (Salud, etc.)
+========================================================== */
+.tab-content table tr {
+  height: 38px; /* ✅ altura mínima uniforme de cada fila */
+}
+
+.tab-content th,
+.tab-content td {
+  padding: 8px 10px;          /* ✅ más aire entre filas */
+  line-height: 1.2;           /* ✅ equilibrio entre texto y botones */
+  vertical-align: middle;     /* ✅ centra todo verticalmente */
+}
+
 /* ============================
    RESPONSABLES
 ============================ */
@@ -1089,6 +1103,30 @@ body {
 }
 
 /* ============================
+   🔗 Botón tipo link — versión balanceada
+============================ */
+.link-boton {
+  background: var(--azul);
+  color: #fff;
+  padding: 4px 16px;
+  border-radius: 6px;
+  text-decoration: none;
+  font-size: 0.9rem;
+  transition: all 0.3s ease;
+  display: inline-flex;          /* ✅ mejor alineación vertical */
+  align-items: center;           /* ✅ centra el texto dentro del botón */
+  height: 28px;                  /* ✅ altura uniforme */
+  line-height: 1;                /* evita que “salte” la línea */
+  vertical-align: middle;        /* ✅ mantiene el nivel con los textos normales */
+}
+
+.link-boton:hover {
+  background: #0e1c35;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 10px rgba(0,0,0,0.15);
+}
+
+/* ============================
    📱 MEDIA QUERY
    Controla tamaño general
 ============================ */
@@ -1116,7 +1154,8 @@ body {
     padding: 0.35rem 0;
   }
 
-  .btn-inscribir {
+  .btn-inscribir,
+  .btn-eliminar {
   font-size: 0.65rem;
   }
 }

@@ -40,32 +40,69 @@ from apps.administracion.models import Cuota, InscripcionAdministrativa
 from apps.administracion.models import InscripcionAdministrativa, CicloLectivo
 
 def estudiante_lista(request):
-    # Trae todos los estudiantes con sus relaciones
+    # 🔹 Trae todos los estudiantes con sus relaciones
     estudiantes = Estudiante.objects.select_related(
-        'inscripcion', 'estado_documentacion'
+        'estado_documentacion'
+    ).prefetch_related(
+        'inscripciones_admin__ciclo'
     ).all()
 
-    # 🔹 Filtra por estado (pendiente / aprobado)
-    estudiantes_pendientes = estudiantes.filter(
-        estado_documentacion__estado='Pendiente'
-    )
-    estudiantes_aprobados = estudiantes.filter(
-        estado_documentacion__estado='Aprobado'
-    )
+    # 🔹 Obtiene los ciclos relevantes
+    ciclo_preparacion = CicloLectivo.objects.filter(estado='Preparacion').order_by('-anio').first()
+    ciclo_activo = CicloLectivo.objects.filter(estado='Activo').order_by('-anio').first()
 
-    # 🔹 Agrega atributo dinámico "inscripto" a cada estudiante de TODAS las listas
-    for grupo in [estudiantes, estudiantes_pendientes, estudiantes_aprobados]:
-        for est in grupo:
-            est.inscripto = InscripcionAdministrativa.objects.filter(
-                estudiante=est,
-                activo=True
-            ).exists()
+    # 🔹 Determina el estado de inscripción de cada estudiante
+    for est in estudiantes:
+        inscripcion = None
 
-    # Renderiza la plantilla con los datos
+        # 1️⃣ Prioriza ciclo en preparación
+        if ciclo_preparacion:
+            inscripcion = est.inscripciones_admin.filter(ciclo=ciclo_preparacion, activo=True).first()
+
+        # 2️⃣ Si no tiene, busca en ciclo activo
+        if not inscripcion and ciclo_activo:
+            inscripcion = est.inscripciones_admin.filter(ciclo=ciclo_activo, activo=True).first()
+
+        # 3️⃣ Si tampoco, busca entre los ciclos inactivos menores (de más reciente a más antiguo)
+        if not inscripcion:
+            ciclos_referencia = [c.anio for c in [ciclo_preparacion, ciclo_activo] if c]
+            if ciclos_referencia:
+                max_referencia = max(ciclos_referencia)
+                # 🔽 Busca la inscripción más reciente en un ciclo inactivo menor
+                inscripcion = (
+                    est.inscripciones_admin
+                    .filter(ciclo__estado='Inactivo', ciclo__anio__lt=max_referencia)
+                    .order_by('-ciclo__anio')  # toma el más cercano hacia atrás
+                    .first()
+                )
+            else:
+                # Si no hay ciclos activos ni en preparación, toma cualquier inactivo (el más reciente)
+                inscripcion = (
+                    est.inscripciones_admin
+                    .filter(ciclo__estado='Inactivo')
+                    .order_by('-ciclo__anio')
+                    .first()
+                )
+
+        # 4️⃣ Define texto y color final (actualizado)
+        if inscripcion:
+            est.estado_inscripcion = f"Inscripto ({inscripcion.ciclo.anio})"
+
+            if inscripcion.ciclo.estado == 'Preparacion':
+                est.estado_color = 'preparacion'   # 🟢 Verde — ciclo en preparación
+            elif inscripcion.ciclo.estado == 'Activo':
+                est.estado_color = 'activo'        # 🔵 Azul — ciclo activo
+            else:
+                est.estado_color = 'viejo'         # ⚪ Gris — ciclo inactivo (histórico)
+        else:
+            est.estado_inscripcion = "No inscripto"
+            est.estado_color = 'no-inscripto'      # 🔴 Rojo — sin inscripción en ningún ciclo
+
+    # 🔹 Renderiza plantilla
     return render(request, 'administracion_alumnos/estudiante_list.html', {
         'estudiantes': estudiantes,
-        'estudiantes_pendientes': estudiantes_pendientes,
-        'estudiantes_aprobados': estudiantes_aprobados,
+        'ciclo_preparacion': ciclo_preparacion,
+        'ciclo_activo': ciclo_activo,
     })
 
 # ----------------FUNCIONA---------------------------------
@@ -131,7 +168,7 @@ def ver_datos_estudiante(request, pk):
         foto_url = os.path.join(settings.STATIC_URL, 'images/default.jpg')
 
     # ======================================================
-    # 🗓️ CICLOS LECTIVOS Y FILTRO POR CICLO
+    # 🗓️ CICLOS LECTIVOS
     # ======================================================
     ciclos = CicloLectivo.objects.all().order_by('-anio')
     ciclo_activo = CicloLectivo.objects.filter(estado='Activo').first()
@@ -144,20 +181,54 @@ def ver_datos_estudiante(request, pk):
     except (ValueError, TypeError):
         ciclo_filtrado = None
 
-    # Si no se selecciona un ciclo manualmente
+    # ======================================================
+    # 🎓 DETERMINAR INSCRIPCIÓN ACTUAL (jerarquía completa)
+    # ======================================================
+    inscripcion_actual = None
+
+    # 1️⃣ Prioriza ciclo en preparación
+    if ciclo_preparacion:
+        inscripcion_actual = estudiante.inscripciones_admin.filter(
+            ciclo=ciclo_preparacion, activo=True
+        ).first()
+
+    # 2️⃣ Si no tiene, busca en ciclo activo
+    if not inscripcion_actual and ciclo_activo:
+        inscripcion_actual = estudiante.inscripciones_admin.filter(
+            ciclo=ciclo_activo, activo=True
+        ).first()
+
+    # 3️⃣ Si tampoco, busca el ciclo inactivo más reciente menor a los de referencia
+    if not inscripcion_actual:
+        ciclos_referencia = [c.anio for c in [ciclo_preparacion, ciclo_activo] if c]
+        if ciclos_referencia:
+            max_referencia = max(ciclos_referencia)
+            inscripcion_actual = (
+                estudiante.inscripciones_admin
+                .filter(ciclo__estado='Inactivo', ciclo__anio__lt=max_referencia)
+                .order_by('-ciclo__anio')  # busca hacia atrás (2030→2029→2028...)
+                .first()
+            )
+        else:
+            # Si no hay ciclos activos ni en preparación, toma el último inactivo directamente
+            inscripcion_actual = (
+                estudiante.inscripciones_admin
+                .filter(ciclo__estado='Inactivo')
+                .order_by('-ciclo__anio')
+                .first()
+            )
+
+    # ======================================================
+    # 💰 CUOTAS DEL ESTUDIANTE (filtradas por ciclo)
+    # ======================================================
     if not ciclo_filtrado:
-        # Si el estudiante tiene inscripciones, tomamos la más reciente
-        ultima_inscripcion = estudiante.inscripciones_admin.order_by('-ciclo__anio').first()
-        if ultima_inscripcion:
-            ciclo_filtrado = ultima_inscripcion.ciclo.anio
+        if inscripcion_actual:
+            ciclo_filtrado = inscripcion_actual.ciclo.anio
         elif ciclo_activo:
             ciclo_filtrado = ciclo_activo.anio
         else:
             ciclo_filtrado = timezone.now().year
 
-    # ======================================================
-    # 💰 CUOTAS DEL ESTUDIANTE (filtradas por ciclo)
-    # ======================================================
     cuotas = Cuota.objects.filter(
         inscripcion__estudiante=estudiante,
         inscripcion__ciclo__anio=ciclo_filtrado
@@ -199,7 +270,8 @@ def ver_datos_estudiante(request, pk):
             'ciclo_activo': ciclo_activo,
             'ciclo_preparacion': ciclo_preparacion,
             'ciclo_filtrado': ciclo_filtrado,
-            'tiene_deudas_anteriores': tiene_deudas_anteriores,  # ✅ NUEVO
+            'tiene_deudas_anteriores': tiene_deudas_anteriores,
+            'inscripcion_actual': inscripcion_actual,  # ✅ usa la jerarquía completa
         }
     )
 

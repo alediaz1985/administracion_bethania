@@ -14,16 +14,16 @@ body {
 ========================================================== */
 .alumnos-container {
     width: 100%;
-    padding: 15px 25px;
+    padding: 20px 25px;
     float: right;
-    margin-bottom: 0.5rem;
+    margin-bottom: 0.3rem;
 }
 
 .alumnos {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin: 10px 0;
+    margin: 0 0 1.5rem 0;
 }
 
 /* ==========================================================
@@ -305,6 +305,62 @@ td.acciones {
 }
 
 /* ==========================================================
+   🔍 FILTRO DE SUBNIVEL — mismo estilo que el de nivel
+========================================================== */
+#subnivel-filter {
+    appearance: none;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    padding: 10px 40px 10px 14px;
+    font-size: 14px;
+    font-weight: 500;
+    border: 1px solid #d1d5db;
+    border-radius: 8px;
+    background-color: #ffffff;
+    color: #1a1a1a;
+    transition: all 0.25s ease;
+    cursor: pointer;
+    font-family: 'Poppins', sans-serif;
+    box-shadow: 0 0 15px rgba(0, 0, 0, 0.35);
+    position: relative;
+    margin-left: 10px; /* 🔹 pequeño espacio con el filtro anterior */
+}
+
+/* Hover y foco */
+#subnivel-filter:hover,
+#subnivel-filter:focus {
+    border-color: #1a2942;
+    box-shadow: 0 0 6px rgba(26, 41, 66, 0.25);
+    outline: none;
+}
+
+/* Flecha minimalista personalizada */
+#subnivel-filter::after {
+    content: "";
+    position: absolute;
+    right: 16px;
+    top: 50%;
+    width: 7px;
+    height: 7px;
+    border-right: 2px solid #1a2942;
+    border-bottom: 2px solid #1a2942;
+    transform: translateY(-50%) rotate(45deg);
+    pointer-events: none;
+}
+
+/* Opciones */
+#subnivel-filter option {
+    background: #ffffff;
+    color: #1a1a1a;
+    font-weight: 500;
+}
+
+/* Hover de opción */
+#subnivel-filter option:hover {
+    background: #f4f4f4;
+}
+
+/* ==========================================================
    🔍 BUSCADOR
 ========================================================== */
 .search-box {
@@ -517,35 +573,58 @@ td.acciones {
 }
 
 /* ==========================================================
-   🎓 ESTADO DE INSCRIPCIÓN — estilo tipo badge
+   🎓 ESTADO DE INSCRIPCIÓN — estilo tipo badge (colores intensificados)
 ========================================================== */
-.alumnos-table td:nth-child(8),  /* 📌 Ajustá el número si cambia el orden de columnas */
+.alumnos-table td:nth-child(8),
 .alumnos-table th:nth-child(8) {
-  text-align: center;       /* Centra el contenido horizontalmente */
-  width: 1%;                /* Deja que se ajuste automáticamente */
-  white-space: nowrap;      /* Evita que el texto se corte en varias líneas */
+  text-align: center;
+  width: 1%;
+  white-space: nowrap;
 }
 
 .badge {
-  padding: 0.4rem 0.6rem;
-  border-radius: 5px;
+  padding: 0.4rem 0.75rem;
+  border-radius: 6px;
   font-size: 0.8rem;
   font-weight: 600;
   display: inline-block;
   text-align: center;
-  min-width: auto;
+  letter-spacing: 0.3px;
+  transition: all 0.25s ease-in-out;
 }
 
-.badge.bg-success {
-  background: #e3f6e3;
-  color: #267c2e;
-  border: 1px solid #b4e2b4;
+/* 🟢 Ciclo en Preparación */
+.badge.bg-preparacion {
+  background: #d3f3d3;
+  color: #1a6f23;
+  border: 1px solid #3bc33b;
 }
 
-.badge.bg-secondary {
-  background: #f1f1f1;
-  color: #b90e0a;
-  border: 1px solid #dab9b9;
+/* 🔵 Ciclo Activo */
+.badge.bg-activo {
+  background: #d9e6ff;
+  color: #0e3c91;
+  border: 1px solid #5a8dff;
+}
+
+/* ⚪ Ciclo Viejo (Inactivo) */
+.badge.bg-viejo {
+  background: #eeeeee;
+  color: #444;
+  border: 1px solid #c8c8c8;
+}
+
+/* 🔴 No inscripto */
+.badge.bg-no-inscripto {
+  background: #ffd6d6;
+  color: #a10707;
+  border: 1px solid #e03e3e;
+}
+
+/* 🔹 Efecto hover sutil para feedback visual */
+.badge:hover {
+  transform: scale(1.05);
+  filter: brightness(1.1);
 }
 
 /* ==========================================================

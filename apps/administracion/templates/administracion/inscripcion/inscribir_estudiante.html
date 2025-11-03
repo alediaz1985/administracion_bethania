@@ -78,21 +78,7 @@
     {% endif %}
   </div>
 
-  <!-- 🧾 Estado de documentación -->
-  <div class="estado-doc">
-    {% if estado_doc %}
-      {% if estado_doc.estado|lower == 'aprobado' %}
-        <p class="estado-aprobado">✅ Documentación aprobada — El estudiante puede ser inscripto.</p>
-      {% else %}
-        <p class="estado-pendiente">⚠️ Documentación pendiente — No puede inscribirse aún.</p>
-      {% endif %}
-    {% else %}
-      <p class="estado-pendiente">⚠️ No se encontró información de documentación.</p>
-    {% endif %}
-  </div>
-
   <!-- 📋 Formulario de Inscripción -->
-  {% if puede_inscribir %}
   <div class="registro-container">
     <div class="form-inscripcion">
       <h3>Registrar Inscripción</h3>
@@ -179,8 +165,7 @@
         <br>Por favor, revise la configuración de la beca.
       </div>
     </div>
-  </div>  
-  {% endif %}
+  </div>
 
   <!-- 🔘 Volver -->
   <div class="student-actions">

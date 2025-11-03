@@ -14,289 +14,136 @@
 
     <!-- 🔹 ENCABEZADO: Filtros y acciones -->
     <div class="alumnos">
-        <!-- 🔸 Filtro de Nivel -->
-        <div class="filters">
-            <select id="nivel-filter" name="nivel">
-                <option value="">Seleccionar Nivel</option>
-                <option value="Inicial">Nivel Inicial</option>
-                <option value="Primario">Nivel Primario</option>
-                <option value="Secundario">Nivel Secundario</option>
-            </select>
-        </div>
 
-        <!-- 🔸 Buscador centrado -->
-        <div class="search-box">
-            <input type="text" id="search-input" placeholder="Buscar por CUIL o Nombre..." />
-        </div>
+      <!-- 🔸 Filtros (Nivel + Subnivel) -->
+      <div class="filters">
+        <select id="nivel-filter" name="nivel">
+          <option value="">Seleccionar Nivel</option>
+          <option value="Inicial">Nivel Inicial</option>
+          <option value="Primario">Nivel Primario</option>
+          <option value="Secundario">Nivel Secundario</option>
+        </select>
 
-        <!-- 🔸 Acciones (Botones PDF y Refrescar) -->
-        <div class="actions">
-            <!-- Registrar estudiante -->
-            <a href="{% url 'registrar_alumno' %}" class="btn-minimal" title="Registrar nuevo estudiante">
-                <i class="fas fa-user-plus"></i>
-                <span>Registrar</span>
-            </a>
-            <!-- Generar PDF -->
-            <form action="{% url 'generar_pdf_lista_alumnos' %}" method="get">
-                <button type="submit" class="btn-minimal" title="Generar PDF">
-                    <i class="fas fa-file-pdf"></i>
-                    <span>Generar PDF</span>
-                </button>
-            </form>
+        <select id="subnivel-filter" name="subnivel">
+          <option value="">Seleccionar Subnivel</option>
+          <option value="Sala de 3 años">Sala de 3 años</option>
+          <option value="Sala de 4 años">Sala de 4 años</option>
+          <option value="Sala de 5 años">Sala de 5 años</option>
+          <option value="1er Grado">1er Grado</option>
+          <option value="2do Grado">2do Grado</option>
+          <option value="3er Grado">3er Grado</option>
+          <option value="4to Grado">4to Grado</option>
+          <option value="5to Grado">5to Grado</option>
+          <option value="6to Grado">6to Grado</option>
+          <option value="7mo Grado">7mo Grado</option>
+          <option value="1er Año">1er Año</option>
+          <option value="2do Año">2do Año</option>
+          <option value="3er Año">3er Año</option>
+          <option value="4to Año">4to Año</option>
+          <option value="5to Año">5to Año</option>
+        </select>
+      </div>
 
-            <!-- Actualizar datos -->
-            <button type="button" id="btn-refresh" class="btn-minimal" title="Actualizar datos" onclick="refrescarDatos()">
-                <i class="fas fa-sync-alt"></i>
-            </button>
-        </div>
-    </div>
+      <!-- 🔸 Buscador centrado -->
+      <div class="search-box">
+        <input type="text" id="search-input" placeholder="Buscar por CUIL o Nombre..." />
+      </div>
 
-    <!-- 🔹 Pestañas -->
-    <div class="tabs">
-        <button class="tab-button active" onclick="showTab('todos')">Todos</button>
-        <button class="tab-button" onclick="showTab('pendientes')">Pendientes</button>
-        <button class="tab-button" onclick="showTab('aprobados')">Aprobados</button>
+      <!-- 🔸 Acciones (Botones PDF y Refrescar) -->
+      <div class="actions">
+        <a href="{% url 'registrar_alumno' %}" class="btn-minimal" title="Registrar nuevo estudiante">
+          <i class="fas fa-user-plus"></i>
+          <span>Registrar</span>
+        </a>
+
+        <form action="{% url 'generar_pdf_lista_alumnos' %}" method="get">
+          <button type="submit" class="btn-minimal" title="Generar PDF">
+            <i class="fas fa-file-pdf"></i>
+            <span>Generar PDF</span>
+          </button>
+        </form>
+
+        <button type="button" id="btn-refresh" class="btn-minimal" title="Actualizar datos" onclick="refrescarDatos()">
+          <i class="fas fa-sync-alt"></i>
+        </button>
+      </div>
     </div>
 
     <!-- 🔹 Contenedor con scroll para las tablas -->
     <div class="alumnos-scroll-container">
+      <table class="alumnos-table" id="data-table">
+          <thead>
+              <tr>
+                  <th>CUIL</th>
+                  <th>Apellido/s</th>
+                  <th>Nombre/s</th>
+                  <th>Nivel</th>
+                  <th>Subnivel</th>
+                  <th>Turno</th>
+                  <th>Fecha Recepción</th>
+                  <th>Estado</th>
+                  <th colspan="2"></th>
+              </tr>
+          </thead>
+          <tbody class="table-body">
+              {% if estudiantes %}
+                  {% for estudiante in estudiantes %}
+                      <tr data-nivel="{{ estudiante.inscripcion.nivel_estudiante }}"
+                          data-subnivel="{{ estudiante.inscripcion.curso_anio_estudiante }}"
+                          data-turno="{{ estudiante.inscripcion.turno_estudiante }}">
+                          
+                          <!-- CUIL + Botón copiar -->
+                          <td>
+                              <span id="cuil_{{ estudiante.id }}">{{ estudiante.cuil_estudiante }}</span>
+                              <button onclick="copiarTexto('cuil_{{ estudiante.id }}')" style="border: none; background: transparent; cursor: pointer;">
+                                  <i class="fas fa-copy" style="color: #b6b6b6;"></i>
+                              </button>
+                          </td>
 
-        <!-- ==================== TAB 1: TODOS ==================== -->
-        <div class="tab-content active" id="todos">
-            <table class="alumnos-table" id="data-table">
-                <thead>
-                    <tr>
-                        <th>CUIL</th>
-                        <th>Apellido/s</th>
-                        <th>Nombre/s</th>
-                        <th>Nivel</th>
-                        <th>Subnivel</th>
-                        <th>Turno</th>
-                        <th>Fecha Recepción</th>
-                        <th>Estado</th>
-                        <th colspan="2"></th>
-                    </tr>
-                </thead>
-                <tbody class="table-body">
-                    {% if estudiantes %}
-                        {% for estudiante in estudiantes %}
-                            <tr data-nivel="{{ estudiante.inscripcion.nivel_estudiante }}" 
-                                data-turno="{{ estudiante.inscripcion.turno_estudiante }}">
-                                
-                                <!-- CUIL + Botón copiar -->
-                                <td>
-                                    <span id="cuil_{{ estudiante.id }}">{{ estudiante.cuil_estudiante }}</span>
-                                    <button onclick="copiarTexto('cuil_{{ estudiante.id }}')" style="border: none; background: transparent; cursor: pointer;">
-                                        <i class="fas fa-copy" style="color: #b6b6b6;"></i>
-                                    </button>
-                                </td>
+                          <!-- Datos principales -->
+                          <td>{{ estudiante.apellidos_estudiante }}</td>
+                          <td>{{ estudiante.nombres_estudiante }}</td>
+                          <td>{{ estudiante.inscripcion.nivel_estudiante }}</td>
+                          <td>{{ estudiante.inscripcion.curso_anio_estudiante }}</td>
+                          <td>{{ estudiante.inscripcion.turno_estudiante }}</td>
+                          <td>{{ estudiante.inscripcion.fecha_recepcion }}</td>
 
-                                <!-- Datos principales -->
-                                <td>{{ estudiante.apellidos_estudiante }}</td>
-                                <td>{{ estudiante.nombres_estudiante }}</td>
-                                <td>{{ estudiante.inscripcion.nivel_estudiante }}</td>
-                                <td>{{ estudiante.inscripcion.curso_anio_estudiante }}</td>
-                                <td>{{ estudiante.inscripcion.turno_estudiante }}</td>
-                                <td>{{ estudiante.inscripcion.fecha_recepcion }}</td>
+                          <!-- 🔹 Estado de inscripción -->
+                          <td>
+                            <span class="badge bg-{{ estudiante.estado_color }}">
+                              {{ estudiante.estado_inscripcion }}
+                            </span>
+                          </td>
 
-                                <!-- 🔹 Estado de inscripción -->
-                                <td>
-                                  {% if estudiante.inscripto %}
-                                    <span class="badge bg-success">Inscripto</span>
-                                  {% else %}
-                                    <span class="badge bg-secondary">No inscripto</span>
-                                  {% endif %}
-                                </td>
+                          <!-- Acciones -->
+                          <td class="acciones">
+                              <form action="{% url 'ver_datos_estudiante' pk=estudiante.pk %}" method="get" class="icon-form">
+                                  <button class="icon-btn" title="Ver datos" type="submit">
+                                      <i class="fas fa-search"></i>
+                                  </button>
+                              </form>
+                              <form action="{% url 'generar_contrato' estudiante.pk %}" method="get" class="icon-form">
+                                  <button class="icon-btn pdf" title="Generar contrato PDF" type="submit">
+                                      <i class="fas fa-file-pdf"></i>
+                                  </button>
+                              </form>
+                              <!-- Editar -->
+                              <a href="{% url 'estudiante_edit' pk=estudiante.pk %}" class="icon-btn edit" title="Editar datos">
+                                  <i class="fas fa-edit"></i>
+                              </a>
 
-                                <!-- Acciones -->
-                                <td class="acciones">
-                                    <form action="{% url 'ver_datos_estudiante' pk=estudiante.pk %}" method="get" class="icon-form">
-                                        <button class="icon-btn" title="Ver datos" type="submit">
-                                            <i class="fas fa-search"></i>
-                                        </button>
-                                    </form>
-                                    <form action="{% url 'generar_contrato' estudiante.pk %}" method="get" class="icon-form">
-                                        <button class="icon-btn pdf" title="Generar contrato PDF" type="submit">
-                                            <i class="fas fa-file-pdf"></i>
-                                        </button>
-                                    </form>
-                                    <!-- Editar -->
-                                    <a href="{% url 'estudiante_edit' pk=estudiante.pk %}" class="icon-btn edit" title="Editar datos">
-                                        <i class="fas fa-edit"></i>
-                                    </a>
-
-                                    <!-- Eliminar -->
-                                    <a href="{% url 'estudiante_delete' pk=estudiante.pk %}" class="icon-btn delete" title="Eliminar registro">
-                                        <i class="fas fa-trash-alt"></i>
-                                    </a>
-                                </td>
-                            </tr>
-                        {% endfor %}
-                    {% else %}
-                        <tr><td colspan="9">No hay alumnos en la base de datos.</td></tr>
-                    {% endif %}
-                </tbody>
-            </table>
-        </div>
-
-        <!-- ==================== TAB 2: PENDIENTES ==================== -->
-        <div class="tab-content" id="pendientes">
-            <table class="alumnos-table" id="data-table">
-                <thead>
-                    <tr>
-                        <th>CUIL</th>
-                        <th>Apellido/s</th>
-                        <th>Nombre/s</th>
-                        <th>Nivel</th>
-                        <th>Grado</th>
-                        <th>Turno</th>
-                        <th>Fecha Recepción</th>
-                        <th>Estado</th>
-                        <th colspan="2"></th>
-                    </tr>
-                </thead>
-                <tbody class="table-body">
-                    {% if estudiantes_pendientes %}
-                        {% for estudiante in estudiantes_pendientes %}
-                            <tr data-nivel="{{ estudiante.inscripcion.nivel_estudiante }}" 
-                                data-subnivel="{{ estudiante.inscripcion.curso_anio_estudiante }}" 
-                                data-turno="{{ estudiante.inscripcion.turno_estudiante }}">
-                                
-                                <!-- CUIL + Copiar -->
-                                <td>
-                                    <span id="datoCuil_{{ estudiante.id }}">{{ estudiante.cuil_estudiante }}</span>
-                                    <button onclick="copiarTexto('datoCuil_{{ estudiante.id }}')" style="border: none; background: transparent; cursor: pointer;">
-                                        <i class="fas fa-copy" style="color: #b6b6b6;"></i>
-                                    </button>
-                                </td>
-
-                                <!-- Datos -->
-                                <td>{{ estudiante.apellidos_estudiante }}</td>
-                                <td>{{ estudiante.nombres_estudiante }}</td>
-                                <td>{{ estudiante.inscripcion.nivel_estudiante }}</td>
-                                <td>{{ estudiante.inscripcion.curso_anio_estudiante }}</td>
-                                <td>{{ estudiante.inscripcion.turno_estudiante }}</td>
-                                <td>{{ estudiante.inscripcion.fecha_recepcion }}</td>
-
-                                <!-- 🔹 Estado de inscripción -->
-                                <td>
-                                  {% if estudiante.inscripto %}
-                                    <span class="badge bg-success">Inscripto</span>
-                                  {% else %}
-                                    <span class="badge bg-secondary">No inscripto</span>
-                                  {% endif %}
-                                </td>
-
-                                <!-- Acciones -->
-                                <td class="acciones">
-                                    <!-- Ver datos -->
-                                    <form action="{% url 'ver_datos_estudiante' pk=estudiante.pk %}" method="get" class="icon-form">
-                                        <button class="icon-btn" title="Ver datos" type="submit">
-                                            <i class="fas fa-search"></i>
-                                        </button>
-                                    </form>
-
-                                    <!-- Generar PDF -->
-                                    <form action="{% url 'generar_contrato' estudiante.pk %}" method="get" class="icon-form">
-                                        <button class="icon-btn pdf" title="Generar contrato PDF" type="submit">
-                                            <i class="fas fa-file-pdf"></i>
-                                        </button>
-                                    </form>
-
-                                    <!-- Editar -->
-                                    <a href="{% url 'estudiante_edit' pk=estudiante.pk %}" class="icon-btn edit" title="Editar datos">
-                                        <i class="fas fa-edit"></i>
-                                    </a>
-
-                                    <!-- Eliminar -->
-                                    <a href="{% url 'estudiante_delete' pk=estudiante.pk %}" class="icon-btn delete" title="Eliminar registro">
-                                        <i class="fas fa-trash-alt"></i>
-                                    </a>
-                                </td>
-                            </tr>
-                        {% endfor %}
-                    {% else %}
-                        <tr><td colspan="9">No hay alumnos pendientes.</td></tr>
-                    {% endif %}
-                </tbody>
-            </table>
-        </div>
-
-        <!-- ==================== TAB 3: APROBADOS ==================== -->
-        <div class="tab-content" id="aprobados">
-            <table class="alumnos-table" id="data-table">
-                <thead>
-                    <tr>
-                        <th>CUIL</th>
-                        <th>Apellido/s</th>
-                        <th>Nombre/s</th>
-                        <th>Nivel</th>
-                        <th>Grado</th>
-                        <th>Turno</th>
-                        <th>Fecha Recepción</th>
-                        <th>Estado</th>
-                        <th colspan="2"></th>
-                    </tr>
-                </thead>
-                <tbody class="table-body">
-                    {% if estudiantes_aprobados %}
-                        {% for estudiante in estudiantes_aprobados %}
-                            <tr data-nivel="{{ estudiante.inscripcion.nivel_estudiante }}" 
-                                data-subnivel="{{ estudiante.inscripcion.curso_anio_estudiante }}" 
-                                data-turno="{{ estudiante.inscripcion.turno_estudiante }}">
-                                
-                                <!-- CUIL + Copiar -->
-                                <td>
-                                    <span id="identificadorCuil_{{ estudiante.id }}">{{ estudiante.cuil_estudiante }}</span>
-                                    <button onclick="copiarTexto('identificadorCuil_{{ estudiante.id }}')" style="border: none; background: transparent; cursor: pointer;">
-                                        <i class="fas fa-copy" style="color: #b6b6b6;"></i>
-                                    </button>
-                                </td>
-
-                                <!-- Datos -->
-                                <td>{{ estudiante.apellidos_estudiante }}</td>
-                                <td>{{ estudiante.nombres_estudiante }}</td>
-                                <td>{{ estudiante.inscripcion.nivel_estudiante }}</td>
-                                <td>{{ estudiante.inscripcion.curso_anio_estudiante }}</td>
-                                <td>{{ estudiante.inscripcion.turno_estudiante }}</td>
-                                <td>{{ estudiante.inscripcion.fecha_recepcion }}</td>
-
-                                <!-- 🔹 Estado de inscripción -->
-                                <td>
-                                  {% if estudiante.inscripto %}
-                                    <span class="badge bg-success">Inscripto</span>
-                                  {% else %}
-                                    <span class="badge bg-secondary">No inscripto</span>
-                                  {% endif %}
-                                </td>
-
-                                <!-- Acciones -->
-                                <td class="acciones">
-                                    <a class="icon-btn" title="Ver datos" href="{% url 'ver_datos_estudiante' pk=estudiante.pk %}">
-                                        <i class="fas fa-search"></i>
-                                    </a>
-                                    <a class="icon-btn pdf" title="Generar contrato PDF" href="{% url 'generar_contrato' estudiante.pk %}" target="_blank" rel="noopener">
-                                        <i class="fas fa-file-pdf"></i>
-                                    </a>
-                                    <!-- Editar -->
-                                    <a href="{% url 'estudiante_edit' pk=estudiante.pk %}" class="icon-btn edit" title="Editar datos">
-                                        <i class="fas fa-edit"></i>
-                                    </a>
-
-                                    <!-- Eliminar -->
-                                    <a href="{% url 'estudiante_delete' pk=estudiante.pk %}" class="icon-btn delete" title="Eliminar registro">
-                                        <i class="fas fa-trash-alt"></i>
-                                    </a>
-                                </td>
-                            </tr>
-                        {% endfor %}
-                    {% else %}
-                        <tr><td colspan="9">No hay alumnos aprobados.</td></tr>
-                    {% endif %}
-                </tbody>
-            </table>
-        </div>
-    </div>
+                              <!-- Eliminar -->
+                              <a href="{% url 'estudiante_delete' pk=estudiante.pk %}" class="icon-btn delete" title="Eliminar registro">
+                                  <i class="fas fa-trash-alt"></i>
+                              </a>
+                          </td>
+                      </tr>
+                  {% endfor %}
+              {% else %}
+                  <tr><td colspan="9">No hay alumnos en la base de datos.</td></tr>
+              {% endif %}
+          </tbody>
+      </table>
 
     <!-- 🔔 Toast minimalista superior -->
     <div id="toast-general"
@@ -329,25 +176,12 @@
         </div>
     </div>
     </div>
-
 </div>
 
 <!-- =====================================================
 📜 SCRIPTS FUNCIONALES
 ===================================================== -->
 <script>
-/* --------------------------------------------------
-   🔹 Cambiar pestañas
--------------------------------------------------- */
-function showTab(tabName) {
-  document.querySelectorAll('.tab-content').forEach(tab => tab.classList.remove('active'));
-  document.getElementById(tabName).classList.add('active');
-
-  document.querySelectorAll('.tab-button').forEach(btn => btn.classList.remove('active'));
-  document.querySelector(`.tab-button[onclick="showTab('${tabName}')"]`).classList.add('active');
-
-  if (window.__filterTable) window.__filterTable();
-}
 
 /* --------------------------------------------------
    🔹 Formatear fechas (es-AR)
@@ -365,21 +199,27 @@ document.addEventListener('DOMContentLoaded', () => {
 -------------------------------------------------- */
 document.addEventListener('DOMContentLoaded', () => {
   const nivelFilter = document.getElementById('nivel-filter');
-
-  function getActiveRows() {
-    const active = document.querySelector('.tab-content.active');
-    return active ? active.querySelectorAll('tbody.table-body tr') : [];
-  }
+  const subnivelFilter = document.getElementById('subnivel-filter');
+  const filas = document.querySelectorAll('#data-table tbody.table-body tr');
 
   function filterTable() {
     const nivel = (nivelFilter.value || '').toLowerCase();
-    getActiveRows().forEach(row => {
+    const subnivel = (subnivelFilter.value || '').toLowerCase();
+
+    filas.forEach(row => {
       const rowNivel = (row.getAttribute('data-nivel') || '').toLowerCase();
-      row.style.display = (nivel === "" || rowNivel.includes(nivel)) ? "" : "none";
+      const rowSubnivel = (row.getAttribute('data-subnivel') || '').toLowerCase();
+
+      const coincideNivel = nivel === "" || rowNivel.includes(nivel);
+      const coincideSubnivel = subnivel === "" || rowSubnivel.includes(subnivel);
+
+      // 🔹 Mostrar solo si cumple ambos filtros
+      row.style.display = (coincideNivel && coincideSubnivel) ? "" : "none";
     });
   }
 
   nivelFilter.addEventListener('change', filterTable);
+  subnivelFilter.addEventListener('change', filterTable);
   window.__filterTable = filterTable;
   filterTable();
 });
@@ -469,31 +309,24 @@ document.addEventListener('DOMContentLoaded', () => {
   const searchInput = document.getElementById('search-input');
   if (!searchInput) return;
 
-  // 🔹 Función para limpiar texto (minúsculas + sin tildes)
+  const filas = document.querySelectorAll('#data-table tbody.table-body tr');
+
   function limpiarTexto(texto) {
     return texto
       .toLowerCase()
-      .normalize("NFD")                // separa letras y acentos
-      .replace(/[\u0300-\u036f]/g, ""); // elimina los acentos
+      .normalize("NFD")
+      .replace(/[\u0300-\u036f]/g, "");
   }
 
   searchInput.addEventListener('input', () => {
     const query = limpiarTexto(searchInput.value.trim());
-
-    // Recorremos TODAS las pestañas
-    document.querySelectorAll('.tab-content').forEach(tab => {
-      tab.querySelectorAll('tbody.table-body tr').forEach(row => {
-        const cuil = limpiarTexto(row.cells[0]?.textContent || "");
-        const apellido = limpiarTexto(row.cells[1]?.textContent || "");
-        const nombre = limpiarTexto(row.cells[2]?.textContent || "");
-
-        const visible =
-          cuil.includes(query) ||
-          apellido.includes(query) ||
-          nombre.includes(query);
-
-        row.style.display = visible ? "" : "none";
-      });
+    filas.forEach(row => {
+      const cuil = limpiarTexto(row.cells[0]?.textContent || "");
+      const apellido = limpiarTexto(row.cells[1]?.textContent || "");
+      const nombre = limpiarTexto(row.cells[2]?.textContent || "");
+      const visible =
+        cuil.includes(query) || apellido.includes(query) || nombre.includes(query);
+      row.style.display = visible ? "" : "none";
     });
   });
 });

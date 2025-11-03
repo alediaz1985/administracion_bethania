@@ -569,14 +569,11 @@ def filtrar_estudiantes_becas(request):
 # ============================================================
 # 🎓 INSCRIPCION
 # ============================================================
-
 def inscribir_estudiante(request, estudiante_id):
     estudiante = get_object_or_404(Estudiante, id=estudiante_id)
-    estado_doc = getattr(estudiante, 'estado_documentacion', None)
 
-    # --- Verifica si puede inscribirse ---
-    estado_actual = (estado_doc.estado.strip().lower() if estado_doc and estado_doc.estado else None)
-    puede_inscribir = estado_actual == 'aprobado'
+    # --- Ya no verificamos el estado de la documentación ---
+    estado_doc = getattr(estudiante, 'estado_documentacion', None)
 
     # --- Datos para selects ---
     ciclos = CicloLectivo.objects.filter(estado__in=['Activo', 'Preparacion'])
@@ -585,7 +582,7 @@ def inscribir_estudiante(request, estudiante_id):
     becas = Beca.objects.filter(activa=True)
 
     # 📩 Si envía el formulario (POST)
-    if request.method == 'POST' and puede_inscribir:
+    if request.method == 'POST':
         ciclo_id = request.POST.get('ciclo')
         nivel_id = request.POST.get('nivel')
         subnivel_id = request.POST.get('subnivel')
@@ -726,7 +723,6 @@ def inscribir_estudiante(request, estudiante_id):
     context = {
         'estudiante': estudiante,
         'estado_doc': estado_doc,
-        'puede_inscribir': puede_inscribir,
         'ciclos': ciclos,
         'niveles': niveles,
         'subniveles': subniveles,
