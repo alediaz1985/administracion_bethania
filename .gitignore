@@ -52,6 +52,7 @@ htmlcov/
 # (NO ignores static/ de fuentes)
 # =========================
 staticfiles/
+/static_collected/
 media/
 
 # =========================
