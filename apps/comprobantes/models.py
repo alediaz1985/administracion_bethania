@@ -1,6 +1,7 @@
 # apps/comprobantes/models.py
 from django.db import models
 from apps.administracion_alumnos.models import Estudiante, Responsable
+from datetime import datetime
 
 def ruta_comprobantes(instance, filename):
     return f"documentos/comprobantes/{instance.drive_file_id}"
@@ -83,10 +84,14 @@ class ComprobantePago(models.Model):
         verbose_name_plural = "Comprobantes de Pago"
 
     def save(self, *args, **kwargs):
-        """
-        Antes de guardar, intenta vincular el comprobante con el estudiante
-        cuyo CUIL coincida con el cuil_estudiante del comprobante.
-        """
+        if self.marca_temporal:
+            # Si viene con microsegundos, los eliminamos
+            try:
+                dt = datetime.fromisoformat(str(self.marca_temporal))
+                self.marca_temporal = dt.strftime("%Y-%m-%d %H:%M:%S")
+            except ValueError:
+                pass  # deja como está si no lo puede convertir
+        # Relación con estudiante
         if self.cuil_estudiante and not self.estudiante:
             estudiante = Estudiante.objects.filter(cuil_estudiante=self.cuil_estudiante).first()
             if estudiante:
