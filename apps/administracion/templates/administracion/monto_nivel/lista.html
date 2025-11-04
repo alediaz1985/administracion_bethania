@@ -119,37 +119,45 @@
   }
 
   // =============================
-  // ⚙️ FUNCIÓN CENTRAL DE EVENTOS
-  // =============================
-  function inicializarEventos() {
-    const btnAdd = document.getElementById("btnAdd");
-    if (btnAdd) btnAdd.addEventListener("click", () => loadModal("{% url 'administracion:crear_monto' %}"));
-
-    document.querySelectorAll(".js-edit, .js-delete").forEach(btn => {
-      btn.addEventListener("click", e => {
-        e.preventDefault();
-        loadModal(btn.dataset.url);
-      });
-    });
-
-    // 🔽 ORDENAMIENTO POR COLUMNAS
-    document.querySelectorAll("th.sortable").forEach(th => {
-      th.addEventListener("click", () => {
-        const col = th.dataset.col;
-
-        if (col === sortCol) {
-          // cambia dirección solo si vuelven a hacer click en la misma columna
-          sortDir = sortDir === "asc" ? "desc" : "asc";
-        } else {
-          // nueva columna → arranca ascendente
-          sortCol = col;
-          sortDir = "asc";
-        }
-
-        aplicarFiltros();
-      });
-    });
+// ⚙️ FUNCIÓN CENTRAL DE EVENTOS
+// =============================
+function inicializarEventos() {
+  // 🟦 Botón "Nuevo Monto"
+  const btnAdd = document.getElementById("btnAdd");
+  if (btnAdd) {
+    const clone = btnAdd.cloneNode(true);
+    btnAdd.parentNode.replaceChild(clone, btnAdd);
+    clone.addEventListener("click", () => loadModal("{% url 'administracion:crear_monto' %}"));
   }
+
+  // 🟩 Botones de editar y eliminar
+  document.querySelectorAll(".js-edit, .js-delete").forEach(btn => {
+    const clone = btn.cloneNode(true);
+    btn.parentNode.replaceChild(clone, btn);
+    clone.addEventListener("click", e => {
+      e.preventDefault();
+      loadModal(clone.dataset.url);
+    });
+  });
+
+  // 🟨 Ordenamiento por columnas
+  document.querySelectorAll("th.sortable").forEach(th => {
+    const clone = th.cloneNode(true);
+    th.parentNode.replaceChild(clone, th);
+    clone.addEventListener("click", () => {
+      const col = clone.dataset.col;
+
+      if (col === sortCol) {
+        sortDir = sortDir === "asc" ? "desc" : "asc";
+      } else {
+        sortCol = col;
+        sortDir = "asc";
+      }
+
+      aplicarFiltros();
+    });
+  });
+}
 
   // =============================
   // 🧭 INDICADORES VISUALES (persistentes)
