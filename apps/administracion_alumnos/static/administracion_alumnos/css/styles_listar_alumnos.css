@@ -107,7 +107,7 @@ td.acciones {
     text-align: center;
     white-space: nowrap;
     padding: 0 2px;             /* menos espacio lateral */
-    width: 110px;               /* columna más compacta */
+    width: 100px;               /* columna más compacta */
     vertical-align: middle;
 }
 

@@ -1,0 +1,187 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Comprobantes de Pago{% endblock %}
+
+{% block extra_styles %}
+<link rel="stylesheet" href="{% static 'comprobantes/css/styles_comprobantes.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="comprobantes-container">
+
+  <!-- 🔹 Encabezado -->
+  <div class="comprobantes-header">
+    <h2>Comprobantes de Pago</h2>
+    <p class="subtitle">Administración de comprobantes enviados por los responsables.</p>
+  </div>
+
+  <!-- 🔍 FILTROS -->
+  <form method="GET" id="filtros-comprobantes" class="filtros-form">
+    <div class="filtros-row">
+      <div class="campo">
+        <label for="buscar-cuil">CUIL</label>
+        <input type="text" id="buscar-cuil" name="buscar" placeholder="CUIL del estudiante o responsable">
+      </div>
+
+      <div class="campo">
+        <label for="fecha-desde">Desde</label>
+        <input type="date" id="fecha-desde" name="fecha_desde">
+      </div>
+
+      <div class="campo">
+        <label for="fecha-hasta">Hasta</label>
+        <input type="date" id="fecha-hasta" name="fecha_hasta">
+      </div>
+
+      <div class="campo">
+        <label for="periodo">Período</label>
+        <select id="periodo" name="periodo">
+          <option value="">-- Seleccionar --</option>
+          <option value="hoy">Hoy</option>
+          <option value="semana">Esta semana</option>
+          <option value="mes">Este mes</option>
+        </select>
+      </div>
+
+      <div class="campo">
+        <label for="estado">Estado</label>
+        <select id="estado" name="estado">
+          <option value="">Todos</option>
+          <option value="Pendiente">Pendiente</option>
+          <option value="Procesado">Procesado</option>
+        </select>
+      </div>
+
+      <div class="acciones-filtros">
+        <button type="submit" class="btn-minimal buscar">Buscar</button>
+        <button type="button" class="btn-minimal limpiar" id="btn-limpiar">Restaurar</button>
+        <a href="{% url 'comprobantes:lista_comprobantes' %}?ver_todos=1" class="btn-minimal ver-todos">Ver todos</a>
+      </div>
+    </div>
+  </form>
+
+  <!-- 📋 TABLA -->
+  <div class="tabla-container">
+    {% if comprobantes %}
+      <table class="tabla-comprobantes">
+        <thead>
+          <tr>
+            <th>Fecha</th>
+            <th>CUIL Estudiante</th>
+            <th>Estudiante</th>
+            <th>CUIL Responsable</th>
+            <th>Estado</th>
+            <th>Acciones</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for comp in comprobantes %}
+          <tr>
+            <td>{{ comp.marca_temporal }}</td>
+            <td>{{ comp.cuil_estudiante }}</td>
+            <td>
+              {% if comp.estudiante %}
+                {{ comp.estudiante.apellidos_estudiante }}, {{ comp.estudiante.nombres_estudiante }}
+              {% else %}
+                <span class="sin-vinculo">—</span>
+              {% endif %}
+            </td>
+            <td>{{ comp.cuil_responsable }}</td>
+            <td>
+              {% if comp.estado == "Pendiente" %}
+                <span class="badge bg-pendiente">Pendiente</span>
+              {% else %}
+                <span class="badge bg-procesado">Procesado</span>
+              {% endif %}
+            </td>
+            <td class="acciones">
+              <a href="{{ comp.url_comprobante }}" target="_blank" class="icon-btn view" title="Ver comprobante">
+                <i class="fas fa-file-invoice"></i>
+              </a>
+              {% if comp.estado == "Pendiente" %}
+                <button type="button" class="icon-btn ok btn-estado" data-id="{{ comp.id }}" data-estado="Procesado" title="Marcar como procesado">
+                  <i class="fas fa-check"></i>
+                </button>
+              {% else %}
+                <button type="button" class="icon-btn back btn-estado" data-id="{{ comp.id }}" data-estado="Pendiente" title="Marcar como pendiente">
+                  <i class="fas fa-undo"></i>
+                </button>
+              {% endif %}
+              {% if comp.estudiante %}
+                <a href="{% url 'ver_datos_estudiante' pk=comp.estudiante.pk %}" class="icon-btn user" title="Ver ficha del estudiante">
+                  <i class="fas fa-user"></i>
+                </a>
+              {% else %}
+                <button class="icon-btn disabled" disabled><i class="fas fa-ban"></i></button>
+              {% endif %}
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    {% else %}
+      <div class="mensaje-inicial">
+        <i class="fas fa-search"></i>
+        <p>Usá los filtros superiores para buscar comprobantes específicos o ver los registros del período que necesites.</p>
+      </div>
+    {% endif %}
+  </div>
+
+  <form style="display:none;">{% csrf_token %}</form>
+</div>
+
+<!-- 🪟 MODAL -->
+<div id="modal-confirmar" class="modal-overlay">
+  <div class="modal-content">
+    <h3>¿Confirmar cambio de estado?</h3>
+    <div class="modal-actions">
+      <button id="btn-confirmar" class="btn-danger">Confirmar</button>
+      <button id="btn-cancelar" class="btn-secondary">Cancelar</button>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+  const modal = document.getElementById('modal-confirmar');
+  const btnConfirmar = document.getElementById('btn-confirmar');
+  const btnCancelar = document.getElementById('btn-cancelar');
+  const btnLimpiar = document.getElementById('btn-limpiar');
+  let comprobanteId = null, nuevoEstado = null;
+
+  document.querySelectorAll('.btn-estado').forEach(btn => {
+    btn.addEventListener('click', () => {
+      comprobanteId = btn.dataset.id;
+      nuevoEstado = btn.dataset.estado;
+      modal.style.display = 'flex';
+    });
+  });
+
+  btnConfirmar.addEventListener('click', () => {
+    if (!comprobanteId) return;
+    fetch("{% url 'comprobantes:cambiar_estado_comprobante' %}", {
+      method: 'POST',
+      headers: {
+        'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value,
+        'Content-Type': 'application/x-www-form-urlencoded',
+      },
+      body: `id=${comprobanteId}&estado=${nuevoEstado}`,
+    })
+    .then(r => r.json())
+    .then(d => { if (d.success) location.reload(); })
+    .catch(err => console.error(err))
+    .finally(() => modal.style.display = 'none');
+  });
+
+  btnCancelar.addEventListener('click', () => modal.style.display = 'none');
+
+  // 🧹 Limpiar filtros → volver al estado inicial
+  btnLimpiar.addEventListener('click', () => {
+    window.location.href = "{% url 'comprobantes:lista_comprobantes' %}";
+  });
+});
+</script>
+{% endblock %}

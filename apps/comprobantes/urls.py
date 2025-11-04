@@ -31,4 +31,8 @@ urlpatterns = [
     path("descargar_nube/", descargar_archivos_nube, name="descargar_nube"),
     path('descargar/', views.descargar_archivos_nube, name='descargar_archivos_nube'),
     path("importar_sheet_auth/", importar_comprobantes_desde_sheet_auth, name="importar_sheet_auth"),
+
+    # --- comprobantes ---
+    path("administrar/", views.lista_comprobantes, name="lista_comprobantes"),
+    path('cambiar-estado/', views.cambiar_estado_comprobante, name='cambiar_estado_comprobante'),
 ]

@@ -1,0 +1,490 @@
+/* ==========================================================
+   📄 COMPROBANTES DE PAGO — Estilo institucional minimalista
+========================================================== */
+
+/* Fondo general */
+body {
+  background-color: #d6dbe1;
+  font-family: 'Inter', sans-serif;
+}
+
+/* ==========================================================
+   🧩 CONTENEDOR PRINCIPAL
+========================================================== */
+.comprobantes-container {
+  max-width: 1180px;
+  margin: 2rem auto;
+  background: #ffffff;
+  border-radius: 14px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+  padding: 2rem;
+}
+
+/* ==========================================================
+   🧭 ENCABEZADO
+========================================================== */
+.comprobantes-header h2 {
+  font-size: 1.35rem;
+  font-weight: 600;
+  color: #1a2942;
+  margin-bottom: 0.4rem;
+}
+
+.comprobantes-header .subtitle {
+  font-size: 0.9rem;
+  color: #555;
+  margin-bottom: 1.8rem;
+}
+
+/* ==========================================================
+   🎛️ FORMULARIO DE FILTROS
+========================================================== */
+.filtros-form {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  background: #ffffff;
+  border: 1px solid #e3e6ec;
+  border-radius: 10px;
+  padding: 1.2rem 1.5rem;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+  margin-bottom: 1.5rem;
+}
+
+.filtros-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  align-items: flex-end;
+}
+
+/* Campo individual */
+.campo {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-width: 180px;
+}
+
+.campo label {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: #1a2942;
+  margin-bottom: 0.35rem;
+}
+
+.campo input,
+.campo select {
+  border: 1px solid #d1d5db;
+  border-radius: 8px;
+  padding: 9px 12px;
+  font-size: 0.9rem;
+  background-color: #fff;
+  transition: all 0.25s ease;
+  box-shadow: 0 0 15px rgba(0, 0, 0, 0.15);
+}
+
+.campo input:focus,
+.campo select:focus {
+  border-color: #1a2942;
+  box-shadow: 0 0 6px rgba(26, 41, 66, 0.25);
+  outline: none;
+}
+
+/* Acciones del formulario */
+.acciones-filtros {
+  display: flex;
+  gap: 0.6rem;
+}
+
+/* ==========================================================
+   🧮 BOTONES MINIMALISTAS DE FILTRO
+========================================================== */
+.btn-minimal {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  background: #ffffff;
+  border: 1px solid #d1d5db;
+  border-radius: 8px;
+  padding: 9px 16px;
+  font-size: 0.9rem;
+  color: #1a1a1a;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.25s ease;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.15);
+}
+
+.btn-minimal:hover {
+  background-color: #f5f5f5;
+  border-color: #1a2942;
+  box-shadow: 0 3px 12px rgba(0, 0, 0, 0.25);
+  transform: translateY(-1px);
+}
+
+.btn-minimal:active {
+  background-color: #eaeaea;
+  transform: scale(0.98);
+}
+
+/* 🟩 Buscar */
+.btn-minimal.buscar:hover {
+  color: #0b874b;
+  border-color: #0b874b;
+}
+
+/* 🧹 Limpiar */
+.btn-minimal.limpiar:hover {
+  color: #b71c1c;
+  border-color: #b71c1c;
+}
+
+/* Iconos dentro de botones */
+.btn-minimal i {
+  font-size: 1rem;
+  color: inherit;
+  transition: transform 0.2s ease;
+}
+
+.btn-minimal:hover i {
+  transform: scale(1.1);
+}
+
+/* 🔵 Ver todos — estilo minimalista consistente */
+.btn-minimal.ver-todos {
+  color: #1a2942;
+  border: 1px solid #d1d5db;
+  background-color: #ffffff;
+  font-weight: 500;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+  transition: all 0.25s ease;
+  text-decoration: none;
+}
+
+.btn-minimal.ver-todos:hover {
+  color: #d3931d;
+  border-color: #d3931d;
+}
+
+.btn-minimal.ver-todos:active {
+  transform: scale(0.97);
+  background-color: #16223a;
+  border-color: #16223a;
+}
+
+/* ==========================================================
+   📋 TABLA DE COMPROBANTES — Estilo igual al template institucional
+========================================================== */
+.tabla-container {
+  height: calc(100vh - 216px);
+  overflow-y: auto;
+  border: none;
+  background-color: #fff;
+  border-radius: 10px;
+  box-shadow: 0 4px 25px rgba(0, 0, 0, 0.5);
+}
+
+.tabla-comprobantes {
+  width: 100%;
+  border-collapse: collapse;
+  box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
+}
+
+/* --- Encabezado --- */
+.tabla-comprobantes thead {
+  background-color: #f8fafc;
+}
+
+.tabla-comprobantes th {
+  background-color: #d6dbe1;
+  color: #333;
+  font-weight: bold;
+  border: 1px solid #bbbbbb;
+  padding: 12px;
+  border-bottom: 1px solid #bbbbbb;
+  border-right: 1px solid #bbbbbb;
+  word-wrap: break-word;
+  max-width: 200px;
+  text-align: center; /* encabezados centrados */
+  font-size: 13px;
+}
+
+/* --- Celdas --- */
+.tabla-comprobantes td {
+  padding: 12px;
+  text-align: left; /* 👈 datos alineados a la izquierda */
+  border-bottom: 1px solid #bbbbbb;
+  border-right: 1px solid #bbbbbb;
+  font-size: 13px;
+  color: #222;
+  word-wrap: break-word;
+  max-width: 200px;
+}
+
+/* Centrado solo en Estado y Acciones */
+.tabla-comprobantes td:nth-child(5),
+.tabla-comprobantes td:nth-child(6) {
+  text-align: center;
+}
+
+/* 🔹 Elimina la línea de la última columna */
+.tabla-comprobantes th:last-child,
+.tabla-comprobantes td:last-child {
+  border-right: none;
+}
+
+/* Hover fila */
+.tabla-comprobantes tbody tr:hover {
+  background-color: #d6dbe1;
+}
+
+/* Sin resultados */
+.sin-resultados {
+  text-align: center;
+  color: #777;
+  padding: 1rem;
+  font-style: italic;
+}
+
+/* ==========================================================
+   🎨 BADGES DE ESTADO (igual al resto del sistema)
+========================================================== */
+.badge {
+  display: inline-block;
+  padding: 0.35rem 0.7rem;
+  border-radius: 6px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  letter-spacing: 0.3px;
+  transition: all 0.25s ease-in-out;
+}
+
+.badge:hover {
+  transform: scale(1.05);
+  filter: brightness(1.1);
+}
+
+.badge-pendiente,
+.bg-pendiente {
+  background: #fff3cd;
+  color: #856404;
+  border: 1px solid #ffeeba;
+}
+
+.badge-procesado,
+.bg-procesado {
+  background: #d4edda;
+  color: #155724;
+  border: 1px solid #c3e6cb;
+}
+
+/* ==========================================================
+   🎛️ CELDAS DE ACCIÓN — Corrección de espaciado fantasma
+========================================================== */
+td.acciones {
+  text-align: center;
+  white-space: nowrap;
+  padding: 0 2px;
+  width: 110px;
+  vertical-align: middle;
+}
+
+/* Botones de ícono */
+.icon-btn,
+.btn-ver,
+.btn-estado,
+.btn-ir {
+  background: none;
+  border: none;
+  color: #1a2942;
+  font-size: 0; /* 🧩 elimina espacios fantasma entre íconos */
+  cursor: pointer;
+  padding: 3px 4px;
+  margin: 0 1.5px;
+  transition: color 0.2s ease, transform 0.15s ease;
+}
+
+.icon-btn i {
+  font-size: 14px; /* restauramos el tamaño del ícono */
+  display: inline-block;
+  width: 16px;
+  text-align: center;
+  line-height: 1;
+  margin: 0;
+  padding: 0;
+}
+
+/* Hover */
+.icon-btn:hover {
+  transform: scale(1.12);
+}
+
+/* Correcciones ópticas */
+.icon-btn.ok i { margin-right: -1px; }
+.icon-btn.back i { margin-left: -1px; }
+
+/* Deshabilitado */
+.icon-btn.disabled {
+  color: #aaa;
+  cursor: not-allowed;
+  opacity: 0.5;
+}
+
+/* 🔗 Ver comprobante */
+.icon-btn.view i {
+  color: #1a2942;
+}
+.icon-btn.view:hover i {
+  color: #1a2942;
+}
+
+/* ✅ Procesar / ↩️ Pendiente */
+.icon-btn.ok i,
+.icon-btn.back i {
+  color: #1a2942;
+}
+.icon-btn.ok:hover i {
+  color: #0b874b;
+}
+.icon-btn.back:hover i {
+  color: #d00000;
+}
+
+/* 👤 Ficha */
+.icon-btn.user i {
+  color: #1a2942;
+}
+.icon-btn.user:hover i {
+  color: #0d6efd;
+}
+
+/* ==========================================================
+   💡 MENSAJE INICIAL (sin registros cargados)
+========================================================== */
+.mensaje-inicial {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  padding: 4rem 2rem;
+  color: #444;
+  font-family: 'Inter', sans-serif;
+  background: linear-gradient(135deg, #f8f9fa, #eef1f5);
+  border-radius: 10px;
+  border: 1px solid #d9d9d9;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+  animation: fadeIn 0.4s ease-in-out;
+}
+
+.mensaje-inicial i {
+  font-size: 2.5rem;
+  color: #1a2942;
+  margin-bottom: 1rem;
+  opacity: 0.85;
+  animation: pulseIcon 1.8s infinite ease-in-out;
+}
+
+.mensaje-inicial p {
+  font-size: 0.95rem;
+  line-height: 1.6;
+  max-width: 520px;
+  color: #333;
+}
+
+@keyframes pulseIcon {
+  0%, 100% { transform: scale(1); opacity: 0.9; }
+  50% { transform: scale(1.1); opacity: 1; }
+}
+
+/* ==========================================================
+   🪟 MODAL CONFIRMACIÓN
+========================================================== */
+#modal-confirmar {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.6);
+  justify-content: center;
+  align-items: center;
+  z-index: 9999;
+}
+
+#modal-confirmar.show {
+  display: flex;
+  animation: fadeIn 0.25s ease;
+}
+
+#modal-confirmar .cm-modal-content,
+.modal-content {
+  background: #ffffff;
+  border-radius: 12px;
+  padding: 2rem;
+  text-align: center;
+  box-shadow: 0 5px 25px rgba(0, 0, 0, 0.3);
+  width: 90%;
+  max-width: 420px;
+}
+
+#modal-confirmar h3 {
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: #1a2942;
+  margin-bottom: 1rem;
+}
+
+.modal-actions,
+.cm-modal-buttons {
+  display: flex;
+  justify-content: center;
+  gap: 1rem;
+  margin-top: 1rem;
+}
+
+.btn-danger {
+  background-color: #d00000;
+  color: #fff;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.btn-danger:hover { background-color: #a40000; }
+
+.btn-secondary {
+  background-color: #ccc;
+  color: #111;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.btn-secondary:hover { background-color: #b3b3b3; }
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: scale(0.9); }
+  to { opacity: 1; transform: scale(1); }
+}
+
+/* ==========================================================
+   📱 MEDIA QUERIES
+========================================================== */
+@media (max-width: 1366px) {
+  .tabla-comprobantes th,
+  .tabla-comprobantes td {
+    padding: 8px;
+    font-size: 12px;
+  }
+  .filtros-form { padding: 1rem; }
+}
+
+@media (max-width: 768px) {
+  .filtros-row { flex-direction: column; }
+  .tabla-container { height: auto; }
+}
