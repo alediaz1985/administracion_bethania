@@ -16,7 +16,7 @@
 }
 
 body {
-  background-color: var(--gris-fondo);
+  background-color: #bfc5ce;
   font-family: 'Inter', sans-serif;
 }
 
@@ -60,7 +60,6 @@ body {
 /* ==========================================================
    🔹 BOTONES DE ACCIÓN
 ========================================================== */
-
 .montos-botones {
   display: flex;
   align-items: center;
@@ -73,8 +72,8 @@ body {
   align-items: center;
   justify-content: center;
   gap: 6px;
-  padding: 0.55rem 1.2rem;
-  font-size: 0.85rem;
+  padding: 0.5rem 0.5rem;       /* 🔹 mismo padding */
+  font-size: 0.75rem;
   font-weight: 500;
   letter-spacing: 0.3px;
   border-radius: 6px;
@@ -136,7 +135,7 @@ body {
 }
 
 .montos-filtros label {
-  font-size: 0.9rem;
+  font-size: 0.75rem;
   font-weight: 600;
   color: var(--azul);
 }
@@ -146,7 +145,7 @@ body {
   border-radius: 6px;
   background: #fff;
   padding: 6px 10px;
-  font-size: 0.9rem;
+  font-size: 0.75rem;
   color: var(--texto);
   transition: all 0.25s ease;
   cursor: pointer;
@@ -164,7 +163,7 @@ body {
   display: flex;
   align-items: center;
   gap: 0.4rem;
-  font-size: 0.9rem;
+  font-size: 0.75rem;
   color: var(--texto);
   font-weight: 500;
 }
@@ -208,7 +207,7 @@ body {
 .montos-table th {
   color: #1a2942;
   font-weight: 600;
-  font-size: 13px;
+  font-size: 0.75rem;
   padding: 12px;
   text-align: left;
   border-bottom: 1px solid #bbbbbb;
@@ -224,7 +223,7 @@ body {
 .montos-table td {
   font-size: 13px;
   color: #222;
-  padding: 12px;
+  padding: 0.25rem 0.625rem;
   border-bottom: 1px solid #bbbbbb;
   border-right: 1px solid #bbbbbb;
   word-wrap: break-word;
@@ -254,7 +253,7 @@ td.acciones {
   background: none;
   border: none;
   color: #1a2942;
-  font-size: 14px;
+  font-size: 0.75rem;
   cursor: pointer;
   padding: 3px 4px;
   margin: 0 1.5px;
@@ -285,7 +284,7 @@ td.acciones {
 .badge {
   padding: 0.4rem 0.6rem;
   border-radius: 5px;
-  font-size: 0.8rem;
+  font-size: 0.75rem;
   font-weight: 600;
   display: inline-block;
 }
@@ -354,7 +353,7 @@ td.acciones {
 
 .modal-title {
   font-weight: 600;
-  font-size: 1rem;
+  font-size: 0.75rem;
   margin: 0;
 }
 
@@ -370,7 +369,7 @@ td.acciones {
   border: 1px solid var(--borde);
   border-radius: 6px;
   padding: 8px;
-  font-size: 0.9rem;
+  font-size: 0.75rem;
   color: var(--texto);
 }
 
@@ -399,7 +398,7 @@ td.acciones {
   border: none;
   border-radius: 6px;
   padding: 0.45rem 1rem;
-  font-size: 0.85rem;
+  font-size: 0.75rem;
   font-weight: 500;
   transition: all 0.25s ease;
 }
@@ -463,7 +462,7 @@ td.acciones {
   margin: 0 auto;
   text-align: center;
   font-weight: 600;
-  font-size: 1rem;
+  font-size: 0.75rem;
   font-family: 'Inter', sans-serif;
 }
 
@@ -496,10 +495,10 @@ td.acciones {
 .form-modal select,
 .form-modal textarea {
   width: 100%;
-  padding: 8px 10px;
+  padding: 6px 10px;
   border: 1px solid var(--borde);
   border-radius: 6px;
-  font-size: 0.9rem;
+  font-size: 0.75rem;
   color: var(--texto);
   font-family: 'Inter', sans-serif;
   background: #fff;
@@ -517,7 +516,7 @@ td.acciones {
 .form-modal label {
   font-weight: 500;
   color: var(--texto);
-  font-size: 0.88rem;
+  font-size: 0.75rem;
   display: block;
   margin-bottom: 5px;
 }
@@ -526,7 +525,7 @@ td.acciones {
 .form-modal .modal-footer {
   background-color: #f9f9f9;
   border-top: 1px solid #ddd;
-  padding: 1rem 1.25rem;
+  padding: 1rem 1rem;
   border-radius: 0 0 10px 10px;
   display: flex;
   justify-content: flex-end;
@@ -540,7 +539,7 @@ td.acciones {
   border: none;
   border-radius: 6px;
   padding: 0.45rem 1rem;
-  font-size: 0.9rem;
+  font-size: 0.75rem;
   font-weight: 500;
   letter-spacing: 0.2px;
   cursor: pointer;
@@ -558,7 +557,7 @@ td.acciones {
   border: 1px solid #ccc;
   border-radius: 6px;
   padding: 0.45rem 1rem;
-  font-size: 0.9rem;
+  font-size: 0.75rem;
   cursor: pointer;
   transition: all 0.25s ease;
 }
@@ -581,7 +580,6 @@ td.acciones {
   display: inline-flex;
   align-items: center;
   gap: 4px;
-  margin-bottom: 0.5rem;
   font-weight: 500;
 }
 
@@ -833,22 +831,9 @@ th.sortable:hover .sort-icon {
 /* ==========================================================
    📱 RESPONSIVE
 ========================================================== */
-@media (max-width: 768px) {
-  .montos-container {
-    padding: 1rem;
-  }
-
-  .montos-header {
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 1rem;
-  }
-
+@media (max-width: 1366px) {
+  .btn-volver,
   .btn-nuevo {
-    width: 100%;
-  }
-
-  .modal-dialog {
-    max-width: 95%;
+    font-size: 0.625rem;
   }
 }

@@ -18,7 +18,7 @@
    🧩 ESTRUCTURA GENERAL
 ========================================================== */
 body {
-  background: var(--gris-fondo);
+  background: #bfc5ce;
   font-family: 'Inter', sans-serif;
   color: var(--texto);
 }

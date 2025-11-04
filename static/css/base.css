@@ -69,7 +69,7 @@ body {
 .nav-title {
   font-weight: 400;
   color: #000000; /* azul institucional */
-  font-size: 0.9rem;        /* 🔽 más pequeño */
+  font-size: 0.75rem;        /* 🔽 más pequeño */
   line-height: 1.2;         /* buena separación entre líneas */
   letter-spacing: 0.3px;
   display: inline-block;
@@ -78,7 +78,7 @@ body {
 .nav-title .subtitle {
   font-weight: 300;
   color: #000000;
-  font-size: 0.7rem;        /* 🔽 un poco más chico para contraste */
+  font-size: 0.625rem;        /* 🔽 un poco más chico para contraste */
 }
 
 /* --- CENTRO --- */
@@ -94,7 +94,7 @@ body {
   text-decoration: none;
   color: #000000;
   font-weight: 400;
-  font-size: 1.05rem;
+  font-size: 0.9375rem;
   transition: transform 0.25s cubic-bezier(0.25, 1.5, 0.5, 1), color 0.25s ease;
   transform-origin: center;
   display: inline-block;
@@ -143,7 +143,7 @@ body {
 }
 
 .user-text .username {
-  font-size: 0.85rem;
+  font-size: 0.75rem;
   font-weight: 600;
   color: #181818;
 }
@@ -311,7 +311,7 @@ footer.footer * {
 
     /* 🔹 Enlaces del navbar */
     .nav-center li a {
-        font-size: 0.85rem;    /* ligeramente más chico */
+        font-size: 0.875rem;    /* ligeramente más chico */
         gap: 40px;
     }
 
@@ -332,19 +332,24 @@ footer.footer * {
 
     /* 🔹 Título en 2 líneas */
     .nav-title {
-    font-size: 0.75rem;        /* 🔽 más pequeño */
+    font-size: 0.625rem;        /* 🔽 más pequeño */
     }
 
     .nav-title .subtitle {
-    font-size: 0.65rem;        /* 🔽 un poco más chico para contraste */
+    font-size: 0.55rem;        /* 🔽 un poco más chico para contraste */
     }
 
     .user-icon {
     font-size: 0.75rem;
     }
 
-    .user-name {
-    font-size: 0.75rem;
+    .user-text .username {
+      font-size: 0.75rem;
+    }
+
+    /* Segunda línea: nombre y apellido */
+    .user-text .fullname {
+      font-size: 0.75rem;
     }
 
     .icon-btn {

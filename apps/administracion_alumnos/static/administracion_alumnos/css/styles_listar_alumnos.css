@@ -5,7 +5,7 @@ body {
     font-family: 'Roboto', sans-serif;
     margin: 0;
     padding: 0;
-    background-color: #d6dbe1;
+    background-color: #bfc5ce;
     color: #000;
 }
 
@@ -54,21 +54,21 @@ body {
 }
 
 .alumnos-table th {
-    padding: 12px;
+    padding: 0.75rem;
     border-bottom: 1px solid #bbbbbb;  /* línea horizontal */
     border-right: 1px solid #bbbbbb;   /* línea vertical entre columnas */
-    font-size: 13px;
+    font-size: 0.75rem;
     word-wrap: break-word;
     max-width: 200px;
     text-align: center;
 }
 
 .alumnos-table td {
-    padding: 12px;
+    padding: 0.25rem 0.625rem;
     text-align: left;
     border-bottom: 1px solid #bbbbbb;  /* línea horizontal */
     border-right: 1px solid #bbbbbb;   /* línea vertical entre columnas */
-    font-size: 13px;
+    font-size: 0.75rem;
     word-wrap: break-word;
     max-width: 200px;
 }
@@ -106,7 +106,7 @@ body {
 td.acciones {
     text-align: center;
     white-space: nowrap;
-    padding: 0 2px;             /* menos espacio lateral */
+    padding: 0 8px;             /* menos espacio lateral */
     width: 100px;               /* columna más compacta */
     vertical-align: middle;
 }
@@ -123,10 +123,9 @@ td.acciones {
     background: none;
     border: none;
     color: #1a2942;             /* 🔹 color base azul oscuro */
-    font-size: 14px;
+    font-size: 0.75rem;
     cursor: pointer;
     padding: 3px 4px;           /* íconos más compactos */
-    margin: 0 1.5px;            /* separación visual ajustada */
     transition: color 0.2s ease, transform 0.15s ease;
 }
 
@@ -177,6 +176,7 @@ td.acciones {
 .icon-btn.delete i {
     color: #1a2942;
 }
+
 .icon-btn.delete:hover i {
     color: #d00000;
 }
@@ -257,7 +257,7 @@ td.acciones {
     -webkit-appearance: none;
     -moz-appearance: none;
     padding: 10px 40px 10px 14px;   /* espacio interior */
-    font-size: 14px;
+    font-size: 0.75rem;
     font-weight: 500;
     border: 1px solid #d1d5db;      /* borde suave */
     border-radius: 8px;             /* bordes redondeados */
@@ -312,7 +312,7 @@ td.acciones {
     -webkit-appearance: none;
     -moz-appearance: none;
     padding: 10px 40px 10px 14px;
-    font-size: 14px;
+    font-size: 0.75rem;
     font-weight: 500;
     border: 1px solid #d1d5db;
     border-radius: 8px;
@@ -377,7 +377,7 @@ td.acciones {
     border: 1px solid #b8b8b8;
     border-radius: 10px;
     background-color: #ffffff;
-    font-size: 14px;
+    font-size: 0.75rem;
     color: #1a1a1a;
     outline: none;
     transition: all 0.25s ease;
@@ -428,14 +428,14 @@ td.acciones {
     border: 1px solid #ccc;
     border-radius: 6px;
     padding: 8px 12px;
-    font-size: 14px;
+    font-size: 0.75rem;
     cursor: pointer;
     transition: all 0.2s ease-in-out;
     text-decoration: none; /* ❌ sin subrayado */
 }
 
 .btn-minimal i {
-    font-size: 16px;
+    font-size: 0.75rem;
 }
 
 .btn-minimal:hover {
@@ -585,7 +585,7 @@ td.acciones {
 .badge {
   padding: 0.4rem 0.75rem;
   border-radius: 6px;
-  font-size: 0.8rem;
+  font-size: 0.625rem;
   font-weight: 600;
   display: inline-block;
   text-align: center;
@@ -637,13 +637,23 @@ td.acciones {
 
     .alumnos-table th,
     .alumnos-table td {
-        padding: 8px;
-        font-size: 12px;
+        font-size: 0.75rem;
+    }
+
+    .alumnos-table td {
+        padding: 0.25rem 0.625rem;
     }
 
     #nivel-filter,
-    #nivel-filter option {
-        font-size: 10px;
+    #nivel-filter option,
+    #subnivel-filter,
+    .search-box input {
+        font-size: 0.625rem;
+    }
+
+    .btn-minimal,
+    .btn-minimal i {
+        font-size: 0.625rem;
     }
 
     .tabs button {
@@ -654,48 +664,8 @@ td.acciones {
         font-size: 12px;
     }
 
-    td.acciones {
-        padding: 0 1px;
-    }
-
-    /* Botones minimalistas de ícono */
-    .icon-btn {
-        font-size: 12px;
-    }
-
-    .btn-minimal {
-        font-size: 12px;
-    }
-
-    .search-box input {
-        font-size: 12px;
-    }
-
     .badge {
-        font-size: 0.75rem;
+        font-size: 0.625rem;
     }
 }
 
-@media (max-width: 1024px) {
-    .alumnos-table th,
-    .alumnos-table td {
-        padding: 6px;
-        font-size: 11px;
-    }
-}
-
-@media (max-width: 768px) {
-    .alumnos-table th,
-    .alumnos-table td {
-        padding: 5px;
-        font-size: 10px;
-    }
-}
-
-@media (max-width: 480px) {
-    .alumnos-table th,
-    .alumnos-table td {
-        padding: 4px;
-        font-size: 8px;
-    }
-}

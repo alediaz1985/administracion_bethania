@@ -17,8 +17,8 @@ body {
 ========================================== */
 .admin-container {
   max-width: 1200px;
-  margin: 2rem auto;
-  padding: 2rem 2rem;
+  margin: 4rem auto;
+  padding: 2rem;
   background: #fff;
   border-radius: 12px;
   box-shadow: 0 2px 10px rgba(0,0,0,0.06);
@@ -34,7 +34,7 @@ body {
 
 .admin-header h1 {
   color: var(--azul);
-  font-size: 1.8rem;
+  font-size: 1.5rem;
   font-weight: 700;
   margin-bottom: 0.5rem;
 }
@@ -58,6 +58,7 @@ body {
   border: 1px solid #e1e1e1;
   border-radius: 10px;
   padding: 1.8rem 1.5rem;
+  margin-bottom: 2rem;
   text-align: center;
   transition: all 0.25s ease;
   box-shadow:
@@ -107,7 +108,7 @@ body {
    TEXTOS
 ========================================== */
 .admin-card h3 {
-  font-size: 1.1rem;
+  font-size: 1rem;
   color: var(--azul);
   font-weight: 600;
   margin-bottom: 0.5rem;
@@ -115,7 +116,7 @@ body {
 
 .admin-card p {
   color: var(--secundario);
-  font-size: 0.9rem;
+  font-size: 0.875rem;
   margin-bottom: 1.2rem;
 }
 
@@ -162,9 +163,18 @@ body {
 /* ==========================================
    📱 RESPONSIVE
 ========================================== */
-@media (max-width: 768px) {
+@media (max-width: 1366px) {
+  .admin-container {
+    margin: 2rem auto;
+    padding: 2rem;
+  }
+
   .admin-header h1 {
-    font-size: 1.5rem;
+    font-size: 1.375rem;
+  }
+
+  .admin-header p {
+    font-size: 0.9375rem;
   }
 
   .admin-card {
@@ -172,6 +182,6 @@ body {
   }
 
   .admin-card h3 {
-    font-size: 1rem;
+    font-size: 0.9375rem;
   }
 }

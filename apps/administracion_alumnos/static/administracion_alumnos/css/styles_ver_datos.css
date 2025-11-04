@@ -7,7 +7,7 @@
 }
 
 body {
-    background-color: #d6dbe1;
+    background-color: #bfc5ce;
 }
 
 /* ============================
@@ -50,7 +50,7 @@ body {
 }
 
 .student-info h2 {
-  font-size: 1.25rem;
+  font-size: 1.125rem;
   margin: 0;
   color: var(--azul);
 }
@@ -77,7 +77,7 @@ body {
   border: 1px solid #b5e0b5;
   padding: 0.4rem 0.8rem;
   border-radius: 6px;
-  font-size: 0.8rem;
+  font-size: 0.75rem;
   font-weight: 500;
   white-space: nowrap;
   width: 100%;
@@ -92,7 +92,7 @@ body {
   text-align: center;
   padding: 0.55rem 0;        /* misma altura */
   border-radius: 6px;
-  font-size: 0.8rem;
+  font-size: 0.75rem;
   font-weight: 600;
   border: none;
   cursor: pointer;
@@ -250,7 +250,7 @@ body {
   color: var(--texto);
   transition: all 0.3s;
   white-space: nowrap;
-  font-size: 0.9rem;
+  font-size: 0.75rem;
 }
 
 .tab-button:hover {
@@ -299,11 +299,13 @@ body {
   color: var(--secundario);
   font-weight: 500;
   vertical-align: top;
+  font-size: 0.875rem;
 }
 
 .tab-content td {
   padding: 6px;
   vertical-align: top;
+  font-size: 0.875rem;
 }
 
 .tab-content input {
@@ -311,7 +313,7 @@ body {
   padding: 6px 8px;
   border: 1px solid var(--borde);
   border-radius: 6px;
-  font-size: 0.9rem;
+  font-size: 0.75rem;
   color: var(--texto);
 }
 
@@ -341,7 +343,7 @@ body {
   margin-bottom: 1rem;
   color: var(--azul);
   font-weight: 600;
-  font-size: 1rem;
+  font-size: 0.9375rem;
 }
 
 /* ============================
@@ -627,14 +629,18 @@ body {
 
 #tab-cuotas th,
 #tab-cuotas td {
-  font-size: 13px;
+  font-size: 0.75rem;
   color: #222;
-  padding: 12px;
+  padding: 0.75rem;
   border-bottom: 1px solid #bbb;
   border-right: 1px solid #bbb;
   vertical-align: middle;
   text-align: center; /* ✅ Todo centrado */
   word-wrap: break-word;
+}
+
+#tab-cuotas td {
+  padding: 0.25rem 0.625rem;
 }
 
 #tab-cuotas th:last-child,
@@ -704,7 +710,7 @@ body {
 
 #tab-cuotas .btn i {
   color: var(--azul);
-  font-size: 1.1rem;
+  font-size: 0.75rem;
   transition: color 0.2s ease, transform 0.2s ease;
 }
 
@@ -754,7 +760,7 @@ body {
 /* Ícono del botón */
 #tab-cuotas td:last-child .btn i {
   color: var(--azul);
-  font-size: 1.1rem;
+  font-size: 0.875rem;
   transition: color 0.2s ease, transform 0.2s ease;
 }
 
@@ -781,7 +787,7 @@ body {
 }
 
 .btn-deshacer-pago i {
-  font-size: 1.1rem;
+  font-size: 0.875rem;
   color: var(--azul);
   transition: color 0.25s ease, transform 0.25s ease;
 }
@@ -876,7 +882,7 @@ body {
 }
 
 #tab-cuotas .filtro-ciclo label {
-  font-size: 0.9rem;
+  font-size: 0.75rem;
   font-weight: 500;
   color: var(--texto);
   white-space: nowrap; /* evita salto de línea */
@@ -886,7 +892,7 @@ body {
   border: 1px solid var(--borde);
   border-radius: 8px;
   padding: 0.45rem 0.8rem;
-  font-size: 0.9rem;
+  font-size: 0.75rem;
   cursor: pointer;
   transition: border-color 0.2s ease, box-shadow 0.2s ease;
   background-color: #fff;
@@ -906,7 +912,7 @@ body {
   border: none;
   border-radius: 8px;
   padding: 0.6rem 1rem;
-  font-size: 0.85rem;
+  font-size: 0.75rem;
   font-weight: 500;
   letter-spacing: 0.3px;
   display: inline-flex;
@@ -939,7 +945,7 @@ body {
   border-radius: 6px;
   padding: 8px 14px;
   margin-bottom: 1rem;
-  font-size: 0.9rem;
+  font-size: 0.75rem;
   font-family: 'Inter', sans-serif;
 }
 
@@ -1074,7 +1080,7 @@ body {
 
 #modalGenerarPDF .btn {
   border-radius: 10px;
-  font-size: 0.9rem;
+  font-size: 0.75rem;
   font-weight: 500;
   padding: 0.6rem 1.3rem;
   transition: all 0.25s ease;
@@ -1133,12 +1139,10 @@ body {
 @media screen and (max-width: 1366px) and (max-height: 768px) {
   .student-card .tab-button {
     font-size: 0.65rem;
-    padding: 8px 10px;
   }
 
   .student-card {
     max-width: 1080px;
-    padding: 1.5rem;
     font-size: 0.75rem;
   }
 

@@ -17,7 +17,7 @@
 }
 
 body {
-  background-color: var(--gris-fondo);
+  background-color: #bfc5ce;
   font-family: 'Inter', sans-serif;
 }
 
@@ -75,7 +75,7 @@ body {
   justify-content: center;
   gap: 6px;
   padding: 0.55rem 1.2rem;
-  font-size: 0.85rem;
+  font-size: 0.75rem;
   font-weight: 500;
   letter-spacing: 0.3px;
   border-radius: 6px;
@@ -102,7 +102,7 @@ body {
   border: 1px solid #267c2e;
   border-radius: 6px;
   padding: 0.55rem 1.2rem;
-  font-size: 0.85rem;
+  font-size: 0.75rem;
   font-weight: 500;
   transition: all 0.25s ease;
   text-decoration: none;
@@ -121,7 +121,7 @@ body {
   border: 1px solid var(--azul);
   border-radius: 6px;
   padding: 0.55rem 1.2rem;
-  font-size: 0.85rem;
+  font-size: 0.75rem;
   font-weight: 500;
   transition: all 0.25s ease;
   cursor: pointer;
@@ -152,7 +152,7 @@ body {
   display: flex;
   align-items: center;
   gap: 0.4rem;
-  font-size: 0.9rem;
+  font-size: 0.75rem;
   color: var(--texto);
   font-weight: 500;
 }
@@ -195,7 +195,7 @@ body {
 .becas-table th {
   color: var(--azul);
   font-weight: 600;
-  font-size: 13px;
+  font-size: 0.75rem;
   padding: 12px;
   text-align: left;
   border-bottom: 1px solid #bbbbbb;
@@ -209,9 +209,9 @@ body {
 
 /* Celdas */
 .becas-table td {
-  font-size: 13px;
+  font-size: 0.75rem;
   color: #222;
-  padding: 12px;
+  padding: 0.25rem 0.625rem;
   border-bottom: 1px solid #bbbbbb;
   border-right: 1px solid #bbbbbb;
   word-wrap: break-word;
@@ -241,7 +241,7 @@ td.acciones {
   background: none;
   border: none;
   color: var(--azul);
-  font-size: 14px;
+  font-size: 0.75rem;
   cursor: pointer;
   padding: 3px 4px;
   margin: 0 1.5px;
@@ -266,7 +266,7 @@ td.acciones {
 .badge {
   padding: 0.4rem 0.6rem;
   border-radius: 5px;
-  font-size: 0.8rem;
+  font-size: 0.75rem;
   font-weight: 600;
   display: inline-block;
 }
@@ -350,7 +350,7 @@ td.acciones {
   margin: 0 auto;
   text-align: center;
   font-weight: 600;
-  font-size: 1rem;
+  font-size: 0.75rem;
   font-family: 'Inter', sans-serif;
 }
 
@@ -370,7 +370,7 @@ td.acciones {
 .form-modal .btn-close::before {
   content: '✕';
   color: #fff;
-  font-size: 1.2rem;
+  font-size: 0.75rem;
   font-weight: 600;
   line-height: 1;
 }
@@ -404,7 +404,7 @@ td.acciones {
   padding: 8px 10px;
   border: 1px solid var(--borde);
   border-radius: 6px;
-  font-size: 0.9rem;
+  font-size: 0.75rem;
   color: var(--texto);
   font-family: 'Inter', sans-serif;
   background: #fff;
@@ -463,7 +463,7 @@ td.acciones {
   border: none;
   border-radius: 6px;
   padding: 0.45rem 1rem;
-  font-size: 0.9rem;
+  font-size: 0.75rem;
   font-weight: 500;
   letter-spacing: 0.2px;
   cursor: pointer;
@@ -482,7 +482,7 @@ td.acciones {
   border: 1px solid #ccc;
   border-radius: 6px;
   padding: 0.45rem 1rem;
-  font-size: 0.9rem;
+  font-size: 0.75rem;
   cursor: pointer;
   transition: all 0.25s ease;
 }
@@ -531,7 +531,7 @@ td.acciones {
 .modal-delete .modal-title {
   font-family: 'Inter', sans-serif;
   font-weight: 600;
-  font-size: 1rem;
+  font-size: 0.875rem;
   text-align: center;
   margin: 0 auto;
 }
@@ -552,7 +552,7 @@ td.acciones {
 .modal-delete .btn-close::before {
   content: '✕';
   color: #fff;
-  font-size: 1.1rem;
+  font-size: 0.875rem;
   font-weight: 600;
   line-height: 1;
 }
@@ -577,7 +577,7 @@ td.acciones {
 .form-modal .btn-close::before {
   content: '✕';
   color: #fff;            /* blanco sobre el fondo azul */
-  font-size: 1.2rem;
+  font-size: 0.875rem;
   font-weight: 600;
   line-height: 1;
 }
@@ -603,11 +603,11 @@ td.acciones {
 .modal-delete .modal-body p {
   color: var(--texto);
   margin-bottom: 0.5rem;
-  font-size: 0.95rem;
+  font-size: 0.875rem;
 }
 
 .modal-delete .modal-body .subtitulo-alerta {
-  font-size: 0.85rem;
+  font-size: 0.75rem;
   color: #d00000;
   font-weight: 500;
   margin-top: 0.3rem;
@@ -623,7 +623,7 @@ td.acciones {
 .modal-delete .modal-body li {
   margin-bottom: 0.6rem;         /* 🧩 más espacio entre cada ítem */
   color: var(--texto);
-  font-size: 0.92rem;
+  font-size: 0.875rem;
 }
 
 .modal-delete .modal-body li strong {
@@ -648,7 +648,7 @@ td.acciones {
   border: none;
   border-radius: 6px;
   padding: 0.45rem 1rem;
-  font-size: 0.9rem;
+  font-size: 0.75rem;
   font-weight: 500;
   letter-spacing: 0.2px;
   cursor: pointer;
@@ -671,7 +671,7 @@ td.acciones {
   border-radius: 6px;
   padding: 0.75rem 1rem;
   margin-bottom: 1rem;
-  font-size: 0.9rem;
+  font-size: 0.75rem;
   font-weight: 500;
   font-family: 'Inter', sans-serif;
 }
@@ -684,7 +684,7 @@ td.acciones {
 
 .form-modal .errorlist li {
   color: #b00020;
-  font-size: 0.82rem;
+  font-size: 0.75rem;
   font-weight: 500;
   background: #ffe5e5;
   border-left: 3px solid #b00020;
