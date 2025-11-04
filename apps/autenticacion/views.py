@@ -8,6 +8,7 @@ from .models import Perfil
 from django.conf import settings
 import os
 from datetime import timedelta
+from time import time
 
 # --- Iniciar sesión ---
 def login_view(request):
@@ -143,4 +144,8 @@ def editar_perfil(request):
 @login_required
 def ver_perfil(request):
     perfil = request.user.perfil
-    return render(request, 'autenticacion/ver_perfil.html', {'perfil': perfil})
+    timestamp = int(time())  # número UNIX
+    return render(request, 'autenticacion/ver_perfil.html', {
+        'perfil': perfil,
+        'cache_buster': timestamp
+    })

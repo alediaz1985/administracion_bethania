@@ -36,7 +36,6 @@
       <button type="button" class="tab-button" data-tab="salud">Salud</button>
       <button type="button" class="tab-button" data-tab="responsables">Responsables</button>
       <button type="button" class="tab-button" data-tab="documentacion">Documentación</button>
-      <button type="button" class="tab-button" data-tab="estado">Estado Doc.</button>
     </div>
 
     <!-- DATOS PERSONALES -->
@@ -226,16 +225,6 @@
         <tr><th>Autoriza Imagen</th><td><select name="autoriza_imagen" id="autoriza_imagen"><option value="">Seleccionar...</option><option value="Si, autorizo" {% if docu_form.instance.autoriza_imagen == 'Si, autorizo' %}selected{% endif %}>Si, autorizo</option><option value="No, autorizo" {% if docu_form.instance.autoriza_imagen == 'No, autorizo' %}selected{% endif %}>No, autorizo</option></select></td></tr>
       </table>
     </div>
-
-    <!-- ESTADO -->
-    <div class="tab-content" id="tab-estado">
-      <table class="table-like">
-        {{ estd_form.non_field_errors }}
-        <tr><th>Estado</th><td>{{ estd_form.estado }}</td></tr>
-        <tr><th>Fecha de Actualización</th><td><input type="datetime-local" name="fecha_actualizacion" id="fecha_actualizacion" value="{{ estd_form.instance.fecha_actualizacion|date:'Y-m-d\\TH:i' }}" readonly></td></tr>
-      </table>
-    </div>
-
   </div>
 </form>
 {% endblock %}

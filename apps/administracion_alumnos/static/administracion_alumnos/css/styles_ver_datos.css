@@ -606,11 +606,6 @@ body {
 /* ==========================================================
    💳 PESTAÑA CUOTAS — Estilo institucional Bethania
 ========================================================== */
-
-#tab-cuotas {
-  margin-top: 1rem;
-}
-
 #tab-cuotas table {
   width: 100%;
   border-collapse: collapse;

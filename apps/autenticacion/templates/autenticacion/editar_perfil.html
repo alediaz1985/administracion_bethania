@@ -19,9 +19,9 @@
         <label for="id_foto" class="foto-label">
           {% if request.user.perfil.foto %}
             <img id="previewFoto"
-                src="{% static 'autenticacion/images/usuarios/' %}{{ request.user.perfil.foto }}"
-                alt="Foto de perfil"
-                class="perfil-photo">
+              src="{% static 'autenticacion/images/usuarios/' %}{{ request.user.perfil.foto }}?v={{ request.user.last_login|date:'U' }}"
+              alt="Foto de perfil"
+              class="perfil-photo">
           {% else %}
             <img id="previewFoto"
                 src="{% static 'autenticacion/images/default-user.jpg' %}"

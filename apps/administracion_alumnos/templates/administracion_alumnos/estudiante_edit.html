@@ -37,7 +37,6 @@
       <button type="button" class="tab-button" data-tab="salud">Salud</button>
       <button type="button" class="tab-button" data-tab="responsables">Responsables</button>
       <button type="button" class="tab-button" data-tab="documentacion">Documentación</button>
-      <button type="button" class="tab-button" data-tab="estado">Estado Doc.</button>
     </div>
 
     <!-- DATOS PERSONALES (Estudiante) -->
@@ -188,16 +187,6 @@
         <tr><th>Autoriza Imagen</th><td>{{ docu_form.autoriza_imagen }}</td></tr>
       </table>
     </div>
-
-    <!-- ESTADO -->
-    <div class="tab-content" id="tab-estado">
-      <table class="table-like">
-        {{ estd_form.non_field_errors }}
-        <tr><th>Estado Actual</th><td>{{ estd_form.estado }}</td></tr>
-        <tr><th>Última Actualización</th><td><em>se actualiza automáticamente</em></td></tr>
-      </table>
-    </div>
-
   </div>
 </form>
 {% endblock %}
