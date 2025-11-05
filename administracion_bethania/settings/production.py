@@ -7,13 +7,14 @@ Configuración de PRODUCCIÓN
 - WhiteNoise (o S3 opcional)
 - Logging sobrio + Sentry opcional
 """
-from .base import *
+
 import os
 from pathlib import Path
 from dotenv import load_dotenv
 
 # 1) Rutas y carga de entorno (antes de importar base.py)
 BASE_DIR = Path(__file__).resolve().parents[2]
+
 load_dotenv(BASE_DIR / ".env.production", override=True)
 load_dotenv(BASE_DIR / ".env", override=False)
 
@@ -25,24 +26,16 @@ DEBUG = False
 # SECRET_KEY obligatorio en prod (si falta, que explote)
 SECRET_KEY = os.environ["SECRET_KEY"]
 
-
-ALLOWED_HOSTS = [
-    "vps-5435089-x.dattaweb.com",
-    "179.43.121.187",
-    "localhost", "127.0.0.1",
-]
-
-CSRF_TRUSTED_ORIGINS = [
-    "http://vps-5435089-x.dattaweb.com",
-    "https://vps-5435089-x.dattaweb.com",
-]
+ALLOWED_HOSTS = env_list("ALLOWED_HOSTS", "")  # e.g. "mi-dominio.com,127.0.0.1"
+CSRF_TRUSTED_ORIGINS = env_list(              # e.g. "https://mi-dominio.com"
+    "CSRF_TRUSTED_ORIGINS",
+    "",
+)
 
 # 4) Seguridad / SSL
 SECURE_SSL_REDIRECT = env_bool("SECURE_SSL_REDIRECT", True)
-
-SESSION_COOKIE_SECURE = False
-
-CSRF_COOKIE_SECURE = False
+SESSION_COOKIE_SECURE = True
+CSRF_COOKIE_SECURE = True
 
 # HSTS (activar en cuanto tengas HTTPS estable)
 SECURE_HSTS_SECONDS = int(os.getenv("SECURE_HSTS_SECONDS", "31536000"))  # 1 año
@@ -51,6 +44,8 @@ SECURE_HSTS_PRELOAD = env_bool("SECURE_HSTS_PRELOAD", True)
 
 # Si hay proxy (Nginx/ELB/Cloudflare) que setea X-Forwarded-Proto
 SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
+
+
 
 # 5) Base de datos (MariaDB remota)
 DATABASES = {
@@ -79,6 +74,7 @@ DATABASES = {
     }
 }
 
+
 # 6) Cache (Redis opcional)
 REDIS_URL = os.getenv("REDIS_URL", "")
 if REDIS_URL:
@@ -99,24 +95,14 @@ EMAIL_USE_TLS = env_bool("EMAIL_USE_TLS", True)
 DEFAULT_FROM_EMAIL = os.getenv("DEFAULT_FROM_EMAIL", "noreply@tu-dominio.com")
 SERVER_EMAIL = os.getenv("SERVER_EMAIL", DEFAULT_FROM_EMAIL)
 
-# 8) Archivos estáticos
-USE_WHITENOISE = env_bool("USE_WHITENOISE", True)
-STATIC_ROOT = str((BASE_DIR / "static_collected").resolve())
 
-if USE_WHITENOISE:
-    INSTALLED_APPS = ["whitenoise.runserver_nostatic"] + INSTALLED_APPS  # noqa: F405
-    MIDDLEWARE.insert(  # noqa: F405
-        MIDDLEWARE.index("django.middleware.security.SecurityMiddleware") + 1,  # noqa: F405
-        "whitenoise.middleware.WhiteNoiseMiddleware",
-    )
-    STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
+# 8)=== Archivos estáticos y multimedia ===
+STATIC_URL = '/static/'
+STATIC_ROOT = '/srv/bethania/app/static_collected/'
 
-# Alternativa S3 (si aplica)
-# STORAGES = {
-#     "default": {"BACKEND": "storages.backends.s3boto3.S3Boto3Storage"},
-#     "staticfiles": {"BACKEND": "storages.backends.s3boto3.S3ManifestStaticStorage"},
-# }
-# AWS_STORAGE_BUCKET_NAME = os.getenv("AWS_STORAGE_BUCKET_NAME")
+MEDIA_URL = '/media/'
+MEDIA_ROOT = '/srv/bethania/app/media/'
+
 
 # 9) Admins / errores
 # Formato: "Nombre|correo,Otra Persona|correo2"
