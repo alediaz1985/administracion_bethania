@@ -13,19 +13,50 @@
   <form method="post" enctype="multipart/form-data" class="perfil-editar-form">
     {% csrf_token %}
 
+    <!-- NUEVO: resumen de errores de ambos forms -->
+    {% if user_form.errors or perfil_form.errors %}
+      <div class="alert alert-danger" style="margin-bottom:1rem">
+        {{ user_form.non_field_errors }}
+        {{ perfil_form.non_field_errors }}
+
+        {% for field in user_form %}
+          {% for err in field.errors %}
+            <div><strong>{{ field.label }}:</strong> {{ err }}</div>
+          {% endfor %}
+        {% endfor %}
+
+        {% for field in perfil_form %}
+          {% for err in field.errors %}
+            <div><strong>{{ field.label }}:</strong> {{ err }}</div>
+          {% endfor %}
+        {% endfor %}
+      </div>
+    {% endif %}
+    <!-- /NUEVO -->
+
     <div class="perfil-editar-header">
       <!-- FOTO -->
       <div class="perfil-editar-foto">
         <label for="id_foto" class="foto-label" style="cursor:pointer">
           <img id="previewFoto"
-              src="{{ request.user.perfil.foto_url }}?v={{ request.user.last_login|date:'U' }}"
-              alt="Foto de perfil"
-              class="perfil-photo">
+               src="{{ request.user.perfil.foto_url }}?v={{ request.user.last_login|date:'U' }}"
+               alt="Foto de perfil"
+               class="perfil-photo">
         </label>
+
+        {# si usás input manual, dejalo: #}
         <input type="file" name="foto" id="id_foto" accept="image/*" style="display:none">
+
+        <!-- NUEVO: error del campo foto -->
+        {% if perfil_form.foto.errors %}
+          <div class="text-danger" style="margin-top:.5rem">
+            {{ perfil_form.foto.errors.0 }}
+          </div>
+        {% endif %}
+        <!-- /NUEVO -->
+
         <p class="foto-texto">Haz clic en la imagen para cambiarla</p>
       </div>
-
 
       <!-- CAMPOS A LA DERECHA -->
       <div class="perfil-editar-campos">
