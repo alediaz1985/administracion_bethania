@@ -1,3 +1,4 @@
+# apps/autenticacion/apps.py
 from django.apps import AppConfig
 
 class AutenticacionConfig(AppConfig):
@@ -5,4 +6,8 @@ class AutenticacionConfig(AppConfig):
     name = 'apps.autenticacion'
 
     def ready(self):
-        import apps.autenticacion.signals
+        """
+        Se ejecuta automáticamente cuando Django inicia la app.
+        Importamos las señales para que queden registradas.
+        """
+        import apps.autenticacion.signals  # noqa

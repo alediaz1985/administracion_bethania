@@ -16,23 +16,16 @@
     <div class="perfil-editar-header">
       <!-- FOTO -->
       <div class="perfil-editar-foto">
-        <label for="id_foto" class="foto-label">
-          {% if request.user.perfil.foto %}
-            <img id="previewFoto"
-              src="{% static 'autenticacion/images/usuarios/' %}{{ request.user.perfil.foto }}?v={{ request.user.last_login|date:'U' }}"
+        <label for="id_foto" class="foto-label" style="cursor:pointer">
+          <img id="previewFoto"
+              src="{{ request.user.perfil.foto_url }}?v={{ request.user.last_login|date:'U' }}"
               alt="Foto de perfil"
               class="perfil-photo">
-          {% else %}
-            <img id="previewFoto"
-                src="{% static 'autenticacion/images/default-user.jpg' %}"
-                alt="Usuario genérico"
-                class="perfil-photo">
-          {% endif %}
         </label>
-        <!-- input oculto -->
-        <input type="file" name="foto" id="id_foto" accept="image/*" style="display: none;">
+        <input type="file" name="foto" id="id_foto" accept="image/*" style="display:none">
         <p class="foto-texto">Haz clic en la imagen para cambiarla</p>
       </div>
+
 
       <!-- CAMPOS A LA DERECHA -->
       <div class="perfil-editar-campos">

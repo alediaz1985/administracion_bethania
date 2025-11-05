@@ -10,14 +10,10 @@
 {% block content %}
 <div class="perfil-card">
   <div class="perfil-header">
-    {% if user.perfil.foto %}
-      <img src="{% static 'autenticacion/images/usuarios/' %}{{ perfil.foto }}?v={{ cache_buster }}"
-        alt="Foto de perfil"
-        class="perfil-photo">
-    {% else %}
-      <img src="{% static 'autenticacion/images/default-user.jpg' %}" 
-          alt="Usuario genérico" class="perfil-photo">
-    {% endif %}
+    <img
+      src="{{ perfil.foto_url }}?v={{ cache_buster }}"
+      alt="Foto de perfil"
+      class="perfil-photo">
 
     <div class="perfil-info">
       <h2>{{ user.first_name }} {{ user.last_name }}</h2>

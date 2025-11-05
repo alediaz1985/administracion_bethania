@@ -69,71 +69,44 @@ def logout_view(request):
 # --- Editar perfil (nombre, apellido, correo, foto) ---
 @login_required
 def editar_perfil(request):
-    # Crear el perfil si no existe (por si el usuario es viejo)
-    perfil, created = Perfil.objects.get_or_create(user=request.user)
-
-    user = request.user
-    user_form = PerfilUsuarioForm(instance=user)
-    perfil_form = PerfilForm(instance=perfil)
+    # Garantizar que exista Perfil
+    perfil, _ = Perfil.objects.get_or_create(user=request.user)
 
     if request.method == 'POST':
-        user_form = PerfilUsuarioForm(request.POST, instance=user)
+        user_form = PerfilUsuarioForm(request.POST, instance=request.user)
         perfil_form = PerfilForm(request.POST, request.FILES, instance=perfil)
-        new_password = request.POST.get('password')
-        confirm_password = request.POST.get('password_confirm')
 
-        if user_form.is_valid() and perfil_form.is_valid():
+        new_password = request.POST.get('password') or ''
+        confirm_password = request.POST.get('password_confirm') or ''
+
+        ok = user_form.is_valid() and perfil_form.is_valid()
+
+        # Validación de password (opcional)
+        if (new_password or confirm_password) and new_password != confirm_password:
+            ok = False
+            messages.error(request, 'Las contraseñas no coinciden.')
+
+        if ok:
+            # 1) Guardar datos del usuario
             user = user_form.save(commit=False)
-
-            # Si el usuario escribió una nueva contraseña
-            if new_password or confirm_password:
-                if new_password == confirm_password:
-                    user.set_password(new_password)
-                else:
-                    messages.error(request, 'Las contraseñas no coinciden.')
-                    return redirect('editar_perfil')
-
+            if new_password:
+                user.set_password(new_password)
             user.save()
 
-            # 🔹 Guardar la foto de perfil en /static/autenticacion/images/usuarios/
-            nueva_foto = request.FILES.get('foto')
-            if nueva_foto:
-                # Carpeta destino
-                destino = os.path.join(
-                    settings.BASE_DIR,
-                    'apps', 'autenticacion', 'static', 'autenticacion', 'images', 'usuarios'
-                )
-                os.makedirs(destino, exist_ok=True)
-
-                # 🔸 Eliminar cualquier foto anterior del usuario (sin importar extensión)
-                for ext in ['jpg', 'jpeg', 'png', 'gif', 'webp']:
-                    archivo_existente = os.path.join(destino, f"{user.username}.{ext}")
-                    if os.path.exists(archivo_existente):
-                        os.remove(archivo_existente)
-
-                # 🔸 Guardar la nueva foto
-                extension = nueva_foto.name.split('.')[-1].lower()
-                nombre_archivo = f"{user.username}.{extension}"
-                ruta_archivo = os.path.join(destino, nombre_archivo)
-
-                with open(ruta_archivo, 'wb+') as f:
-                    for chunk in nueva_foto.chunks():
-                        f.write(chunk)
-
-                # 🔸 Actualizar el campo en el modelo
-                perfil.foto = nombre_archivo
-                perfil.save()
-            else:
-                perfil_form.save()  # si no sube nueva foto, guardar los demás campos
+            # 2) Guardar foto (y demás campos de Perfil) -> ¡acá va el archivo!
+            #    NO escribir en /static ni manejar archivos a mano
+            perfil_form.save()
 
             messages.success(request, 'Perfil actualizado correctamente.')
 
-            # Si cambió la contraseña, forzamos re-login
             if new_password:
-                logout(request)
-                return redirect('iniciar_sesion')
+                # Mantener sesión activa tras cambiar password
+                update_session_auth_hash(request, user)
 
             return redirect('ver_perfil')
+    else:
+        user_form = PerfilUsuarioForm(instance=request.user)
+        perfil_form = PerfilForm(instance=perfil)
 
     return render(request, 'autenticacion/editar_perfil.html', {
         'user_form': user_form,

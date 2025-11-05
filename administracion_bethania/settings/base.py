@@ -41,7 +41,7 @@ INSTALLED_APPS = [
     "crispy_bootstrap5",
     # Apps propias
     "apps.administracion",
-    "apps.autenticacion",
+    "apps.autenticacion.apps.AutenticacionConfig",
     "apps.administracion_alumnos",
     "apps.dashboard",
     "apps.comprobantes",
